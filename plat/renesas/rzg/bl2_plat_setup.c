@@ -66,6 +66,7 @@ extern void rzg_swdt_init(void);
 extern void rzg_rpc_init(void);
 extern void rzg_pfc_init(void);
 extern void rzg_dma_init(void);
+extern void bl2_ecc_init(uint32_t major, uint32_t minor);
 
 static void bl2_init_generic_timer(void);
 
@@ -692,6 +693,9 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 		break;
 	}
 
+	major = 0;
+	minor = 0;
+
 	if ((PRR_PRODUCT_G2M == product) &&
 	    (PRR_PRODUCT_20 == (reg & RZG_MAJOR_MASK))) {
 		if (RZG_G2M_CUT_VER11 == (reg & PRR_CUT_MASK)) {
@@ -814,6 +818,8 @@ lcm_state:
 		}
 		rzg_qos_init();
 	}
+
+	bl2_ecc_init(major, minor);
 
 	/* Set up FDT */
 	ret = fdt_create_empty_tree(fdt, sizeof(fdt_blob));

@@ -259,6 +259,28 @@ ifeq (${RZG_SYSTEM_RESET_KEEPON_DDR},1)
   endif
 endif
 
+# Process RZG_DRAM_ECC flag
+ifndef RZG_DRAM_ECC
+RZG_DRAM_ECC :=0
+endif
+$(eval $(call add_define,RZG_DRAM_ECC))
+
+# Process RZG_DRAM_ECC_FULL flag
+# 0 : ECC Full mode will not be applied
+# 1 : ECC Full mode dual channel will be applied
+# 2 : ECC Full mode single channel will be applied
+ifndef RZG_DRAM_ECC_FULL
+RZG_DRAM_ECC_FULL :=0
+endif
+$(eval $(call add_define,RZG_DRAM_ECC_FULL))
+
+# RZ/G2N and RZ/G2E do not support ECC Full mode dual channel.
+ifeq (${LSI}, $(filter ${LSI}, G2E G2N))
+  ifeq (${RZG_DRAM_ECC_FULL},1)
+    $(error "Error: RZ/${LSI} does not support ECC Full mode dual channel")
+  endif
+endif
+
 # Enable workarounds for selected Cortex-A53 erratas.
 ERRATA_A53_835769  := 1
 ifdef ERRATA_A53_843419
@@ -319,6 +341,7 @@ BL2_SOURCES	+=	${RZG_GIC_SOURCES}				\
 			plat/renesas/rzg/bl2_plat_mem_params_desc.c	\
 			plat/renesas/rzg/plat_image_load.c		\
 			plat/renesas/rzg/bl2_cpg_init.c			\
+			plat/renesas/rzg/bl2_fusa.c			\
 			drivers/renesas/rzg/console/rzg_printf.c	\
 			drivers/renesas/rzg/scif/scif.S			\
 			drivers/renesas/rzg/common.c			\
