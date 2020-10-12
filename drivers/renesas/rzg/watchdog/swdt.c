@@ -49,9 +49,15 @@ extern void gicd_set_icenabler(uintptr_t base, unsigned int id);
 #define WTCSRA_INIT_DATA		(WTCSRA_UPPER_BYTE + 0x0FU)
 #define WTCSRB_INIT_DATA		(WTCSRB_UPPER_BYTE + 0x21U)
 
+#if (RZG_DRAM_ECC == 1)
+#define WTCNT_COUNT_8p13k		(0U)
+#define WTCNT_COUNT_8p22k		(0U)
+#define WTCNT_COUNT_7p81k		(0U)
+#else /* (RZG_DRAM_ECC == 1) */
 #define WTCNT_COUNT_8p13k		(0x10000U - 40687U)
 #define WTCNT_COUNT_8p22k		(0x10000U - 41115U)
 #define WTCNT_COUNT_7p81k		(0x10000U - 39062U)
+#endif /* (RZG_DRAM_ECC == 1) */
 
 #define WTCSRA_CKS_DIV16		(0x00000002U)
 
