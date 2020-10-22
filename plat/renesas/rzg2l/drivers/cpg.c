@@ -18,20 +18,21 @@ static CPG_REG_SETTING cpg_clk_on_tbl[CPG_CLK_ON_TBL_NUM] = {
 	{ (uintptr_t)CPG_CLKON_SYC,             0x00010001 },		/* SYC */
 	{ (uintptr_t)CPG_CLKON_SYSC,            0x00030003 },		/* SYSC */
 	{ (uintptr_t)CPG_CLKON_OSTM,            0x00010001 },		/* OSTM */
-	{ (uintptr_t)CPG_CLKON_WDT,             0x000f000f },		/* WDT */
+	{ (uintptr_t)CPG_CLKON_WDT,             0x00330033 },		/* WDT */
 	{ (uintptr_t)CPG_CLKON_SPI_MULTI,       0x00030003 },		/* SPI_MULTI */
 	{ (uintptr_t)CPG_CLKON_SDHI,            0x00ff00ff },		/* SDHI */
 	{ (uintptr_t)CPG_CLKON_SCIF,            0x00010001 },		/* SCIF */
 	{ (uintptr_t)CPG_CLKON_GPIO,            0x00010001 },		/* GPIO */
 	{ (uintptr_t)CPG_CLKON_JAUTH,           0x00010001 },		/* JAUTH */
 	{ (uintptr_t)CPG_CLKON_OTP,             0x00030003 },		/* OTP */
+	{ (uintptr_t)CPG_CLKON_BBGU,            0x00010001 },		/* BBGU */
 	{ (uintptr_t)CPG_CLKON_AXI_ACPU_BUS,    0x000f000f },		/* AXI_ACPU_BUS */
 	{ (uintptr_t)CPG_CLKON_AXI_MCPU_BUS,    0x07ff07ff },		/* AXI_MCPU_BUS */
 	{ (uintptr_t)CPG_CLKON_AXI_COM_BUS,     0x00030003 },		/* AXI_COM_BUS */
 	{ (uintptr_t)CPG_CLKON_AXI_VIDEO_BUS,   0x00030003 },		/* AXI_VIDEO_BUS */
 	{ (uintptr_t)CPG_CLKON_PERI_COM,        0x00030003 },		/* PERI_COM */
-	{ (uintptr_t)CPG_CLKON_REG1_BUS,        0x00030003 },		/* REG1_BUS */
 	{ (uintptr_t)CPG_CLKON_REG0_BUS,        0x000f000f },		/* REG0_BUS */
+	{ (uintptr_t)CPG_CLKON_REG1_BUS,        0x00030003 },		/* REG1_BUS */
 	{ (uintptr_t)CPG_CLKON_PERI_CPU,        0x000f000f },		/* PERI_CPU */
 	{ (uintptr_t)CPG_CLKON_PERI_VIDEO,      0x00070007 },		/* PERI_VIDEO */
 	{ (uintptr_t)CPG_CLKON_PERI_DDR,        0x00010001 },		/* PERI_DDR */
@@ -71,8 +72,18 @@ static CPG_REG_SETTING cpg_reset_tbl[CPG_RESET_TBL_NUM] = {
 };
 
 static CPG_REG_SETTING cpg_select_tbl[CPG_CELECT_TBL_NUM] = {
-	{ (uintptr_t)CPG_PLL4_CLK2,             0x00000004 },
-	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 }
+	{ (uintptr_t)CPG_PL1_DDIV,              0x00010000 },
+	{ (uintptr_t)CPG_PL2_DDIV,              0x11110000 },
+	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110300 },
+	{ (uintptr_t)CPG_PL3B_DDIV,             0x00010000 },
+	{ (uintptr_t)CPG_PL5_SDIV,              0x01010000 },
+	{ (uintptr_t)CPG_PL6_DDIV,              0x00010000 },
+	{ (uintptr_t)CPG_PL2SDHI_DSEL,          0x00110022 },
+	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
+	{ (uintptr_t)CPG_PL3_SSEL,              0x01000000 },
+	{ (uintptr_t)CPG_PL6_SSEL,              0x10000000 },
+	{ (uintptr_t)CPG_PL6_ETH_SSEL,          0x00010000 },
+	{ (uintptr_t)CPG_OTHERFUNC1_REG,        0x00010000 }
 };
 
 /* It is assumed that the PLL has stopped by the time this function is executed. */
@@ -136,9 +147,15 @@ static void cpg_pll_setup(void)
 static void cpg_div_sel_setup(void)
 {
 	int cnt;
+	uint32_t val;
 	
 	for(cnt = 0; cnt < CPG_CELECT_TBL_NUM; cnt++) {
 		mmio_write_32(cpg_select_tbl[cnt].reg, cpg_select_tbl[cnt].val);
+	}
+	
+	val = mmio_read_32(CPG_OTHERFUNC1_REG);
+	if(val != 0x00000000) {
+		/* エラー処理？ */
 	}
 }
 
