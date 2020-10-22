@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifdef _PFC_H_
+#ifndef _PFC_H_
 #define _PFC_H_
 
 extern void pfc_setup(void);
