@@ -712,8 +712,8 @@ typedef struct {
 	uint32_t  val;
 } CPG_REG_SETTING;
 
-#define CPG_CLK_ON_TBL_NUM							(28)
+#define CPG_CLK_ON_TBL_NUM							(29)
 #define CPG_RESET_TBL_NUM							(27)
-#define CPG_CELECT_TBL_NUM							(2)
+#define CPG_CELECT_TBL_NUM							(12)
 
 #endif	/* _CPG_REGS_H_ */
