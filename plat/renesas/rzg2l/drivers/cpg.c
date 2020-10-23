@@ -9,7 +9,14 @@
 #include "cpg.h"
 #include <lib/mmio.h>
 
-static CPG_REG_SETTING cpg_clk_on_tbl[CPG_CLK_ON_TBL_NUM] = {
+#define SIZEOF(array)	(sizeof(array)/sizeof(array[0]))
+
+typedef struct {
+	uintptr_t reg;
+	uint32_t  val;
+} CPG_REG_SETTING;
+
+static CPG_REG_SETTING cpg_clk_on_tbl[] = {
 	{ (uintptr_t)CPG_CLKON_CM33,            0x00000000 },		/* CM33 */
 	{ (uintptr_t)CPG_CLKON_ROM,             0x00010001 },		/* ROM */
 	{ (uintptr_t)CPG_CLKON_GIC600,          0x00010001 },		/* GIC600 */
@@ -67,7 +74,7 @@ static CPG_REG_SETTING cpg_clk_on_tbl[CPG_CLK_ON_TBL_NUM] = {
 	{ (uintptr_t)CPG_CLKON_AXI_DEFAULT_SLV, 0x00010001 },		/* AXI_DEFAULT_SLV */
 };
 
-static CPG_REG_SETTING cpg_reset_tbl[CPG_RESET_TBL_NUM] = {
+static CPG_REG_SETTING cpg_reset_tbl[] = {
 	{ (uintptr_t)CPG_RST_CM33,              0x00000000 },		/* CM33 */
 	{ (uintptr_t)CPG_RST_ROM,               0x00010001 },		/* ROM */
 	{ (uintptr_t)CPG_RST_GIC600,            0x00030003 },		/* GIC600 */
@@ -124,7 +131,7 @@ static CPG_REG_SETTING cpg_reset_tbl[CPG_RESET_TBL_NUM] = {
 	{ (uintptr_t)CPG_RST_AXI_DEFAULT_SLV,   0x00010001 },		/* AXI_DEFAULT_SLV */
 };
 
-static CPG_REG_SETTING cpg_select_tbl[CPG_CELECT_TBL_NUM] = {
+static CPG_REG_SETTING cpg_select_tbl[] = {
 	{ (uintptr_t)CPG_PL1_DDIV,              0x00010000 },
 	{ (uintptr_t)CPG_PL2_DDIV,              0x11110000 },
 	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110300 },
@@ -138,6 +145,48 @@ static CPG_REG_SETTING cpg_select_tbl[CPG_CELECT_TBL_NUM] = {
 	{ (uintptr_t)CPG_PL6_ETH_SSEL,          0x00010000 },
 	{ (uintptr_t)CPG_OTHERFUNC1_REG,        0x00010000 }
 };
+
+#if 0
+/* 
+ * for dynamic switching clock DIVIDERs and SELECTORs
+ * Only the following must be set.
+ *
+ *    - CPG_PL1_DDIV
+ *    - CPG_PL2_DDIV
+ *    - CPG_PL3A_DDIV
+ *    - CPG_PL3B_DDIV
+ *    - CPG_PL6_DDIV
+ *    - CPG_PL2SDHI_DSEL
+ *    - CPG_PL4_DSEL
+ */ 
+static CPG_REG_SETTING cpg_dynamic_sel_tbl[] = {
+	{ (uintptr_t)CPG_PL1_DDIV,              0x00010000 },
+	{ (uintptr_t)CPG_PL2_DDIV,              0x11110000 },
+	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110300 },
+	{ (uintptr_t)CPG_PL3B_DDIV,             0x00010000 },
+	{ (uintptr_t)CPG_PL6_DDIV,              0x00010000 },
+	{ (uintptr_t)CPG_PL2SDHI_DSEL,          0x00110022 },
+	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
+};
+
+/* 
+ * for static switching clock DIVIDERs and SELECTORs
+ * Only the following must be set.
+ *
+ *    - CPG_PL5_SDIV
+ *    - CPG_PL3_SSEL
+ *    - CPG_PL6_SSEL
+ *    - CPG_PL6_ETH_SSEL
+ *    - CPG_OTHERFUNC1_REG
+ */
+static CPG_REG_SETTING cpg_static_sel_tbl[] = {
+	{ (uintptr_t)CPG_PL5_SDIV,              0x01010000 },
+	{ (uintptr_t)CPG_PL3_SSEL,              0x01000000 },
+	{ (uintptr_t)CPG_PL6_SSEL,              0x10000000 },
+	{ (uintptr_t)CPG_PL6_ETH_SSEL,          0x00010000 },
+	{ (uintptr_t)CPG_OTHERFUNC1_REG,        0x00010000 }
+};
+#endif
 
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
@@ -200,26 +249,25 @@ static void cpg_pll_setup(void)
 static void cpg_div_sel_setup(void)
 {
 	int cnt;
-	uint32_t val;
 	
-	for(cnt = 0; cnt < CPG_CELECT_TBL_NUM; cnt++) {
+	for(cnt = 0; cnt < SIZEOF(cpg_select_tbl); cnt++) {
 		mmio_write_32(cpg_select_tbl[cnt].reg, cpg_select_tbl[cnt].val);
 	}
 	
-	val = mmio_read_32(CPG_OTHERFUNC1_REG);
-	if(val != 0x00000000) {
-		/* エラー処理？ */
-	}
+	/* Wait for completion of settings */
+	while(mmio_read_32(CPG_CLKSTATUS) != 0);
 }
 
 static void cpg_clk_on_setup(void)
 {
 	int cnt;
 	
-	for(cnt = 0; cnt < CPG_CLK_ON_TBL_NUM; cnt++) {
+	for(cnt = 0; cnt < SIZEOF(cpg_clk_on_tbl); cnt++) {
 		mmio_write_32(cpg_clk_on_tbl[cnt].reg, cpg_clk_on_tbl[cnt].val);
 	}
 		
+	/* FIXME */
+	/* Wait for completion of settings */
 	while((mmio_read_32(CPG_CLKMON_AXI_DEFAULT_SLV) & BIT0_ON) == 0 );
 }
 
@@ -227,17 +275,19 @@ static void cpg_reset_setup(void)
 {
 	int cnt;
 	
-	for(cnt = 0; cnt < CPG_RESET_TBL_NUM; cnt++) {
+	for(cnt = 0; cnt < SIZEOF(cpg_reset_tbl); cnt++) {
 		mmio_write_32(cpg_reset_tbl[cnt].reg, cpg_reset_tbl[cnt].val);
 	}
 		
+	/* FIXME */
+	/* Wait for completion of settings */
 	while((mmio_read_32(CPG_RSTMON_AXI_DEFAULT_SLV) & BIT0_ON) == 0 );
 }
 
 void cpg_setup(void)
 {
-	cpg_pll_setup();
 	cpg_div_sel_setup();
+	cpg_pll_setup();
 	cpg_clk_on_setup();
 	cpg_reset_setup();
 }
