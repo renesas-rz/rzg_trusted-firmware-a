@@ -25,7 +25,7 @@ static CPG_REG_SETTING cpg_clk_on_tbl[CPG_CLK_ON_TBL_NUM] = {
 	{ (uintptr_t)CPG_CLKON_POE3,            0x00000000 },		/* POE3 */
 	{ (uintptr_t)CPG_CLKON_GPT,             0x00000000 },		/* GPT */
 	{ (uintptr_t)CPG_CLKON_POEG,            0x00000000 },		/* POEG */
-	{ (uintptr_t)CPG_CLKON_WDT,             0x00330033 },		/* WDT */
+	{ (uintptr_t)CPG_CLKON_WDT,             0x00C300C3 },		/* WDT */
 	{ (uintptr_t)CPG_CLKON_DDR,             0x00000000 },		/* DDR */
 	{ (uintptr_t)CPG_CLKON_SPI_MULTI,       0x00030003 },		/* SPI_MULTI */
 	{ (uintptr_t)CPG_CLKON_SDHI,            0x00ff00ff },		/* SDHI */
