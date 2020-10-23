@@ -706,14 +706,4 @@
 #define BIT30_ON									(1 << 30)
 #define BIT31_ON									(1 << 31)
 
-
-typedef struct {
-	uintptr_t reg;
-	uint32_t  val;
-} CPG_REG_SETTING;
-
-#define CPG_CLK_ON_TBL_NUM							(55)
-#define CPG_RESET_TBL_NUM							(54)
-#define CPG_CELECT_TBL_NUM							(12)
-
 #endif	/* _CPG_REGS_H_ */
