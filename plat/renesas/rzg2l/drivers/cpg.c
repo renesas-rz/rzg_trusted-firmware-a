@@ -16,6 +16,74 @@ typedef struct {
 	uint32_t  val;
 } CPG_REG_SETTING;
 
+typedef struct {
+	CPG_REG_SETTING		clk1_dat;
+	CPG_REG_SETTING		clk2_dat;
+	CPG_REG_SETTING		stby_dat;
+} CPG_PLL_SETDATA_146;
+
+typedef struct {
+	CPG_REG_SETTING		clk1_dat;
+	CPG_REG_SETTING		clk2_dat;
+	CPG_REG_SETTING		clk3_dat;
+	CPG_REG_SETTING		clk4_dat;
+	CPG_REG_SETTING		clk5_dat;
+	CPG_REG_SETTING		stby_dat;
+} CPG_PLL_SETDATA_235;
+
+#define	CPG_PLL1_INDEX					(0)
+#define	CPG_PLL4_INDEX					(1)
+#define	CPG_PLL6_INDEX					(2)
+
+static CPG_PLL_SETDATA_146 cpg_pll_setdata_146[] = {
+	{ 
+		{ CPG_PLL1_CLK1 , 0x00001901 },
+		{ CPG_PLL1_CLK2 , 0x00180601 },
+		{ CPG_PLL1_STBY , 0x00000005 }
+	},
+	{ 
+		{ CPG_PLL4_CLK1 , 0x00003203 },
+		{ CPG_PLL4_CLK2 , 0x00082400 },
+		{ CPG_PLL4_STBY , 0x00010005 }
+	},
+	{ 
+		{ CPG_PLL6_CLK1 , 0x00003E83 },
+		{ CPG_PLL6_CLK2 , 0x00082D02 },
+		{ CPG_PLL6_STBY , 0x00010001 }
+	}
+};
+
+#define	CPG_PLL2_INDEX					(0)
+#define	CPG_PLL3_INDEX					(1)
+#define	CPG_PLL5_INDEX					(2)
+
+static CPG_PLL_SETDATA_235 cpg_pll_setdata_235[] = {
+	{
+		{ CPG_PLL2_CLK1 , 0x01110111 },
+		{ CPG_PLL2_CLK2 , 0x01550100 },
+		{ CPG_PLL2_CLK3 , 0x55555506 },
+		{ CPG_PLL2_CLK4 , 0x008500FF },
+		{ CPG_PLL2_CLK5 , 0x00000016 },
+		{ CPG_PLL2_STBY , 0x00000011 }
+	},
+	{
+		{ CPG_PLL3_CLK1 , 0x01110111 },
+		{ CPG_PLL3_CLK2 , 0x01550100 },
+		{ CPG_PLL3_CLK3 , 0x55555506 },
+		{ CPG_PLL3_CLK4 , 0x008500FF },
+		{ CPG_PLL3_CLK5 , 0x00000016 },
+		{ CPG_PLL3_STBY , 0x00000011 }
+	},
+	{
+		{ CPG_PLL5_CLK1 , 0x01110111 },
+		{ CPG_PLL5_CLK2 , 0x01550100 },
+		{ CPG_PLL5_CLK3 , 0x00000006 },
+		{ CPG_PLL5_CLK4 , 0x007D00FF },
+		{ CPG_PLL5_CLK5 , 0x00000016 },
+		{ CPG_PLL5_STBY , 0x00010015 }
+	}
+};
+
 static CPG_REG_SETTING cpg_clk_on_tbl[] = {
 	{ (uintptr_t)CPG_CLKON_CM33,            0x00000000 },		/* CM33 */
 	{ (uintptr_t)CPG_CLKON_ROM,             0x00010001 },		/* ROM */
@@ -188,6 +256,32 @@ static CPG_REG_SETTING cpg_static_sel_tbl[] = {
 };
 #endif
 
+#if 0
+static void cpg_pll_stop(uintptr_t reg)
+{
+	uint32_t set = 0x00010000;
+	
+	mmio_write_32(reg, set);
+}
+#endif
+
+static void cpg_pll_start_146(uint32_t index)
+{
+	mmio_write_32(cpg_pll_setdata_146[index].clk1_dat.reg, cpg_pll_setdata_146[index].clk1_dat.val);
+	mmio_write_32(cpg_pll_setdata_146[index].clk2_dat.reg, cpg_pll_setdata_146[index].clk2_dat.val);
+	mmio_write_32(cpg_pll_setdata_146[index].stby_dat.reg, cpg_pll_setdata_146[index].stby_dat.val);
+}
+
+static void cpg_pll_start_235(uint32_t index)
+{
+	mmio_write_32(cpg_pll_setdata_235[index].clk1_dat.reg, cpg_pll_setdata_235[index].clk1_dat.val);
+	mmio_write_32(cpg_pll_setdata_235[index].clk2_dat.reg, cpg_pll_setdata_235[index].clk2_dat.val);
+	mmio_write_32(cpg_pll_setdata_235[index].clk3_dat.reg, cpg_pll_setdata_235[index].clk3_dat.val);
+	mmio_write_32(cpg_pll_setdata_235[index].clk4_dat.reg, cpg_pll_setdata_235[index].clk4_dat.val);
+	mmio_write_32(cpg_pll_setdata_235[index].clk5_dat.reg, cpg_pll_setdata_235[index].clk5_dat.val);
+	mmio_write_32(cpg_pll_setdata_235[index].stby_dat.reg, cpg_pll_setdata_235[index].stby_dat.val);
+}
+
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
 {
@@ -200,7 +294,8 @@ static void cpg_pll_setup(void)
 	} while((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) != 0);
 	
 	/* Set PLL4 to normal mode */
-	mmio_write_32(CPG_PLL4_STBY, (PLL4_STBY_RESETB_WEN | PLL4_STBY_RESETB));
+	/* mmio_write_32(CPG_PLL4_STBY, (PLL4_STBY_RESETB_WEN | PLL4_STBY_RESETB)); */
+	cpg_pll_start_146(CPG_PLL4_INDEX);
 	
 	/* PLL4 normal mode transition confirmation */
 	do {
@@ -221,8 +316,9 @@ static void cpg_pll_setup(void)
 #endif
 	
 	/* PLL5 set to normal mode */
-	val = mmio_read_32(CPG_PLL5_STBY) | PLL5_STBY_RESETB_WEN | PLL5_STBY_RESETB;
-	mmio_write_32(CPG_PLL5_STBY, val);
+	/* val = mmio_read_32(CPG_PLL5_STBY) | PLL5_STBY_RESETB_WEN | PLL5_STBY_RESETB; */
+	/* mmio_write_32(CPG_PLL5_STBY, val); */
+	cpg_pll_start_235(CPG_PLL5_INDEX);
 	
 	/* PLL5 Normal mode transition confirmation */
 	do {
@@ -236,8 +332,9 @@ static void cpg_pll_setup(void)
 	} while((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) != 0);
 	
 	/* Set PLL6 to normal mode */
-	val = mmio_read_32(CPG_PLL6_STBY) | PLL6_STBY_RESETB_WEN | PLL6_STBY_RESETB;
-	mmio_write_32(CPG_PLL6_STBY, val);
+	/* val = mmio_read_32(CPG_PLL6_STBY) | PLL6_STBY_RESETB_WEN | PLL6_STBY_RESETB; */
+	/* mmio_write_32(CPG_PLL6_STBY, val); */
+	cpg_pll_start_146(CPG_PLL6_INDEX);
 	
 	/* PLL6 Normal mode transition confirmation */
 	do {
