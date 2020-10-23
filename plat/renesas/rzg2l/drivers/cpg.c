@@ -10,21 +10,47 @@
 #include <lib/mmio.h>
 
 static CPG_REG_SETTING cpg_clk_on_tbl[CPG_CLK_ON_TBL_NUM] = {
+	{ (uintptr_t)CPG_CLKON_CM33,            0x00000000 },		/* CM33 */
 	{ (uintptr_t)CPG_CLKON_ROM,             0x00010001 },		/* ROM */
 	{ (uintptr_t)CPG_CLKON_GIC600,          0x00010001 },		/* GIC600 */
 	{ (uintptr_t)CPG_CLKON_IA55,            0x00030003 },		/* IA55 */
 	{ (uintptr_t)CPG_CLKON_IM33,            0x00030003 },		/* IM33 */
+	{ (uintptr_t)CPG_CLKON_MHU,             0x00000000 },		/* MHU */
 	{ (uintptr_t)CPG_CLKON_CST,             0x07ff07ff },		/* CST */
 	{ (uintptr_t)CPG_CLKON_SYC,             0x00010001 },		/* SYC */
+	{ (uintptr_t)CPG_CLKON_DAMC_REG,        0x00000000 },		/* DMAC */
 	{ (uintptr_t)CPG_CLKON_SYSC,            0x00030003 },		/* SYSC */
 	{ (uintptr_t)CPG_CLKON_OSTM,            0x00010001 },		/* OSTM */
+	{ (uintptr_t)CPG_CLKON_MTU,             0x00000000 },		/* MTU */
+	{ (uintptr_t)CPG_CLKON_POE3,            0x00000000 },		/* POE3 */
+	{ (uintptr_t)CPG_CLKON_GPT,             0x00000000 },		/* GPT */
+	{ (uintptr_t)CPG_CLKON_POEG,            0x00000000 },		/* POEG */
 	{ (uintptr_t)CPG_CLKON_WDT,             0x00330033 },		/* WDT */
+	{ (uintptr_t)CPG_CLKON_DDR,             0x00000000 },		/* DDR */
 	{ (uintptr_t)CPG_CLKON_SPI_MULTI,       0x00030003 },		/* SPI_MULTI */
 	{ (uintptr_t)CPG_CLKON_SDHI,            0x00ff00ff },		/* SDHI */
+	{ (uintptr_t)CPG_CLKON_GPU,             0x00000000 },		/* GPU */
+	{ (uintptr_t)CPG_CLKON_ISU,             0x00000000 },		/* Image Scaling Unit */
+	{ (uintptr_t)CPG_CLKON_H264,            0x00000000 },		/* H.264 codec */
+	{ (uintptr_t)CPG_CLKON_CRU,             0x00000000 },		/* Camera Data Receive Unit */
+	{ (uintptr_t)CPG_CLKON_MIPI_DSI,        0x00000000 },		/* MIPI-DSI */
+	{ (uintptr_t)CPG_CLKON_LCDC,            0x00000000 },		/* LCDC */
+	{ (uintptr_t)CPG_CLKON_SSI,             0x00000000 },		/* Serial Sound Interface */
+	{ (uintptr_t)CPG_CLKON_SRC,             0x00000000 },		/* Sampling Rate Converter */
+	{ (uintptr_t)CPG_CLKON_USB,             0x00000000 },		/* USB2.0 */
+	{ (uintptr_t)CPG_CLKON_ETH,             0x00000000 },		/* ETHER */
+	{ (uintptr_t)CPG_CLKON_I2C,             0x00000000 },		/* I2C */
 	{ (uintptr_t)CPG_CLKON_SCIF,            0x00010001 },		/* SCIF */
+	{ (uintptr_t)CPG_CLKON_SCI,             0x00000000 },		/* SCI */
+	{ (uintptr_t)CPG_CLKON_IRDA,            0x00000000 },		/* IrDA */
+	{ (uintptr_t)CPG_CLKON_RSPI,            0x00000000 },		/* SPI */
+	{ (uintptr_t)CPG_CLKON_CANFD,           0x00000000 },		/* CAN */
 	{ (uintptr_t)CPG_CLKON_GPIO,            0x00010001 },		/* GPIO */
+	{ (uintptr_t)CPG_CLKON_TSIPG,           0x00000000 },		/* TSIPG */
 	{ (uintptr_t)CPG_CLKON_JAUTH,           0x00010001 },		/* JAUTH */
 	{ (uintptr_t)CPG_CLKON_OTP,             0x00030003 },		/* OTP */
+	{ (uintptr_t)CPG_CLKON_ADC,             0x00000000 },		/* ADC */
+	{ (uintptr_t)CPG_CLKON_TSU,             0x00000000 },		/* Thermal Sensor Unit */
 	{ (uintptr_t)CPG_CLKON_BBGU,            0x00010001 },		/* BBGU */
 	{ (uintptr_t)CPG_CLKON_AXI_ACPU_BUS,    0x000f000f },		/* AXI_ACPU_BUS */
 	{ (uintptr_t)CPG_CLKON_AXI_MCPU_BUS,    0x07ff07ff },		/* AXI_MCPU_BUS */
@@ -42,20 +68,47 @@ static CPG_REG_SETTING cpg_clk_on_tbl[CPG_CLK_ON_TBL_NUM] = {
 };
 
 static CPG_REG_SETTING cpg_reset_tbl[CPG_RESET_TBL_NUM] = {
+	{ (uintptr_t)CPG_RST_CM33,              0x00000000 },		/* CM33 */
 	{ (uintptr_t)CPG_RST_ROM,               0x00010001 },		/* ROM */
 	{ (uintptr_t)CPG_RST_GIC600,            0x00030003 },		/* GIC600 */
 	{ (uintptr_t)CPG_RST_IA55,              0x00010001 },		/* IA55 */
 	{ (uintptr_t)CPG_RST_IM33,              0x00010001 },		/* IM33 */
+	{ (uintptr_t)CPG_RST_MHU,               0x00000000 },		/* MHU */
 	{ (uintptr_t)CPG_RST_SYC,               0x00010001 },		/* SYC */
+	{ (uintptr_t)CPG_RST_DMAC,              0x00010001 },		/* DMAC */
 	{ (uintptr_t)CPG_RST_SYSC,              0x00070007 },		/* SYSC */
 	{ (uintptr_t)CPG_RST_OSTM,              0x00010001 },		/* OSTM */
-	{ (uintptr_t)CPG_RST_WDT,               0x00050005 },		/* WDT */
+	{ (uintptr_t)CPG_RST_MTU,               0x00000000 },		/* MTU */
+	{ (uintptr_t)CPG_RST_POE3,              0x00000000 },		/* POE3 */
+	{ (uintptr_t)CPG_RST_GPT,               0x00000000 },		/* GPT */
+	{ (uintptr_t)CPG_RST_POEG,              0x00000000 },		/* POEG */
+	{ (uintptr_t)CPG_RST_WDT,               0x00090009 },		/* WDT */
+	{ (uintptr_t)CPG_RST_DDR,               0x00000000 },		/* DDR */
 	{ (uintptr_t)CPG_RST_SPI,               0x00010001 },		/* SPI_MULTI */
 	{ (uintptr_t)CPG_RST_SDHI,              0x00030003 },		/* SDHI */
+	{ (uintptr_t)CPG_RST_GPU,               0x00000000 },		/* GPU */
+	{ (uintptr_t)CPG_RST_ISU,               0x00000000 },		/* Image Scaling Unit */
+	{ (uintptr_t)CPG_RST_H264,              0x00000000 },		/* H.264 codec */
+	{ (uintptr_t)CPG_RST_CRU,               0x00000000 },		/* Camera Data Receive Unit */
+	{ (uintptr_t)CPG_RST_MIPI_DSI,          0x00000000 },		/* MIPI-DSI */
+	{ (uintptr_t)CPG_RST_LCDC,              0x00000000 },		/* LCDC */
+	{ (uintptr_t)CPG_RST_SSIF,              0x00000000 },		/* Serial Sound Interface */
+	{ (uintptr_t)CPG_RST_SRC,               0x00000000 },		/* Sampling Rate Converter */
+	{ (uintptr_t)CPG_RST_USB,               0x00000000 },		/* USB2.0 */
+	{ (uintptr_t)CPG_RST_ETH,               0x00000000 },		/* ETHER */
+	{ (uintptr_t)CPG_RST_I2C,               0x00000000 },		/* I2C */
 	{ (uintptr_t)CPG_RST_SCIF,              0x00010001 },		/* SCIF */
+	{ (uintptr_t)CPG_RST_SCI,               0x00000000 },		/* SCI */
+	{ (uintptr_t)CPG_RST_IRDA,              0x00000000 },		/* IrDA */
+	{ (uintptr_t)CPG_RST_RSPI,              0x00000000 },		/* SPI */
+	{ (uintptr_t)CPG_RST_CANFD,             0x00000000 },		/* CAN */
 	{ (uintptr_t)CPG_RST_GPIO,              0x00070007 },		/* GPIO */
+	{ (uintptr_t)CPG_RST_TSIPG,             0x00000000 },		/* TSIPG */
 	{ (uintptr_t)CPG_RST_JAUTH,             0x00010001 },		/* JAUTH */
 	{ (uintptr_t)CPG_RST_OTP,               0x00010001 },		/* OTP */
+	{ (uintptr_t)CPG_RST_ADC,               0x00000000 },		/* ADC */
+	{ (uintptr_t)CPG_RST_TSU,               0x00000000 },		/* Thermal Sensor Unit */
+	{ (uintptr_t)CPG_RST_BBGU,              0x00000000 },		/* BBGU */
 	{ (uintptr_t)CPG_RST_AXI_ACPU_BUS,      0x00010001 },		/* AXI_ACPU_BUS */
 	{ (uintptr_t)CPG_RST_AXI_MCPU_BUS,      0x00010001 },		/* AXI_MCPU_BUS */
 	{ (uintptr_t)CPG_RST_AXI_COM_BUS,       0x00010001 },		/* AXI_COM_BUS */
