@@ -29,6 +29,7 @@ BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S					\
 					plat/renesas/rzg2l/bl2_plat_mem_params_desc.c	\
 					plat/renesas/rzg2l/plat_image_load.c			\
 					plat/renesas/rzg2l/plat_storage.c				\
+					plat/renesas/rzg2l/plat_security.c				\
 					plat/renesas/rzg2l/aarch64/plat_helpers.S		\
 					plat/renesas/rzg2l/drivers/syc.c				\
 					plat/renesas/rzg2l/drivers/pfc.c				\
