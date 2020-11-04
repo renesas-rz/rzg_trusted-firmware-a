@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "pfc_regs.h"
-#include "pfc.h"
+/* #include "pfc.h" */
 #include <lib/mmio.h>
 
 static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
