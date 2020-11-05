@@ -22,9 +22,6 @@
 #include <lib/xlat_tables/xlat_tables_defs.h>
 #include "scifa.h"
 
-#define	SYC_BASE					(0x11000000)			/* SYC base address */
-#define	TIMER_COUNT_24M_PER_SEC		(24000000)
-
 extern void rzg2l_io_setup(void);
 extern void rzg2l_io_emmc_setup(void);
 
@@ -69,7 +66,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	uint32_t reg, boot_dev, ret;
 	
 	/* generic timer */
-	syc_init(SYC_BASE, TIMER_COUNT_24M_PER_SEC);
+	syc_init(RZG2L_SYSC_BASE, RZG2L_SYC_INCK_HZ);
 
 	reg = mmio_read_32(SYS_LSI_MODE);
 	boot_dev = reg & MODEMR_BOOT_DEV_MASK;
