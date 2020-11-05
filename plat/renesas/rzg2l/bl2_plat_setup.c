@@ -13,6 +13,7 @@
 #include <system_regs.h>
 /* #include <spi_multi.h> */
 #include <syc.h>
+#include <sys.h>
 #include <rzg2l_def.h>
 #include <lib/mmio.h>
 #include <drivers/io/io_driver.h>
@@ -23,7 +24,6 @@
 #include "scifa.h"
 
 extern void rzg2l_io_setup(void);
-extern void rzg2l_io_emmc_setup(void);
 
 static console_t rzg2l_bl31_console;
 
@@ -63,13 +63,12 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 								u_register_t arg3, u_register_t arg4)
 {
-	uint32_t reg, boot_dev, ret;
+	uint32_t boot_dev, ret;
 	
 	/* generic timer */
 	syc_init(RZG2L_SYSC_BASE, RZG2L_SYC_INCK_HZ);
 
-	reg = mmio_read_32(SYS_LSI_MODE);
-	boot_dev = reg & MODEMR_BOOT_DEV_MASK;
+	boot_dev = sys_get_mode_mr();
 
 	cpg_setup();
 
@@ -89,14 +88,12 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	
 	/* spi_multi_setup(); */
 	
-	if (boot_dev == BOOT_MODE_EMMC_1_8 ||
-		boot_dev == BOOT_MODE_EMMC_3_3) {
-		rzg2l_io_emmc_setup();
-	}
-	else if(boot_dev == BOOT_MODE_SPI_1_8 ||
+	if(boot_dev == BOOT_MODE_SPI_1_8 ||
 			boot_dev == BOOT_MODE_SPI_3_3) {
 		rzg2l_io_setup();
 	}
+	else
+		panic();
 
 }
 

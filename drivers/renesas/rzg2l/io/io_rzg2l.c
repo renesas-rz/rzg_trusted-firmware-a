@@ -66,7 +66,7 @@ typedef struct {
 #define RZG2L_ATTR_GET_ISNOLOAD(a)	(((a) >> 16) & 0x1U)
 #define RZG2L_ATTR_GET_CERTOFF(a)	((uint32_t)(((a) >> 8) & 0xFU))
 
-#define RZG2L_MAX_BL3X_IMAGE		(8U)
+#define RZG2L_MAX_BL3X_IMAGE		(0U)
 #define RZG2L_SECTOR6_CERT_OFFSET	(0x400U)
 #define RZG2L_SDRAM_certESS		(0x43F00000U)
 #define RZG2L_CERT_SIZE			(0x800U)

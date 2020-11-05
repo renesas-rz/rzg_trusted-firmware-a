@@ -145,21 +145,6 @@ void rzg2l_io_setup(void)
 	io_dev_open(memmap, 0, &memdrv_dev_handle);
 }
 
-void rzg2l_io_emmc_setup(void)
-{
-#if 0
-	const io_dev_connector_t *rzg2l;
-	const io_dev_connector_t *emmc;
-
-	boot_io_drv_id = EMMC_DEV_ID;
-
-	rzg2l_register_io_dev(&rzg2l);
-	rzg2l_register_io_dev_emmcdrv(&emmc);
-	io_dev_open(rzg2l, 0, &rzg2l_dev_handle);
-	io_dev_open(emmc, 0, &emmcdrv_dev_handle);
-#endif
-}
-
 int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 				uintptr_t *image_spec)
 {
