@@ -37,7 +37,7 @@ BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
 					plat/renesas/rzg2l/bl2_plat_mem_params_desc.c		\
 					plat/renesas/rzg2l/plat_image_load.c				\
 					plat/renesas/rzg2l/aarch64/plat_helpers.S			\
-					drivers/renesas/rzg2l/io/io_memdrv.c				\
+					drivers/io/io_memmap.c								\
 					drivers/io/io_fip.c
 					
 

@@ -13,11 +13,12 @@
 #include <drivers/io/io_semihosting.h>
 #include <drivers/io/io_storage.h>
 #include <drivers/io/io_fip.h>
+#include <drivers/io/io_memmap.h>
 
 #include "io_common.h"
 #include "io_rzg2l.h"
 #include "io_memdrv.h"
-#include "io_emmcdrv.h"
+/* #include "io_emmcdrv.h" */
 #include "io_private.h"
 #include "rzg2l_def.h"
 
@@ -136,11 +137,11 @@ void rzg2l_io_setup(void)
 	const io_dev_connector_t *memmap;
 	const io_dev_connector_t *rzg2l;
 
-	boot_io_drv_id = FLASH_DEV_ID;
+	boot_io_drv_id = FIP_IMAGE_ID;
 
 	/* rzg2l_register_io_dev(&rzg2l); */
 	register_io_dev_fip(&rzg2l);
-	rzg2l_register_io_dev_memdrv(&memmap);
+	register_io_dev_memmap(&memmap);
 	io_dev_open(rzg2l, 0, &fip_dev_handle);
 	io_dev_open(memmap, 0, &memdrv_dev_handle);
 }
