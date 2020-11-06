@@ -87,8 +87,7 @@ static int32_t memdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 		return IO_FAIL;
 	}
 
-	/* rzg2l_dma_exec(buffer, fp->base + (uintptr_t)fp->file_pos, length); */
-	memcpy((void *)buffer, (const void *)(fp->base + (uintptr_t)fp->file_pos), length);
+	rzg2l_dma_exec(buffer, fp->base + (uintptr_t)fp->file_pos, length);
 	fp->file_pos += (signed long long)length;
 	*cnt = length;
 
