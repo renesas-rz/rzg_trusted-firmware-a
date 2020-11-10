@@ -8,6 +8,7 @@
 #include "cpg_regs.h"
 #include "cpg.h"
 #include <lib/mmio.h>
+#include <drivers/delay_timer.h>
 
 #define SIZEOF(array)	(sizeof(array)/sizeof(array[0]))
 
@@ -634,6 +635,38 @@ static void cpg_reset_setup(void)
 	/* FIXME */
 	/* Wait for completion of settings */
 	while((mmio_read_32(CPG_RSTMON_AXI_DEFAULT_SLV) & BIT0_ON) == 0 );
+}
+
+void cpg_active_ddr(void (*disable_phy)(void))
+{
+	/* Assert the reset of DDRTOP */
+	mmio_write_32(CPG_RST_DDR, 0x007F0000);
+	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
+
+	/* Start the clocks of DDRTOP */
+	mmio_write_32(CPG_CLKON_DDR, 0x00030003);
+	while((mmio_read_32(CPG_CLKMON_DDR) & 0x00000003) != 0x00000003);
+
+	udelay(1);
+
+	/* De-assert rst_n */
+	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
+
+	udelay(1);
+
+	/* De-assert PRESETN */
+	mmio_write_32(CPG_RST_DDR, 0x00020002);
+	while((mmio_read_32(CPG_RSTMON_DDR) & 0x00000002) != 0x00000002);
+
+	udelay(1);
+
+	disable_phy();
+
+	/* De-assert axiY_ARESETn, regARESETn, reset_n */
+	mmio_write_32(CPG_RST_DDR, 0x007D007D);
+	while((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007D) != 0x0000007D);
+
+	udelay(1);
 }
 
 void cpg_setup(void)
