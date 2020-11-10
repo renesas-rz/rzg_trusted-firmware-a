@@ -512,10 +512,11 @@ static void exec_trainingVREF(void)
 	dval = (read_mc_reg(DENALI_CTL_415) >> 8) & 0xFF;
 	val = (read_mc_reg(DENALI_CTL_416) >> 24) & 0xFF;
 	if(val > 0){
-		dval = 1000000000000 / ((1000000/dval) + (1000000/val));
+		dval = ((dval * val) * 1000000) / (dval + val);
 	}
 	val = read_mc_reg(DENALI_CTL_416) & 0xFF;
-	vref_mid_level = (((val + 1) * 1000000000000) / ((val * 1000000) + dval)) / 2;
+	val = val * 1000000;
+	vref_mid_level = (1000000 + ((val * 1000000) / (val + dval))) / 2;
 	tmp64 = (((vref_mid_level - 507000) * 1000000) / 6600) + 65000000 - 500000;
 	vref_mid_level_code = CEIL(tmp64, 1000000);
 	tmp64 = (((vref_mid_level * 150000) * 1000000) / 6600) - 500000;
