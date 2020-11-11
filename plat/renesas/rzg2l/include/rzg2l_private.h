@@ -7,8 +7,6 @@
 #ifndef __RZG2L_PRIVATE_H__
 #define __RZG2L_PRIVATE_H__
 
-#include <platform_def.h>
-
 #define RZG2L_DEVICE_BASE			(0x10000000)
 #define RZG2L_SCIF0_BASE			(0x1004B800)
 #define RZG2L_SPIMULT_BASE			(0x10060000)
