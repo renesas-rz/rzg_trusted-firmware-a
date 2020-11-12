@@ -43,6 +43,14 @@
 void plat_gic_driver_init(void);
 void plat_gic_init(void);
 
-
+/*
+ * This structure represents the superset of information that is passed to
+ * BL31 e.g. while passing control to it from BL2 which is bl31_params
+ * and bl31_plat_params and its elements
+ */
+typedef struct bl2_to_bl31_params_mem {
+	/* image_info_t bl33_image_info; */
+	entry_point_info_t bl33_ep_info;
+} bl2_to_bl31_params_mem_t;
 
 #endif	/* __RZG2L_PRIVATE_H__ */
