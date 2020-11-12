@@ -10,6 +10,7 @@
 #ifndef __ASSEMBLER__
 
 #include <stdint.h>
+#include <drivers/console.h>
 
 int console_rzg2l_register(uintptr_t baseaddr, uint32_t clock,
 		uint32_t baud, console_t *console);
