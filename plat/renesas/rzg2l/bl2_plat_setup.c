@@ -17,7 +17,6 @@
 #include <rzg2l_def.h>
 #include <lib/mmio.h>
 #include <drivers/io/io_driver.h>
-#include <io_rzg2l.h>
 #include <rzg2l_private.h>
 #include <common/desc_image_load.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>

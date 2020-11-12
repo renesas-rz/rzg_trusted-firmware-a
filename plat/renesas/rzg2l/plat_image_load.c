@@ -4,9 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <common/bl_common.h>
 #include <common/desc_image_load.h>
-#include <plat/common/platform.h>
 
 bl_load_info_t *plat_get_bl_image_load_info(void)
 {

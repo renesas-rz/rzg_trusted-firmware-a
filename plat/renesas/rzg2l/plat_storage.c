@@ -3,19 +3,13 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#include <string.h>
 
-#include <platform_def.h>
-
-#include <common/debug.h>
 #include <common/tbbr/tbbr_img_def.h>
 #include <drivers/io/io_driver.h>
-#include <drivers/io/io_semihosting.h>
 #include <drivers/io/io_storage.h>
 #include <drivers/io/io_fip.h>
 #include <drivers/io/io_memmap.h>
 
-#include "io_common.h"
 #include "io_private.h"
 #include "rzg2l_def.h"
 
