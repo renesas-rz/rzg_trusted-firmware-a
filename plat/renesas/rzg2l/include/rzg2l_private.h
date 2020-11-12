@@ -49,7 +49,6 @@ void plat_gic_init(void);
  * and bl31_plat_params and its elements
  */
 typedef struct bl2_to_bl31_params_mem {
-	/* image_info_t bl33_image_info; */
 	entry_point_info_t bl33_ep_info;
 } bl2_to_bl31_params_mem_t;
 

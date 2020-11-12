@@ -26,9 +26,6 @@ extern void rzg2l_io_setup(void);
 
 static console_t rzg2l_bl31_console;
 
-/* FDT with DRAM configuration */
-uint64_t fdt_blob[PAGE_SIZE_4KB / sizeof(uint64_t)];
-
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
 	return 0;
