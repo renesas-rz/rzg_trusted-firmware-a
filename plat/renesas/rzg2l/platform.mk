@@ -18,8 +18,7 @@ ERRATA_A55_1221012	:= 1
 ERRATA_A55_1530923	:= 1
 
 PLAT_INCLUDES	:=  -Iplat/renesas/rzg2l/include						\
-					-Iplat/renesas/rzg2l								\
-					-Idrivers/renesas/rzg2l/io
+					-Iplat/renesas/rzg2l								
 
 RZG2L_TIMER_SOURCES := drivers/delay_timer/generic_delay_timer.c	\
 					   drivers/delay_timer/delay_timer.c
