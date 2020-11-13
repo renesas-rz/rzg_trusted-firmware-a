@@ -7,6 +7,10 @@
 #ifndef __DDR_MC_REGS_H__
 #define __DDR_MC_REGS_H__
 
+#include "rzg2l_private.h"
+
+#define DDR_MC_BASE			RZG2L_DDR_MEMC_BASE
+
 #define	DENALI_CTL_00		(0x0000)
 #define	DENALI_CTL_01		(0x0004)
 #define	DENALI_CTL_02		(0x0008)

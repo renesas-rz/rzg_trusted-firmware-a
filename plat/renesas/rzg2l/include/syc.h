@@ -7,7 +7,7 @@
 #ifndef __SYC_H__
 #define __SYC_H__
 
-void syc_init(uintptr_t base_addr, unsigned int freq);
+void syc_init(unsigned int freq);
 unsigned int syc_get_freq(void);
 
 #endif	/* __SYC_H__ */
