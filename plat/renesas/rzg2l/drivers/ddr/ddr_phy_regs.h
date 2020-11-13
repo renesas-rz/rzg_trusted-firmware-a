@@ -7,6 +7,10 @@
 #ifndef __DDR_PHY_REGS_H__
 #define __DDR_PHY_REGS_H__
 
+#include "rzg2l_private.h"
+
+#define DDR_PHY_BASE					RZG2L_DDR_PHY_BASE
+
 #define	BIT_LVL_TRIM_OFFSET				(0x040)
 #define	DLL_TEST						(0x044)
 #define	DLL_TEST_START					(0x048)

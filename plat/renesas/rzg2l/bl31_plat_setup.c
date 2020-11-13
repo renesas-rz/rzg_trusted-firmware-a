@@ -65,9 +65,6 @@ void bl31_platform_setup(void)
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
-
-	/* initialize SYC driver */
-	syc_init(RZG2L_SYSC_BASE, RZG2L_SYC_INCK_HZ);
 }
 
 entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)

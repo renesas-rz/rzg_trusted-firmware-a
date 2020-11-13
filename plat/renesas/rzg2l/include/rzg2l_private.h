@@ -7,6 +7,8 @@
 #ifndef __RZG2L_PRIVATE_H__
 #define __RZG2L_PRIVATE_H__
 
+#include <common/bl_common.h>
+
 #define RZG2L_DEVICE_BASE			(0x10000000)
 #define RZG2L_SCIF0_BASE			(0x1004B800)
 #define RZG2L_SPIMULT_BASE			(0x10060000)
@@ -42,6 +44,9 @@
 /* plat_gicv3.c */
 void plat_gic_driver_init(void);
 void plat_gic_init(void);
+
+/* plat_security.c */
+void plat_tzc400_setup(uintptr_t tzc_base);
 
 /*
  * This structure represents the superset of information that is passed to

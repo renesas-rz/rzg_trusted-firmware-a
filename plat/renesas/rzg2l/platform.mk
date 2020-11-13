@@ -24,8 +24,10 @@ RZG2L_TIMER_SOURCES := drivers/delay_timer/generic_delay_timer.c	\
 					   drivers/delay_timer/delay_timer.c
 
 BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
+					${RZG2L_TIMER_SOURCES}								\
 					common/desc_image_load.c							\
 					drivers/io/io_storage.c								\
+					drivers/arm/tzc/tzc400.c							\
 					plat/renesas/rzg2l/bl2_plat_setup.c					\
 					plat/renesas/rzg2l/bl2_plat_mem_params_desc.c		\
 					plat/renesas/rzg2l/plat_image_load.c				\
