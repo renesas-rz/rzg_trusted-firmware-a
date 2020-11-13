@@ -35,35 +35,33 @@
 #define MAX_BEST_VREF_SAVED	(30U)
 #define VREF_SETP			(1U)
 
-static uintptr_t mc_reg;
-static uintptr_t phy_reg;
 
-static uint32_t read_mc_reg(uint32_t offset)
+static inline uint32_t read_mc_reg(uint32_t offset)
 {
-	return mmio_read_32(mc_reg + offset);
+	return mmio_read_32(DDR_MC_BASE + offset);
 }
 
-static void write_mc_reg(uint32_t offset, uint32_t val)
+static inline void write_mc_reg(uint32_t offset, uint32_t val)
 {
-	mmio_write_32(mc_reg + offset, val);
+	mmio_write_32(DDR_MC_BASE + offset, val);
 }
 
-static void rmw_mc_reg(uint32_t offset, uint32_t mask, uint32_t val)
+static inline void rmw_mc_reg(uint32_t offset, uint32_t mask, uint32_t val)
 {
 	write_mc_reg(offset, (read_mc_reg(offset) & mask) | val);
 }
 
-static uint32_t read_phy_reg(uint32_t offset)
+static inline uint32_t read_phy_reg(uint32_t offset)
 {
-	return mmio_read_32(phy_reg + offset);
+	return mmio_read_32(DDR_PHY_BASE + offset);
 }
 
-static void write_phy_reg(uint32_t offset, uint32_t val)
+static inline void write_phy_reg(uint32_t offset, uint32_t val)
 {
-	mmio_write_32(phy_reg + offset, val);
+	mmio_write_32(DDR_PHY_BASE + offset, val);
 }
 
-static void rmw_phy_reg(uint32_t offset, uint32_t mask, uint32_t val)
+static inline void rmw_phy_reg(uint32_t offset, uint32_t mask, uint32_t val)
 {
 	write_phy_reg(offset, (read_phy_reg(offset) & mask) | val);
 }
@@ -953,12 +951,4 @@ void ddr_setup(void)
 
 	// Step29
 	rmw_mc_reg(DENALI_CTL_60, 0xFFFFFFF0, 0<<4);
-}
-
-void ddr_init(uintptr_t mc_base, uintptr_t phy_base)
-{
-	mc_reg = mc_base;
-	phy_reg = phy_base;
-
-	ddr_setup();
 }

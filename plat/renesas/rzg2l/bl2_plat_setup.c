@@ -21,6 +21,7 @@
 #include <common/desc_image_load.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 #include "scifa.h"
+#include "ddr.h"
 
 extern void rzg2l_io_setup(void);
 
@@ -61,14 +62,16 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 {
 	uint32_t boot_dev, ret;
 	
-	/* generic timer */
-	syc_init(RZG2L_SYSC_BASE, RZG2L_SYC_INCK_HZ);
-
 	boot_dev = sys_get_mode_mr();
 
+	/* setup PFC */
+	pfc_setup();
+
+	/* setup Clock and Reset */
 	cpg_setup();
 
-	pfc_setup();
+	/* initialize SYC */
+	syc_init(RZG2L_SYC_INCK_HZ);
 
 	/* initialize console driver */
 	ret = console_rzg2l_register(
@@ -81,6 +84,13 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	console_set_scope(&rzg2l_bl31_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
+
+	/* initialize TZC-400 */
+	plat_tzc400_setup(RZG2L_TZC_DDR_BASE);
+	plat_tzc400_setup(RZG2L_TZC_SPI_BASE);
+
+	/* initialize DDR */
+	ddr_setup();
 	
 	/* spi_multi_setup(); */
 	
