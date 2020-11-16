@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PFC_REGS_H_
-#define _PFC_REGS_H_
+#ifndef __PFC_REGS_H__
+#define __PFC_REGS_H__
 
 #define	PFC_BASE					(0x11030000)			/* PFC base address */
 
@@ -710,4 +710,4 @@ typedef struct {
 } PFC_REGS;
 
 
-#endif	/* _PFC_REGS_H_ */
+#endif	/* __PFC_REGS_H__ */

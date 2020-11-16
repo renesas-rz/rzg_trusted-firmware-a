@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _CPG_H_
-#define _CPG_H_
+#ifndef __CPG_H__
+#define __CPG_H__
 
-extern void cpg_setup(void);
+void cpg_setup(void);
 void cpg_active_ddr(void (*disable_phy)(void));
 
-#endif /* _CPG_H_ */
+#endif /* __CPG_H__ */
