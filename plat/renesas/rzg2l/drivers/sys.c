@@ -11,7 +11,7 @@
 uint32_t sys_get_mode_mr(void)
 {
 	uint32_t	reg;
-	
+
 	reg = mmio_read_32(SYS_LSI_MODE);
 	return (reg & MODEMR_BOOT_DEV_MASK);
 }

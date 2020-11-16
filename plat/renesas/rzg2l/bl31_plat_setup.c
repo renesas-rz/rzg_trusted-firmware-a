@@ -38,7 +38,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 							RZG2L_UART_INCK_HZ,
 							RZG2L_UART_BARDRATE,
 							&rzg2l_bl31_console);
-	if(!ret)
+	if (!ret)
 		panic();
 
 	console_set_scope(&rzg2l_bl31_console,

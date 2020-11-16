@@ -674,7 +674,7 @@
 #define ETH_MII_1_MII		(1 << 1)
 
 #define	PFC_SET_TBL_NUM		(11)
-#define	PFC_OFF 			(0)
+#define	PFC_OFF				(0)
 #define PFC_ON				(1)
 
 #define PFC_MUX_TBL_NUM		(4)

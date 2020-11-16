@@ -15,7 +15,7 @@ static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
 	{
 		{ PFC_ON,  (uintptr_t)PFC_PMC22,  0x03 },					/* PMC */
 		{ PFC_ON,  (uintptr_t)PFC_PFC22,  0x00000011 },				/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH22, 0x0000000000000101 }, 	/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH22, 0x0000000000000101 },		/* IOLH */
 		{ PFC_OFF, (uintptr_t)PFC_PUPD22, 0x0000000000000000 },		/* PUPD */
 		{ PFC_OFF, (uintptr_t)PFC_SR22,   0x0000000000000101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
@@ -24,7 +24,7 @@ static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
 	{
 		{ PFC_ON,  (uintptr_t)PFC_PMC23,  0x03 },					/* PMC */
 		{ PFC_ON,  (uintptr_t)PFC_PFC23,  0x00000011 },				/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH23, 0x0000000000000101 }, 	/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH23, 0x0000000000000101 },		/* IOLH */
 		{ PFC_OFF, (uintptr_t)PFC_PUPD23, 0x0000000000000000 },		/* PUPD */
 		{ PFC_OFF, (uintptr_t)PFC_SR23,   0x0000000000000101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
@@ -33,7 +33,7 @@ static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
 	{
 		{ PFC_ON,  (uintptr_t)PFC_PMC36,  0x03 },					/* PMC */
 		{ PFC_ON,  (uintptr_t)PFC_PFC36,  0x00000011 },				/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH36, 0x0000000000000101 }, 	/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH36, 0x0000000000000101 },		/* IOLH */
 		{ PFC_OFF, (uintptr_t)PFC_PUPD36, 0x0000000000000000 },		/* PUPD */
 		{ PFC_OFF, (uintptr_t)PFC_SR36,   0x0000000000000101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
@@ -42,7 +42,7 @@ static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
 	{
 		{ PFC_ON,  (uintptr_t)PFC_PMC37,  0x07 },					/* PMC */
 		{ PFC_ON,  (uintptr_t)PFC_PFC37,  0x00000111 },				/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH37, 0x0000000000010101 }, 	/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH37, 0x0000000000010101 },		/* IOLH */
 		{ PFC_OFF, (uintptr_t)PFC_PUPD37, 0x0000000000000000 },		/* PUPD */
 		{ PFC_OFF, (uintptr_t)PFC_SR37,   0x0000000000010101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
@@ -72,7 +72,7 @@ static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH0C, 0x0000000000010101 }, 	/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH0C, 0x0000000000010101 },		/* IOLH */
 		{ PFC_OFF, (uintptr_t)PFC_PUPD0C, 0x0000000000000000 },		/* PUPD */
 		{ PFC_OFF, (uintptr_t)PFC_SR0C,   0x0000000000010000 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
@@ -121,29 +121,29 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 static void pfc_mux_setup(void)
 {
 	int      cnt;
-	
+
 	/* multiplexer terminal switching */
 	mmio_write_32(PFC_PWPR, PWPR_PFCWE);
-	
-	for(cnt = 0; cnt < PFC_MUX_TBL_NUM; cnt++) {
+
+	for (cnt = 0; cnt < PFC_MUX_TBL_NUM; cnt++) {
 		/* PMC */
-		if(pfc_mux_reg_tbl[cnt].pmc.flg == PFC_ON) {
+		if (pfc_mux_reg_tbl[cnt].pmc.flg == PFC_ON) {
 			mmio_write_8(pfc_mux_reg_tbl[cnt].pmc.reg, pfc_mux_reg_tbl[cnt].pmc.val);
 		}
 		/* PFC */
-		if(pfc_mux_reg_tbl[cnt].pfc.flg == PFC_ON) {
+		if (pfc_mux_reg_tbl[cnt].pfc.flg == PFC_ON) {
 			mmio_write_32(pfc_mux_reg_tbl[cnt].pfc.reg, pfc_mux_reg_tbl[cnt].pfc.val);
 		}
 		/* IOLH */
-		if(pfc_mux_reg_tbl[cnt].iolh.flg == PFC_ON) {
+		if (pfc_mux_reg_tbl[cnt].iolh.flg == PFC_ON) {
 			mmio_write_64(pfc_mux_reg_tbl[cnt].iolh.reg, pfc_mux_reg_tbl[cnt].iolh.val);
 		}
 		/* PUPD */
-		if(pfc_mux_reg_tbl[cnt].pupd.flg == PFC_ON) {
+		if (pfc_mux_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_mux_reg_tbl[cnt].pupd.reg, pfc_mux_reg_tbl[cnt].pupd.val);
 		}
 		/* SR */
-		if(pfc_mux_reg_tbl[cnt].sr.flg == PFC_ON) {
+		if (pfc_mux_reg_tbl[cnt].sr.flg == PFC_ON) {
 			mmio_write_64(pfc_mux_reg_tbl[cnt].sr.reg, pfc_mux_reg_tbl[cnt].sr.val);
 		}
 	}
@@ -155,54 +155,52 @@ static void pfc_mux_setup(void)
 static void pfc_qspi_setup(void)
 {
 	int      cnt;
-	
+
 	/* Since QSPI is 3.3V, the initial value will be set. */
 	/* mmio_write_32(PFC_QSPI, 0); */
-	
-	for(cnt = 0; cnt < PFC_QSPI_TBL_NUM; cnt++) {
+
+	for (cnt = 0; cnt < PFC_QSPI_TBL_NUM; cnt++) {
 		/* IOLH */
-		if(pfc_qspi_reg_tbl[cnt].iolh.flg == PFC_ON) {
+		if (pfc_qspi_reg_tbl[cnt].iolh.flg == PFC_ON) {
 			mmio_write_64(pfc_qspi_reg_tbl[cnt].iolh.reg, pfc_qspi_reg_tbl[cnt].iolh.val);
 		}
 		/* PUPD */
-		if(pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
+		if (pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_qspi_reg_tbl[cnt].pupd.reg, pfc_qspi_reg_tbl[cnt].pupd.val);
 		}
 		/* SR */
-		if(pfc_qspi_reg_tbl[cnt].sr.flg == PFC_ON) {
+		if (pfc_qspi_reg_tbl[cnt].sr.flg == PFC_ON) {
 			mmio_write_64(pfc_qspi_reg_tbl[cnt].sr.reg, pfc_qspi_reg_tbl[cnt].sr.val);
 		}
 	}
-	
 }
 
 static void pfc_sd_setup(void)
 {
 	int      cnt;
-	
+
 	/* Since SDx is 3.3V, the initial value will be set. */
 	/* mmio_write_32(PFC_SD_ch0, 0); */
 	/* mmio_write_32(PFC_SD_ch1, 0); */
-	
-	for(cnt = 0; cnt < PFC_SD_TBL_NUM; cnt++) {
+
+	for (cnt = 0; cnt < PFC_SD_TBL_NUM; cnt++) {
 		/* IOLH */
-		if(pfc_sd_reg_tbl[cnt].iolh.flg == PFC_ON) {
+		if (pfc_sd_reg_tbl[cnt].iolh.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].iolh.reg, pfc_sd_reg_tbl[cnt].iolh.val);
 		}
 		/* PUPD */
-		if(pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
+		if (pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].pupd.reg, pfc_sd_reg_tbl[cnt].pupd.val);
 		}
 		/* SR */
-		if(pfc_sd_reg_tbl[cnt].sr.flg == PFC_ON) {
+		if (pfc_sd_reg_tbl[cnt].sr.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].sr.reg, pfc_sd_reg_tbl[cnt].sr.val);
 		}
 		/* IEN */
-		if(pfc_sd_reg_tbl[cnt].ien.flg == PFC_ON) {
+		if (pfc_sd_reg_tbl[cnt].ien.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].ien.reg, pfc_sd_reg_tbl[cnt].ien.val);
 		}
 	}
-	
 }
 
 #if 0
@@ -213,7 +211,6 @@ static void pfc_eth_setup(void)
 	mmio_write_32(PFC_ETH_ch1, 0);
 	/* Set the initial value in the ETH mode setting register */
 	mmio_write_32(PFC_ETH_MII, (ETH_MII_0_MII | ETH_MII_1_MII));
-	
 }
 #endif
 

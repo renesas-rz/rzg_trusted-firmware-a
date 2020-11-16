@@ -40,20 +40,20 @@ typedef struct {
 #define	CPG_PLL6_INDEX					(2)
 
 static CPG_PLL_SETDATA_146 cpg_pll_setdata_146[] = {
-	{ 
-		{ CPG_PLL1_CLK1 , 0x00001901 },
-		{ CPG_PLL1_CLK2 , 0x00180601 },
-		{ CPG_PLL1_STBY , 0x00000005 }
+	{
+		{ CPG_PLL1_CLK1, 0x00001901 },
+		{ CPG_PLL1_CLK2, 0x00180601 },
+		{ CPG_PLL1_STBY, 0x00000005 }
 	},
-	{ 
-		{ CPG_PLL4_CLK1 , 0x00003203 },
-		{ CPG_PLL4_CLK2 , 0x00082400 },
-		{ CPG_PLL4_STBY , 0x00010005 }
+	{
+		{ CPG_PLL4_CLK1, 0x00003203 },
+		{ CPG_PLL4_CLK2, 0x00082400 },
+		{ CPG_PLL4_STBY, 0x00010005 }
 	},
-	{ 
-		{ CPG_PLL6_CLK1 , 0x00003E83 },
-		{ CPG_PLL6_CLK2 , 0x00082D02 },
-		{ CPG_PLL6_STBY , 0x00010001 }
+	{
+		{ CPG_PLL6_CLK1, 0x00003E83 },
+		{ CPG_PLL6_CLK2, 0x00082D02 },
+		{ CPG_PLL6_STBY, 0x00010001 }
 	}
 };
 
@@ -63,28 +63,28 @@ static CPG_PLL_SETDATA_146 cpg_pll_setdata_146[] = {
 
 static CPG_PLL_SETDATA_235 cpg_pll_setdata_235[] = {
 	{
-		{ CPG_PLL2_CLK1 , 0x01110111 },
-		{ CPG_PLL2_CLK2 , 0x01550100 },
-		{ CPG_PLL2_CLK3 , 0x55555506 },
-		{ CPG_PLL2_CLK4 , 0x008500FF },
-		{ CPG_PLL2_CLK5 , 0x00000016 },
-		{ CPG_PLL2_STBY , 0x00000011 }
+		{ CPG_PLL2_CLK1, 0x01110111 },
+		{ CPG_PLL2_CLK2, 0x01550100 },
+		{ CPG_PLL2_CLK3, 0x55555506 },
+		{ CPG_PLL2_CLK4, 0x008500FF },
+		{ CPG_PLL2_CLK5, 0x00000016 },
+		{ CPG_PLL2_STBY, 0x00000011 }
 	},
 	{
-		{ CPG_PLL3_CLK1 , 0x01110111 },
-		{ CPG_PLL3_CLK2 , 0x01550100 },
-		{ CPG_PLL3_CLK3 , 0x55555506 },
-		{ CPG_PLL3_CLK4 , 0x008500FF },
-		{ CPG_PLL3_CLK5 , 0x00000016 },
-		{ CPG_PLL3_STBY , 0x00000011 }
+		{ CPG_PLL3_CLK1, 0x01110111 },
+		{ CPG_PLL3_CLK2, 0x01550100 },
+		{ CPG_PLL3_CLK3, 0x55555506 },
+		{ CPG_PLL3_CLK4, 0x008500FF },
+		{ CPG_PLL3_CLK5, 0x00000016 },
+		{ CPG_PLL3_STBY, 0x00000011 }
 	},
 	{
-		{ CPG_PLL5_CLK1 , 0x01110111 },
-		{ CPG_PLL5_CLK2 , 0x01550100 },
-		{ CPG_PLL5_CLK3 , 0x00000006 },
-		{ CPG_PLL5_CLK4 , 0x007D00FF },
-		{ CPG_PLL5_CLK5 , 0x00000016 },
-		{ CPG_PLL5_STBY , 0x00010015 }
+		{ CPG_PLL5_CLK1, 0x01110111 },
+		{ CPG_PLL5_CLK2, 0x01550100 },
+		{ CPG_PLL5_CLK3, 0x00000006 },
+		{ CPG_PLL5_CLK4, 0x007D00FF },
+		{ CPG_PLL5_CLK5, 0x00000016 },
+		{ CPG_PLL5_STBY, 0x00010015 }
 	}
 };
 
@@ -219,7 +219,7 @@ static CPG_REG_SETTING cpg_select_tbl[] = {
 };
 
 #if 0
-/* 
+/*
  * for dynamic switching clock DIVIDERs and SELECTORs
  * Only the following must be set.
  *
@@ -230,7 +230,7 @@ static CPG_REG_SETTING cpg_select_tbl[] = {
  *    - CPG_PL6_DDIV
  *    - CPG_PL2SDHI_DSEL
  *    - CPG_PL4_DSEL
- */ 
+ */
 static CPG_REG_SETTING cpg_dynamic_sel_tbl[] = {
 	{ (uintptr_t)CPG_PL1_DDIV,              0x00010000 },
 	{ (uintptr_t)CPG_PL2_DDIV,              0x11110000 },
@@ -241,7 +241,7 @@ static CPG_REG_SETTING cpg_dynamic_sel_tbl[] = {
 	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
 };
 
-/* 
+/*
  * for static switching clock DIVIDERs and SELECTORs
  * Only the following must be set.
  *
@@ -264,7 +264,7 @@ static CPG_REG_SETTING cpg_static_sel_tbl[] = {
 static void cpg_pll_stop(uintptr_t reg)
 {
 	uint32_t set = 0x00010000;
-	
+
 	mmio_write_32(reg, set);
 }
 #endif
@@ -381,136 +381,124 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 {
 	uint32_t cnt;
 	uint32_t tbl_num;
-	
-	switch(sel) {
+
+	switch (sel) {
 	case CPG_SEL_PLL1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll1_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll1_on_off[cnt].reg) | cpg_sel_pll1_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll1_on_off[cnt].reg) & ~cpg_sel_pll1_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_PLL2_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll2_1_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll2_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_1_on_off[cnt].reg) | cpg_sel_pll2_1_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll2_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_1_on_off[cnt].reg) & ~cpg_sel_pll2_1_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_PLL3_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll3_1_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll3_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_1_on_off[cnt].reg) | cpg_sel_pll3_1_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll3_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_1_on_off[cnt].reg) & ~cpg_sel_pll3_1_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_PLL3_2_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll3_2_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll3_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_2_on_off[cnt].reg) | cpg_sel_pll3_2_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll3_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_2_on_off[cnt].reg) & ~cpg_sel_pll3_2_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_PLL3_3_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll3_3_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll3_3_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_3_on_off[cnt].reg) | cpg_sel_pll3_3_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll3_3_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_3_on_off[cnt].reg) & ~cpg_sel_pll3_3_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_PLL5_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll5_1_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll5_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_1_on_off[cnt].reg) | cpg_sel_pll5_1_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll5_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_1_on_off[cnt].reg) & ~cpg_sel_pll5_1_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_PLL5_3_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll5_3_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll5_3_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_3_on_off[cnt].reg) | cpg_sel_pll5_3_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll5_3_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_3_on_off[cnt].reg) & ~cpg_sel_pll5_3_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_PLL5_4_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll5_4_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll5_4_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_4_on_off[cnt].reg) | cpg_sel_pll5_4_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll5_4_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_4_on_off[cnt].reg) & ~cpg_sel_pll5_4_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_PLL6_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll6_1_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_pll6_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll6_1_on_off[cnt].reg) | cpg_sel_pll6_1_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_pll6_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll6_1_on_off[cnt].reg) & ~cpg_sel_pll6_1_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_GPU1_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_gpu1_1_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_gpu1_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu1_1_on_off[cnt].reg) | cpg_sel_gpu1_1_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_gpu1_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu1_1_on_off[cnt].reg) & ~cpg_sel_gpu1_1_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_GPU1_2_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_gpu1_2_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_gpu1_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu1_2_on_off[cnt].reg) | cpg_sel_gpu1_2_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_gpu1_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu1_2_on_off[cnt].reg) & ~cpg_sel_gpu1_2_on_off[cnt].val));
 			}
 		}
 		break;
 	case CPG_SEL_GPU2_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_gpu2_on_off);
-		for(cnt = 0; cnt < tbl_num; cnt++) {
-			if(flag == CPG_ON) {
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
 				mmio_write_32(cpg_sel_gpu2_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu2_on_off[cnt].reg) | cpg_sel_gpu2_on_off[cnt].val));
-			}
-			else {
+			} else {
 				mmio_write_32(cpg_sel_gpu2_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu2_on_off[cnt].reg) & ~cpg_sel_gpu2_on_off[cnt].val));
 			}
 		}
@@ -542,99 +530,101 @@ static void cpg_pll_start_235(uint32_t index)
 static void cpg_pll_setup(void)
 {
 	uint32_t val = 0;
-	
+
 	/* PLL4 startup */
 	/* PLL4 standby mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
-	} while((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) != 0);
-	
+	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) != 0);
+
 	/* Set PLL4 to normal mode */
 	/* mmio_write_32(CPG_PLL4_STBY, (PLL4_STBY_RESETB_WEN | PLL4_STBY_RESETB)); */
 	cpg_pll_start_146(CPG_PLL4_INDEX);
-	
+
 	/* PLL4 normal mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
-	} while((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
-	
+	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
+
 	/* PLL5 startup */
 	/* PLL5 standby mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL5_MON);
-	} while((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) != 0);
-	
+	} while ((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) != 0);
+
 #if 0
 	/* Divided ratio setting of PLL5 Divide 3000MHz by 32 and set it within 5.08-148.5MHz. */
 	/* val = PL5_SDIV_DIVSDIB_WEN | PL5_SDIV_DIVDSA_WEN | PL5_SDIV_DIVDSIA_SET_1_4 | PL5_SDIV_DIVDSIB_SET_1_8; */
 	val = PL5_SDIV_DIVSDIB_WEN | PL5_SDIV_DIVDSA_WEN | PL5_SDIV_DIVDSIA_SET_1_1 | PL5_SDIV_DIVDSIB_SET_1_1;
 	mmio_write_32(CPG_PL5_SDIV, val);
 #endif
-	
+
 	/* PLL5 set to normal mode */
 	/* val = mmio_read_32(CPG_PLL5_STBY) | PLL5_STBY_RESETB_WEN | PLL5_STBY_RESETB; */
 	/* mmio_write_32(CPG_PLL5_STBY, val); */
 	cpg_pll_start_235(CPG_PLL5_INDEX);
-	
+
 	/* PLL5 Normal mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL5_MON);
-	} while((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) == 0);
-	
+	} while ((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) == 0);
+
 	/* PLL6 startup */
 	/* PLL6 standby mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL6_MON);
-	} while((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) != 0);
-	
+	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) != 0);
+
 	/* Set PLL6 to normal mode */
 	/* val = mmio_read_32(CPG_PLL6_STBY) | PLL6_STBY_RESETB_WEN | PLL6_STBY_RESETB; */
 	/* mmio_write_32(CPG_PLL6_STBY, val); */
 	cpg_pll_start_146(CPG_PLL6_INDEX);
-	
+
 	/* PLL6 Normal mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL6_MON);
-	} while((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) == 0);
-	
+	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) == 0);
 }
 
 static void cpg_div_sel_setup(void)
 {
 	int cnt;
-	
-	for(cnt = 0; cnt < SIZEOF(cpg_select_tbl); cnt++) {
+
+	for (cnt = 0; cnt < SIZEOF(cpg_select_tbl); cnt++) {
 		mmio_write_32(cpg_select_tbl[cnt].reg, cpg_select_tbl[cnt].val);
 	}
-	
+
 	/* Wait for completion of settings */
-	while(mmio_read_32(CPG_CLKSTATUS) != 0);
+	while (mmio_read_32(CPG_CLKSTATUS) != 0)
+		;
 }
 
 static void cpg_clk_on_setup(void)
 {
 	int cnt;
-	
-	for(cnt = 0; cnt < SIZEOF(cpg_clk_on_tbl); cnt++) {
+
+	for (cnt = 0; cnt < SIZEOF(cpg_clk_on_tbl); cnt++) {
 		mmio_write_32(cpg_clk_on_tbl[cnt].reg, cpg_clk_on_tbl[cnt].val);
 	}
-		
+
 	/* FIXME */
 	/* Wait for completion of settings */
-	while((mmio_read_32(CPG_CLKMON_AXI_DEFAULT_SLV) & BIT0_ON) == 0 );
+	while ((mmio_read_32(CPG_CLKMON_AXI_DEFAULT_SLV) & BIT0_ON) == 0)
+		;
 }
 
 static void cpg_reset_setup(void)
 {
 	int cnt;
-	
-	for(cnt = 0; cnt < SIZEOF(cpg_reset_tbl); cnt++) {
+
+	for (cnt = 0; cnt < SIZEOF(cpg_reset_tbl); cnt++) {
 		mmio_write_32(cpg_reset_tbl[cnt].reg, cpg_reset_tbl[cnt].val);
 	}
-		
+
 	/* FIXME */
 	/* Wait for completion of settings */
-	while((mmio_read_32(CPG_RSTMON_AXI_DEFAULT_SLV) & BIT0_ON) == 0 );
+	while ((mmio_read_32(CPG_RSTMON_AXI_DEFAULT_SLV) & BIT0_ON) == 0)
+		;
 }
 
 void cpg_active_ddr(void (*disable_phy)(void))
@@ -645,7 +635,8 @@ void cpg_active_ddr(void (*disable_phy)(void))
 
 	/* Start the clocks of DDRTOP */
 	mmio_write_32(CPG_CLKON_DDR, 0x00030003);
-	while((mmio_read_32(CPG_CLKMON_DDR) & 0x00000003) != 0x00000003);
+	while ((mmio_read_32(CPG_CLKMON_DDR) & 0x00000003) != 0x00000003)
+		;
 
 	udelay(1);
 
@@ -656,7 +647,8 @@ void cpg_active_ddr(void (*disable_phy)(void))
 
 	/* De-assert PRESETN */
 	mmio_write_32(CPG_RST_DDR, 0x00020002);
-	while((mmio_read_32(CPG_RSTMON_DDR) & 0x00000002) != 0x00000002);
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x00000002) != 0x00000002)
+		;
 
 	udelay(1);
 
@@ -664,7 +656,8 @@ void cpg_active_ddr(void (*disable_phy)(void))
 
 	/* De-assert axiY_ARESETn, regARESETn, reset_n */
 	mmio_write_32(CPG_RST_DDR, 0x007D007D);
-	while((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007D) != 0x0000007D);
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007D) != 0x0000007D)
+		;
 
 	udelay(1);
 }
