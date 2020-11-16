@@ -150,7 +150,7 @@ func console_rzg2l_init
 1:	add w3, w3, #1
 	cmp w3, #256
 	bne 1b
-	
+
 	ldrh w3, [x0, #FTCR]
 	and w3, w3, #~FTCR_TTRGS
 	and w3, w3, #~FTCR_RTRGS

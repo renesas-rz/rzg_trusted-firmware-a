@@ -60,7 +60,7 @@ static int32_t open_fipdrv(const uintptr_t spec)
 {
 	uintptr_t handle;
 	int32_t result;
-	
+
 	result = io_dev_init(fip_dev_handle, boot_io_drv_id);
 	if (result != IO_SUCCESS)
 		return result;

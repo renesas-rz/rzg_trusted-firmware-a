@@ -87,7 +87,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 							RZG2L_UART_INCK_HZ,
 							RZG2L_UART_BARDRATE,
 							&rzg2l_bl31_console);
-	if(!ret)
+	if (!ret)
 		panic();
 
 	console_set_scope(&rzg2l_bl31_console,
@@ -113,21 +113,21 @@ void bl2_el3_plat_arch_setup(void)
 void bl2_platform_setup(void)
 {
 	uint32_t boot_dev;
-	
+
 	/* initialize TZC-400 */
 	plat_tzc400_setup(RZG2L_TZC_DDR_BASE);
 	plat_tzc400_setup(RZG2L_TZC_SPI_BASE);
 
 	/* initialize DDR */
 	ddr_setup();
-	
+
 	/* spi_multi_setup(); */
-	
+
 	boot_dev = sys_get_mode_mr();
-	if(boot_dev == BOOT_MODE_SPI_1_8 ||
+	if (boot_dev == BOOT_MODE_SPI_1_8 ||
 			boot_dev == BOOT_MODE_SPI_3_3) {
 		rzg2l_io_setup();
-	}
-	else
+	} else {
 		panic();
+	}
 }
