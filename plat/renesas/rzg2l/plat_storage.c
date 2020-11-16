@@ -19,8 +19,8 @@ static uintptr_t fip_dev_handle;
 static uintptr_t boot_io_drv_id;
 
 static const io_block_spec_t rzg2l_block_spec = {
-	.offset = FLASH0_BASE,
-	.length = FLASH0_SIZE
+	.offset = RZG2L_SPIROM_FIP_BASE,
+	.length = RZG2L_SPIROM_FIP_SIZE,
 };
 
 static const io_block_spec_t bl31_file_spec = {

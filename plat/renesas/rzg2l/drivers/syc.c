@@ -5,7 +5,7 @@
  */
 
 #include <lib/mmio.h>
-#include "rzg2l_private.h"
+#include "rzg2l_def.h"
 
 #define SYC_BASE	RZG2L_SYC_BASE
 

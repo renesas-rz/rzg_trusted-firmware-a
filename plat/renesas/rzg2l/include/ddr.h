@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _DDR_H_
-#define _DDR_H_
+#ifndef __DDR_H__
+#define __DDR_H__
 
 void ddr_setup(void);
 
-#endif	/* _DDR_H_ */
+#endif	/* __DDR_H__ */

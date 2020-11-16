@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __PFC_H__
-#define __PFC_H__
+#include "syc.h"
 
-void pfc_setup(void);
-
-
-#endif	/* __PFC_H__ */
+unsigned int plat_get_syscnt_freq2(void)
+{
+	return syc_get_freq();
+}

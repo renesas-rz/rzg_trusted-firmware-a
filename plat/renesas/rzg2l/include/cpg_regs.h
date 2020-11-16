@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _CPG_REGS_H_
-#define _CPG_REGS_H_
+#ifndef __CPG_REGS_H__
+#define __CPG_REGS_H__
 
 #define	CPG_BASE					(0x11010000)		/* CPG base address */
 
@@ -706,4 +706,4 @@
 #define BIT30_ON									(1 << 30)
 #define BIT31_ON									(1 << 31)
 
-#endif	/* _CPG_REGS_H_ */
+#endif	/* __CPG_REGS_H__ */
