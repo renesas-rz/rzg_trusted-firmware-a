@@ -11,6 +11,7 @@
 #include <drivers/arm/gicv3.h>
 #include <plat/common/platform.h>
 
+#include "rzg2l_def.h"
 #include "rzg2l_private.h"
 
 uintptr_t plat_rdistif_base_addrs[PLATFORM_CORE_COUNT];

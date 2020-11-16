@@ -9,16 +9,15 @@
 #include <assert.h>
 #include <common/bl_common.h>
 #include <lib/xlat_tables/xlat_tables_compat.h>
+#include <plat/common/common_def.h>
 
-#include "syc.h"
 #include "scifa.h"
 #include "rzg2l_private.h"
+#include "rzg2l_def.h"
 
 static const mmap_region_t rzg2l_mmap[] = {
 	MAP_REGION_FLAT(RZG2L_DEVICE_BASE, RZG2L_DEVICE_SIZE,
 			MT_DEVICE | MT_RW | MT_SECURE),
-	MAP_REGION_FLAT(RZG2L_SPIROM_BASE, RZG2L_SPIROM_SIZE,
-			MT_MEMORY | MT_RO | MT_SECURE),
 	MAP_REGION_FLAT(RZG2L_DDR1_BASE, RZG2L_DDR1_SIZE,
 			MT_MEMORY | MT_RW | MT_SECURE),
 	{0}
@@ -53,6 +52,8 @@ void bl31_plat_arch_setup(void)
 						MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(BL_CODE_BASE, BL_CODE_END - BL_CODE_BASE,
 						MT_CODE | MT_SECURE),
+		MAP_REGION_FLAT(BL_RO_DATA_BASE, BL_RO_DATA_END - BL_RO_DATA_BASE,
+						MT_RO_DATA | MT_SECURE),
 		{0}
 	};
 
@@ -73,9 +74,4 @@ entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
 	entry_point_info_t *ep = NULL;
 
 	return ep;
-}
-
-unsigned int plat_get_syscnt_freq2(void)
-{
-	return syc_get_freq();
 }

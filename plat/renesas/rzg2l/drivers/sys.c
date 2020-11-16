@@ -3,9 +3,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#include <stdint.h>
+
 #include <lib/mmio.h>
-#include <system_regs.h>
+#include "sys.h"
+#include "sys_regs.h"
 
 uint32_t sys_get_mode_mr(void)
 {

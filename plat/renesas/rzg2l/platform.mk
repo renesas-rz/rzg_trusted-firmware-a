@@ -20,10 +20,13 @@ ERRATA_A55_1530923	:= 1
 PLAT_INCLUDES	:=  -Iplat/renesas/rzg2l/include						\
 					-Iplat/renesas/rzg2l								
 
+RZG2L_COMMON		:=	plat/renesas/rzg2l/rzg2l_plat_common.c
+
 RZG2L_TIMER_SOURCES := drivers/delay_timer/generic_delay_timer.c	\
 					   drivers/delay_timer/delay_timer.c
 
 BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
+					${RZG2L_COMMON}										\
 					${RZG2L_TIMER_SOURCES}								\
 					common/desc_image_load.c							\
 					drivers/io/io_storage.c								\
@@ -46,7 +49,7 @@ BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
 include drivers/arm/gic/v3/gicv3.mk
 
 BL31_SOURCES	+=	lib/cpus/aarch64/cortex_a55.S				\
-					${RZG2L_TIMER_SOURCES}						\
+					${RZG2L_COMMON}								\
 					${GICV3_SOURCES}							\
 					plat/common/plat_gicv3.c					\
 					plat/common/plat_psci_common.c				\

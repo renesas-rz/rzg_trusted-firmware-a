@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2015-2017, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef IO_PRIVATE_H
-#define IO_PRIVATE_H
+#ifndef __IO_PRIVATE_H__
+#define __IO_PRIVATE_H__
 
 /*
  * Return codes reported by 'io_*' APIs
@@ -17,4 +17,4 @@
 #define IO_NOT_SUPPORTED	(-0x82)
 #define IO_RESOURCES_EXHAUSTED	(-0x83)
 
-#endif /* IO_PRIVATE_H */
+#endif /* __IO_PRIVATE_H__ */
