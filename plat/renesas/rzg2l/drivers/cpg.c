@@ -271,16 +271,17 @@ static void cpg_pll_stop(uintptr_t reg)
 
 #define CPG_SEL_PLL1_ON_OFF					(0)
 #define CPG_SEL_PLL2_1_ON_OFF				(1)
-#define CPG_SEL_PLL3_1_ON_OFF				(2)
-#define CPG_SEL_PLL3_2_ON_OFF				(3)
-#define CPG_SEL_PLL3_3_ON_OFF				(4)
-#define CPG_SEL_PLL5_1_ON_OFF				(5)
-#define CPG_SEL_PLL5_3_ON_OFF				(6)
-#define CPG_SEL_PLL5_4_ON_OFF				(7)
-#define CPG_SEL_PLL6_1_ON_OFF				(8)
-#define CPG_SEL_GPU1_1_ON_OFF				(9)
-#define CPG_SEL_GPU1_2_ON_OFF				(10)
-#define CPG_SEL_GPU2_ON_OFF					(11)
+#define CPG_SEL_PLL2_2_ON_OFF				(2)
+#define CPG_SEL_PLL3_1_ON_OFF				(3)
+#define CPG_SEL_PLL3_2_ON_OFF				(4)
+#define CPG_SEL_PLL3_3_ON_OFF				(5)
+#define CPG_SEL_PLL5_1_ON_OFF				(6)
+#define CPG_SEL_PLL5_3_ON_OFF				(7)
+#define CPG_SEL_PLL5_4_ON_OFF				(8)
+#define CPG_SEL_PLL6_1_ON_OFF				(9)
+#define CPG_SEL_GPU1_1_ON_OFF				(10)
+#define CPG_SEL_GPU1_2_ON_OFF				(11)
+#define CPG_SEL_GPU2_ON_OFF					(12)
 
 static CPG_REG_SETTING cpg_sel_pll1_on_off[] = {
 	{(uintptr_t)CPG_CLKON_CA55, 0x00000001 }
@@ -290,6 +291,11 @@ static CPG_REG_SETTING cpg_sel_pll2_1_on_off[] = {
 	{(uintptr_t)CPG_CLKON_ADC, 0x00000001 },
 	{(uintptr_t)CPG_CLKON_TSU, 0x00000001 },
 	{(uintptr_t)CPG_CLKON_SDHI, 0x00000077 }
+};
+
+static CPG_REG_SETTING cpg_sel_pll2_2_on_off[] = {
+	{(uintptr_t)CPG_CLKON_SDHI, 0x00000077 },
+	{(uintptr_t)CPG_CLKON_MIPI_DSI, 0x00000020 },
 };
 
 static CPG_REG_SETTING cpg_sel_pll3_1_on_off[] = {
@@ -400,6 +406,16 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 				mmio_write_32(cpg_sel_pll2_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_1_on_off[cnt].reg) | cpg_sel_pll2_1_on_off[cnt].val));
 			} else {
 				mmio_write_32(cpg_sel_pll2_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_1_on_off[cnt].reg) & ~cpg_sel_pll2_1_on_off[cnt].val));
+			}
+		}
+		break;
+	case CPG_SEL_PLL2_2_ON_OFF:
+		tbl_num = SIZEOF(cpg_sel_pll2_2_on_off);
+		for (cnt = 0; cnt < tbl_num; cnt++) {
+			if (flag == CPG_ON) {
+				mmio_write_32(cpg_sel_pll2_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_2_on_off[cnt].reg) | cpg_sel_pll2_2_on_off[cnt].val));
+			} else {
+				mmio_write_32(cpg_sel_pll2_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_2_on_off[cnt].reg) & ~cpg_sel_pll2_2_on_off[cnt].val));
 			}
 		}
 		break;
