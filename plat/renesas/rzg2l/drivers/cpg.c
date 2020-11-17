@@ -387,140 +387,71 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 {
 	uint32_t cnt;
 	uint32_t tbl_num;
+	CPG_REG_SETTING *ptr;
 
 	switch (sel) {
 	case CPG_SEL_PLL1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll1_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll1_on_off[cnt].reg) | cpg_sel_pll1_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll1_on_off[cnt].reg) & ~cpg_sel_pll1_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll1_on_off[0];
 		break;
 	case CPG_SEL_PLL2_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll2_1_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll2_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_1_on_off[cnt].reg) | cpg_sel_pll2_1_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll2_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_1_on_off[cnt].reg) & ~cpg_sel_pll2_1_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll2_1_on_off[0];
 		break;
 	case CPG_SEL_PLL2_2_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll2_2_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll2_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_2_on_off[cnt].reg) | cpg_sel_pll2_2_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll2_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll2_2_on_off[cnt].reg) & ~cpg_sel_pll2_2_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll2_2_on_off[0];
 		break;
 	case CPG_SEL_PLL3_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll3_1_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll3_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_1_on_off[cnt].reg) | cpg_sel_pll3_1_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll3_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_1_on_off[cnt].reg) & ~cpg_sel_pll3_1_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll3_1_on_off[0];
 		break;
 	case CPG_SEL_PLL3_2_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll3_2_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll3_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_2_on_off[cnt].reg) | cpg_sel_pll3_2_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll3_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_2_on_off[cnt].reg) & ~cpg_sel_pll3_2_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll3_2_on_off[0];
 		break;
 	case CPG_SEL_PLL3_3_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll3_3_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll3_3_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_3_on_off[cnt].reg) | cpg_sel_pll3_3_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll3_3_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll3_3_on_off[cnt].reg) & ~cpg_sel_pll3_3_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll3_3_on_off[0];
 		break;
 	case CPG_SEL_PLL5_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll5_1_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll5_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_1_on_off[cnt].reg) | cpg_sel_pll5_1_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll5_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_1_on_off[cnt].reg) & ~cpg_sel_pll5_1_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll5_1_on_off[0];
 		break;
 	case CPG_SEL_PLL5_3_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll5_3_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll5_3_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_3_on_off[cnt].reg) | cpg_sel_pll5_3_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll5_3_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_3_on_off[cnt].reg) & ~cpg_sel_pll5_3_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll5_3_on_off[0];
 		break;
 	case CPG_SEL_PLL5_4_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll5_4_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll5_4_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_4_on_off[cnt].reg) | cpg_sel_pll5_4_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll5_4_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll5_4_on_off[cnt].reg) & ~cpg_sel_pll5_4_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll5_4_on_off[0];
 		break;
 	case CPG_SEL_PLL6_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_pll6_1_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_pll6_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll6_1_on_off[cnt].reg) | cpg_sel_pll6_1_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_pll6_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_pll6_1_on_off[cnt].reg) & ~cpg_sel_pll6_1_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_pll6_1_on_off[0];
 		break;
 	case CPG_SEL_GPU1_1_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_gpu1_1_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_gpu1_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu1_1_on_off[cnt].reg) | cpg_sel_gpu1_1_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_gpu1_1_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu1_1_on_off[cnt].reg) & ~cpg_sel_gpu1_1_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_gpu1_1_on_off[0];
 		break;
 	case CPG_SEL_GPU1_2_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_gpu1_2_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_gpu1_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu1_2_on_off[cnt].reg) | cpg_sel_gpu1_2_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_gpu1_2_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu1_2_on_off[cnt].reg) & ~cpg_sel_gpu1_2_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_gpu1_2_on_off[0];
 		break;
 	case CPG_SEL_GPU2_ON_OFF:
 		tbl_num = SIZEOF(cpg_sel_gpu2_on_off);
-		for (cnt = 0; cnt < tbl_num; cnt++) {
-			if (flag == CPG_ON) {
-				mmio_write_32(cpg_sel_gpu2_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu2_on_off[cnt].reg) | cpg_sel_gpu2_on_off[cnt].val));
-			} else {
-				mmio_write_32(cpg_sel_gpu2_on_off[cnt].reg, (mmio_read_32(cpg_sel_gpu2_on_off[cnt].reg) & ~cpg_sel_gpu2_on_off[cnt].val));
-			}
-		}
+		ptr = &cpg_sel_gpu2_on_off[0];
 		break;
 	default:
 		break;
+	}
+	
+	for (cnt = 0; cnt < tbl_num; cnt++) {
+		if (flag == CPG_ON) {
+			mmio_write_32(ptr[cnt].reg, (mmio_read_32(ptr[cnt].reg) | ptr[cnt].val));
+		} else {
+			mmio_write_32(ptr[cnt].reg, (mmio_read_32(ptr[cnt].reg) & ~ptr[cnt].val));
+		}
 	}
 
 }
