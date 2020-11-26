@@ -372,6 +372,7 @@ BL31_SOURCES	+=	${RZG_GIC_SOURCES}				\
 			plat/renesas/rzg/aarch64/platform_common.c	\
 			plat/renesas/rzg/bl31_plat_setup.c		\
 			plat/renesas/rzg/plat_pm.c			\
+			plat/renesas/rzg/rzg_sip_svc.c			\
 			drivers/renesas/rzg/console/rzg_console.S	\
 			drivers/renesas/rzg/console/rzg_printf.c	\
 			drivers/renesas/rzg/delay/micro_delay.c		\
