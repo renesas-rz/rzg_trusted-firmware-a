@@ -12,7 +12,7 @@
 #define RZG2L_SCIF0_BASE            (0x1004B800)
 #define RZG2L_SPIMULT_BASE          (0x10060000)
 #define RZG2L_SPIMULT_WBUF_BASE     (0x10070000)
-#define RZG2L_SYC_BASE              (0x11020000)
+#define RZG2L_SYC_BASE              (0x11000000)
 #define RZG2L_CPG_BASE              (0x11010000)
 #define RZG2L_SYSC_BASE             (0x11020000)
 #define RZG2L_GPIO_BASE             (0x11030000)
