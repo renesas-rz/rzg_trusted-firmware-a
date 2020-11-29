@@ -15,6 +15,16 @@
 #define	CPG_OFF			(0)
 #define	CPG_ON			(1)
 
+#define CPG_T_CLK		(0)
+#define CPG_T_RST		(1)
+
+typedef struct {
+	uintptr_t reg;
+	uintptr_t mon;
+	uint32_t  val;
+	uint32_t  type;
+} CPG_SETUP_DATA;
+
 typedef struct {
 	uintptr_t reg;
 	uint32_t  val;
@@ -88,6 +98,11 @@ static CPG_PLL_SETDATA_235 cpg_pll_setdata_235[] = {
 	}
 };
 
+static const CPG_SETUP_DATA early_setup_tbl[] = {
+	{(uintptr_t)CPG_CLKON_SYC, (uintptr_t)CPG_CLKMON_SYC, 0x00010001, CPG_T_CLK},
+	{(uintptr_t)CPG_RST_SYC, (uintptr_t)CPG_RSTMON_SYC, 0x00010001,CPG_T_RST}
+};
+
 static CPG_REG_SETTING cpg_clk_on_tbl[] = {
 	{ (uintptr_t)CPG_CLKON_CM33,            0x00000000 },		/* CM33 */
 	{ (uintptr_t)CPG_CLKON_ROM,             0x00010001 },		/* ROM */
@@ -96,7 +111,7 @@ static CPG_REG_SETTING cpg_clk_on_tbl[] = {
 	{ (uintptr_t)CPG_CLKON_IM33,            0x00030003 },		/* IM33 */
 	{ (uintptr_t)CPG_CLKON_MHU,             0x00000000 },		/* MHU */
 	{ (uintptr_t)CPG_CLKON_CST,             0x07ff07ff },		/* CST */
-	{ (uintptr_t)CPG_CLKON_SYC,             0x00010001 },		/* SYC */
+//	{ (uintptr_t)CPG_CLKON_SYC,             0x00010001 },		/* SYC */
 	{ (uintptr_t)CPG_CLKON_DAMC_REG,        0x00000000 },		/* DMAC */
 	{ (uintptr_t)CPG_CLKON_SYSC,            0x00030003 },		/* SYSC */
 	{ (uintptr_t)CPG_CLKON_OSTM,            0x00010001 },		/* OSTM */
@@ -153,7 +168,7 @@ static CPG_REG_SETTING cpg_reset_tbl[] = {
 	{ (uintptr_t)CPG_RST_IA55,              0x00010001 },		/* IA55 */
 	{ (uintptr_t)CPG_RST_IM33,              0x00010001 },		/* IM33 */
 	{ (uintptr_t)CPG_RST_MHU,               0x00000000 },		/* MHU */
-	{ (uintptr_t)CPG_RST_SYC,               0x00010001 },		/* SYC */
+//	{ (uintptr_t)CPG_RST_SYC,               0x00010001 },		/* SYC */
 	{ (uintptr_t)CPG_RST_DMAC,              0x00010001 },		/* DMAC */
 	{ (uintptr_t)CPG_RST_SYSC,              0x00070007 },		/* SYSC */
 	{ (uintptr_t)CPG_RST_OSTM,              0x00010001 },		/* OSTM */
@@ -607,6 +622,25 @@ void cpg_active_ddr(void (*disable_phy)(void))
 		;
 
 	udelay(1);
+}
+
+void cpg_early_setup(void)
+{
+	int i;
+	uint32_t mask;
+	uint32_t cmp;
+
+	for (i = 0; i < SIZEOF(early_setup_tbl); i++) {
+		mmio_write_32(early_setup_tbl[i].reg, early_setup_tbl[i].val);
+
+		mask = (early_setup_tbl[i].val >> 16) & 0xFFFF;
+		cmp = early_setup_tbl[i].val & 0xFFFF;
+		if (early_setup_tbl[i].type == CPG_T_RST) {
+			cmp = ~(cmp);
+		}
+		while((mmio_read_32(early_setup_tbl[i].mon) & mask) != (cmp & mask))
+			;
+	}
 }
 
 void cpg_setup(void)
