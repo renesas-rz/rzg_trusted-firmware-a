@@ -69,6 +69,9 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 {
 	int ret;
 
+	/* early setup Clock and Reset */
+	cpg_early_setup();
+
 	/* initialize SYC */
 	syc_init(RZG2L_SYC_INCK_HZ);
 
