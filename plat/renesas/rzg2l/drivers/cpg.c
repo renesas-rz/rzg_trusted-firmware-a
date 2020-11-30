@@ -398,6 +398,26 @@ static CPG_REG_SETTING cpg_sel_gpu2_on_off[] = {
 	{(uintptr_t)CPG_CLKON_GPU, 0x00000001 }
 };
 
+
+static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
+{
+	int i;
+	uint32_t mask;
+	uint32_t cmp;
+
+	for (i = 0; i < num; i++, array++) {
+		mmio_write_32(array->reg, array->val);
+
+		mask = (array->val >> 16) & 0xFFFF;
+		cmp = array->val & 0xFFFF;
+		if (array->type == CPG_T_RST) {
+			cmp = ~(cmp);
+		}
+		while((mmio_read_32(array->mon) & mask) != (cmp & mask))
+			;
+	}
+}
+
 static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 {
 	uint32_t cnt;
@@ -626,21 +646,7 @@ void cpg_active_ddr(void (*disable_phy)(void))
 
 void cpg_early_setup(void)
 {
-	int i;
-	uint32_t mask;
-	uint32_t cmp;
-
-	for (i = 0; i < SIZEOF(early_setup_tbl); i++) {
-		mmio_write_32(early_setup_tbl[i].reg, early_setup_tbl[i].val);
-
-		mask = (early_setup_tbl[i].val >> 16) & 0xFFFF;
-		cmp = early_setup_tbl[i].val & 0xFFFF;
-		if (early_setup_tbl[i].type == CPG_T_RST) {
-			cmp = ~(cmp);
-		}
-		while((mmio_read_32(early_setup_tbl[i].mon) & mask) != (cmp & mask))
-			;
-	}
+	cpg_ctrl_clkrst(&early_setup_tbl[0], SIZEOF(early_setup_tbl));
 }
 
 void cpg_setup(void)
