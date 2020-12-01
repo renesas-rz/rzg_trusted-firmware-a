@@ -511,28 +511,36 @@ static void cpg_pll_start_235(uint32_t index)
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
 {
+#if !DEBUG_RZG2L_FPGA
 	uint32_t val = 0;
+#endif
 
 	/* PLL4 startup */
 	/* PLL4 standby mode transition confirmation */
+#if !DEBUG_RZG2L_FPGA
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
 	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) != 0);
+#endif
 
 	/* Set PLL4 to normal mode */
 	/* mmio_write_32(CPG_PLL4_STBY, (PLL4_STBY_RESETB_WEN | PLL4_STBY_RESETB)); */
 	cpg_pll_start_146(CPG_PLL4_INDEX);
 
 	/* PLL4 normal mode transition confirmation */
+#if !DEBUG_RZG2L_FPGA
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
 	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
+#endif
 
 	/* PLL5 startup */
 	/* PLL5 standby mode transition confirmation */
+#if !DEBUG_RZG2L_FPGA
 	do {
 		val = mmio_read_32(CPG_PLL5_MON);
 	} while ((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) != 0);
+#endif
 
 #if 0
 	/* Divided ratio setting of PLL5 Divide 3000MHz by 32 and set it within 5.08-148.5MHz. */
@@ -547,15 +555,19 @@ static void cpg_pll_setup(void)
 	cpg_pll_start_235(CPG_PLL5_INDEX);
 
 	/* PLL5 Normal mode transition confirmation */
+#if !DEBUG_RZG2L_FPGA
 	do {
 		val = mmio_read_32(CPG_PLL5_MON);
 	} while ((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) == 0);
+#endif
 
 	/* PLL6 startup */
 	/* PLL6 standby mode transition confirmation */
+#if !DEBUG_RZG2L_FPGA
 	do {
 		val = mmio_read_32(CPG_PLL6_MON);
 	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) != 0);
+#endif
 
 	/* Set PLL6 to normal mode */
 	/* val = mmio_read_32(CPG_PLL6_STBY) | PLL6_STBY_RESETB_WEN | PLL6_STBY_RESETB; */
@@ -563,9 +575,11 @@ static void cpg_pll_setup(void)
 	cpg_pll_start_146(CPG_PLL6_INDEX);
 
 	/* PLL6 Normal mode transition confirmation */
+#if !DEBUG_RZG2L_FPGA
 	do {
 		val = mmio_read_32(CPG_PLL6_MON);
 	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) == 0);
+#endif
 }
 
 static void cpg_div_sel_setup(void)
@@ -576,9 +590,11 @@ static void cpg_div_sel_setup(void)
 		mmio_write_32(cpg_select_tbl[cnt].reg, cpg_select_tbl[cnt].val);
 	}
 
+#if !DEBUG_RZG2L_FPGA
 	/* Wait for completion of settings */
 	while (mmio_read_32(CPG_CLKSTATUS) != 0)
 		;
+#endif
 }
 
 static void cpg_clk_on_setup(void)
