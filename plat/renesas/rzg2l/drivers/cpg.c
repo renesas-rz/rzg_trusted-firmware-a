@@ -231,57 +231,6 @@ static CPG_REG_SETTING cpg_select_tbl[] = {
 	{ (uintptr_t)CPG_OTHERFUNC1_REG,        0x00010000 }
 };
 
-#if 0
-/*
- * for dynamic switching clock DIVIDERs and SELECTORs
- * Only the following must be set.
- *
- *    - CPG_PL1_DDIV
- *    - CPG_PL2_DDIV
- *    - CPG_PL3A_DDIV
- *    - CPG_PL3B_DDIV
- *    - CPG_PL6_DDIV
- *    - CPG_PL2SDHI_DSEL
- *    - CPG_PL4_DSEL
- */
-static CPG_REG_SETTING cpg_dynamic_sel_tbl[] = {
-	{ (uintptr_t)CPG_PL1_DDIV,              0x00010000 },
-	{ (uintptr_t)CPG_PL2_DDIV,              0x11110000 },
-	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110300 },
-	{ (uintptr_t)CPG_PL3B_DDIV,             0x00010000 },
-	{ (uintptr_t)CPG_PL6_DDIV,              0x00010000 },
-	{ (uintptr_t)CPG_PL2SDHI_DSEL,          0x00110022 },
-	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
-};
-
-/*
- * for static switching clock DIVIDERs and SELECTORs
- * Only the following must be set.
- *
- *    - CPG_PL5_SDIV
- *    - CPG_PL3_SSEL
- *    - CPG_PL6_SSEL
- *    - CPG_PL6_ETH_SSEL
- *    - CPG_OTHERFUNC1_REG
- */
-static CPG_REG_SETTING cpg_static_sel_tbl[] = {
-	{ (uintptr_t)CPG_PL5_SDIV,              0x01010000 },
-	{ (uintptr_t)CPG_PL3_SSEL,              0x01000000 },
-	{ (uintptr_t)CPG_PL6_SSEL,              0x10000000 },
-	{ (uintptr_t)CPG_PL6_ETH_SSEL,          0x00010000 },
-	{ (uintptr_t)CPG_OTHERFUNC1_REG,        0x00010000 }
-};
-#endif
-
-#if 0
-static void cpg_pll_stop(uintptr_t reg)
-{
-	uint32_t set = 0x00010000;
-
-	mmio_write_32(reg, set);
-}
-#endif
-
 #define CPG_SEL_PLL1_ON_OFF					(0)
 #define CPG_SEL_PLL2_1_ON_OFF				(1)
 #define CPG_SEL_PLL2_2_ON_OFF				(2)
