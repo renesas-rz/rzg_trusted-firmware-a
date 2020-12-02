@@ -465,7 +465,7 @@ static void setup_vref_training_registers(
 	// Step1
 	if (vref_value > 50) {
 		vref_op_code = vref_value - 23;
-	} else{
+	} else {
 		vref_op_code = vref_value | (1 << 6);
 	}
 
@@ -480,11 +480,7 @@ static void setup_vref_training_registers(
 
 static void exec_trainingVREF(void)
 {
-#if 0
-	double dval, vref_mid_level;
-#else
 	uint64_t dval, vref_mid_level, tmp64;	// x1,000,000
-#endif
 	uint32_t vref_mid_level_code;
 	uint32_t vref_training_value;
 	uint32_t sweep_range;
@@ -499,17 +495,6 @@ static void exec_trainingVREF(void)
 	int i, j;
 
 	// Step1
-#if 0
-	dval = (double)((read_mc_reg(DENALI_CTL_415) >> 8) & 0xFF);
-	val = (read_mc_reg(DENALI_CTL_416) >> 24) & 0xFF;
-	if (val > 0) {
-		dval = 1 / ((1/dval) + (1/val));
-	}
-	val = read_mc_reg(DENALI_CTL_416) & 0xFF;
-	vref_mid_level = (1 + val / (val + dval)) / 2.0;
-	vref_mid_level_code = ((vref_mid_level - 0.507) / 0.0066) + 65 + 0.4999;
-	sweep_range = (vref_mid_level * 0.15 / 0.0066) + 0.4999;
-#else
 	dval = (read_mc_reg(DENALI_CTL_415) >> 8) & 0xFF;
 	val = (read_mc_reg(DENALI_CTL_416) >> 24) & 0xFF;
 	if (val > 0) {
@@ -522,7 +507,6 @@ static void exec_trainingVREF(void)
 	vref_mid_level_code = CEIL(tmp64, 1000000);
 	tmp64 = (((vref_mid_level * 150000) * 1000000) / 6600) - 500000;
 	sweep_range = CEIL(tmp64, 1000000);
-#endif
 
 	// Step2
 	for (i = 0; i < BYTE_LANES; i++) {
@@ -613,17 +597,6 @@ static void exec_trainingVREF(void)
 	rmw_phy_reg(IP_DQ_DQS_BITWISE_TRIM, 0xFFFFFF7F, 0x00000080);
 
 	// Step9
-#if 0
-	dval = (double)((read_mc_reg(DENALI_CTL_416) >> 8) & 0xFF);
-	val = (read_mc_reg(DENALI_CTL_416) >> 16) & 0xFF;
-	if (val > 0) {
-		dval = 1 / ((1/dval) + (1/val));
-	}
-	val = read_mc_reg(DENALI_CTL_415) & 0xFF;
-	vref_mid_level = (1 + val / (val + dval)) / 2.0;
-	vref_mid_level_code = ((vref_mid_level - 0.450) / 0.0065) + 0.4999;
-	sweep_range = (vref_mid_level * 0.15 / 0.0065) + 0.4999;
-#else
 	dval = (read_mc_reg(DENALI_CTL_416) >> 8) & 0xFF;
 	val = (read_mc_reg(DENALI_CTL_416) >> 16) & 0xFF;
 	if (val > 0) {
@@ -635,7 +608,6 @@ static void exec_trainingVREF(void)
 	vref_mid_level_code = CEIL(tmp64, 1000000);
 	tmp64 = (((vref_mid_level * 150000) * 1000000) / 6500) - 500000;
 	sweep_range = CEIL(tmp64, 1000000);
-#endif
 
 	// Step10
 	orig_cs_config = read_phy_reg(SCL_CONFIG_2) & 0x3;
@@ -665,11 +637,11 @@ static void exec_trainingVREF(void)
 				current_vref = vref_mid_level_code - vref_training_value;
 			}
 		} else {
-			if ((vref_mid_level_code + vref_training_value - sweep_range) > 73) {
-				break;
-			} else {
+			if ((vref_mid_level_code + vref_training_value - sweep_range) <= 73) {
 				current_vref =
 					vref_mid_level_code + vref_training_value - sweep_range;
+			} else {
+				break;
 			}
 		}
 		setup_vref_training_registers(current_vref, orig_cs_config, 0);
