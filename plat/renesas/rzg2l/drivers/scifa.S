@@ -138,7 +138,7 @@ func console_rzg2l_init
 	strb w3, [x0, #BRR]
 
 	add x3, x3 ,#1
-	lsr x3, x3, #(BRR_C_RSHIFT + 8)
+	lsl x3, x3, #(BRR_C_RSHIFT + 8)
 	mul x3, x3, x2
 	udiv x3, x3, x1
 	mov w1, #(SEMR_MDDR)
