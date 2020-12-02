@@ -203,17 +203,6 @@ static void pfc_sd_setup(void)
 	}
 }
 
-#if 0
-static void pfc_eth_setup(void)
-{
-	/* Set the ETH voltage setting register to the initial value */
-	mmio_write_32(PFC_ETH_ch0, 0);
-	mmio_write_32(PFC_ETH_ch1, 0);
-	/* Set the initial value in the ETH mode setting register */
-	mmio_write_32(PFC_ETH_MII, (ETH_MII_0_MII | ETH_MII_1_MII));
-}
-#endif
-
 void pfc_setup(void)
 {
 	pfc_mux_setup();
