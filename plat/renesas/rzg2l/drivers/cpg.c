@@ -540,13 +540,6 @@ static void cpg_pll_setup(void)
 	} while ((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) != 0);
 #endif
 
-#if 0
-	/* Divided ratio setting of PLL5 Divide 3000MHz by 32 and set it within 5.08-148.5MHz. */
-	/* val = PL5_SDIV_DIVSDIB_WEN | PL5_SDIV_DIVDSA_WEN | PL5_SDIV_DIVDSIA_SET_1_4 | PL5_SDIV_DIVDSIB_SET_1_8; */
-	val = PL5_SDIV_DIVSDIB_WEN | PL5_SDIV_DIVDSA_WEN | PL5_SDIV_DIVDSIA_SET_1_1 | PL5_SDIV_DIVDSIB_SET_1_1;
-	mmio_write_32(CPG_PL5_SDIV, val);
-#endif
-
 	/* PLL5 set to normal mode */
 	/* val = mmio_read_32(CPG_PLL5_STBY) | PLL5_STBY_RESETB_WEN | PLL5_STBY_RESETB; */
 	/* mmio_write_32(CPG_PLL5_STBY, val); */
