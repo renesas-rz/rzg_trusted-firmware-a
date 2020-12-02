@@ -10,8 +10,6 @@
 #include <lib/mmio.h>
 #include <drivers/delay_timer.h>
 
-#define SIZEOF(array)	(sizeof(array)/sizeof(array[0]))
-
 #define	CPG_OFF			(0)
 #define	CPG_ON			(1)
 
@@ -100,7 +98,7 @@ static CPG_PLL_SETDATA_235 cpg_pll_setdata_235[] = {
 
 static const CPG_SETUP_DATA early_setup_tbl[] = {
 	{(uintptr_t)CPG_CLKON_SYC, (uintptr_t)CPG_CLKMON_SYC, 0x00010001, CPG_T_CLK},
-	{(uintptr_t)CPG_RST_SYC, (uintptr_t)CPG_RSTMON_SYC, 0x00010001,CPG_T_RST}
+	{(uintptr_t)CPG_RST_SYC, (uintptr_t)CPG_RSTMON_SYC, 0x00010001, CPG_T_RST}
 };
 
 static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
@@ -413,7 +411,7 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 		if (array->type == CPG_T_RST) {
 			cmp = ~(cmp);
 		}
-		while((mmio_read_32(array->mon) & mask) != (cmp & mask))
+		while ((mmio_read_32(array->mon) & mask) != (cmp & mask))
 			;
 	}
 }
@@ -426,61 +424,61 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 
 	switch (sel) {
 	case CPG_SEL_PLL1_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll1_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll1_on_off);
 		ptr = &cpg_sel_pll1_on_off[0];
 		break;
 	case CPG_SEL_PLL2_1_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll2_1_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll2_1_on_off);
 		ptr = &cpg_sel_pll2_1_on_off[0];
 		break;
 	case CPG_SEL_PLL2_2_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll2_2_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll2_2_on_off);
 		ptr = &cpg_sel_pll2_2_on_off[0];
 		break;
 	case CPG_SEL_PLL3_1_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll3_1_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll3_1_on_off);
 		ptr = &cpg_sel_pll3_1_on_off[0];
 		break;
 	case CPG_SEL_PLL3_2_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll3_2_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll3_2_on_off);
 		ptr = &cpg_sel_pll3_2_on_off[0];
 		break;
 	case CPG_SEL_PLL3_3_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll3_3_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll3_3_on_off);
 		ptr = &cpg_sel_pll3_3_on_off[0];
 		break;
 	case CPG_SEL_PLL5_1_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll5_1_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll5_1_on_off);
 		ptr = &cpg_sel_pll5_1_on_off[0];
 		break;
 	case CPG_SEL_PLL5_3_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll5_3_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll5_3_on_off);
 		ptr = &cpg_sel_pll5_3_on_off[0];
 		break;
 	case CPG_SEL_PLL5_4_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll5_4_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll5_4_on_off);
 		ptr = &cpg_sel_pll5_4_on_off[0];
 		break;
 	case CPG_SEL_PLL6_1_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_pll6_1_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_pll6_1_on_off);
 		ptr = &cpg_sel_pll6_1_on_off[0];
 		break;
 	case CPG_SEL_GPU1_1_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_gpu1_1_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_gpu1_1_on_off);
 		ptr = &cpg_sel_gpu1_1_on_off[0];
 		break;
 	case CPG_SEL_GPU1_2_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_gpu1_2_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_gpu1_2_on_off);
 		ptr = &cpg_sel_gpu1_2_on_off[0];
 		break;
 	case CPG_SEL_GPU2_ON_OFF:
-		tbl_num = SIZEOF(cpg_sel_gpu2_on_off);
+		tbl_num = ARRAY_SIZE(cpg_sel_gpu2_on_off);
 		ptr = &cpg_sel_gpu2_on_off[0];
 		break;
 	default:
 		break;
 	}
-	
+
 	for (cnt = 0; cnt < tbl_num; cnt++) {
 		if (flag == CPG_ON) {
 			mmio_write_32(ptr[cnt].reg, (mmio_read_32(ptr[cnt].reg) | ptr[cnt].val));
@@ -586,7 +584,7 @@ static void cpg_div_sel_setup(void)
 {
 	int cnt;
 
-	for (cnt = 0; cnt < SIZEOF(cpg_select_tbl); cnt++) {
+	for (cnt = 0; cnt < ARRAY_SIZE(cpg_select_tbl); cnt++) {
 		mmio_write_32(cpg_select_tbl[cnt].reg, cpg_select_tbl[cnt].val);
 	}
 
@@ -599,12 +597,12 @@ static void cpg_div_sel_setup(void)
 
 static void cpg_clk_on_setup(void)
 {
-	cpg_ctrl_clkrst(&cpg_clk_on_tbl[0], SIZEOF(cpg_clk_on_tbl));
+	cpg_ctrl_clkrst(&cpg_clk_on_tbl[0], ARRAY_SIZE(cpg_clk_on_tbl));
 }
 
 static void cpg_reset_setup(void)
 {
-	cpg_ctrl_clkrst(&cpg_reset_tbl[0], SIZEOF(cpg_reset_tbl));
+	cpg_ctrl_clkrst(&cpg_reset_tbl[0], ARRAY_SIZE(cpg_reset_tbl));
 }
 
 void cpg_active_ddr(void (*disable_phy)(void))
@@ -644,7 +642,7 @@ void cpg_active_ddr(void (*disable_phy)(void))
 
 void cpg_early_setup(void)
 {
-	cpg_ctrl_clkrst(&early_setup_tbl[0], SIZEOF(early_setup_tbl));
+	cpg_ctrl_clkrst(&early_setup_tbl[0], ARRAY_SIZE(early_setup_tbl));
 }
 
 void cpg_setup(void)
