@@ -24,6 +24,8 @@
 #include <drivers/delay_timer.h>
 
 static const mmap_region_t rzg2l_mmap[] = {
+	MAP_REGION_FLAT(RZG2L_SRAM_BASE, RZG2L_SRAM_SIZE,
+			MT_MEMORY | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(RZG2L_DEVICE_BASE, RZG2L_DEVICE_SIZE,
 			MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(RZG2L_SPIROM_BASE, RZG2L_SPIROM_SIZE,
@@ -43,21 +45,21 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 int bl2_plat_handle_post_image_load(unsigned int image_id)
 {
 	static bl2_to_bl31_params_mem_t *params;
-	//bl_mem_params_node_t *bl_mem_params;
+	bl_mem_params_node_t *bl_mem_params;
 
 	if (!params) {
 		params = (bl2_to_bl31_params_mem_t *) PARAMS_BASE;
-		//memset((void *)PARAMS_BASE, 0, sizeof(*params));
+		memset((void *)PARAMS_BASE, 0, sizeof(*params));
 	}
 
-	//bl_mem_params = get_bl_mem_params_node(image_id);
+	bl_mem_params = get_bl_mem_params_node(image_id);
 
 	switch (image_id) {
 	case BL31_IMAGE_ID:
 		break;
 	case BL33_IMAGE_ID:
-		//memcpy(&params->bl33_ep_info, &bl_mem_params->ep_info,
-		//	sizeof(entry_point_info_t));
+		memcpy(&params->bl33_ep_info, &bl_mem_params->ep_info,
+			sizeof(entry_point_info_t));
 		break;
 	}
 

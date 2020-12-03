@@ -91,10 +91,9 @@ void rzg2l_io_setup(void)
 {
 	const io_dev_connector_t *memmap;
 	const io_dev_connector_t *rzg2l;
-	uint32_t boot_dev;
+	uint16_t boot_dev;
 	
-	//boot_dev = mmio_read_16((uintptr_t)(RZG2L_SRAM_BASE + 2));
-	boot_dev = sys_get_mode_mr();
+	boot_dev = *((uint16_t*)RZG2L_BOOTINFO_BASE);
 
 	boot_io_drv_id = FIP_IMAGE_ID;
 

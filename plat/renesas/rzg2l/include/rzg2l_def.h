@@ -30,6 +30,7 @@
 #define RZG2L_GICD_BASE             (RZG2L_GIC_BASE)
 #define RZG2L_GICR_BASE             (RZG2L_GIC_BASE + 0x00040000)
 
+#define RZG2L_SRAM_SIZE				(0x00030000 - RZG2L_SRAM_BASE)
 #define RZG2L_DEVICE_SIZE           (0x15000000 - RZG2L_DEVICE_BASE)
 #define RZG2L_SPIROM_SIZE           (0x30000000 - RZG2L_SPIROM_BASE)
 #define RZG2L_DDR1_SIZE             (RZG2L_DDR2_BASE - RZG2L_DDR1_BASE)
@@ -42,7 +43,10 @@
 #define RZG2L_UART_INCK_HZ          (100000000)
 #define RZG2L_UART_BARDRATE         (115200)
 
+/* Boot Info base address */
+#define RZG2L_BOOTINFO_BASE			(RZG2L_SRAM_BASE)
+
 /* Base address where parameters to BL31 are stored */
-#define PARAMS_BASE					(RZG2L_SRAM_BASE + 0x0002F000)
+#define PARAMS_BASE					(RZG2L_SRAM_BASE + 0x0001F000)
 
 #endif /* __RZG2L_DEF_H__ */
