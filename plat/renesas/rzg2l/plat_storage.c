@@ -62,18 +62,12 @@ static const struct plat_io_policy policies[] = {
 
 static int32_t open_fipdrv(const uintptr_t spec)
 {
-	//uintptr_t handle;
 	int32_t result;
 
 	result = io_dev_init(fip_dev_handle, boot_io_drv_id);
 	if (result != IO_SUCCESS)
 		return result;
 
-#if 0
-	result = io_open(fip_dev_handle, spec, &handle);
-	if (result == IO_SUCCESS)
-		io_close(handle);
-#endif
 	return result;
 }
 
