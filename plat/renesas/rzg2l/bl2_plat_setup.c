@@ -21,6 +21,7 @@
 #include "ddr.h"
 #include "rzg2l_def.h"
 #include "rzg2l_private.h"
+#include <drivers/delay_timer.h>
 
 static const mmap_region_t rzg2l_mmap[] = {
 	MAP_REGION_FLAT(RZG2L_DEVICE_BASE, RZG2L_DEVICE_SIZE,
@@ -42,21 +43,21 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 int bl2_plat_handle_post_image_load(unsigned int image_id)
 {
 	static bl2_to_bl31_params_mem_t *params;
-	bl_mem_params_node_t *bl_mem_params;
+	//bl_mem_params_node_t *bl_mem_params;
 
 	if (!params) {
 		params = (bl2_to_bl31_params_mem_t *) PARAMS_BASE;
-		memset((void *)PARAMS_BASE, 0, sizeof(*params));
+		//memset((void *)PARAMS_BASE, 0, sizeof(*params));
 	}
 
-	bl_mem_params = get_bl_mem_params_node(image_id);
+	//bl_mem_params = get_bl_mem_params_node(image_id);
 
 	switch (image_id) {
 	case BL31_IMAGE_ID:
 		break;
 	case BL33_IMAGE_ID:
-		memcpy(&params->bl33_ep_info, &bl_mem_params->ep_info,
-			sizeof(entry_point_info_t));
+		//memcpy(&params->bl33_ep_info, &bl_mem_params->ep_info,
+		//	sizeof(entry_point_info_t));
 		break;
 	}
 
@@ -84,6 +85,8 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	/* setup Clock and Reset */
 	cpg_setup();
 
+	udelay(2000);
+	
 	/* initialize console driver */
 	ret = console_rzg2l_register(
 							RZG2L_SCIF0_BASE,
@@ -115,8 +118,6 @@ void bl2_el3_plat_arch_setup(void)
 
 void bl2_platform_setup(void)
 {
-	uint32_t boot_dev;
-
 	/* initialize TZC-400 */
 	plat_tzc400_setup(RZG2L_TZC_DDR_BASE);
 	plat_tzc400_setup(RZG2L_TZC_SPI_BASE);
@@ -126,13 +127,5 @@ void bl2_platform_setup(void)
 	ddr_setup();
 #endif /* DEBUG_FPGA */
 
-	/* spi_multi_setup(); */
-
-	boot_dev = sys_get_mode_mr();
-	if (boot_dev == BOOT_MODE_SPI_1_8 ||
-			boot_dev == BOOT_MODE_SPI_3_3) {
-		rzg2l_io_setup();
-	} else {
-		panic();
-	}
+	rzg2l_io_setup();
 }

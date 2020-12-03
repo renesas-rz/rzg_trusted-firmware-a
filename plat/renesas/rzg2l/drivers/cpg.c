@@ -97,129 +97,684 @@ static CPG_PLL_SETDATA_235 cpg_pll_setdata_235[] = {
 };
 
 static const CPG_SETUP_DATA early_setup_tbl[] = {
-	{(uintptr_t)CPG_CLKON_SYC, (uintptr_t)CPG_CLKMON_SYC, 0x00010001, CPG_T_CLK},
-	{(uintptr_t)CPG_RST_SYC, (uintptr_t)CPG_RSTMON_SYC, 0x00010001, CPG_T_RST}
+	{
+		(uintptr_t)CPG_CLKON_SYC,
+		(uintptr_t)CPG_CLKMON_SYC,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{
+		(uintptr_t)CPG_RST_SYC,
+		(uintptr_t)CPG_RSTMON_SYC,
+		0x00010001,
+		CPG_T_RST
+	}
 };
 
 static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
-	{ (uintptr_t)CPG_CLKON_CM33,            (uintptr_t)CPG_CLKMON_CM33,            0x00000000, CPG_T_CLK },		/* CM33 */
-	{ (uintptr_t)CPG_CLKON_ROM,             (uintptr_t)CPG_CLKMON_ROM,             0x00010001, CPG_T_CLK },		/* ROM */
-	{ (uintptr_t)CPG_CLKON_GIC600,          (uintptr_t)CPG_CLKMON_GIC600,          0x00010001, CPG_T_CLK },		/* GIC600 */
-	{ (uintptr_t)CPG_CLKON_IA55,            (uintptr_t)CPG_CLKMON_IA55,            0x00030003, CPG_T_CLK },		/* IA55 */
-	{ (uintptr_t)CPG_CLKON_IM33,            (uintptr_t)CPG_CLKMON_IM33,            0x00030003, CPG_T_CLK },		/* IM33 */
-	{ (uintptr_t)CPG_CLKON_MHU,             (uintptr_t)CPG_CLKMON_MHU,             0x00000000, CPG_T_CLK },		/* MHU */
-	{ (uintptr_t)CPG_CLKON_CST,             (uintptr_t)CPG_CLKMON_CST,             0x07ff07ff, CPG_T_CLK },		/* CST */
-	{ (uintptr_t)CPG_CLKON_DAMC_REG,        (uintptr_t)CPG_CLKMON_DAMC_REG,        0x00000000, CPG_T_CLK },		/* DMAC */
-	{ (uintptr_t)CPG_CLKON_SYSC,            (uintptr_t)CPG_CLKMON_SYSC,            0x00030003, CPG_T_CLK },		/* SYSC */
-	{ (uintptr_t)CPG_CLKON_OSTM,            (uintptr_t)CPG_CLKMON_OSTM,            0x00010001, CPG_T_CLK },		/* OSTM */
-	{ (uintptr_t)CPG_CLKON_MTU,             (uintptr_t)CPG_CLKMON_MTU,             0x00000000, CPG_T_CLK },		/* MTU */
-	{ (uintptr_t)CPG_CLKON_POE3,            (uintptr_t)CPG_CLKMON_POE3,            0x00000000, CPG_T_CLK },		/* POE3 */
-	{ (uintptr_t)CPG_CLKON_GPT,             (uintptr_t)CPG_CLKMON_GPT,             0x00000000, CPG_T_CLK },		/* GPT */
-	{ (uintptr_t)CPG_CLKON_POEG,            (uintptr_t)CPG_CLKMON_POEG,            0x00000000, CPG_T_CLK },		/* POEG */
-	{ (uintptr_t)CPG_CLKON_WDT,             (uintptr_t)CPG_CLKMON_WDT,             0x00C300C3, CPG_T_CLK },		/* WDT */
+	{		/* CM33 */
+		(uintptr_t)CPG_CLKON_CM33,
+		(uintptr_t)CPG_CLKMON_CM33,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* ROM */
+		(uintptr_t)CPG_CLKON_ROM,
+		(uintptr_t)CPG_CLKMON_ROM,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* GIC600 */
+		(uintptr_t)CPG_CLKON_GIC600,
+		(uintptr_t)CPG_CLKMON_GIC600,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* IA55 */
+		(uintptr_t)CPG_CLKON_IA55,
+		(uintptr_t)CPG_CLKMON_IA55,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* IM33 */
+		(uintptr_t)CPG_CLKON_IM33,
+		(uintptr_t)CPG_CLKMON_IM33,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* MHU */
+		(uintptr_t)CPG_CLKON_MHU,
+		(uintptr_t)CPG_CLKMON_MHU,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* CST */
+		(uintptr_t)CPG_CLKON_CST,
+		(uintptr_t)CPG_CLKMON_CST,
+		0x07ff07ff,
+		CPG_T_CLK
+	},
+	{		/* DMAC */
+		(uintptr_t)CPG_CLKON_DAMC_REG,
+		(uintptr_t)CPG_CLKMON_DAMC_REG,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* SYSC */
+		(uintptr_t)CPG_CLKON_SYSC,
+		(uintptr_t)CPG_CLKMON_SYSC,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* OSTM */
+		(uintptr_t)CPG_CLKON_OSTM,
+		(uintptr_t)CPG_CLKMON_OSTM,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* MTU */
+		(uintptr_t)CPG_CLKON_MTU,
+		(uintptr_t)CPG_CLKMON_MTU,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* POE3 */
+		(uintptr_t)CPG_CLKON_POE3,
+		(uintptr_t)CPG_CLKMON_POE3,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* GPT */
+		(uintptr_t)CPG_CLKON_GPT,
+		(uintptr_t)CPG_CLKMON_GPT,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* POEG */
+		(uintptr_t)CPG_CLKON_POEG,
+		(uintptr_t)CPG_CLKMON_POEG,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* WDT */
+		(uintptr_t)CPG_CLKON_WDT,
+		(uintptr_t)CPG_CLKMON_WDT,
+		0x00C300C3,
+		CPG_T_CLK
+	},
 #if !DEBUG_RZG2L_FPGA
-	{ (uintptr_t)CPG_CLKON_DDR,             (uintptr_t)CPG_CLKMON_DDR,             0x00000000, CPG_T_CLK },		/* DDR */
+	{		/* DDR */
+		(uintptr_t)CPG_CLKON_DDR,
+		(uintptr_t)CPG_CLKMON_DDR,
+		0x00000000,
+		CPG_T_CLK
+	},
 #else
-	{ (uintptr_t)CPG_CLKON_DDR,             (uintptr_t)CPG_CLKMON_DDR,             0x00030003, CPG_T_CLK },		/* DDR */
+	{		/* DDR */
+		(uintptr_t)CPG_CLKON_DDR,
+		(uintptr_t)CPG_CLKMON_DDR,
+		0x00030003,
+		CPG_T_CLK
+	},
 #endif
-	{ (uintptr_t)CPG_CLKON_SPI_MULTI,       (uintptr_t)CPG_CLKMON_SPI_MULTI,       0x00030003, CPG_T_CLK },		/* SPI_MULTI */
-	{ (uintptr_t)CPG_CLKON_SDHI,            (uintptr_t)CPG_CLKMON_SDHI,            0x00ff00ff, CPG_T_CLK },		/* SDHI */
-	{ (uintptr_t)CPG_CLKON_GPU,             (uintptr_t)CPG_CLKMON_GPU,             0x00000000, CPG_T_CLK },		/* GPU */
-	{ (uintptr_t)CPG_CLKON_ISU,             (uintptr_t)CPG_CLKMON_ISU,             0x00000000, CPG_T_CLK },		/* Image Scaling Unit */
-	{ (uintptr_t)CPG_CLKON_H264,            (uintptr_t)CPG_CLKMON_H264,            0x00000000, CPG_T_CLK },		/* H.264 codec */
-	{ (uintptr_t)CPG_CLKON_CRU,             (uintptr_t)CPG_CLKMON_CRU,             0x00000000, CPG_T_CLK },		/* Camera Data Receive Unit */
-	{ (uintptr_t)CPG_CLKON_MIPI_DSI,        (uintptr_t)CPG_CLKMON_MIPI_DSI,        0x00000000, CPG_T_CLK },		/* MIPI-DSI */
-	{ (uintptr_t)CPG_CLKON_LCDC,            (uintptr_t)CPG_CLKMON_LCDC,            0x00000000, CPG_T_CLK },		/* LCDC */
-	{ (uintptr_t)CPG_CLKON_SSI,             (uintptr_t)CPG_CLKMON_SSI,             0x00000000, CPG_T_CLK },		/* Serial Sound Interface */
-	{ (uintptr_t)CPG_CLKON_SRC,             (uintptr_t)CPG_CLKMON_SRC,             0x00000000, CPG_T_CLK },		/* Sampling Rate Converter */
-	{ (uintptr_t)CPG_CLKON_USB,             (uintptr_t)CPG_CLKMON_USB,             0x00000000, CPG_T_CLK },		/* USB2.0 */
-	{ (uintptr_t)CPG_CLKON_ETH,             (uintptr_t)CPG_CLKMON_ETH,             0x00000000, CPG_T_CLK },		/* ETHER */
-	{ (uintptr_t)CPG_CLKON_I2C,             (uintptr_t)CPG_CLKMON_I2C,             0x00000000, CPG_T_CLK },		/* I2C */
-	{ (uintptr_t)CPG_CLKON_SCIF,            (uintptr_t)CPG_CLKMON_SCIF,            0x00010001, CPG_T_CLK },		/* SCIF */
-	{ (uintptr_t)CPG_CLKON_SCI,             (uintptr_t)CPG_CLKMON_SCI,             0x00000000, CPG_T_CLK },		/* SCI */
-	{ (uintptr_t)CPG_CLKON_IRDA,            (uintptr_t)CPG_CLKMON_IRDA,            0x00000000, CPG_T_CLK },		/* IrDA */
-	{ (uintptr_t)CPG_CLKON_RSPI,            (uintptr_t)CPG_CLKMON_RSPI,            0x00000000, CPG_T_CLK },		/* SPI */
-	{ (uintptr_t)CPG_CLKON_CANFD,           (uintptr_t)CPG_CLKMON_CANFD,           0x00000000, CPG_T_CLK },		/* CAN */
-	{ (uintptr_t)CPG_CLKON_GPIO,            (uintptr_t)CPG_CLKMON_GPIO,            0x00010001, CPG_T_CLK },		/* GPIO */
-	{ (uintptr_t)CPG_CLKON_TSIPG,           (uintptr_t)CPG_CLKMON_TSIPG,           0x00000000, CPG_T_CLK },		/* TSIPG */
-	{ (uintptr_t)CPG_CLKON_JAUTH,           (uintptr_t)CPG_CLKMON_JAUTH,           0x00010001, CPG_T_CLK },		/* JAUTH */
-	{ (uintptr_t)CPG_CLKON_OTP,             (uintptr_t)CPG_CLKMON_OTP,             0x00030003, CPG_T_CLK },		/* OTP */
-	{ (uintptr_t)CPG_CLKON_ADC,             (uintptr_t)CPG_CLKMON_ADC,             0x00000000, CPG_T_CLK },		/* ADC */
-	{ (uintptr_t)CPG_CLKON_TSU,             (uintptr_t)CPG_CLKMON_TSU,             0x00000000, CPG_T_CLK },		/* Thermal Sensor Unit */
-	{ (uintptr_t)CPG_CLKON_BBGU,            (uintptr_t)CPG_CLKMON_BBGU,            0x00010001, CPG_T_CLK },		/* BBGU */
-	{ (uintptr_t)CPG_CLKON_AXI_ACPU_BUS,    (uintptr_t)CPG_CLKMON_AXI_ACPU_BUS,    0x000f000f, CPG_T_CLK },		/* AXI_ACPU_BUS */
-	{ (uintptr_t)CPG_CLKON_AXI_MCPU_BUS,    (uintptr_t)CPG_CLKMON_AXI_MCPU_BUS,    0x07ff07ff, CPG_T_CLK },		/* AXI_MCPU_BUS */
-	{ (uintptr_t)CPG_CLKON_AXI_COM_BUS,     (uintptr_t)CPG_CLKMON_AXI_COM_BUS,     0x00030003, CPG_T_CLK },		/* AXI_COM_BUS */
-	{ (uintptr_t)CPG_CLKON_AXI_VIDEO_BUS,   (uintptr_t)CPG_CLKMON_AXI_VIDEO_BUS,   0x00030003, CPG_T_CLK },		/* AXI_VIDEO_BUS */
-	{ (uintptr_t)CPG_CLKON_PERI_COM,        (uintptr_t)CPG_CLKMON_PERI_COM,        0x00030003, CPG_T_CLK },		/* PERI_COM */
-	{ (uintptr_t)CPG_CLKON_REG0_BUS,        (uintptr_t)CPG_CLKMON_REG0_BUS,        0x000f000f, CPG_T_CLK },		/* REG0_BUS */
-	{ (uintptr_t)CPG_CLKON_REG1_BUS,        (uintptr_t)CPG_CLKMON_REG1_BUS,        0x00030003, CPG_T_CLK },		/* REG1_BUS */
-	{ (uintptr_t)CPG_CLKON_PERI_CPU,        (uintptr_t)CPG_CLKMON_PERI_CPU,        0x000f000f, CPG_T_CLK },		/* PERI_CPU */
-	{ (uintptr_t)CPG_CLKON_PERI_VIDEO,      (uintptr_t)CPG_CLKMON_PERI_VIDEO,      0x00070007, CPG_T_CLK },		/* PERI_VIDEO */
-	{ (uintptr_t)CPG_CLKON_PERI_DDR,        (uintptr_t)CPG_CLKMON_PERI_DDR,        0x00010001, CPG_T_CLK },		/* PERI_DDR */
-	{ (uintptr_t)CPG_CLKON_AXI_TZCDDR,      (uintptr_t)CPG_CLKMON_AXI_TZCDDR,      0x001f001f, CPG_T_CLK },		/* AXI_TZCDDR */
-	{ (uintptr_t)CPG_CLKON_MTGPGS,          (uintptr_t)CPG_CLKMON_MTGPGS,          0x00030003, CPG_T_CLK },		/* MTGPGS */
-	{ (uintptr_t)CPG_CLKON_AXI_DEFAULT_SLV, (uintptr_t)CPG_CLKMON_AXI_DEFAULT_SLV, 0x00010001, CPG_T_CLK }		/* AXI_DEFAULT_SLV */
+	{		/* SPI_MULTI */
+		(uintptr_t)CPG_CLKON_SPI_MULTI,
+		(uintptr_t)CPG_CLKMON_SPI_MULTI,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* SDHI */
+		(uintptr_t)CPG_CLKON_SDHI,
+		(uintptr_t)CPG_CLKMON_SDHI,
+		0x00ff00ff,
+		CPG_T_CLK
+	},
+	{		/* GPU */
+		(uintptr_t)CPG_CLKON_GPU,
+		(uintptr_t)CPG_CLKMON_GPU,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* Image Scaling Unit */
+		(uintptr_t)CPG_CLKON_ISU,
+		(uintptr_t)CPG_CLKMON_ISU,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* H.264 codec */
+		(uintptr_t)CPG_CLKON_H264,
+		(uintptr_t)CPG_CLKMON_H264,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* Camera Data Receive Unit */
+		(uintptr_t)CPG_CLKON_CRU,
+		(uintptr_t)CPG_CLKMON_CRU,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* MIPI-DSI */
+		(uintptr_t)CPG_CLKON_MIPI_DSI,
+		(uintptr_t)CPG_CLKMON_MIPI_DSI,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* LCDC */
+		(uintptr_t)CPG_CLKON_LCDC,
+		(uintptr_t)CPG_CLKMON_LCDC,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* Serial Sound Interface */
+		(uintptr_t)CPG_CLKON_SSI,
+		(uintptr_t)CPG_CLKMON_SSI,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* Sampling Rate Converter */
+		(uintptr_t)CPG_CLKON_SRC,
+		(uintptr_t)CPG_CLKMON_SRC,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* USB2.0 */
+		(uintptr_t)CPG_CLKON_USB,
+		(uintptr_t)CPG_CLKMON_USB,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* ETHER */
+		(uintptr_t)CPG_CLKON_ETH,
+		(uintptr_t)CPG_CLKMON_ETH,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* I2C */
+		(uintptr_t)CPG_CLKON_I2C,
+		(uintptr_t)CPG_CLKMON_I2C,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* SCIF */
+		(uintptr_t)CPG_CLKON_SCIF,
+		(uintptr_t)CPG_CLKMON_SCIF,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* SCI */
+		(uintptr_t)CPG_CLKON_SCI,
+		(uintptr_t)CPG_CLKMON_SCI,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* IrDA */
+		(uintptr_t)CPG_CLKON_IRDA,
+		(uintptr_t)CPG_CLKMON_IRDA,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* SPI */
+		(uintptr_t)CPG_CLKON_RSPI,
+		(uintptr_t)CPG_CLKMON_RSPI,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* CAN */
+		(uintptr_t)CPG_CLKON_CANFD,
+		(uintptr_t)CPG_CLKMON_CANFD,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* GPIO */
+		(uintptr_t)CPG_CLKON_GPIO,
+		(uintptr_t)CPG_CLKMON_GPIO,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* TSIPG */
+		(uintptr_t)CPG_CLKON_TSIPG,
+		(uintptr_t)CPG_CLKMON_TSIPG,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* JAUTH */
+		(uintptr_t)CPG_CLKON_JAUTH,
+		(uintptr_t)CPG_CLKMON_JAUTH,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* OTP */
+		(uintptr_t)CPG_CLKON_OTP,
+		(uintptr_t)CPG_CLKMON_OTP,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* ADC */
+		(uintptr_t)CPG_CLKON_ADC,
+		(uintptr_t)CPG_CLKMON_ADC,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* Thermal Sensor Unit */
+		(uintptr_t)CPG_CLKON_TSU,
+		(uintptr_t)CPG_CLKMON_TSU,
+		0x00000000,
+		CPG_T_CLK
+	},
+	{		/* BBGU */
+		(uintptr_t)CPG_CLKON_BBGU,
+		(uintptr_t)CPG_CLKMON_BBGU,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* AXI_ACPU_BUS */
+		(uintptr_t)CPG_CLKON_AXI_ACPU_BUS,
+		(uintptr_t)CPG_CLKMON_AXI_ACPU_BUS,
+		0x000f000f,
+		CPG_T_CLK
+	},
+	{		/* AXI_MCPU_BUS */
+		(uintptr_t)CPG_CLKON_AXI_MCPU_BUS,
+		(uintptr_t)CPG_CLKMON_AXI_MCPU_BUS,
+		0x07ff07ff,
+		CPG_T_CLK
+	},
+	{		/* AXI_COM_BUS */
+		(uintptr_t)CPG_CLKON_AXI_COM_BUS,
+		(uintptr_t)CPG_CLKMON_AXI_COM_BUS,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* AXI_VIDEO_BUS */
+		(uintptr_t)CPG_CLKON_AXI_VIDEO_BUS,
+		(uintptr_t)CPG_CLKMON_AXI_VIDEO_BUS,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* PERI_COM */
+		(uintptr_t)CPG_CLKON_PERI_COM,
+		(uintptr_t)CPG_CLKMON_PERI_COM,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* REG0_BUS */
+		(uintptr_t)CPG_CLKON_REG0_BUS,
+		(uintptr_t)CPG_CLKMON_REG0_BUS,
+		0x000f000f,
+		CPG_T_CLK
+	},
+	{		/* REG1_BUS */
+		(uintptr_t)CPG_CLKON_REG1_BUS,
+		(uintptr_t)CPG_CLKMON_REG1_BUS,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* PERI_CPU */
+		(uintptr_t)CPG_CLKON_PERI_CPU,
+		(uintptr_t)CPG_CLKMON_PERI_CPU,
+		0x000f000f,
+		CPG_T_CLK
+	},
+	{		/* PERI_VIDEO */
+		(uintptr_t)CPG_CLKON_PERI_VIDEO,
+		(uintptr_t)CPG_CLKMON_PERI_VIDEO,
+		0x00070007,
+		CPG_T_CLK
+	},
+	{		/* PERI_DDR */
+		(uintptr_t)CPG_CLKON_PERI_DDR,
+		(uintptr_t)CPG_CLKMON_PERI_DDR,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* AXI_TZCDDR */
+		(uintptr_t)CPG_CLKON_AXI_TZCDDR,
+		(uintptr_t)CPG_CLKMON_AXI_TZCDDR,
+		0x001f001f,
+		CPG_T_CLK
+	},
+	{		/* MTGPGS */
+		(uintptr_t)CPG_CLKON_MTGPGS,
+		(uintptr_t)CPG_CLKMON_MTGPGS,
+		0x00030003,
+		CPG_T_CLK
+	},
+	{		/* AXI_DEFAULT_SLV */
+		(uintptr_t)CPG_CLKON_AXI_DEFAULT_SLV,
+		(uintptr_t)CPG_CLKMON_AXI_DEFAULT_SLV,
+		0x00010001,
+		CPG_T_CLK
+	}
 };
 
 static CPG_SETUP_DATA cpg_reset_tbl[] = {
-	{ (uintptr_t)CPG_RST_CM33,            (uintptr_t)CPG_RSTMON_CM33,             0x00000000, CPG_T_RST },		/* CM33 */
-	{ (uintptr_t)CPG_RST_ROM,             (uintptr_t)CPG_RSTMON_ROM,              0x00010001, CPG_T_RST },		/* ROM */
-	{ (uintptr_t)CPG_RST_GIC600,          (uintptr_t)CPG_RSTMON_GIC600,           0x00030003, CPG_T_RST },		/* GIC600 */
-	{ (uintptr_t)CPG_RST_IA55,            (uintptr_t)CPG_RSTMON_IA55,             0x00010001, CPG_T_RST },		/* IA55 */
-	{ (uintptr_t)CPG_RST_IM33,            (uintptr_t)CPG_RSTMON_IM33,             0x00010001, CPG_T_RST },		/* IM33 */
-	{ (uintptr_t)CPG_RST_MHU,             (uintptr_t)CPG_RSTMON_MHU,              0x00000000, CPG_T_RST },		/* MHU */
-	{ (uintptr_t)CPG_RST_DMAC,            (uintptr_t)CPG_RSTMON_DMAC,             0x00010001, CPG_T_RST },		/* DMAC */
-	{ (uintptr_t)CPG_RST_SYSC,            (uintptr_t)CPG_RSTMON_SYSC,             0x00070007, CPG_T_RST },		/* SYSC */
-	{ (uintptr_t)CPG_RST_OSTM,            (uintptr_t)CPG_RSTMON_OSTM,             0x00010001, CPG_T_RST },		/* OSTM */
-	{ (uintptr_t)CPG_RST_MTU,             (uintptr_t)CPG_RSTMON_MTU,              0x00000000, CPG_T_RST },		/* MTU */
-	{ (uintptr_t)CPG_RST_POE3,            (uintptr_t)CPG_RSTMON_POE3,             0x00000000, CPG_T_RST },		/* POE3 */
-	{ (uintptr_t)CPG_RST_GPT,             (uintptr_t)CPG_RSTMON_GPT,              0x00000000, CPG_T_RST },		/* GPT */
-	{ (uintptr_t)CPG_RST_POEG,            (uintptr_t)CPG_RSTMON_POEG,             0x00000000, CPG_T_RST },		/* POEG */
-	{ (uintptr_t)CPG_RST_WDT,             (uintptr_t)CPG_RSTMON_WDT,              0x00090009, CPG_T_RST },		/* WDT */
+	{		/* CM33 */
+		(uintptr_t)CPG_RST_CM33,
+		(uintptr_t)CPG_RSTMON_CM33,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* ROM */
+		(uintptr_t)CPG_RST_ROM,
+		(uintptr_t)CPG_RSTMON_ROM,
+		0x00010001,
+		CPG_T_RST 
+	},
+	{		/* GIC600 */
+		(uintptr_t)CPG_RST_GIC600,
+		(uintptr_t)CPG_RSTMON_GIC600,
+		0x00030003,
+		CPG_T_RST
+	},
+	{		/* IA55 */
+		(uintptr_t)CPG_RST_IA55,
+		(uintptr_t)CPG_RSTMON_IA55,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* IM33 */
+		(uintptr_t)CPG_RST_IM33,
+		(uintptr_t)CPG_RSTMON_IM33,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* MHU */
+		(uintptr_t)CPG_RST_MHU,
+		(uintptr_t)CPG_RSTMON_MHU,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* DMAC */
+		(uintptr_t)CPG_RST_DMAC,
+		(uintptr_t)CPG_RSTMON_DMAC,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* SYSC */
+		(uintptr_t)CPG_RST_SYSC,
+		(uintptr_t)CPG_RSTMON_SYSC,
+		0x00070007,
+		CPG_T_RST
+	},
+	{		/* OSTM */
+		(uintptr_t)CPG_RST_OSTM,
+		(uintptr_t)CPG_RSTMON_OSTM,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* MTU */
+		(uintptr_t)CPG_RST_MTU,
+		(uintptr_t)CPG_RSTMON_MTU,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* POE3 */
+		(uintptr_t)CPG_RST_POE3,
+		(uintptr_t)CPG_RSTMON_POE3,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* GPT */
+		(uintptr_t)CPG_RST_GPT,
+		(uintptr_t)CPG_RSTMON_GPT,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* POEG */
+		(uintptr_t)CPG_RST_POEG,
+		(uintptr_t)CPG_RSTMON_POEG,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* WDT */
+		(uintptr_t)CPG_RST_WDT,
+		(uintptr_t)CPG_RSTMON_WDT,
+		0x00090009,
+		CPG_T_RST
+	},
 #if !DEBUG_RZG2L_FPGA
-	{ (uintptr_t)CPG_RST_DDR,             (uintptr_t)CPG_RSTMON_DDR,              0x00000000, CPG_T_RST },		/* DDR */
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x00000000,
+		CPG_T_RST
+	},
 #else
-	{ (uintptr_t)CPG_RST_DDR,             (uintptr_t)CPG_RSTMON_DDR,              0x007F007F, CPG_T_RST },		/* DDR */
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x007F007F,
+		CPG_T_RST
+	},
 #endif
-	{ (uintptr_t)CPG_RST_SPI,             (uintptr_t)CPG_RSTMON_SPI,              0x00010001, CPG_T_RST },		/* SPI_MULTI */
-	{ (uintptr_t)CPG_RST_SDHI,            (uintptr_t)CPG_RSTMON_SDHI,             0x00030003, CPG_T_RST },		/* SDHI */
-	{ (uintptr_t)CPG_RST_GPU,             (uintptr_t)CPG_RSTMON_GPU,              0x00000000, CPG_T_RST },		/* GPU */
-	{ (uintptr_t)CPG_RST_ISU,             (uintptr_t)CPG_RSTMON_ISU,              0x00000000, CPG_T_RST },		/* Image Scaling Unit */
-	{ (uintptr_t)CPG_RST_H264,            (uintptr_t)CPG_RSTMON_H264,             0x00000000, CPG_T_RST },		/* H.264 codec */
-	{ (uintptr_t)CPG_RST_CRU,             (uintptr_t)CPG_RSTMON_CRU,              0x00000000, CPG_T_RST },		/* Camera Data Receive Unit */
-	{ (uintptr_t)CPG_RST_MIPI_DSI,        (uintptr_t)CPG_RSTMON_MIPI_DSI,         0x00000000, CPG_T_RST },		/* MIPI-DSI */
-	{ (uintptr_t)CPG_RST_LCDC,            (uintptr_t)CPG_RSTMON_LCDC,             0x00000000, CPG_T_RST },		/* LCDC */
-	{ (uintptr_t)CPG_RST_SSIF,            (uintptr_t)CPG_RSTMON_SSIF,             0x00000000, CPG_T_RST },		/* Serial Sound Interface */
-	{ (uintptr_t)CPG_RST_SRC,             (uintptr_t)CPG_RSTMON_SRC,              0x00000000, CPG_T_RST },		/* Sampling Rate Converter */
-	{ (uintptr_t)CPG_RST_USB,             (uintptr_t)CPG_RSTMON_USB,              0x00000000, CPG_T_RST },		/* USB2.0 */
-	{ (uintptr_t)CPG_RST_ETH,             (uintptr_t)CPG_RSTMON_ETH,              0x00000000, CPG_T_RST },		/* ETHER */
-	{ (uintptr_t)CPG_RST_I2C,             (uintptr_t)CPG_RSTMON_I2C,              0x00000000, CPG_T_RST },		/* I2C */
-	{ (uintptr_t)CPG_RST_SCIF,            (uintptr_t)CPG_RSTMON_SCIF,             0x00010001, CPG_T_RST },		/* SCIF */
-	{ (uintptr_t)CPG_RST_SCI,             (uintptr_t)CPG_RSTMON_SCI,              0x00000000, CPG_T_RST },		/* SCI */
-	{ (uintptr_t)CPG_RST_IRDA,            (uintptr_t)CPG_RSTMON_IRDA,             0x00000000, CPG_T_RST },		/* IrDA */
-	{ (uintptr_t)CPG_RST_RSPI,            (uintptr_t)CPG_RSTMON_RSPI,             0x00000000, CPG_T_RST },		/* SPI */
-	{ (uintptr_t)CPG_RST_CANFD,           (uintptr_t)CPG_RSTMON_CANFD,            0x00000000, CPG_T_RST },		/* CAN */
-	{ (uintptr_t)CPG_RST_GPIO,            (uintptr_t)CPG_RSTMON_GPIO,             0x00070007, CPG_T_RST },		/* GPIO */
-	{ (uintptr_t)CPG_RST_TSIPG,           (uintptr_t)CPG_RSTMON_TSIPG,            0x00000000, CPG_T_RST },		/* TSIPG */
-	{ (uintptr_t)CPG_RST_JAUTH,           (uintptr_t)CPG_RSTMON_JAUTH,            0x00010001, CPG_T_RST },		/* JAUTH */
-	{ (uintptr_t)CPG_RST_OTP,             (uintptr_t)CPG_RSTMON_OTP,              0x00010001, CPG_T_RST },		/* OTP */
-	{ (uintptr_t)CPG_RST_ADC,             (uintptr_t)CPG_RSTMON_ADC,              0x00000000, CPG_T_RST },		/* ADC */
-	{ (uintptr_t)CPG_RST_TSU,             (uintptr_t)CPG_RSTMON_TSU,              0x00000000, CPG_T_RST },		/* Thermal Sensor Unit */
-	{ (uintptr_t)CPG_RST_BBGU,            (uintptr_t)CPG_RSTMON_BBGU,             0x00000000, CPG_T_RST },		/* BBGU */
-	{ (uintptr_t)CPG_RST_AXI_ACPU_BUS,    (uintptr_t)CPG_RSTMON_AXI_ACPU_BUS,     0x00010001, CPG_T_RST },		/* AXI_ACPU_BUS */
-	{ (uintptr_t)CPG_RST_AXI_MCPU_BUS,    (uintptr_t)CPG_RSTMON_AXI_MCPU_BUS,     0x00010001, CPG_T_RST },		/* AXI_MCPU_BUS */
-	{ (uintptr_t)CPG_RST_AXI_COM_BUS,     (uintptr_t)CPG_RSTMON_AXI_COM_BUS,      0x00010001, CPG_T_RST },		/* AXI_COM_BUS */
-	{ (uintptr_t)CPG_RST_AXI_VIDEO_BUS,   (uintptr_t)CPG_RSTMON_AXI_VIDEO_BUS,    0x00010001, CPG_T_RST },		/* AXI_VIDEO_BUS */
-	{ (uintptr_t)CPG_RST_PERI_COM,        (uintptr_t)CPG_RSTMON_PERI_COM,         0x00010001, CPG_T_RST },		/* PERI_COM */
-	{ (uintptr_t)CPG_RST_REG1_BUS,        (uintptr_t)CPG_RSTMON_REG1_BUS,         0x00010001, CPG_T_RST },		/* REG1_BUS */
-	{ (uintptr_t)CPG_RST_REG0_BUS,        (uintptr_t)CPG_RSTMON_REG0_BUS,         0x00010001, CPG_T_RST },		/* REG0_BUS */
-	{ (uintptr_t)CPG_RST_PERI_CPU,        (uintptr_t)CPG_RSTMON_PERI_CPU,         0x00010001, CPG_T_RST },		/* PERI_CPU */
-	{ (uintptr_t)CPG_RST_PERI_VIDEO,      (uintptr_t)CPG_RSTMON_PERI_VIDEO,       0x00010001, CPG_T_RST },		/* PERI_VIDEO */
-	{ (uintptr_t)CPG_RST_PERI_DDR,        (uintptr_t)CPG_RSTMON_PERI_DDR,         0x00010001, CPG_T_RST },		/* PERI_DDR */
-	{ (uintptr_t)CPG_RST_AXI_TZCDDR,      (uintptr_t)CPG_RSTMON_AXI_TZCDDR,       0x001f001f, CPG_T_RST },		/* AXI_TZCDDR */
-	{ (uintptr_t)CPG_RST_MTGPGS,          (uintptr_t)CPG_RSTMON_MTGPGS,           0x00030003, CPG_T_RST },		/* MTGPGS */
-	{ (uintptr_t)CPG_RST_AXI_DEFAULT_SLV, (uintptr_t)CPG_RSTMON_AXI_DEFAULT_SLV,  0x00010001, CPG_T_RST },		/* AXI_DEFAULT_SLV */
+	{		/* SPI_MULTI */
+		(uintptr_t)CPG_RST_SPI,
+		(uintptr_t)CPG_RSTMON_SPI,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* SDHI */
+		(uintptr_t)CPG_RST_SDHI,
+		(uintptr_t)CPG_RSTMON_SDHI,
+		0x00030003,
+		CPG_T_RST
+	},
+	{		/* GPU */
+		(uintptr_t)CPG_RST_GPU,
+		(uintptr_t)CPG_RSTMON_GPU,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* Image Scaling Unit */
+		(uintptr_t)CPG_RST_ISU,
+		(uintptr_t)CPG_RSTMON_ISU,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* H.264 codec */
+		(uintptr_t)CPG_RST_H264,
+		(uintptr_t)CPG_RSTMON_H264,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* Camera Data Receive Unit */
+		(uintptr_t)CPG_RST_CRU,
+		(uintptr_t)CPG_RSTMON_CRU,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* MIPI-DSI */
+		(uintptr_t)CPG_RST_MIPI_DSI,
+		(uintptr_t)CPG_RSTMON_MIPI_DSI,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* LCDC */
+		(uintptr_t)CPG_RST_LCDC,
+		(uintptr_t)CPG_RSTMON_LCDC,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* Serial Sound Interface */
+		(uintptr_t)CPG_RST_SSIF,
+		(uintptr_t)CPG_RSTMON_SSIF,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* Sampling Rate Converter */
+		(uintptr_t)CPG_RST_SRC,
+		(uintptr_t)CPG_RSTMON_SRC,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* USB2.0 */
+		(uintptr_t)CPG_RST_USB,
+		(uintptr_t)CPG_RSTMON_USB,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* ETHER */
+		(uintptr_t)CPG_RST_ETH,
+		(uintptr_t)CPG_RSTMON_ETH,
+		0x00000000, 
+		CPG_T_RST
+	},
+	{		/* I2C */
+		(uintptr_t)CPG_RST_I2C,
+		(uintptr_t)CPG_RSTMON_I2C,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* SCIF */
+		(uintptr_t)CPG_RST_SCIF,
+		(uintptr_t)CPG_RSTMON_SCIF,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* SCI */
+		(uintptr_t)CPG_RST_SCI,
+		(uintptr_t)CPG_RSTMON_SCI,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* IrDA */
+		(uintptr_t)CPG_RST_IRDA,
+		(uintptr_t)CPG_RSTMON_IRDA,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* SPI */
+		(uintptr_t)CPG_RST_RSPI,
+		(uintptr_t)CPG_RSTMON_RSPI,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* CAN */
+		(uintptr_t)CPG_RST_CANFD, 
+		(uintptr_t)CPG_RSTMON_CANFD,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* GPIO */
+		(uintptr_t)CPG_RST_GPIO,
+		(uintptr_t)CPG_RSTMON_GPIO,
+		0x00070007,
+		CPG_T_RST
+	},
+	{		/* TSIPG */
+		(uintptr_t)CPG_RST_TSIPG,
+		(uintptr_t)CPG_RSTMON_TSIPG,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* JAUTH */
+		(uintptr_t)CPG_RST_JAUTH,
+		(uintptr_t)CPG_RSTMON_JAUTH,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* OTP */
+		(uintptr_t)CPG_RST_OTP,
+		(uintptr_t)CPG_RSTMON_OTP,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* ADC */
+		(uintptr_t)CPG_RST_ADC,
+		(uintptr_t)CPG_RSTMON_ADC,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* Thermal Sensor Unit */
+		(uintptr_t)CPG_RST_TSU,
+		(uintptr_t)CPG_RSTMON_TSU,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* BBGU */
+		(uintptr_t)CPG_RST_BBGU,
+		(uintptr_t)CPG_RSTMON_BBGU,
+		0x00000000,
+		CPG_T_RST
+	},
+	{		/* AXI_ACPU_BUS */
+		(uintptr_t)CPG_RST_AXI_ACPU_BUS,
+		(uintptr_t)CPG_RSTMON_AXI_ACPU_BUS,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* AXI_MCPU_BUS */
+		(uintptr_t)CPG_RST_AXI_MCPU_BUS,
+		(uintptr_t)CPG_RSTMON_AXI_MCPU_BUS,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* AXI_COM_BUS */
+		(uintptr_t)CPG_RST_AXI_COM_BUS,
+		(uintptr_t)CPG_RSTMON_AXI_COM_BUS,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* AXI_VIDEO_BUS */
+		(uintptr_t)CPG_RST_AXI_VIDEO_BUS,
+		(uintptr_t)CPG_RSTMON_AXI_VIDEO_BUS,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* PERI_COM */
+		(uintptr_t)CPG_RST_PERI_COM,
+		(uintptr_t)CPG_RSTMON_PERI_COM,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* REG1_BUS */
+		(uintptr_t)CPG_RST_REG1_BUS,
+		(uintptr_t)CPG_RSTMON_REG1_BUS,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* REG0_BUS */
+		(uintptr_t)CPG_RST_REG0_BUS,
+		(uintptr_t)CPG_RSTMON_REG0_BUS,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* PERI_CPU */
+		(uintptr_t)CPG_RST_PERI_CPU,
+		(uintptr_t)CPG_RSTMON_PERI_CPU,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* PERI_VIDEO */
+		(uintptr_t)CPG_RST_PERI_VIDEO,
+		(uintptr_t)CPG_RSTMON_PERI_VIDEO,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* PERI_DDR */
+		(uintptr_t)CPG_RST_PERI_DDR,
+		(uintptr_t)CPG_RSTMON_PERI_DDR,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* AXI_TZCDDR */
+		(uintptr_t)CPG_RST_AXI_TZCDDR,
+		(uintptr_t)CPG_RSTMON_AXI_TZCDDR,
+		0x001f001f,
+		CPG_T_RST
+	},
+	{		/* MTGPGS */
+		(uintptr_t)CPG_RST_MTGPGS,
+		(uintptr_t)CPG_RSTMON_MTGPGS,
+		0x00030003,
+		CPG_T_RST
+	},
+	{		/* AXI_DEFAULT_SLV */
+		(uintptr_t)CPG_RST_AXI_DEFAULT_SLV,
+		(uintptr_t)CPG_RSTMON_AXI_DEFAULT_SLV,
+		0x00010001,
+		CPG_T_RST
+	},
 };
 
 static CPG_REG_SETTING cpg_select_tbl[] = {
