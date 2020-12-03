@@ -4,14 +4,18 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <assert.h>
 #include <common/tbbr/tbbr_img_def.h>
 #include <drivers/io/io_driver.h>
 #include <drivers/io/io_storage.h>
 #include <drivers/io/io_fip.h>
 #include <drivers/io/io_memmap.h>
+#include <lib/mmio.h>
+#include <tools_share/firmware_image_package.h>
 
 #include "io_private.h"
 #include "rzg2l_def.h"
+#include "sys.h"
 
 static uintptr_t memdrv_dev_handle;
 static uintptr_t fip_dev_handle;
@@ -23,12 +27,12 @@ static const io_block_spec_t rzg2l_block_spec = {
 	.length = RZG2L_SPIROM_FIP_SIZE,
 };
 
-static const io_block_spec_t bl31_file_spec = {
-	.offset = BL31_IMAGE_ID,
+static const io_uuid_spec_t bl31_file_spec = {
+	.uuid = UUID_EL3_RUNTIME_FIRMWARE_BL31,
 };
 
-static const io_block_spec_t bl33_file_spec = {
-	.offset = BL33_IMAGE_ID,
+static const io_uuid_spec_t bl33_file_spec = {
+	.uuid = UUID_NON_TRUSTED_FIRMWARE_BL33,
 };
 
 static int32_t open_memmap(const uintptr_t spec);
@@ -58,17 +62,18 @@ static const struct plat_io_policy policies[] = {
 
 static int32_t open_fipdrv(const uintptr_t spec)
 {
-	uintptr_t handle;
+	//uintptr_t handle;
 	int32_t result;
 
 	result = io_dev_init(fip_dev_handle, boot_io_drv_id);
 	if (result != IO_SUCCESS)
 		return result;
 
+#if 0
 	result = io_open(fip_dev_handle, spec, &handle);
 	if (result == IO_SUCCESS)
 		io_close(handle);
-
+#endif
 	return result;
 }
 
@@ -92,13 +97,30 @@ void rzg2l_io_setup(void)
 {
 	const io_dev_connector_t *memmap;
 	const io_dev_connector_t *rzg2l;
+	uint32_t boot_dev;
+	
+	//boot_dev = mmio_read_16((uintptr_t)(RZG2L_SRAM_BASE + 2));
+	boot_dev = sys_get_mode_mr();
 
 	boot_io_drv_id = FIP_IMAGE_ID;
 
 	register_io_dev_fip(&rzg2l);
-	register_io_dev_memmap(&memmap);
+	
+	if (boot_dev == BOOT_MODE_SPI_1_8 ||
+		boot_dev == BOOT_MODE_SPI_3_3) {
+		register_io_dev_memmap(&memmap);
+	} else {
+		panic();
+	}
+	
 	io_dev_open(rzg2l, 0, &fip_dev_handle);
-	io_dev_open(memmap, 0, &memdrv_dev_handle);
+	
+	if (boot_dev == BOOT_MODE_SPI_1_8 ||
+		boot_dev == BOOT_MODE_SPI_3_3) {
+		io_dev_open(memmap, 0, &memdrv_dev_handle);
+	} else {
+		panic();
+	}
 }
 
 int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
