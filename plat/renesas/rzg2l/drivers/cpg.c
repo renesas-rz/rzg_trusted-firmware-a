@@ -109,7 +109,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{ (uintptr_t)CPG_CLKON_IM33,            (uintptr_t)CPG_CLKMON_IM33,            0x00030003, CPG_T_CLK },		/* IM33 */
 	{ (uintptr_t)CPG_CLKON_MHU,             (uintptr_t)CPG_CLKMON_MHU,             0x00000000, CPG_T_CLK },		/* MHU */
 	{ (uintptr_t)CPG_CLKON_CST,             (uintptr_t)CPG_CLKMON_CST,             0x07ff07ff, CPG_T_CLK },		/* CST */
-//	{ (uintptr_t)CPG_CLKON_SYC,             (uintptr_t)CPG_CLKMON_SYC,             0x00010001, CPG_T_CLK },		/* SYC */
 	{ (uintptr_t)CPG_CLKON_DAMC_REG,        (uintptr_t)CPG_CLKMON_DAMC_REG,        0x00000000, CPG_T_CLK },		/* DMAC */
 	{ (uintptr_t)CPG_CLKON_SYSC,            (uintptr_t)CPG_CLKMON_SYSC,            0x00030003, CPG_T_CLK },		/* SYSC */
 	{ (uintptr_t)CPG_CLKON_OSTM,            (uintptr_t)CPG_CLKMON_OSTM,            0x00010001, CPG_T_CLK },		/* OSTM */
@@ -118,7 +117,11 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{ (uintptr_t)CPG_CLKON_GPT,             (uintptr_t)CPG_CLKMON_GPT,             0x00000000, CPG_T_CLK },		/* GPT */
 	{ (uintptr_t)CPG_CLKON_POEG,            (uintptr_t)CPG_CLKMON_POEG,            0x00000000, CPG_T_CLK },		/* POEG */
 	{ (uintptr_t)CPG_CLKON_WDT,             (uintptr_t)CPG_CLKMON_WDT,             0x00C300C3, CPG_T_CLK },		/* WDT */
+#if !DEBUG_RZG2L_FPGA
 	{ (uintptr_t)CPG_CLKON_DDR,             (uintptr_t)CPG_CLKMON_DDR,             0x00000000, CPG_T_CLK },		/* DDR */
+#else
+	{ (uintptr_t)CPG_CLKON_DDR,             (uintptr_t)CPG_CLKMON_DDR,             0x00030003, CPG_T_CLK },		/* DDR */
+#endif
 	{ (uintptr_t)CPG_CLKON_SPI_MULTI,       (uintptr_t)CPG_CLKMON_SPI_MULTI,       0x00030003, CPG_T_CLK },		/* SPI_MULTI */
 	{ (uintptr_t)CPG_CLKON_SDHI,            (uintptr_t)CPG_CLKMON_SDHI,            0x00ff00ff, CPG_T_CLK },		/* SDHI */
 	{ (uintptr_t)CPG_CLKON_GPU,             (uintptr_t)CPG_CLKMON_GPU,             0x00000000, CPG_T_CLK },		/* GPU */
@@ -166,7 +169,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{ (uintptr_t)CPG_RST_IA55,            (uintptr_t)CPG_RSTMON_IA55,             0x00010001, CPG_T_RST },		/* IA55 */
 	{ (uintptr_t)CPG_RST_IM33,            (uintptr_t)CPG_RSTMON_IM33,             0x00010001, CPG_T_RST },		/* IM33 */
 	{ (uintptr_t)CPG_RST_MHU,             (uintptr_t)CPG_RSTMON_MHU,              0x00000000, CPG_T_RST },		/* MHU */
-//	{ (uintptr_t)CPG_RST_SYC,             (uintptr_t)CPG_RSTMON_SYC,              0x00010001, CPG_T_RST },		/* SYC */
 	{ (uintptr_t)CPG_RST_DMAC,            (uintptr_t)CPG_RSTMON_DMAC,             0x00010001, CPG_T_RST },		/* DMAC */
 	{ (uintptr_t)CPG_RST_SYSC,            (uintptr_t)CPG_RSTMON_SYSC,             0x00070007, CPG_T_RST },		/* SYSC */
 	{ (uintptr_t)CPG_RST_OSTM,            (uintptr_t)CPG_RSTMON_OSTM,             0x00010001, CPG_T_RST },		/* OSTM */
@@ -175,7 +177,11 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{ (uintptr_t)CPG_RST_GPT,             (uintptr_t)CPG_RSTMON_GPT,              0x00000000, CPG_T_RST },		/* GPT */
 	{ (uintptr_t)CPG_RST_POEG,            (uintptr_t)CPG_RSTMON_POEG,             0x00000000, CPG_T_RST },		/* POEG */
 	{ (uintptr_t)CPG_RST_WDT,             (uintptr_t)CPG_RSTMON_WDT,              0x00090009, CPG_T_RST },		/* WDT */
+#if !DEBUG_RZG2L_FPGA
 	{ (uintptr_t)CPG_RST_DDR,             (uintptr_t)CPG_RSTMON_DDR,              0x00000000, CPG_T_RST },		/* DDR */
+#else
+	{ (uintptr_t)CPG_RST_DDR,             (uintptr_t)CPG_RSTMON_DDR,              0x007F007F, CPG_T_RST },		/* DDR */
+#endif
 	{ (uintptr_t)CPG_RST_SPI,             (uintptr_t)CPG_RSTMON_SPI,              0x00010001, CPG_T_RST },		/* SPI_MULTI */
 	{ (uintptr_t)CPG_RST_SDHI,            (uintptr_t)CPG_RSTMON_SDHI,             0x00030003, CPG_T_RST },		/* SDHI */
 	{ (uintptr_t)CPG_RST_GPU,             (uintptr_t)CPG_RSTMON_GPU,              0x00000000, CPG_T_RST },		/* GPU */
