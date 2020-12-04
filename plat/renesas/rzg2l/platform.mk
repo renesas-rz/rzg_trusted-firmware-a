@@ -20,7 +20,6 @@ ERRATA_A55_1221012	:= 1
 ERRATA_A55_1530923	:= 1
 
 PLAT_INCLUDES	:=  -Iplat/renesas/rzg2l/include						\
-					-Idrivers/renesas/rzg2l/io							\
 					-Iplat/renesas/rzg2l
 
 RZG2L_COMMON		:=	plat/renesas/rzg2l/rzg2l_plat_common.c
@@ -45,7 +44,7 @@ BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
 					plat/renesas/rzg2l/drivers/cpg.c					\
 					plat/renesas/rzg2l/drivers/sys.c					\
 					plat/renesas/rzg2l/drivers/ddr/ddr.c				\
-					drivers/renesas/rzg2l/io/rzg2l_io_memmap.c			\
+					plat/renesas/rzg2l/rzg2l_io_memmap.c				\
 					drivers/io/io_fip.c
 
 # Include GICv3 driver files
