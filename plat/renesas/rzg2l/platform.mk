@@ -44,7 +44,7 @@ BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
 					plat/renesas/rzg2l/drivers/cpg.c					\
 					plat/renesas/rzg2l/drivers/sys.c					\
 					plat/renesas/rzg2l/drivers/ddr/ddr.c				\
-					plat/renesas/rzg2l/rzg2l_io_memmap.c				\
+					plat/renesas/rzg2l/drivers/io/rzg2l_io_memmap.c		\
 					drivers/io/io_fip.c
 
 # Include GICv3 driver files
