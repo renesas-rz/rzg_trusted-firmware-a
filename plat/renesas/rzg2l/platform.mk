@@ -63,8 +63,7 @@ BL31_SOURCES	+=	lib/cpus/aarch64/cortex_a55.S				\
 					plat/renesas/rzg2l/plat_topology.c			\
 					plat/renesas/rzg2l/plat_gic.c				\
 					plat/renesas/rzg2l/aarch64/plat_helpers.S	\
-					plat/renesas/rzg2l/drivers/syc.c			\
-					plat/renesas/rzg2l/drivers/sys.c
+					plat/renesas/rzg2l/drivers/syc.c
 
 include lib/xlat_tables_v2/xlat_tables.mk
 PLAT_BL_COMMON_SOURCES	+=	${XLAT_TABLES_LIB_SRCS}				\
