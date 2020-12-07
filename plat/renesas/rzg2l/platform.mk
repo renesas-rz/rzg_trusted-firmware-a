@@ -13,7 +13,9 @@ GICV3_SUPPORT_GIC600			:= 1
 HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
 DEBUG_RZG2L_FPGA				:= 1
+DEBUG_SPI_MULTI_SLOW			:= 1
 $(eval $(call add_define,DEBUG_RZG2L_FPGA))
+$(eval $(call add_define,DEBUG_SPI_MULTI_SLOW))
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_1221012	:= 1
@@ -43,6 +45,7 @@ BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
 					plat/renesas/rzg2l/drivers/pfc.c					\
 					plat/renesas/rzg2l/drivers/cpg.c					\
 					plat/renesas/rzg2l/drivers/sys.c					\
+					plat/renesas/rzg2l/drivers/spi_multi.c				\
 					plat/renesas/rzg2l/drivers/ddr/ddr.c				\
 					plat/renesas/rzg2l/drivers/io/rzg2l_io_memmap.c		\
 					drivers/io/io_fip.c

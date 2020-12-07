@@ -1143,6 +1143,18 @@ void cpg_active_ddr(void (*disable_phy)(void))
 	udelay(1);
 }
 
+void cpg_spi_multi_setting_fpga(void)
+{
+	cpg_selector_on_off(CPG_SEL_PLL3_1_ON_OFF, CPG_OFF);
+	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_OFF);
+	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_OFF);
+	cpg_div_sel_setup();
+	mmio_write_32(CPG_PL3A_DDIV, 0x01110000);
+	cpg_selector_on_off(CPG_SEL_PLL3_1_ON_OFF, CPG_ON);
+	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_ON);
+	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_ON);
+}
+
 void cpg_early_setup(void)
 {
 	cpg_ctrl_clkrst(&early_setup_tbl[0], ARRAY_SIZE(early_setup_tbl));

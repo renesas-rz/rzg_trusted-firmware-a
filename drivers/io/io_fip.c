@@ -212,6 +212,8 @@ static int fip_dev_open(const uintptr_t dev_spec,
 	return 0;
 }
 
+	fip_toc_header_t header;
+
 
 /* Do some basic package checks. */
 static int fip_dev_init(io_dev_info_t *dev_info, const uintptr_t init_params)
@@ -219,7 +221,7 @@ static int fip_dev_init(io_dev_info_t *dev_info, const uintptr_t init_params)
 	int result;
 	unsigned int image_id = (unsigned int)init_params;
 	uintptr_t backend_handle;
-	fip_toc_header_t header;
+	//fip_toc_header_t header;
 	size_t bytes_read;
 	fip_dev_state_t *state;
 
