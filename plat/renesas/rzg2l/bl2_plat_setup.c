@@ -86,8 +86,6 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	/* setup Clock and Reset */
 	cpg_setup();
 
-	udelay(2000);
-	
 	/* initialize console driver */
 	ret = console_rzg2l_register(
 							RZG2L_SCIF0_BASE,
