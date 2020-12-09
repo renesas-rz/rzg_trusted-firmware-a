@@ -10,6 +10,5 @@
 void cpg_early_setup(void);
 void cpg_setup(void);
 void cpg_active_ddr(void (*disable_phy)(void));
-void cpg_spi_multi_setting_fpga(void);
 
 #endif /* __CPG_H__ */

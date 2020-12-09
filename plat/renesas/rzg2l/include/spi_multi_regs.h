@@ -46,6 +46,7 @@
 #define CMNCR_IO3FV_OUT1					(1 << 14)
 #define CMNCR_IO3FV_OUT_PREV				(2 << 14)
 #define CMNCR_IO3FV_HIZ						(3 << 14)
+#define CMNCR_DEF_DATA						(1 << 24)
 #define CMNCR_MOIIO0_OUT0					(0 << 16)
 #define CMNCR_MOIIO0_OUT1					(1 << 16)
 #define CMNCR_MOIIO0_OUT_PREV				(2 << 16)
@@ -240,6 +241,8 @@
 #define PHYCNT_WBUF							(1 << 2)
 #define PHYCNT_WBUF2						(1 << 4)
 #define PHYCNT_CKSEL_SLOW					(0 << 16)
+#define PHYCNT_CKSEL_MID1					(1 << 16)
+#define PHYCNT_CKSEL_MID2					(2 << 16)
 #define PHYCNT_CKSEL_FAST					(3 << 16)
 #define PHYCNT_HS							(1 << 18)
 #define PHYCNT_OCT							(1 << 21)
@@ -262,8 +265,12 @@
 #define PHYINT_WPEN							(1 << 25)
 #define PHYINT_RSTEN						(1 << 26)
 
-#define DREAR_EAV_ADDRE_DATA				(0x20 << 16)
-
+#define DREAR_EAV_ADDRE_DATA				(2 << 16)
+#define PHYADJ1_DEF_DATA					(0x80000000)
+#define PHYADJ2_DEF_DATA					(0xA5390000)
+#define PHYADJ1_ADJ_DATA					(0x80000032)
+#define PHYADJ2_ADJ_DATA1					(0x00000000)
+#define PHYADJ2_ADJ_DATA2					(0x00000002)
 
 #endif	/* _SPI_MULTI_REG_H_ */
 
