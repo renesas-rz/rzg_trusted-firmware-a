@@ -85,19 +85,21 @@ static const io_dev_info_t memmap_dev_info = {
 static int memmap_dev_open(const uintptr_t dev_spec __unused,
 			   io_dev_info_t **dev_info)
 {
+	int ret = 0;
+	
 	assert(dev_info != NULL);
 	*dev_info = (io_dev_info_t *)&memmap_dev_info; /* cast away const */
 	
 	if(spi_multi_init == 0) {
 		spi_multi_init = 1;
 #if DEBUG_SPI_MULTI_SLOW
-		spi_multi_setup(DATA_READ_COMMAND);
+		ret = spi_multi_setup(DATA_READ_COMMAND);
 #else
-		spi_multi_setup(FAST_READ_COMMAND);
+		ret = spi_multi_setup(QUAD_FAST_READ_COMMAND);
 #endif
 	}
 	
-	return 0;
+	return ret;
 }
 
 
