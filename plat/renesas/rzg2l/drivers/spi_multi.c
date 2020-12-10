@@ -40,7 +40,7 @@ SPI_MULTI_ADJ spi_multi_adj_tbl[] = {
 	
 #endif
 
-static void spi_multi_send_reset(void)
+void spi_multi_send_reset(void)
 {
 	volatile uint32_t val = 0;
 	
@@ -80,7 +80,7 @@ int spi_multi_setup(uint32_t command)
 	int      flg = 0;
 
 	/* send RESET commnad. */
-	spi_multi_send_reset();
+	//spi_multi_send_reset();
 	
 #endif
 	
