@@ -780,7 +780,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 static CPG_REG_SETTING cpg_select_tbl[] = {
 	{ (uintptr_t)CPG_PL1_DDIV,              0x00010000 },
 	{ (uintptr_t)CPG_PL2_DDIV,              0x11110000 },
-	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110300 },
+	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110100 },
 	{ (uintptr_t)CPG_PL3B_DDIV,             0x00010000 },
 	{ (uintptr_t)CPG_PL5_SDIV,              0x01010000 },
 	{ (uintptr_t)CPG_PL6_DDIV,              0x00010000 },
