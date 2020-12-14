@@ -24,8 +24,8 @@ int plat_core_pos_by_mpidr(u_register_t mpidr)
 {
 	unsigned int cluster_id, cpu_id;
 
-	cluster_id = mpidr & MPIDR_CLUSTER_MASK;
-	cpu_id = mpidr & MPIDR_CPU_MASK;
+	cluster_id = MPIDR_AFFLVL2_VAL(mpidr);
+	cpu_id = MPIDR_AFFLVL1_VAL(mpidr);
 
 	if ((cluster_id >= PLATFORM_CLUSTER_COUNT) || (cpu_id >= PLATFORM_CORE_COUNT))
 		return -1;

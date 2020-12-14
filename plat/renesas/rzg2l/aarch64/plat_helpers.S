@@ -19,6 +19,7 @@ endfunc platform_mem_init
 
 func plat_my_core_pos
 	mrs x0, mpidr_el1
+	lsr x0, x0, #MPIDR_AFF1_SHIFT
 	and x0, x0, #MPIDR_CPU_MASK
 	ret
 endfunc plat_my_core_pos
