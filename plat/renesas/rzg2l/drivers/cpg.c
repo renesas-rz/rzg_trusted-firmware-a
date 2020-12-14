@@ -458,7 +458,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		(uintptr_t)CPG_RST_ROM,
 		(uintptr_t)CPG_RSTMON_ROM,
 		0x00010001,
-		CPG_T_RST 
+		CPG_T_RST
 	},
 	{		/* GIC600 */
 		(uintptr_t)CPG_RST_GIC600,
@@ -616,7 +616,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* ETHER */
 		(uintptr_t)CPG_RST_ETH,
 		(uintptr_t)CPG_RSTMON_ETH,
-		0x00000000, 
+		0x00000000,
 		CPG_T_RST
 	},
 	{		/* I2C */
@@ -650,7 +650,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		CPG_T_RST
 	},
 	{		/* CAN */
-		(uintptr_t)CPG_RST_CANFD, 
+		(uintptr_t)CPG_RST_CANFD,
 		(uintptr_t)CPG_RSTMON_CANFD,
 		0x00000000,
 		CPG_T_RST
