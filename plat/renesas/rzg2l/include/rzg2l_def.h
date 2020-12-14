@@ -48,5 +48,6 @@
 
 /* Base address where parameters to BL31 are stored */
 #define PARAMS_BASE					(RZG2L_SRAM_BASE + 0x0001F000)
+#define PARAMS_SIZE					(0x1000)
 
 #endif /* __RZG2L_DEF_H__ */

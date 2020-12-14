@@ -18,7 +18,6 @@ $(eval $(call add_define,DEBUG_RZG2L_FPGA))
 $(eval $(call add_define,DEBUG_SPI_MULTI_SLOW))
 
 # Enable workarounds for selected Cortex-A55 erratas.
-ERRATA_A55_1221012	:= 1
 ERRATA_A55_1530923	:= 1
 
 PLAT_INCLUDES	:=  -Iplat/renesas/rzg2l/include						\
