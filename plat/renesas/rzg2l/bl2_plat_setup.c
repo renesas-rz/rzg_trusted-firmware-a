@@ -13,18 +13,21 @@
 #include <drivers/generic_delay_timer.h>
 #include <lib/xlat_tables/xlat_tables_compat.h>
 #include <plat/common/common_def.h>
+#include <lib/mmio.h>
 #include "pfc.h"
 #include "cpg.h"
 #include "syc.h"
 #include "scifa.h"
 #include "ddr.h"
+#include "sys_regs.h"
 #include "rzg2l_def.h"
 #include "rzg2l_private.h"
-#include <drivers/delay_timer.h>
 
 static const mmap_region_t rzg2l_mmap[] = {
 	MAP_REGION_FLAT(RZG2L_SRAM_BASE, RZG2L_SRAM_SIZE,
 			MT_MEMORY | MT_RW | MT_SECURE),
+	MAP_REGION_FLAT(PARAMS_BASE, PARAMS_SIZE,
+			MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(RZG2L_DEVICE_BASE, RZG2L_DEVICE_SIZE,
 			MT_DEVICE | MT_RW | MT_SECURE),
 	MAP_REGION_FLAT(RZG2L_SPIROM_BASE, RZG2L_SPIROM_SIZE,
@@ -120,6 +123,8 @@ void bl2_platform_setup(void)
 	/* initialize TZC-400 */
 	plat_tzc400_setup(RZG2L_TZC_DDR_BASE);
 	plat_tzc400_setup(RZG2L_TZC_SPI_BASE);
+
+	mmio_write_32(SYS_SLVACCCTL1, mmio_read_32(SYS_SLVACCCTL1) & 0xFFFFFF3F);
 
 #if !DEBUG_RZG2L_FPGA
 	/* initialize DDR */
