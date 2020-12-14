@@ -17,7 +17,7 @@
 #include <lib/mmio.h>
 #include "spi_multi.h"
 
-static int spi_multi_init = 0;
+static int spi_multi_init;
 
 /* As we need to be able to keep state for seek, only one file can be open
  * at a time. Make this a structure and point to the entity->info. When we
@@ -86,11 +86,11 @@ static int memmap_dev_open(const uintptr_t dev_spec __unused,
 			   io_dev_info_t **dev_info)
 {
 	int ret = 0;
-	
+
 	assert(dev_info != NULL);
 	*dev_info = (io_dev_info_t *)&memmap_dev_info; /* cast away const */
-	
-	if(spi_multi_init == 0) {
+
+	if (spi_multi_init == 0) {
 		spi_multi_init = 1;
 #if DEBUG_SPI_MULTI_SLOW
 		ret = spi_multi_setup(DATA_READ_COMMAND);
@@ -98,7 +98,7 @@ static int memmap_dev_open(const uintptr_t dev_spec __unused,
 		ret = spi_multi_setup(QUAD_FAST_READ_COMMAND);
 #endif
 	}
-	
+
 	return ret;
 }
 
@@ -257,6 +257,7 @@ static int memmap_block_close(io_entity_t *entity)
 int register_io_dev_memmap(const io_dev_connector_t **dev_con)
 {
 	int result;
+
 	assert(dev_con != NULL);
 
 	result = io_register_device(&memmap_dev_info);

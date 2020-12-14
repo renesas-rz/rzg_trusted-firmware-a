@@ -24,7 +24,7 @@
 
 typedef struct {
 	uint32_t  phycnt_data;
-	uint32_t  phyadj2_data;;
+	uint32_t  phyadj2_data;
 } SPI_MULTI_ADJ;
 
 SPI_MULTI_ADJ spi_multi_adj_tbl[] = {
@@ -37,35 +37,34 @@ SPI_MULTI_ADJ spi_multi_adj_tbl[] = {
 	{ (PHYCNT_CKSEL_SLOW | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA1 },
 	{ (PHYCNT_CKSEL_SLOW | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA2 },
 };
-	
+
 #endif
 
 void spi_multi_send_reset(void)
 {
 	volatile uint32_t val = 0;
-	
+
 	/* RESET ENABLE command send */
 	mmio_write_32(SPIM_PHYCNT, SPIM_PHYCNT_DATA);
 	mmio_write_32(SPIM_CMNCR, SPIM_CMNCR_SM_DATA);
-	
+
 	mmio_write_32(SPIM_SMCMR, SPIM_SMCMR_RE_DATA);
 	mmio_write_32(SPIM_SMENR, SPIM_SMENR_DATA);
 	mmio_write_32(SPIM_SMCR, SPIM_SMCR_DATA);
-	
+
 	/* Wait until the transfer is complete */
 	do {
 		val = mmio_read_32(SPIM_CMNSR);
-	}while((val & CMNSR_TEND) == 0);
-	
+	} while ((val & CMNSR_TEND) == 0);
+
 	/* RESET MEMORY command send */
 	mmio_write_32(SPIM_SMCMR, SPIM_SMCMR_RM_DATA);
 	mmio_write_32(SPIM_SMCR, SPIM_SMCR_DATA);
-	
+
 	/* Wait until the transfer is complete */
 	do {
 		val = mmio_read_32(SPIM_CMNSR);
-	}while((val & CMNSR_TEND) == 0);
-	
+	} while ((val & CMNSR_TEND) == 0);
 }
 
 int spi_multi_setup(uint32_t command)
@@ -81,9 +80,9 @@ int spi_multi_setup(uint32_t command)
 
 	/* send RESET commnad. */
 	//spi_multi_send_reset();
-	
+
 #endif
-	
+
 #if DEBUG_SPI_MULTI_SLOW
 	mmio_write_32(SPIM_CMNCR, SPIM_CMNCR_DATA);
 #else
@@ -94,7 +93,7 @@ int spi_multi_setup(uint32_t command)
 		  CMNCR_MOIIO3_OUT1    | CMNCR_DEF_DATA;
 	mmio_write_32(SPIM_CMNCR, val);
 #endif
-	
+
 #if DEBUG_SPI_MULTI_SLOW
 	mmio_write_32(SPIM_DRCR, SPIM_DRCR_DATA);
 #else
@@ -107,10 +106,10 @@ int spi_multi_setup(uint32_t command)
 	mmio_write_32(SPIM_DRCR, val);
 	mmio_read_32(SPIM_DRCR);
 #endif
-	
+
 	/* Set the data read command */
 	mmio_write_32(SPIM_DRCMR, command);
-	
+
 #if DEBUG_SPI_MULTI_SLOW
 	mmio_write_32(SPIM_PHYCNT, SPIM_PHYCNT_DATA);
 #else
@@ -118,7 +117,7 @@ int spi_multi_setup(uint32_t command)
 	val = PHYCNT_DEF_DATA;
 	mmio_write_32(SPIM_PHYCNT, val);
 #endif
-	
+
 #if DEBUG_SPI_MULTI_SLOW
 	mmio_write_32(SPIM_PHYOFFSET1, SPIM_PHYOFFSET1_DATA);
 #else
@@ -126,7 +125,7 @@ int spi_multi_setup(uint32_t command)
 	val = PHYOFFSET1_DEF_DATA | PHYOFFSET1_DDRTMG_SPIDRE_0;
 	mmio_write_32(SPIM_PHYOFFSET1, val);
 #endif
-	
+
 #if DEBUG_SPI_MULTI_SLOW
 	mmio_write_32(SPIM_DRENR, SPIM_DRENR_DATA);
 #else
@@ -136,80 +135,79 @@ int spi_multi_setup(uint32_t command)
 		  DRENR_ADE_ADD23_OUT | DRENR_OPDE_NO_OUT;
 	mmio_write_32(SPIM_DRENR, val);
 #endif
-	
+
 #if !DEBUG_SPI_MULTI_SLOW
 	/* Extended external address setting */
 	//val = DREAR_EAC_EXADDR27;
 	//mmio_write_32(SPIM_DREAR, val);
 #endif
-	
+
 #if DEBUG_SPI_MULTI_SLOW
 	mmio_write_32(SPIM_DRDMCR, SPIM_DRDMCR_DATA);
 #else
 	/* Dummy cycle setting */
 	mmio_write_32(SPIM_DRDMCR, DRDMCR_DMCYC_8CYCLE);
 #endif
-	
+
 #if DEBUG_SPI_MULTI_SLOW
 	mmio_write_32(SPIM_DRDRENR, SPIM_DRDRENR_DATA);
 #else
 	/* Change to SPI flash mode */
 	mmio_write_32(SPIM_DRDRENR, 0x00000000);
 #endif
-	
+
 #if !DEBUG_SPI_MULTI_SLOW
 	/* Wait until the transfer is complete */
 	do {
 		val = mmio_read_32(SPIM_CMNSR);
-	}while((val & CMNSR_TEND) == 0);
-	
+	} while ((val & CMNSR_TEND) == 0);
+
 	/* Timing adjustment */
 	mmio_write_32(SPIM_PHYADJ1, PHYADJ1_DEF_DATA);
 	mmio_write_32(SPIM_PHYADJ2, PHYADJ2_DEF_DATA);
-	
-	for(cnt = 0; cnt < ARRAY_SIZE(spi_multi_adj_tbl); cnt++) {
+
+	for (cnt = 0; cnt < ARRAY_SIZE(spi_multi_adj_tbl); cnt++) {
 		/* Wait until the transfer is complete */
 		do {
 			val = mmio_read_32(SPIM_CMNSR);
-		}while((val & CMNSR_TEND) == 0);
-		
+		} while ((val & CMNSR_TEND) == 0);
+
 		mmio_write_32(SPIM_PHYADJ1, PHYADJ1_ADJ_DATA);
 		mmio_write_32(SPIM_PHYADJ2, spi_multi_adj_tbl[cnt].phyadj2_data);
 		mmio_write_32(SPIM_PHYCNT, spi_multi_adj_tbl[cnt].phycnt_data);
-		
+
 		dat = *(volatile uint32_t *)(0x2001D210);
-		if(dat == 0x6d08d447) {
+		if (dat == 0x6d08d447) {
 			adj_ok1 = cnt;
 			flg++;
 			break;
 		}
 	}
-	
-	for(cnt = 0; cnt < ARRAY_SIZE(spi_multi_adj_tbl); cnt++) {
+
+	for (cnt = 0; cnt < ARRAY_SIZE(spi_multi_adj_tbl); cnt++) {
 		/* Wait until the transfer is complete */
 		do {
 			val = mmio_read_32(SPIM_CMNSR);
-		}while((val & CMNSR_TEND) == 0);
-		
+		} while ((val & CMNSR_TEND) == 0);
+
 		mmio_write_32(SPIM_PHYADJ1, PHYADJ1_ADJ_DATA);
 		mmio_write_32(SPIM_PHYADJ2, spi_multi_adj_tbl[cnt].phyadj2_data);
 		mmio_write_32(SPIM_PHYCNT, spi_multi_adj_tbl[cnt].phycnt_data);
-		
+
 		dat = *(volatile uint32_t *)(0x2001D210);
-		if(dat == 0x6d08d447) {
+		if (dat == 0x6d08d447) {
 			adj_ok2 = cnt;
 			flg++;
 			break;
 		}
 	}
-	
-	if(flg == 2) {
+
+	if (flg == 2) {
 		val = (adj_ok1 + adj_ok2) / 2;
 		mmio_write_32(SPIM_PHYADJ1, PHYADJ1_ADJ_DATA);
 		mmio_write_32(SPIM_PHYADJ2, spi_multi_adj_tbl[val].phyadj2_data);
 		mmio_write_32(SPIM_PHYCNT, spi_multi_adj_tbl[val].phycnt_data);
-	}
-	else {
+	} else {
 		ret = -1;
 	}
 #endif

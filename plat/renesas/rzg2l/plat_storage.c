@@ -92,22 +92,22 @@ void rzg2l_io_setup(void)
 	const io_dev_connector_t *memmap;
 	const io_dev_connector_t *rzg2l;
 	uint16_t boot_dev;
-	
-	boot_dev = *((uint16_t*)RZG2L_BOOTINFO_BASE);
+
+	boot_dev = *((uint16_t *)RZG2L_BOOTINFO_BASE);
 
 	boot_io_drv_id = FIP_IMAGE_ID;
 
 	register_io_dev_fip(&rzg2l);
-	
+
 	if (boot_dev == BOOT_MODE_SPI_1_8 ||
 		boot_dev == BOOT_MODE_SPI_3_3) {
 		register_io_dev_memmap(&memmap);
 	} else {
 		panic();
 	}
-	
+
 	io_dev_open(rzg2l, 0, &fip_dev_handle);
-	
+
 	if (boot_dev == BOOT_MODE_SPI_1_8 ||
 		boot_dev == BOOT_MODE_SPI_3_3) {
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
