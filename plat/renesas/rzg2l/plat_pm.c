@@ -24,11 +24,10 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 		{ CPG_CORE0_PCHCTL, CPG_CORE0_PCHMON },
 		{ CPG_CORE1_PCHCTL, CPG_CORE1_PCHMON }
 	};
-
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
-	if (coreid > 1) {
+
+	if (coreid > 1)
 		return PSCI_E_INVALID_PARAMS;
-	}
 
 	mmio_write_32(rval[coreid][0], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
 	mmio_write_32(rval[coreid][1], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
