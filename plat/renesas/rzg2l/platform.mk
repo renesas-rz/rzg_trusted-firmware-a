@@ -7,7 +7,6 @@
 BL2_AT_EL3						:= 1
 COLD_BOOT_SINGLE_CPU			:= 1
 PROGRAMMABLE_RESET_ADDRESS		:= 1
-RESET_TO_BL31					:= 1
 WARMBOOT_ENABLE_DCACHE_EARLY	:= 1
 GICV3_SUPPORT_GIC600			:= 1
 HW_ASSISTED_COHERENCY			:= 1
@@ -18,7 +17,6 @@ $(eval $(call add_define,DEBUG_RZG2L_FPGA))
 $(eval $(call add_define,DEBUG_SPI_MULTI_SLOW))
 
 # Enable workarounds for selected Cortex-A55 erratas.
-ERRATA_A55_1221012	:= 1
 ERRATA_A55_1530923	:= 1
 
 PLAT_INCLUDES	:=  -Iplat/renesas/rzg2l/include						\

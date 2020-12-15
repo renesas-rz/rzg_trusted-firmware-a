@@ -24,7 +24,10 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 		{ CPG_CORE0_PCHCTL, CPG_CORE0_PCHMON },
 		{ CPG_CORE1_PCHCTL, CPG_CORE1_PCHMON }
 	};
-	uint8_t coreid = mpidr & 0x1;
+	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
+
+	if (coreid > 1)
+		return PSCI_E_INVALID_PARAMS;
 
 	mmio_write_32(rval[coreid][0], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
 	mmio_write_32(rval[coreid][1], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
@@ -34,13 +37,12 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 	while ((mmio_read_32(CPG_RSTMON_CA55) & (0x1 << coreid)) == 0x0)
 		;
 
-	mmio_write_32(pch[coreid][0], 0x00080001);
-
 	/* Deassert PORESET */
-	mmio_write_32(CPG_RST_CA55, (0x00010001 << coreid));
+	mmio_write_32(CPG_RST_CA55, (0x00050005 << coreid));
 	while ((mmio_read_32(CPG_RSTMON_CA55) & (0x1 << coreid)) != 0x0)
 		;
 
+	mmio_write_32(pch[coreid][0], 0x00080001);
 	while ((mmio_read_32(pch[coreid][1]) & 0x1) != 0x1)
 		;
 	mmio_write_32(pch[coreid][0], 0x00080000);

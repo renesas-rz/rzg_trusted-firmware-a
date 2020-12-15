@@ -26,6 +26,7 @@ static const mmap_region_t rzg2l_mmap[] = {
 };
 
 static console_t rzg2l_bl31_console;
+static bl2_to_bl31_params_mem_t from_bl2;
 
 void bl31_early_platform_setup2(u_register_t arg0,
 								u_register_t arg1,
@@ -45,6 +46,9 @@ void bl31_early_platform_setup2(u_register_t arg0,
 
 	console_set_scope(&rzg2l_bl31_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
+
+	/* copy bl2_to_bl31_params_mem_t*/
+	memcpy(&from_bl2, (void *)arg0, sizeof(from_bl2));
 }
 
 void bl31_plat_arch_setup(void)
@@ -75,11 +79,9 @@ void bl31_platform_setup(void)
 entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
 {
 	entry_point_info_t *ep = NULL;
-	bl2_to_bl31_params_mem_t *from_bl2 =
-		(bl2_to_bl31_params_mem_t*)PARAMS_BASE;
 
 	if (type == NON_SECURE)
-		ep = &from_bl2->bl33_ep_info;
+		ep = &from_bl2.bl33_ep_info;
 
 	return ep;
 }
