@@ -92,11 +92,7 @@ static int memmap_dev_open(const uintptr_t dev_spec __unused,
 
 	if (spi_multi_init == 0) {
 		spi_multi_init = 1;
-#if DEBUG_SPI_MULTI_SLOW
-		ret = spi_multi_setup(DATA_READ_COMMAND);
-#else
 		ret = spi_multi_setup(QUAD_FAST_READ_COMMAND);
-#endif
 	}
 
 	return ret;

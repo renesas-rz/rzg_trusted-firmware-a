@@ -12,9 +12,7 @@ GICV3_SUPPORT_GIC600			:= 1
 HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
 DEBUG_RZG2L_FPGA				:= 1
-DEBUG_SPI_MULTI_SLOW			:= 0
 $(eval $(call add_define,DEBUG_RZG2L_FPGA))
-$(eval $(call add_define,DEBUG_SPI_MULTI_SLOW))
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_1530923	:= 1
