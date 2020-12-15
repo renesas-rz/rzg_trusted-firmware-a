@@ -1157,6 +1157,10 @@ void cpg_setup(void)
 	cpg_selector_on_off(CPG_SEL_PLL3_1_ON_OFF, CPG_ON);
 	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_ON);
 	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_ON);
+	cpg_selector_on_off(CPG_SEL_PLL5_1_ON_OFF, CPG_ON);
+	cpg_selector_on_off(CPG_SEL_PLL5_3_ON_OFF, CPG_ON);
+	cpg_selector_on_off(CPG_SEL_PLL5_4_ON_OFF, CPG_ON);
+	cpg_selector_on_off(CPG_SEL_PLL6_1_ON_OFF, CPG_ON);
 	cpg_pll_setup();
 	cpg_clk_on_setup();
 	cpg_reset_setup();
