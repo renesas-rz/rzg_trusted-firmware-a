@@ -22,7 +22,7 @@ PLAT_INCLUDES	:=  -Iplat/renesas/rzg2l/include						\
 
 RZG2L_COMMON		:=	plat/renesas/rzg2l/rzg2l_plat_common.c
 
-RZG2L_TIMER_SOURCES := drivers/delay_timer/generic_delay_timer.c	\
+RZG2L_TIMER_SOURCES := drivers/delay_timer/generic_delay_timer.c		\
 					   drivers/delay_timer/delay_timer.c
 
 BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\

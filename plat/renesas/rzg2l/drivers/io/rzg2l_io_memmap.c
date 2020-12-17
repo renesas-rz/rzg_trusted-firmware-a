@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2014-2018, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -16,8 +17,6 @@
 #include <lib/utils.h>
 #include <lib/mmio.h>
 #include "spi_multi.h"
-
-static int spi_multi_init;
 
 /* As we need to be able to keep state for seek, only one file can be open
  * at a time. Make this a structure and point to the entity->info. When we
@@ -83,17 +82,10 @@ static const io_dev_info_t memmap_dev_info = {
 static int memmap_dev_open(const uintptr_t dev_spec __unused,
 			   io_dev_info_t **dev_info)
 {
-	int ret = 0;
-
 	assert(dev_info != NULL);
 	*dev_info = (io_dev_info_t *)&memmap_dev_info; /* cast away const */
 
-	if (spi_multi_init == 0) {
-		spi_multi_init = 1;
-		ret = spi_multi_setup(SPI_MULTI_BIT_WIDE_1_1_4);
-	}
-
-	return ret;
+	return  spi_multi_setup(SPI_MULTI_BIT_WIDE_1_1_4);
 }
 
 

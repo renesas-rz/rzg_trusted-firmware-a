@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include <stdint.h>
 #include <lib/utils_def.h>
+#include <lib/mmio.h>
 #include "spi_multi_regs.h"
 #include "spi_multi.h"
-#include <lib/mmio.h>
-
 
 typedef struct {
 	uint32_t  phycnt_data;
@@ -36,7 +41,7 @@ static SPI_MULTI_BIT_WIDE_PTN spi_multi_bit_ptn[2] = {
 int spi_multi_setup(uint32_t ptn)
 {
 	int ret = 0;
-	volatile uint32_t val = 0;
+	uint32_t val;
 	uint32_t dat;
 	uint32_t cnt;
 	uint32_t adj_ok1;
@@ -44,8 +49,7 @@ int spi_multi_setup(uint32_t ptn)
 	int      flg = 0;
 
 	/* SDR mode serial flash settings */
-	val = PHYCNT_DEF_DATA;
-	mmio_write_32(SPIM_PHYCNT, val);
+	mmio_write_32(SPIM_PHYCNT, PHYCNT_DEF_DATA);
 
 	/* Read timing setting */
 	val = PHYOFFSET1_DEF_DATA | PHYOFFSET1_DDRTMG_SPIDRE_0;
@@ -60,10 +64,9 @@ int spi_multi_setup(uint32_t ptn)
 
 	val = SSLDR_SCKDL_4_5 | SSLDR_SLNDL_4QSPIn | SSLDR_SPNDL_4QSPIn;
 	mmio_write_32(SPIM_SSLDR, val);
-	
+
 	/* Clear the RBE bit */
-	val = DRCR_RBE;
-	mmio_clrbits_32(SPIM_DRCR, val);
+	mmio_clrbits_32(SPIM_DRCR, DRCR_RBE);
 	val = DRCR_RBE | DRCR_RCF | DRCR_RBURST_32_DATALEN;
 	mmio_write_32(SPIM_DRCR, val);
 	mmio_read_32(SPIM_DRCR);
@@ -71,15 +74,17 @@ int spi_multi_setup(uint32_t ptn)
 	/* Set the data read command */
 	mmio_write_32(SPIM_DRCMR, spi_multi_bit_ptn[ptn].command);
 
-	/* Set the bit width of command and address output to 1 bit and the address size to 4 bytes */
+	/* Set the bit width of command and address output to 1 bit and	*/
+	/* the address size to 4 byte									*/
 	val = DRENR_CDB_1BIT | DRENR_OCDB_1BIT | spi_multi_bit_ptn[ptn].adr_wide |
 		  DRENR_OPDB_1BIT | spi_multi_bit_ptn[ptn].data_wide | DRENR_CDE | DRENR_DME |
 		  DRENR_ADE_ADD23_OUT | DRENR_OPDE_NO_OUT;
 	mmio_write_32(SPIM_DRENR, val);
 
+#if !DEBUG_RZG2L_FPGA
 	/* Extended external address setting */
-	//val = DREAR_EAC_EXADDR27;
-	//mmio_write_32(SPIM_DREAR, val);
+	mmio_write_32(SPIM_DREAR, DREAR_EAC_EXADDR27);
+#endif
 
 	/* Dummy cycle setting */
 	mmio_write_32(SPIM_DRDMCR, spi_multi_bit_ptn[ptn].cycle);
