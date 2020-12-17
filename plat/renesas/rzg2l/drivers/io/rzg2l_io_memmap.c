@@ -90,7 +90,7 @@ static int memmap_dev_open(const uintptr_t dev_spec __unused,
 
 	if (spi_multi_init == 0) {
 		spi_multi_init = 1;
-		ret = spi_multi_setup(QUAD_FAST_READ_COMMAND);
+		ret = spi_multi_setup(SPI_MULTI_BIT_WIDE_1_1_4);
 	}
 
 	return ret;
@@ -101,8 +101,6 @@ static int memmap_dev_open(const uintptr_t dev_spec __unused,
 /* Close a connection to the memmap device */
 static int memmap_dev_close(io_dev_info_t *dev_info)
 {
-	/* NOP */
-	/* TODO: Consider tracking open files and cleaning them up here */
 	return 0;
 }
 

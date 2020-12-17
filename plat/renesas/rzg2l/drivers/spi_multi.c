@@ -10,7 +10,7 @@ typedef struct {
 	uint32_t  phyadj2_data;
 } SPI_MULTI_ADJ;
 
-SPI_MULTI_ADJ spi_multi_adj_tbl[] = {
+static SPI_MULTI_ADJ spi_multi_adj_tbl[] = {
 	{ (PHYCNT_CKSEL_FAST | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA1 },
 	{ (PHYCNT_CKSEL_FAST | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA2 },
 	{ (PHYCNT_CKSEL_MID2 | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA1 },
@@ -21,7 +21,19 @@ SPI_MULTI_ADJ spi_multi_adj_tbl[] = {
 	{ (PHYCNT_CKSEL_SLOW | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA2 },
 };
 
-int spi_multi_setup(uint32_t command)
+typedef struct {
+	uint32_t  command;
+	uint32_t  adr_wide;
+	uint32_t  data_wide;
+	uint32_t  cycle;
+} SPI_MULTI_BIT_WIDE_PTN;
+
+static SPI_MULTI_BIT_WIDE_PTN spi_multi_bit_ptn[2] = {
+	{ 0x6B << 16, DRENR_ADB_1BIT, DRENR_DRDB_4BIT, DRDMCR_DMCYC_8CYCLE },
+	{ 0xEB << 16, DRENR_ADB_4BIT, DRENR_DRDB_4BIT, DRDMCR_DMCYC_10CYCLE }
+};
+
+int spi_multi_setup(uint32_t ptn)
 {
 	int ret = 0;
 	volatile uint32_t val = 0;
@@ -57,11 +69,11 @@ int spi_multi_setup(uint32_t command)
 	mmio_read_32(SPIM_DRCR);
 
 	/* Set the data read command */
-	mmio_write_32(SPIM_DRCMR, command);
+	mmio_write_32(SPIM_DRCMR, spi_multi_bit_ptn[ptn].command);
 
 	/* Set the bit width of command and address output to 1 bit and the address size to 4 bytes */
-	val = DRENR_CDB_1BIT | DRENR_OCDB_1BIT | DRENR_ADB_1BIT |
-		  DRENR_OPDB_1BIT | DRENR_DRDB_4BIT | DRENR_CDE | DRENR_DME |
+	val = DRENR_CDB_1BIT | DRENR_OCDB_1BIT | spi_multi_bit_ptn[ptn].adr_wide |
+		  DRENR_OPDB_1BIT | spi_multi_bit_ptn[ptn].data_wide | DRENR_CDE | DRENR_DME |
 		  DRENR_ADE_ADD23_OUT | DRENR_OPDE_NO_OUT;
 	mmio_write_32(SPIM_DRENR, val);
 
@@ -70,7 +82,7 @@ int spi_multi_setup(uint32_t command)
 	//mmio_write_32(SPIM_DREAR, val);
 
 	/* Dummy cycle setting */
-	mmio_write_32(SPIM_DRDMCR, DRDMCR_DMCYC_8CYCLE);
+	mmio_write_32(SPIM_DRDMCR, spi_multi_bit_ptn[ptn].cycle);
 
 	/* Change to SPI flash mode */
 	mmio_write_32(SPIM_DRDRENR, 0x00000000);
