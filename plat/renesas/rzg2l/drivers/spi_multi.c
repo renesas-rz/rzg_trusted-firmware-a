@@ -5,13 +5,6 @@
 #include <lib/mmio.h>
 
 
-#define SPIM_CMNCR_SM_DATA		(0x81a4f000)
-#define SPIM_PHYCNT_DATA		(0x80030260)
-#define SPIM_SMCR_DATA			(0x00000001)
-#define SPIM_SMCMR_RE_DATA		(0x00660000)
-#define SPIM_SMCMR_RM_DATA		(0x00990000)
-#define SPIM_SMENR_DATA			(0x00004000)
-
 typedef struct {
 	uint32_t  phycnt_data;
 	uint32_t  phyadj2_data;
@@ -38,6 +31,14 @@ int spi_multi_setup(uint32_t command)
 	uint32_t adj_ok2;
 	int      flg = 0;
 
+	/* SDR mode serial flash settings */
+	val = PHYCNT_DEF_DATA;
+	mmio_write_32(SPIM_PHYCNT, val);
+
+	/* Read timing setting */
+	val = PHYOFFSET1_DEF_DATA | PHYOFFSET1_DDRTMG_SPIDRE_0;
+	mmio_write_32(SPIM_PHYOFFSET1, val);
+
 	/* Set the QSPIn_SSL setting value */
 	val = CMNCR_IO0FV_OUT_PREV | CMNCR_IO2FV_OUT_PREV |
 		  CMNCR_IO3FV_OUT_PREV | CMNCR_MOIIO0_OUT1 |
@@ -57,14 +58,6 @@ int spi_multi_setup(uint32_t command)
 
 	/* Set the data read command */
 	mmio_write_32(SPIM_DRCMR, command);
-
-	/* SDR mode serial flash settings */
-	val = PHYCNT_DEF_DATA;
-	mmio_write_32(SPIM_PHYCNT, val);
-
-	/* Read timing setting */
-	val = PHYOFFSET1_DEF_DATA | PHYOFFSET1_DDRTMG_SPIDRE_0;
-	mmio_write_32(SPIM_PHYOFFSET1, val);
 
 	/* Set the bit width of command and address output to 1 bit and the address size to 4 bytes */
 	val = DRENR_CDB_1BIT | DRENR_OCDB_1BIT | DRENR_ADB_1BIT |
