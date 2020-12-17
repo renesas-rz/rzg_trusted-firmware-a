@@ -69,33 +69,6 @@ static CPG_PLL_SETDATA_146 cpg_pll_setdata_146[] = {
 #define	CPG_PLL3_INDEX					(1)
 #define	CPG_PLL5_INDEX					(2)
 
-static CPG_PLL_SETDATA_235 cpg_pll_setdata_235[] = {
-	{
-		{ CPG_PLL2_CLK1, 0x01110111 },
-		{ CPG_PLL2_CLK2, 0x01550100 },
-		{ CPG_PLL2_CLK3, 0x55555506 },
-		{ CPG_PLL2_CLK4, 0x008500FF },
-		{ CPG_PLL2_CLK5, 0x00000016 },
-		{ CPG_PLL2_STBY, 0x00000011 }
-	},
-	{
-		{ CPG_PLL3_CLK1, 0x01110111 },
-		{ CPG_PLL3_CLK2, 0x01550100 },
-		{ CPG_PLL3_CLK3, 0x55555506 },
-		{ CPG_PLL3_CLK4, 0x008500FF },
-		{ CPG_PLL3_CLK5, 0x00000016 },
-		{ CPG_PLL3_STBY, 0x00000011 }
-	},
-	{
-		{ CPG_PLL5_CLK1, 0x01110111 },
-		{ CPG_PLL5_CLK2, 0x01550100 },
-		{ CPG_PLL5_CLK3, 0x00000006 },
-		{ CPG_PLL5_CLK4, 0x007D00FF },
-		{ CPG_PLL5_CLK5, 0x00000016 },
-		{ CPG_PLL5_STBY, 0x00010015 }
-	}
-};
-
 static const CPG_SETUP_DATA early_setup_tbl[] = {
 	{
 		(uintptr_t)CPG_CLKON_SYC,
@@ -778,18 +751,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 };
 
 static CPG_REG_SETTING cpg_select_tbl[] = {
-	{ (uintptr_t)CPG_PL1_DDIV,              0x00010000 },
-	{ (uintptr_t)CPG_PL2_DDIV,              0x11110000 },
 	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110100 },
-	{ (uintptr_t)CPG_PL3B_DDIV,             0x00010000 },
-	{ (uintptr_t)CPG_PL5_SDIV,              0x01010000 },
-	{ (uintptr_t)CPG_PL6_DDIV,              0x00010000 },
-	{ (uintptr_t)CPG_PL2SDHI_DSEL,          0x00110022 },
-	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
-	{ (uintptr_t)CPG_PL3_SSEL,              0x01000000 },
-	{ (uintptr_t)CPG_PL6_SSEL,              0x10000000 },
-	{ (uintptr_t)CPG_PL6_ETH_SSEL,          0x00010000 },
-	{ (uintptr_t)CPG_OTHERFUNC1_REG,        0x00010000 }
 };
 
 #define CPG_SEL_PLL1_ON_OFF					(0)
@@ -1006,16 +968,6 @@ static void cpg_pll_start_146(uint32_t index)
 	mmio_write_32(cpg_pll_setdata_146[index].stby_dat.reg, cpg_pll_setdata_146[index].stby_dat.val);
 }
 
-static void cpg_pll_start_235(uint32_t index)
-{
-	mmio_write_32(cpg_pll_setdata_235[index].clk1_dat.reg, cpg_pll_setdata_235[index].clk1_dat.val);
-	mmio_write_32(cpg_pll_setdata_235[index].clk2_dat.reg, cpg_pll_setdata_235[index].clk2_dat.val);
-	mmio_write_32(cpg_pll_setdata_235[index].clk3_dat.reg, cpg_pll_setdata_235[index].clk3_dat.val);
-	mmio_write_32(cpg_pll_setdata_235[index].clk4_dat.reg, cpg_pll_setdata_235[index].clk4_dat.val);
-	mmio_write_32(cpg_pll_setdata_235[index].clk5_dat.reg, cpg_pll_setdata_235[index].clk5_dat.val);
-	mmio_write_32(cpg_pll_setdata_235[index].stby_dat.reg, cpg_pll_setdata_235[index].stby_dat.val);
-}
-
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
 {
@@ -1040,46 +992,6 @@ static void cpg_pll_setup(void)
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
 	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
-#endif
-
-	/* PLL5 startup */
-	/* PLL5 standby mode transition confirmation */
-#if !DEBUG_RZG2L_FPGA
-	do {
-		val = mmio_read_32(CPG_PLL5_MON);
-	} while ((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) != 0);
-#endif
-
-	/* PLL5 set to normal mode */
-	/* val = mmio_read_32(CPG_PLL5_STBY) | PLL5_STBY_RESETB_WEN | PLL5_STBY_RESETB; */
-	/* mmio_write_32(CPG_PLL5_STBY, val); */
-	cpg_pll_start_235(CPG_PLL5_INDEX);
-
-	/* PLL5 Normal mode transition confirmation */
-#if !DEBUG_RZG2L_FPGA
-	do {
-		val = mmio_read_32(CPG_PLL5_MON);
-	} while ((val & (PLL5_MON_PLL5_RESETB | PLL5_MON_PLL5_LOCK)) == 0);
-#endif
-
-	/* PLL6 startup */
-	/* PLL6 standby mode transition confirmation */
-#if !DEBUG_RZG2L_FPGA
-	do {
-		val = mmio_read_32(CPG_PLL6_MON);
-	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) != 0);
-#endif
-
-	/* Set PLL6 to normal mode */
-	/* val = mmio_read_32(CPG_PLL6_STBY) | PLL6_STBY_RESETB_WEN | PLL6_STBY_RESETB; */
-	/* mmio_write_32(CPG_PLL6_STBY, val); */
-	cpg_pll_start_146(CPG_PLL6_INDEX);
-
-	/* PLL6 Normal mode transition confirmation */
-#if !DEBUG_RZG2L_FPGA
-	do {
-		val = mmio_read_32(CPG_PLL6_MON);
-	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) == 0);
 #endif
 }
 
@@ -1150,11 +1062,9 @@ void cpg_early_setup(void)
 
 void cpg_setup(void)
 {
-	cpg_selector_on_off(CPG_SEL_PLL3_1_ON_OFF, CPG_OFF);
 	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_OFF);
 	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_OFF);
 	cpg_div_sel_setup();
-	cpg_selector_on_off(CPG_SEL_PLL3_1_ON_OFF, CPG_ON);
 	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_ON);
 	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_ON);
 	cpg_pll_setup();
