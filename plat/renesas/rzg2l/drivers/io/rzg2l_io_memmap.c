@@ -50,10 +50,6 @@ static int memmap_block_seek(io_entity_t *entity, int mode,
 static int memmap_block_len(io_entity_t *entity, size_t *length);
 static int memmap_block_read(io_entity_t *entity, uintptr_t buffer,
 			     size_t length, size_t *length_read);
-#if 0
-static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
-			      size_t length, size_t *length_written);
-#endif
 static int memmap_block_close(io_entity_t *entity);
 static int memmap_dev_close(io_dev_info_t *dev_info);
 
@@ -205,35 +201,6 @@ static int memmap_block_read(io_entity_t *entity, uintptr_t buffer,
 
 	return 0;
 }
-
-#if 0
-/* Write data to a file on the memmap device */
-static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
-			      size_t length, size_t *length_written)
-{
-	file_state_t *fp;
-	unsigned long long pos_after;
-
-	assert(entity != NULL);
-	assert(length_written != NULL);
-
-	fp = (file_state_t *) entity->info;
-
-	/* Assert that file position is valid for this write operation */
-	pos_after = fp->file_pos + length;
-	assert((pos_after >= fp->file_pos) && (pos_after <= fp->size));
-
-	memcpy((void *)((uintptr_t)(fp->base + fp->file_pos)),
-	       (void *)buffer, length);
-
-	*length_written = length;
-
-	/* Set file position after write */
-	fp->file_pos = pos_after;
-
-	return 0;
-}
-#endif
 
 /* Close a file on the memmap device */
 static int memmap_block_close(io_entity_t *entity)
