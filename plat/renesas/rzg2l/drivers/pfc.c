@@ -82,38 +82,38 @@ static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
 static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	/* SD0_CLK */
 	{
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH06, 0x0000000000010101 },		/* IOLH */
-		{ PFC_OFF, (uintptr_t)PFC_PUPD06, 0x0000000000000000 },		/* PUPD */
-		{ PFC_OFF, (uintptr_t)PFC_SR06,   0x0000000000010101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_PMC22,  0x0003 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC22,  0x00000003 },				/* PFC */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH06, 0x0000000000010101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD06, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR06,   0x0000000000010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN06,  0x0000000000000100 }		/* IEN */
 	},
 	/* SD0_DATA */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH07, 0x0101010101010101 },		/* IOLH */
-		{ PFC_OFF, (uintptr_t)PFC_PUPD07, 0x0000000000000000 },		/* PUPD */
-		{ PFC_OFF, (uintptr_t)PFC_SR07,   0x0101010101010101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0101010101010101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD07, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR07,   0x0101010101010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN07,  0x0101010101010101 }		/* IEN */
 	},
 	/* SD1_CLK */
 	{
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH08, 0x0000000000000101 },		/* IOLH */
-		{ PFC_OFF, (uintptr_t)PFC_PUPD08, 0x0000000000000000 },		/* PUPD */
-		{ PFC_OFF, (uintptr_t)PFC_SR08,   0x0000000000000101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_PMC23,  0x0003 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC23,  0x00000003 },				/* PFC */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000000000101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD08, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR08,   0x0000000000000101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN08,  0x0000000000000100 }		/* IEN */
 	},
 	/* SD1_DATA */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH09, 0x0000000001010101 },		/* IOLH */
-		{ PFC_OFF, (uintptr_t)PFC_PUPD09, 0x0000000000000000 },		/* PUPD */
-		{ PFC_OFF, (uintptr_t)PFC_SR09,   0x0000000001010101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH09, 0x0000000001010101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD09, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR09,   0x0000000001010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN09,  0x0000000001010101 }		/* IEN */
 	}
 };
@@ -180,10 +180,18 @@ static void pfc_sd_setup(void)
 	int      cnt;
 
 	/* Since SDx is 3.3V, the initial value will be set. */
-	/* mmio_write_32(PFC_SD_ch0, 0); */
-	/* mmio_write_32(PFC_SD_ch1, 0); */
+	mmio_write_32(PFC_SD_ch0, 1);
+	mmio_write_32(PFC_SD_ch1, 0);
 
 	for (cnt = 0; cnt < PFC_SD_TBL_NUM; cnt++) {
+		/* PMC */
+		if (pfc_sd_reg_tbl[cnt].pmc.flg == PFC_ON) {
+			mmio_write_8(pfc_sd_reg_tbl[cnt].pmc.reg, pfc_sd_reg_tbl[cnt].pmc.val);
+		}
+		/* PFC */
+		if (pfc_sd_reg_tbl[cnt].pfc.flg == PFC_ON) {
+			mmio_write_32(pfc_sd_reg_tbl[cnt].pfc.reg, pfc_sd_reg_tbl[cnt].pfc.val);
+		}
 		/* IOLH */
 		if (pfc_sd_reg_tbl[cnt].iolh.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].iolh.reg, pfc_sd_reg_tbl[cnt].iolh.val);

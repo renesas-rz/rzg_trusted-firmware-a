@@ -50,8 +50,10 @@ static int memmap_block_seek(io_entity_t *entity, int mode,
 static int memmap_block_len(io_entity_t *entity, size_t *length);
 static int memmap_block_read(io_entity_t *entity, uintptr_t buffer,
 			     size_t length, size_t *length_read);
+#if 0
 static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 			      size_t length, size_t *length_written);
+#endif
 static int memmap_block_close(io_entity_t *entity);
 static int memmap_dev_close(io_dev_info_t *dev_info);
 
@@ -67,7 +69,7 @@ static const io_dev_funcs_t memmap_dev_funcs = {
 	.seek = memmap_block_seek,
 	.size = memmap_block_len,
 	.read = memmap_block_read,
-	.write = memmap_block_write,
+	.write = NULL,
 	.close = memmap_block_close,
 	.dev_init = NULL,
 	.dev_close = memmap_dev_close,
@@ -204,7 +206,7 @@ static int memmap_block_read(io_entity_t *entity, uintptr_t buffer,
 	return 0;
 }
 
-
+#if 0
 /* Write data to a file on the memmap device */
 static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 			      size_t length, size_t *length_written)
@@ -231,7 +233,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 	return 0;
 }
-
+#endif
 
 /* Close a file on the memmap device */
 static int memmap_block_close(io_entity_t *entity)
