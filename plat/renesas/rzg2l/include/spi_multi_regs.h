@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #ifndef _SPI_MULTI_REG_H_
 #define _SPI_MULTI_REG_H_
 
