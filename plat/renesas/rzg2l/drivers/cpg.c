@@ -169,12 +169,15 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		0x00000000,
 		CPG_T_CLK
 	},
+// FIXME QA BL2 no.16
+#if 0
 	{		/* WDT */
 		(uintptr_t)CPG_CLKON_WDT,
 		(uintptr_t)CPG_CLKMON_WDT,
 		0x00C300C3,
 		CPG_T_CLK
 	},
+#endif
 #if !DEBUG_RZG2L_FPGA
 	{		/* DDR */
 		(uintptr_t)CPG_CLKON_DDR,
@@ -499,12 +502,15 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		0x00000000,
 		CPG_T_RST
 	},
+// FIXME QA BL2 no.16
+#if 0
 	{		/* WDT */
 		(uintptr_t)CPG_RST_WDT,
 		(uintptr_t)CPG_RSTMON_WDT,
 		0x00090009,
 		CPG_T_RST
 	},
+#endif
 #if !DEBUG_RZG2L_FPGA
 	{		/* DDR */
 		(uintptr_t)CPG_RST_DDR,
@@ -750,9 +756,12 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	},
 };
 
-static CPG_REG_SETTING cpg_select_tbl[] = {
-	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
+static CPG_REG_SETTING cpg_static_select_tbl[] = {
 	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110100 },
+};
+
+static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
+	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
 };
 
 #define CPG_SEL_PLL1_ON_OFF					(0)
@@ -995,12 +1004,12 @@ static void cpg_pll_setup(void)
 #endif
 }
 
-static void cpg_div_sel_setup(void)
+static void cpg_div_sel_setup(CPG_REG_SETTING *tbl, uint32_t size)
 {
 	int cnt;
 
-	for (cnt = 0; cnt < ARRAY_SIZE(cpg_select_tbl); cnt++) {
-		mmio_write_32(cpg_select_tbl[cnt].reg, cpg_select_tbl[cnt].val);
+	for (cnt = 0; cnt < size; cnt++, tbl++) {
+		mmio_write_32(tbl->reg, tbl->val);
 	}
 
 #if !DEBUG_RZG2L_FPGA
@@ -1008,6 +1017,16 @@ static void cpg_div_sel_setup(void)
 	while (mmio_read_32(CPG_CLKSTATUS) != 0)
 		;
 #endif
+}
+
+static void cpg_div_sel_static_setup(void)
+{
+	cpg_div_sel_setup(cpg_static_select_tbl, ARRAY_SIZE(cpg_static_select_tbl));
+}
+
+static void cpg_div_sel_dynamic_setup(void)
+{
+	cpg_div_sel_setup(cpg_dynamic_select_tbl, ARRAY_SIZE(cpg_dynamic_select_tbl));
 }
 
 static void cpg_clk_on_setup(void)
@@ -1025,7 +1044,7 @@ void cpg_active_ddr(void (*disable_phy)(void))
 	/* Assert the reset of DDRTOP */
 	mmio_write_32(CPG_RST_DDR, 0x007F0000);
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007F) != 0x00000000)
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007F) != 0x0000007F)
 		;
 
 	/* Start the clocks of DDRTOP */
@@ -1042,7 +1061,7 @@ void cpg_active_ddr(void (*disable_phy)(void))
 
 	/* De-assert PRESETN */
 	mmio_write_32(CPG_RST_DDR, 0x00020002);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x00000002) != 0x00000002)
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x00000002) != 0x00000000)
 		;
 
 	udelay(1);
@@ -1051,7 +1070,7 @@ void cpg_active_ddr(void (*disable_phy)(void))
 
 	/* De-assert axiY_ARESETn, regARESETn, reset_n */
 	mmio_write_32(CPG_RST_DDR, 0x007D007D);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007D) != 0x0000007D)
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007D) != 0x00000000)
 		;
 
 	udelay(1);
@@ -1066,10 +1085,11 @@ void cpg_setup(void)
 {
 	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_OFF);
 	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_OFF);
-	cpg_div_sel_setup();
+	cpg_div_sel_static_setup();
 	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_ON);
 	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_ON);
 	cpg_pll_setup();
 	cpg_clk_on_setup();
 	cpg_reset_setup();
+	cpg_div_sel_dynamic_setup();
 }
