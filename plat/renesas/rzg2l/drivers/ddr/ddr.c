@@ -20,7 +20,7 @@
 
 #ifdef DDR_TYPE_C_010_D4_01_1
 #include "param_mc_C-010_D4-01-1.c"
-#include "param_swizzle_C-xx0_D4.c"
+#include "param_swizzle_T1c.c"
 #endif
 
 #define MAX_BYTE_LANES		(2U)

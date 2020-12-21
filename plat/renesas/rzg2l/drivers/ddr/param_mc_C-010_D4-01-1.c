@@ -444,38 +444,3 @@ const uint32_t mc_init_tbl[][2] = {
 	{	DENALI_CTL_434,	0x00000000	},
 	{	DENALI_CTL_435,	0x00000000	}
 };
-
-const uint32_t mc_odt_pins_tbl[4] = {
-	0x01000000,
-	0x00000200,
-	0x00000000,
-	0x00000000
-};
-
-const uint32_t mc_mr1_tbl[2] = {
-	0xFFFFF8F9,
-	0x00000200
-};
-
-const uint32_t mc_mr2_tbl[2] = {
-	0xFFFFF1FF,
-	0x00000000
-};
-
-const uint32_t mc_mr5_tbl[2] = {
-	0xFFFFFE3F,
-	0x000001C0
-};
-
-const uint32_t mc_mr6_tbl[2] = {
-	0xFFFFFF80,
-	0x0000001C
-};
-
-const uint32_t mc_phy_settings_tbl[][2] = {
-	{DENALI_CTL_414,	0x576E08E8},
-	{DENALI_CTL_415,	0x00003C22},
-	{DENALI_CTL_416,	0x22227822},
-	{DENALI_CTL_417,	0x00123312}
-};
-
