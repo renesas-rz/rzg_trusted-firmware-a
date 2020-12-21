@@ -51,12 +51,12 @@ static CPG_PLL_SETDATA_146 cpg_pll_setdata_146[] = {
 	{
 		{ CPG_PLL1_CLK1, 0x00001901 },
 		{ CPG_PLL1_CLK2, 0x00180601 },
-		{ CPG_PLL1_STBY, 0x00000005 }
+		{ CPG_PLL1_STBY, 0x00010001 }
 	},
 	{
 		{ CPG_PLL4_CLK1, 0x00003203 },
 		{ CPG_PLL4_CLK2, 0x00082400 },
-		{ CPG_PLL4_STBY, 0x00010005 }
+		{ CPG_PLL4_STBY, 0x00010001 }
 	},
 	{
 		{ CPG_PLL6_CLK1, 0x00003E83 },
@@ -751,6 +751,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 };
 
 static CPG_REG_SETTING cpg_select_tbl[] = {
+	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
 	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110100 },
 };
 
@@ -984,7 +985,6 @@ static void cpg_pll_setup(void)
 #endif
 
 	/* Set PLL4 to normal mode */
-	/* mmio_write_32(CPG_PLL4_STBY, (PLL4_STBY_RESETB_WEN | PLL4_STBY_RESETB)); */
 	cpg_pll_start_146(CPG_PLL4_INDEX);
 
 	/* PLL4 normal mode transition confirmation */
