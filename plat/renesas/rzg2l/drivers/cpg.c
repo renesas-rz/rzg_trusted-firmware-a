@@ -1025,6 +1025,8 @@ void cpg_active_ddr(void (*disable_phy)(void))
 	/* Assert the reset of DDRTOP */
 	mmio_write_32(CPG_RST_DDR, 0x007F0000);
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007F) != 0x00000000)
+		;
 
 	/* Start the clocks of DDRTOP */
 	mmio_write_32(CPG_CLKON_DDR, 0x00030003);
