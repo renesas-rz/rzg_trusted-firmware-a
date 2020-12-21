@@ -11,7 +11,7 @@ WARMBOOT_ENABLE_DCACHE_EARLY	:= 1
 GICV3_SUPPORT_GIC600			:= 1
 HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
-DEBUG_RZG2L_FPGA				:= 1
+DEBUG_RZG2L_FPGA				:= 0
 $(eval $(call add_define,DEBUG_RZG2L_FPGA))
 
 # Enable workarounds for selected Cortex-A55 erratas.
