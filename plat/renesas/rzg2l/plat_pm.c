@@ -11,6 +11,7 @@
 
 #include "cpg_regs.h"
 #include "sys_regs.h"
+#include "rzg2l_private.h"
 
 uintptr_t	gp_warm_ep;
 
