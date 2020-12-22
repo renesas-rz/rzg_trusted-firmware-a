@@ -124,8 +124,6 @@ void bl2_platform_setup(void)
 	plat_tzc400_setup(RZG2L_TZC_DDR_BASE);
 	plat_tzc400_setup(RZG2L_TZC_SPI_BASE);
 
-	mmio_write_32(SYS_SLVACCCTL1, mmio_read_32(SYS_SLVACCCTL1) & 0xFFFFFF3F);
-
 #if !DEBUG_RZG2L_FPGA
 	/* initialize DDR */
 	ddr_setup();
