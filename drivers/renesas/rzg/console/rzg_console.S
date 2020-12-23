@@ -82,15 +82,12 @@ func console_rzg_putc
 endfunc console_rzg_putc
 
 	/* ---------------------------------------------
-	 * int console_rzg_flush(void)
+	 * void console_rzg_flush(void)
 	 * Function to force a write of all buffered
-	 * data that hasn't been output. It returns 0
-	 * upon successful completion, otherwise it
-	 * returns -1.
+	 * data that hasn't been output. It returns void
 	 * Clobber list : x0, x1
 	 * ---------------------------------------------
 	 */
 func console_rzg_flush
-	mov	w0, #0
 	ret
 endfunc console_rzg_flush
