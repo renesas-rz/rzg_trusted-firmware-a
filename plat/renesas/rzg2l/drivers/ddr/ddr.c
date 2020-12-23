@@ -382,7 +382,7 @@ static void program_phy1(uint32_t scl_lanes, uint32_t byte_lanes)
 	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x00000000);
 
 	// Step39
-	rmw_phy_reg(PHY_CTRL0, 0xFFFFF0FF, (scl_lanes << 8));
+	rmw_phy_reg(PHY_CTRL0, 0xFFFFF0FE, (scl_lanes << 8));
 }
 
 static void program_phy2(void)
@@ -452,8 +452,8 @@ static void write_mr(uint8_t cs, uint8_t mrw_sel, uint16_t mrw_data)
 	mrw_allcs = ((cs & 0x3) == 0x3) ? 1 : 0;
 
 	// Step2
-	rmw_mc_reg(DENALI_CTL_67, 0xF8000000,
-		0x04800000 | (mrw_allcs << 24) | (mrw_cs << 8) | mrw_sel);
+	rmw_mc_reg(DENALI_CTL_67, 0xFC000000,
+		0x02800000 | (mrw_allcs << 24) | (mrw_cs << 8) | mrw_sel);
 
 	// Step3
 	while ((read_mc_reg(DENALI_CTL_147) & (1 << 3)) != (1 << 3))
