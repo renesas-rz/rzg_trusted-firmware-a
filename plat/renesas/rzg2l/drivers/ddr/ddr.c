@@ -553,7 +553,7 @@ static void exec_trainingVREF(uint32_t scl_lanes, uint32_t byte_lanes)
 					all_best_vref_matches[i][num_best_vref_matches[i]] = current_vref;
 					num_best_vref_matches[i] += 1;
 				} else {
-					ERROR("PHY side VREF training failed lane %d, current_vref = %d",
+					INFO("BL2: PHY side VREF training failed lane %d, current_vref = %d\n",
 						i, current_vref);
 				}
 			}
@@ -657,8 +657,8 @@ static void exec_trainingVREF(uint32_t scl_lanes, uint32_t byte_lanes)
 					all_best_vref_matches[i][num_best_vref_matches[i]] = current_vref;
 					num_best_vref_matches[i] += 1;
 				} else {
-					ERROR("VREF training failed during VrefDQ training DRAM side, current_vref = %d",
-							current_vref);
+					INFO("BL2: VREF training failed during VrefDQ training DRAM side,"
+						 " current_vref = %d\n", current_vref);
 				}
 			}
 		}
