@@ -123,6 +123,7 @@ static void pfc_mux_setup(void)
 	int      cnt;
 
 	/* multiplexer terminal switching */
+	mmio_write_32(PFC_PWPR, 0x0);
 	mmio_write_32(PFC_PWPR, PWPR_PFCWE);
 
 	for (cnt = 0; cnt < PFC_MUX_TBL_NUM; cnt++) {
