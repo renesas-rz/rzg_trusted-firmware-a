@@ -821,7 +821,7 @@ static CPG_REG_SETTING cpg_sel_pll3_1_on_off[] = {
 	{(uintptr_t)CPG_CLKON_REG0_BUS, 0x00010001 },
 	{(uintptr_t)CPG_CLKON_REG1_BUS, 0x00030003 },
 	{(uintptr_t)CPG_CLKON_ROM, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_SDHI, 0x00080088 },
+	{(uintptr_t)CPG_CLKON_SDHI, 0x00880088 },
 	{(uintptr_t)CPG_CLKON_SRAM_ACPU, 0x00010001 },
 	{(uintptr_t)CPG_CLKON_SRAM_MCPU, 0x00010001 },
 	{(uintptr_t)CPG_CLKON_SYSC, 0x00020002 },
