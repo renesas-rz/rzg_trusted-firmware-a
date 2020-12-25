@@ -499,15 +499,12 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		0x00000000,
 		CPG_T_RST
 	},
-// FIXME QA BL2 no.16
-#if 0
 	{		/* WDT */
 		(uintptr_t)CPG_RST_WDT,
 		(uintptr_t)CPG_RSTMON_WDT,
-		0x00090009,
+		0x00010001,
 		CPG_T_RST
 	},
-#endif
 #if !DEBUG_RZG2L_FPGA
 	{		/* DDR */
 		(uintptr_t)CPG_RST_DDR,
