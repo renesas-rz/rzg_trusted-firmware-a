@@ -736,9 +736,15 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 		break;
 	}
 
-	if (type == BOARD_UNKNOWN || rev == BOARD_REV_UNKNOWN)
+	if (type == BOARD_UNKNOWN || rev == BOARD_REV_UNKNOWN) {
 		NOTICE("BL2: Board is %s Rev.---\n", GET_BOARD_NAME(type));
-	else {
+	} else if (type == BOARD_EK874) {
+		char board_rev;
+
+		board_rev = (char) rev;
+		NOTICE("BL2: Board is %s Rev.%s\n",
+			GET_BOARD_NAME(type), &board_rev);
+	} else {
 		NOTICE("BL2: Board is %s Rev.%d.%d\n",
 		       GET_BOARD_NAME(type),
 		       GET_BOARD_MAJOR(rev), GET_BOARD_MINOR(rev));

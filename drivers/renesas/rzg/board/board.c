@@ -43,6 +43,10 @@
 #define HH_ID	{ 0x40U, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU }
 #define EK_ID	{ 0x10U, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU }
 
+#if (RZG_LSI == RZG_G2E)
+extern char ek874_board_rev;
+#endif /* RZG_LSI == RZG_G2E */
+
 const char *g_board_tbl[] = {
 	[BOARD_HIHOPE_RZG2M]	= "HiHope RZ/G2M",
 	[BOARD_HIHOPE_RZG2N]	= "HiHope RZ/G2N",
@@ -65,7 +69,7 @@ int32_t rzg_get_board_type(uint32_t *type, uint32_t *rev)
 	uint32_t reg, boardInfo, read_rev;
 #elif (RZG_LSI == RZG_G2H)
 	uint32_t boardInfo;
-#else
+#elif (RZG_LSI != RZG_G2E)
 	uint32_t read_rev;
 #endif
 
@@ -110,6 +114,8 @@ get_type:
 #elif (RZG_LSI == RZG_G2H)
 	boardInfo = mmio_read_32(GPIO_INDT5) & (GP5_19_BIT |GP5_21_BIT);
 	*rev = (((boardInfo & GP5_19_BIT) >> 14) | ((boardInfo & GP5_21_BIT) >> 17)) + 0x30;
+#elif (RZG_LSI == RZG_G2E)
+	*rev = ek874_board_rev;
 #else
 	read_rev = (uint8_t)(board_id & BOARD_REV_MASK);
 	*rev = board_tbl[*type][read_rev];
