@@ -1077,10 +1077,8 @@ void cpg_early_setup(void)
 
 void cpg_setup(void)
 {
-	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_OFF);
 	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_OFF);
 	cpg_div_sel_static_setup();
-	cpg_selector_on_off(CPG_SEL_PLL3_2_ON_OFF, CPG_ON);
 	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_ON);
 	cpg_pll_setup();
 	cpg_clk_on_setup();
