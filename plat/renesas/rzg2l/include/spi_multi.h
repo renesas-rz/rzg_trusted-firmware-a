@@ -9,6 +9,7 @@
 
 #define SPI_MULTI_BIT_WIDE_1_1_4			(0)
 #define SPI_MULTI_BIT_WIDE_1_4_4			(1)
+#define SPI_MULTI_BIT_WIDE_1_1_1			(2)
 
 int spi_multi_setup(uint32_t command);
 

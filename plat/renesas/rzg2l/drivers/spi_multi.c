@@ -33,9 +33,10 @@ typedef struct {
 	uint32_t  cycle;
 } SPI_MULTI_BIT_WIDE_PTN;
 
-static SPI_MULTI_BIT_WIDE_PTN spi_multi_bit_ptn[2] = {
-	{ 0x6B << 16, DRENR_ADB_1BIT, DRENR_DRDB_4BIT, DRDMCR_DMCYC_8CYCLE },
-	{ 0xEB << 16, DRENR_ADB_4BIT, DRENR_DRDB_4BIT, DRDMCR_DMCYC_10CYCLE }
+static SPI_MULTI_BIT_WIDE_PTN spi_multi_bit_ptn[3] = {
+	{ 0x6C << 16, DRENR_ADB_1BIT, DRENR_DRDB_4BIT, DRDMCR_DMCYC_8CYCLE },
+	{ 0xEC << 16, DRENR_ADB_4BIT, DRENR_DRDB_4BIT, DRDMCR_DMCYC_10CYCLE },
+	{ 0x0C << 16, DRENR_ADB_1BIT, DRENR_DRDB_1BIT, DRDMCR_DMCYC_8CYCLE }
 };
 
 int spi_multi_setup(uint32_t ptn)
@@ -49,7 +50,7 @@ int spi_multi_setup(uint32_t ptn)
 	int      flg = 0;
 
 	/* SDR mode serial flash settings */
-	mmio_write_32(SPIM_PHYCNT, PHYCNT_DEF_DATA);
+	mmio_write_32(SPIM_PHYCNT, (PHYCNT_DEF_DATA | PHYCNT_CKSEL_FAST));
 
 	/* Read timing setting */
 	val = PHYOFFSET1_DEF_DATA | PHYOFFSET1_DDRTMG_SPIDRE_0;
@@ -78,12 +79,12 @@ int spi_multi_setup(uint32_t ptn)
 	/* the address size to 4 byte									*/
 	val = DRENR_CDB_1BIT | DRENR_OCDB_1BIT | spi_multi_bit_ptn[ptn].adr_wide |
 		  DRENR_OPDB_1BIT | spi_multi_bit_ptn[ptn].data_wide | DRENR_CDE | DRENR_DME |
-		  DRENR_ADE_ADD23_OUT | DRENR_OPDE_NO_OUT;
+		  DRENR_ADE_ADD31_OUT | DRENR_OPDE_NO_OUT;
 	mmio_write_32(SPIM_DRENR, val);
 
 #if !DEBUG_RZG2L_FPGA
 	/* Extended external address setting */
-	mmio_write_32(SPIM_DREAR, DREAR_EAC_EXADDR27);
+	mmio_write_32(SPIM_DREAR, DREAR_EAC_EXADDR25);
 #endif
 
 	/* Dummy cycle setting */
