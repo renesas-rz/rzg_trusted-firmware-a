@@ -157,9 +157,6 @@ static void pfc_qspi_setup(void)
 {
 	int      cnt;
 
-	/* Since QSPI is 3.3V, the initial value will be set. */
-	/* mmio_write_32(PFC_QSPI, 0); */
-
 	for (cnt = 0; cnt < PFC_QSPI_TBL_NUM; cnt++) {
 		/* IOLH */
 		if (pfc_qspi_reg_tbl[cnt].iolh.flg == PFC_ON) {
