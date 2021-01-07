@@ -46,6 +46,7 @@ BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
 					drivers/io/io_fip.c
 
 # Include GICv3 driver files
+GICV3_IMPL		:= GIC600
 include drivers/arm/gic/v3/gicv3.mk
 
 BL31_SOURCES	+=	lib/cpus/aarch64/cortex_a55.S				\
