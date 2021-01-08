@@ -94,25 +94,25 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{		/* ROM */
 		(uintptr_t)CPG_CLKON_ROM,
 		(uintptr_t)CPG_CLKMON_ROM,
-		0x00010001,
+		0x00000000,
 		CPG_T_CLK
 	},
 	{		/* GIC600 */
 		(uintptr_t)CPG_CLKON_GIC600,
 		(uintptr_t)CPG_CLKMON_GIC600,
-		0x00010001,
+		0x00000000,
 		CPG_T_CLK
 	},
 	{		/* IA55 */
 		(uintptr_t)CPG_CLKON_IA55,
 		(uintptr_t)CPG_CLKMON_IA55,
-		0x00030003,
+		0x00000000,
 		CPG_T_CLK
 	},
 	{		/* IM33 */
 		(uintptr_t)CPG_CLKON_IM33,
 		(uintptr_t)CPG_CLKMON_IM33,
-		0x00030003,
+		0x00000000,
 		CPG_T_CLK
 	},
 	{		/* MHU */
@@ -136,7 +136,7 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{		/* OSTM */
 		(uintptr_t)CPG_CLKON_OSTM,
 		(uintptr_t)CPG_CLKMON_OSTM,
-		0x00010001,
+		0x00000000,
 		CPG_T_CLK
 	},
 	{		/* MTU */
@@ -307,7 +307,7 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{		/* OTP */
 		(uintptr_t)CPG_CLKON_OTP,
 		(uintptr_t)CPG_CLKMON_OTP,
-		0x00030003,
+		0x00000000,
 		CPG_T_CLK
 	},
 	{		/* ADC */
@@ -391,7 +391,7 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{		/* AXI_TZCDDR */
 		(uintptr_t)CPG_CLKON_AXI_TZCDDR,
 		(uintptr_t)CPG_CLKMON_AXI_TZCDDR,
-		0x001f001f,
+		0x00000000,
 		CPG_T_CLK
 	},
 	{		/* MTGPGS */
@@ -418,25 +418,25 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* ROM */
 		(uintptr_t)CPG_RST_ROM,
 		(uintptr_t)CPG_RSTMON_ROM,
-		0x00010001,
+		0x00000000,
 		CPG_T_RST
 	},
 	{		/* GIC600 */
 		(uintptr_t)CPG_RST_GIC600,
 		(uintptr_t)CPG_RSTMON_GIC600,
-		0x00030003,
+		0x00000000,
 		CPG_T_RST
 	},
 	{		/* IA55 */
 		(uintptr_t)CPG_RST_IA55,
 		(uintptr_t)CPG_RSTMON_IA55,
-		0x00010001,
+		0x00000000,
 		CPG_T_RST
 	},
 	{		/* IM33 */
 		(uintptr_t)CPG_RST_IM33,
 		(uintptr_t)CPG_RSTMON_IM33,
-		0x00010001,
+		0x00000000,
 		CPG_T_RST
 	},
 	{		/* MHU */
@@ -460,7 +460,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* OSTM */
 		(uintptr_t)CPG_RST_OSTM,
 		(uintptr_t)CPG_RSTMON_OSTM,
-		0x00010001,
+		0x00000000,
 		CPG_T_RST
 	},
 	{		/* MTU */
@@ -631,7 +631,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* OTP */
 		(uintptr_t)CPG_RST_OTP,
 		(uintptr_t)CPG_RSTMON_OTP,
-		0x00010001,
+		0x00000000,
 		CPG_T_RST
 	},
 	{		/* ADC */
@@ -715,7 +715,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* AXI_TZCDDR */
 		(uintptr_t)CPG_RST_AXI_TZCDDR,
 		(uintptr_t)CPG_RSTMON_AXI_TZCDDR,
-		0x001f001f,
+		0x00000000,
 		CPG_T_RST
 	},
 	{		/* MTGPGS */
