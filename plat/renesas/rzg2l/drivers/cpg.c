@@ -121,12 +121,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		0x00000000,
 		CPG_T_CLK
 	},
-	{		/* CST */
-		(uintptr_t)CPG_CLKON_CST,
-		(uintptr_t)CPG_CLKMON_CST,
-		0x07ff07ff,
-		CPG_T_CLK
-	},
 	{		/* DMAC */
 		(uintptr_t)CPG_CLKON_DAMC_REG,
 		(uintptr_t)CPG_CLKMON_DAMC_REG,
@@ -308,12 +302,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		(uintptr_t)CPG_CLKON_TSIPG,
 		(uintptr_t)CPG_CLKMON_TSIPG,
 		0x00000000,
-		CPG_T_CLK
-	},
-	{		/* JAUTH */
-		(uintptr_t)CPG_CLKON_JAUTH,
-		(uintptr_t)CPG_CLKMON_JAUTH,
-		0x00010001,
 		CPG_T_CLK
 	},
 	{		/* OTP */
@@ -638,12 +626,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		(uintptr_t)CPG_RST_TSIPG,
 		(uintptr_t)CPG_RSTMON_TSIPG,
 		0x00000000,
-		CPG_T_RST
-	},
-	{		/* JAUTH */
-		(uintptr_t)CPG_RST_JAUTH,
-		(uintptr_t)CPG_RSTMON_JAUTH,
-		0x00010001,
 		CPG_T_RST
 	},
 	{		/* OTP */
