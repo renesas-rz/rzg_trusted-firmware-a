@@ -22,7 +22,7 @@
 /*******************************************************************************
  * Generic platform constants
  ******************************************************************************/
-#define PLATFORM_STACK_SIZE		U(0x400)
+#define PLATFORM_STACK_SIZE		U(0x1000)
 
 #define PLATFORM_SYSTEM_COUNT	U(1)
 #define PLATFORM_CLUSTER_COUNT	U(1)
