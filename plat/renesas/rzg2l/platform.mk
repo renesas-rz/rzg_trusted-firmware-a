@@ -14,6 +14,14 @@ USE_COHERENT_MEM				:= 0
 DEBUG_RZG2L_FPGA				:= 0
 $(eval $(call add_define,DEBUG_RZG2L_FPGA))
 
+BOARD_RZG2L_15MMSQ	:=0
+BOARD_RZG2LC_EVA	:=1
+$(eval $(call add_define,BOARD_RZG2L_15MMSQ))
+$(eval $(call add_define,BOARD_RZG2LC_EVA))
+
+BOARD_TYPE	:= BOARD_RZG2L_15MMSQ
+$(eval $(call add_define,BOARD_TYPE))
+
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_1530923	:= 1
 

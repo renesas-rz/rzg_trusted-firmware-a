@@ -16,11 +16,12 @@
 #define _MIN(a, b)		((a) < (b) ? (a) : (b))
 #define _MAX(a, b)		((a) > (b) ? (a) : (b))
 
-#define DDR_TYPE_C_010_D4_01_1
-
-#ifdef DDR_TYPE_C_010_D4_01_1
+#if (BOARD_TYPE == BOARD_RZG2L_15MMSQ)
 #include "param_mc_C-010_D4-01-1.c"
 #include "param_swizzle_T1c.c"
+#elif (BOARD_TYPE == BOARD_RZG2LC_EVA)
+#include "param_mc_C-010_D3-02-2.c"
+#include "param_swizzle_T3c.c"
 #endif
 
 #define MAX_BYTE_LANES		(2U)
