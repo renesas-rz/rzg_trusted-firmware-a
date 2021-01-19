@@ -100,7 +100,7 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{		/* DMAC */
 		(uintptr_t)CPG_CLKON_DAMC_REG,
 		(uintptr_t)CPG_CLKMON_DAMC_REG,
-		0x00030000,
+		0x00030003,
 		CPG_T_CLK
 	},
 	{		/* OSTM */
@@ -298,7 +298,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* DMAC */
 		(uintptr_t)CPG_RST_DMAC,
 		(uintptr_t)CPG_RSTMON_DMAC,
-		0x00030000,
+		0x00030003,
 		CPG_T_RST
 	},
 	{		/* OSTM */
