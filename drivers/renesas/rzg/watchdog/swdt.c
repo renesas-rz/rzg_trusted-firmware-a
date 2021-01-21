@@ -77,21 +77,14 @@ static void swdt_disable(void)
 	gicd_set_icenabler(RZG_GICD_BASE, ARM_IRQ_SEC_WDT);
 }
 
-void rzg_swdt_init(void)
+void rzg_swdt_init_counter(void)
 {
-	uint32_t rmsk, sr;
 #if (RZG_LSI != RZG_G2E)
 	uint32_t reg, val, chk_data;
 
 	reg = mmio_read_32(RZG_MODEMR);
 	chk_data = reg & CHECK_MD13_MD14;
 #endif
-	/* stop watchdog */
-	if (mmio_read_32(SWDT_WTCSRA) & SWDT_ENABLE)
-		mmio_write_32(SWDT_WTCSRA, WTCSRA_UPPER_BYTE);
-
-	mmio_write_32(SWDT_WTCSRA, WTCSRA_UPPER_BYTE |
-		      WTCSRA_WOVFE | WTCSRA_CKS_DIV16);
 
 #if (RZG_LSI == RZG_G2E)
 	mmio_write_32(SWDT_WTCNT, WTCNT_UPPER_BYTE | WTCNT_COUNT_7p81k);
@@ -117,6 +110,21 @@ void rzg_swdt_init(void)
 
 	mmio_write_32(SWDT_WTCNT, val);
 #endif
+}
+
+void rzg_swdt_init(void)
+{
+	uint32_t rmsk, sr;
+
+	/* stop watchdog */
+	if (mmio_read_32(SWDT_WTCSRA) & SWDT_ENABLE)
+		mmio_write_32(SWDT_WTCSRA, WTCSRA_UPPER_BYTE);
+
+	mmio_write_32(SWDT_WTCSRA, WTCSRA_UPPER_BYTE |
+		      WTCSRA_WOVFE | WTCSRA_CKS_DIV16);
+
+	rzg_swdt_init_counter();
+
 	rmsk = mmio_read_32(RST_WDTRSTCR) & WDTRSTCR_MASK_ALL;
 	rmsk |= SWDT_RSTMSK | WDTRSTCR_UPPER_BYTE;
 	mmio_write_32(RST_WDTRSTCR, rmsk);
