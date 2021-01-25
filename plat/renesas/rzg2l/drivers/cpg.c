@@ -46,8 +46,10 @@ typedef struct {
 static CPG_PLL_SETDATA_146 cpg_pll4_setdata = {
 #if (BOARD_TYPE == BOARD_RZG2L_15MMSQ)
 	{ CPG_PLL4_CLK1, 0x00003203 },
-#elif (BOARD_TYPE == BOARD_RZG2LC_EVA)
+#elif (BOARD_TYPE == BOARD_RZG2LC_13MMSQ)
 	{ CPG_PLL4_CLK1, 0x40005346 },
+#else
+#error "Unknown Board Type."
 #endif
 	{ CPG_PLL4_CLK2, 0x00082400 },
 	{ CPG_PLL4_STBY, 0x00010001 }

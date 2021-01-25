@@ -22,6 +22,8 @@
 #elif (BOARD_TYPE == BOARD_RZG2LC_13MMSQ)
 #include "param_mc_C-010_D3-02-2.c"
 #include "param_swizzle_T3cl.c"
+#else
+#error "Unknown Board Type."
 #endif
 
 #define MAX_BYTE_LANES		(2U)
