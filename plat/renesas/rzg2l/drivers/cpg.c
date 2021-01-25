@@ -49,20 +49,10 @@ typedef struct {
 
 static CPG_PLL_SETDATA_146 cpg_pll_setdata_146[] = {
 	{
-		{ CPG_PLL1_CLK1, 0x00001901 },
-		{ CPG_PLL1_CLK2, 0x00180601 },
-		{ CPG_PLL1_STBY, 0x00010001 }
-	},
-	{
 		{ CPG_PLL4_CLK1, 0x00003203 },
 		{ CPG_PLL4_CLK2, 0x00082400 },
 		{ CPG_PLL4_STBY, 0x00010001 }
 	},
-	{
-		{ CPG_PLL6_CLK1, 0x00003E83 },
-		{ CPG_PLL6_CLK2, 0x00082D02 },
-		{ CPG_PLL6_STBY, 0x00010001 }
-	}
 };
 
 #define	CPG_PLL2_INDEX					(0)
@@ -695,11 +685,11 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 
 }
 
-static void cpg_pll_start_146(uint32_t index)
+static void cpg_pll_start_146(CPG_PLL_SETDATA_146 *ptr)
 {
-	mmio_write_32(cpg_pll_setdata_146[index].clk1_dat.reg, cpg_pll_setdata_146[index].clk1_dat.val);
-	mmio_write_32(cpg_pll_setdata_146[index].clk2_dat.reg, cpg_pll_setdata_146[index].clk2_dat.val);
-	mmio_write_32(cpg_pll_setdata_146[index].stby_dat.reg, cpg_pll_setdata_146[index].stby_dat.val);
+	mmio_write_32(ptr[0].clk1_dat.reg, ptr[0].clk1_dat.val);
+	mmio_write_32(ptr[0].clk2_dat.reg, ptr[0].clk2_dat.val);
+	mmio_write_32(ptr[0].stby_dat.reg, ptr[0].stby_dat.val);
 }
 
 /* It is assumed that the PLL has stopped by the time this function is executed. */
@@ -718,7 +708,7 @@ static void cpg_pll_setup(void)
 #endif
 
 	/* Set PLL4 to normal mode */
-	cpg_pll_start_146(CPG_PLL4_INDEX);
+	cpg_pll_start_146(&cpg_pll_setdata_146[0]);
 
 	/* PLL4 normal mode transition confirmation */
 #if !DEBUG_RZG2L_FPGA
