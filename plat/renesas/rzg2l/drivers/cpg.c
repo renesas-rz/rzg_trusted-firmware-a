@@ -43,26 +43,14 @@ typedef struct {
 	CPG_REG_SETTING		stby_dat;
 } CPG_PLL_SETDATA_235;
 
-#define	CPG_PLL1_INDEX					(0)
-#define	CPG_PLL4_INDEX					(1)
-#define	CPG_PLL6_INDEX					(2)
-
-static CPG_PLL_SETDATA_146 cpg_pll_setdata_146[] = {
-	{
-		{ CPG_PLL1_CLK1, 0x00001901 },
-		{ CPG_PLL1_CLK2, 0x00180601 },
-		{ CPG_PLL1_STBY, 0x00010001 }
-	},
-	{
-		{ CPG_PLL4_CLK1, 0x00003203 },
-		{ CPG_PLL4_CLK2, 0x00082400 },
-		{ CPG_PLL4_STBY, 0x00010001 }
-	},
-	{
-		{ CPG_PLL6_CLK1, 0x00003E83 },
-		{ CPG_PLL6_CLK2, 0x00082D02 },
-		{ CPG_PLL6_STBY, 0x00010001 }
-	}
+static CPG_PLL_SETDATA_146 cpg_pll4_setdata = {
+#if (BOARD_TYPE == BOARD_RZG2L_15MMSQ)
+	{ CPG_PLL4_CLK1, 0x00003203 },
+#elif (BOARD_TYPE == BOARD_RZG2LC_EVA)
+	{ CPG_PLL4_CLK1, 0x40005346 },
+#endif
+	{ CPG_PLL4_CLK2, 0x00082400 },
+	{ CPG_PLL4_STBY, 0x00010001 }
 };
 
 #define	CPG_PLL2_INDEX					(0)
@@ -695,11 +683,11 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 
 }
 
-static void cpg_pll_start_146(uint32_t index)
+static void cpg_pll_start_146(CPG_PLL_SETDATA_146 *pdata)
 {
-	mmio_write_32(cpg_pll_setdata_146[index].clk1_dat.reg, cpg_pll_setdata_146[index].clk1_dat.val);
-	mmio_write_32(cpg_pll_setdata_146[index].clk2_dat.reg, cpg_pll_setdata_146[index].clk2_dat.val);
-	mmio_write_32(cpg_pll_setdata_146[index].stby_dat.reg, cpg_pll_setdata_146[index].stby_dat.val);
+	mmio_write_32(pdata->clk1_dat.reg, pdata->clk1_dat.val);
+	mmio_write_32(pdata->clk2_dat.reg, pdata->clk2_dat.val);
+	mmio_write_32(pdata->stby_dat.reg, pdata->stby_dat.val);
 }
 
 /* It is assumed that the PLL has stopped by the time this function is executed. */
@@ -707,21 +695,19 @@ static void cpg_pll_setup(void)
 {
 #if !DEBUG_RZG2L_FPGA
 	uint32_t val = 0;
-#endif
 
 	/* PLL4 startup */
 	/* PLL4 standby mode transition confirmation */
-#if !DEBUG_RZG2L_FPGA
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
 	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) != 0);
 #endif
 
 	/* Set PLL4 to normal mode */
-	cpg_pll_start_146(CPG_PLL4_INDEX);
+	cpg_pll_start_146(&cpg_pll4_setdata);
 
-	/* PLL4 normal mode transition confirmation */
 #if !DEBUG_RZG2L_FPGA
+	/* PLL4 normal mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
 	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
