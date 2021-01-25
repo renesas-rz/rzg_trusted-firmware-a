@@ -15,9 +15,9 @@ DEBUG_RZG2L_FPGA				:= 0
 $(eval $(call add_define,DEBUG_RZG2L_FPGA))
 
 BOARD_RZG2L_15MMSQ	:=0
-BOARD_RZG2LC_EVA	:=1
+BOARD_RZG2LC_13MMSQ	:=1
 $(eval $(call add_define,BOARD_RZG2L_15MMSQ))
-$(eval $(call add_define,BOARD_RZG2LC_EVA))
+$(eval $(call add_define,BOARD_RZG2LC_13MMSQ))
 
 BOARD_TYPE	:= BOARD_RZG2L_15MMSQ
 $(eval $(call add_define,BOARD_TYPE))
