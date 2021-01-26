@@ -224,10 +224,6 @@ func console_rzg2l_flush
 	cmp	w1, #FSR_TEND
 	bne	1b
 
-	ldrh w1, [x0, #SCR]
-	and w1, w1, #~(SCR_RE_ON | SCR_TE_ON)
-	strh w1, [x0, #SCR]
-
 	mov	w0, #0
 	ret
 endfunc console_rzg2l_flush
