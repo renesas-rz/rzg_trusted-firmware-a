@@ -48,8 +48,8 @@ const uint32_t swizzle_mc_tbl[][2] = {
 	{DENALI_CTL_407,	0x180E2000},
 	{DENALI_CTL_408,	0x0D1F0B1B},
 	{DENALI_CTL_409,	0x021A1400},
-	{DENALI_CTL_410,	0x1D1C0616},
-	{DENALI_CTL_411,	0x00000013}
+	{DENALI_CTL_410,	0x0C1C0616},
+	{DENALI_CTL_411,	0x00000000}
 };
 
 const uint32_t swizzle_phy_tbl[][2] = {
