@@ -19,6 +19,9 @@
 #if (BOARD_TYPE == BOARD_RZG2L_15MMSQ)
 #include "param_mc_C-010_D4-01-1.c"
 #include "param_swizzle_T1c.c"
+#elif (BOARD_TYPE == BOARD_RZG2L_EVA)
+#include "param_mc_C-010_D4-01-2.c"
+#include "param_swizzle_T1c.c"
 #elif (BOARD_TYPE == BOARD_RZG2LC_13MMSQ)
 #include "param_mc_C-010_D3-02-2.c"
 #include "param_swizzle_T3cl.c"
