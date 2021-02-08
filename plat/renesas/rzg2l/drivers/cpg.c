@@ -57,6 +57,12 @@ static CPG_PLL_SETDATA_146 cpg_pll4_setdata = {
 	{ CPG_PLL4_STBY, 0x00010001 }
 };
 
+static CPG_PLL_SETDATA_146 cpg_pll6_setdata = {
+	{ CPG_PLL6_CLK1, 0x00003e83 },
+	{ CPG_PLL6_CLK2, 0x00082D02 },
+	{ CPG_PLL6_STBY, 0x00010001 }, /* SSC OFF */
+};
+
 #define	CPG_PLL2_INDEX					(0)
 #define	CPG_PLL3_INDEX					(1)
 #define	CPG_PLL5_INDEX					(2)
@@ -706,16 +712,29 @@ static void cpg_pll_setup(void)
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
 	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) != 0);
+
+	/* PLL6 startup */
+	/* PLL6 standby mode transition confirmation */
+	do {
+		val = mmio_read_32(CPG_PLL6_MON);
+	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) != 0);
 #endif
 
 	/* Set PLL4 to normal mode */
 	cpg_pll_start_146(&cpg_pll4_setdata);
+	/* Set PLL6 to normal mode */
+	cpg_pll_start_146(&cpg_pll6_setdata);
 
 #if !DEBUG_RZG2L_FPGA
 	/* PLL4 normal mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
 	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
+
+	/* PLL6 normal mode transition confirmation */
+	do {
+		val = mmio_read_32(CPG_PLL6_MON);
+	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) == 0);
 #endif
 }
 
