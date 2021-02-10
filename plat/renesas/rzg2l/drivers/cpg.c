@@ -472,6 +472,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 
 static CPG_REG_SETTING cpg_static_select_tbl[] = {
 	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110100 },
+	{ (uintptr_t)CPG_PL3_SSEL,              0x01110011 },
 };
 
 static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {

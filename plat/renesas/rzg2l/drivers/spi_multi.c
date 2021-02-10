@@ -10,51 +10,82 @@
 #include "spi_multi_regs.h"
 #include "spi_multi.h"
 
-typedef struct {
-	uint32_t  phycnt_data;
-	uint32_t  phyadj2_data;
-} SPI_MULTI_ADJ;
-
-static SPI_MULTI_ADJ spi_multi_adj_tbl[] = {
-	{ (PHYCNT_CKSEL_FAST | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA1 },
-	{ (PHYCNT_CKSEL_FAST | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA2 },
-	{ (PHYCNT_CKSEL_MID2 | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA1 },
-	{ (PHYCNT_CKSEL_MID2 | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA2 },
-	{ (PHYCNT_CKSEL_MID1 | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA1 },
-	{ (PHYCNT_CKSEL_MID1 | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA2 },
-	{ (PHYCNT_CKSEL_SLOW | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA1 },
-	{ (PHYCNT_CKSEL_SLOW | PHYCNT_DEF_DATA), PHYADJ2_ADJ_DATA2 },
+static uint32_t spi_multi_cmd_tbl[2][3] = {
+	{
+		DRCMR_CMD_FAST_READ_3B,
+		DRCMR_CMD_QUAD_OUTPUT_FAST_READ_3B,
+		DRCMR_CMD_QUAD_INPUT_OUTPUT_FAST_READ_3B
+	},
+	{
+		DRCMR_CMD_FAST_READ_4B,
+		DRCMR_CMD_QUAD_OUTPUT_FAST_READ_4B,
+		DRCMR_CMD_QUAD_INPUT_OUTPUT_FAST_READ_4B
+	}
 };
 
 typedef struct {
-	uint32_t  command;
-	uint32_t  adr_wide;
-	uint32_t  data_wide;
-	uint32_t  cycle;
+	uint32_t  adr_width;
+	uint32_t  data_width;
 } SPI_MULTI_BIT_WIDE_PTN;
 
 static SPI_MULTI_BIT_WIDE_PTN spi_multi_bit_ptn[3] = {
-	{ 0x6C << 16, DRENR_ADB_1BIT, DRENR_DRDB_4BIT, DRDMCR_DMCYC_8CYCLE },
-	{ 0xEC << 16, DRENR_ADB_4BIT, DRENR_DRDB_4BIT, DRDMCR_DMCYC_10CYCLE },
-	{ 0x0C << 16, DRENR_ADB_1BIT, DRENR_DRDB_1BIT, DRDMCR_DMCYC_8CYCLE }
+	{ DRENR_ADB_1BIT, DRENR_DRDB_1BIT },
+	{ DRENR_ADB_1BIT, DRENR_DRDB_4BIT },
+	{ DRENR_ADB_4BIT, DRENR_DRDB_4BIT },
 };
 
-int spi_multi_setup(uint32_t ptn)
+typedef struct {
+	uint32_t  addr_width;
+	uint32_t  flash_width;
+} SPI_MULTI_ADDR_WIDE_PTN;
+
+static SPI_MULTI_ADDR_WIDE_PTN spi_multi_addr_ptn[2] = {
+	{ DRENR_ADE_ADD23_OUT, DREAR_EAC_EXADDR24 },
+	{ DRENR_ADE_ADD31_OUT, DREAR_EAC_EXADDR25 }
+};
+
+void spi_multi_timing_set(void)
 {
-	int ret = 0;
-	uint32_t val;
-	uint32_t dat;
-	uint32_t cnt;
-	uint32_t adj_ok1;
-	uint32_t adj_ok2;
-	int      flg = 0;
+
+	/* Timing adjustment register setting */
+	mmio_write_32(SPIM_PHYADJ2, 0xA5390000);
+	mmio_write_32(SPIM_PHYADJ1, 0x80000000);
+	mmio_write_32(SPIM_PHYADJ2, 0x00008080);
+	mmio_write_32(SPIM_PHYADJ1, 0x80000022);
+	mmio_write_32(SPIM_PHYADJ2, 0x00008080);
+	mmio_write_32(SPIM_PHYADJ1, 0x80000024);
 
 	/* SDR mode serial flash settings */
 	mmio_write_32(SPIM_PHYCNT, (PHYCNT_DEF_DATA | PHYCNT_CKSEL_FAST));
 
+	/* Timing adjustment register setting */
+	mmio_write_32(SPIM_PHYADJ2, 0x00000030);
+	mmio_write_32(SPIM_PHYADJ1, 0x80000032);
+}
+
+int spi_multi_setup(uint32_t addr_width, uint32_t dq_width, uint32_t dummy_cycle)
+{
+	uint32_t val;
+
+	/* parameter check */
+	if ((addr_width > SPI_MULTI_ADDR_WIDES_32) ||
+		(dq_width > SPI_MULTI_BIT_WIDES_1_4_4) ||
+		(dummy_cycle > DRDMCR_DMCYC_20CYCLE)){
+			return (-1);
+	}
+
+	/* Wait until the transfer is complete */
+	do {
+		val = mmio_read_32(SPIM_CMNSR);
+	} while ((val & CMNSR_TEND) == 0);
+
+	/* SDR mode serial flash settings */
+	mmio_write_32(SPIM_PHYCNT, PHYCNT_DEF_DATA);
+
 	/* Read timing setting */
 	val = PHYOFFSET1_DEF_DATA | PHYOFFSET1_DDRTMG_SPIDRE_0;
 	mmio_write_32(SPIM_PHYOFFSET1, val);
+	mmio_write_32(SPIM_PHYOFFSET2, PHYOFFSET2_DEF_DATA);
 
 	/* Set the QSPIn_SSL setting value */
 	val = CMNCR_IO0FV_OUT_PREV | CMNCR_IO2FV_OUT_PREV |
@@ -67,85 +98,31 @@ int spi_multi_setup(uint32_t ptn)
 	mmio_write_32(SPIM_SSLDR, val);
 
 	/* Clear the RBE bit */
-	mmio_clrbits_32(SPIM_DRCR, DRCR_RBE);
 	val = DRCR_RBE | DRCR_RCF | DRCR_RBURST_32_DATALEN;
 	mmio_write_32(SPIM_DRCR, val);
 	mmio_read_32(SPIM_DRCR);
 
 	/* Set the data read command */
-	mmio_write_32(SPIM_DRCMR, spi_multi_bit_ptn[ptn].command);
+	mmio_write_32(SPIM_DRCMR, spi_multi_cmd_tbl[addr_width][dq_width]);
+
+	/* Extended external address setting */
+	mmio_write_32(SPIM_DREAR, spi_multi_addr_ptn[addr_width].flash_width);
 
 	/* Set the bit width of command and address output to 1 bit and	*/
 	/* the address size to 4 byte									*/
-	val = DRENR_CDB_1BIT | DRENR_OCDB_1BIT | spi_multi_bit_ptn[ptn].adr_wide |
-		  DRENR_OPDB_1BIT | spi_multi_bit_ptn[ptn].data_wide | DRENR_CDE | DRENR_DME |
-		  DRENR_ADE_ADD31_OUT | DRENR_OPDE_NO_OUT;
+	val = DRENR_CDB_1BIT | DRENR_OCDB_1BIT | spi_multi_bit_ptn[dq_width].adr_width |
+		  DRENR_OPDB_1BIT | spi_multi_bit_ptn[dq_width].data_width | DRENR_CDE | DRENR_DME |
+		  spi_multi_addr_ptn[addr_width].addr_width | DRENR_OPDE_NO_OUT;
 	mmio_write_32(SPIM_DRENR, val);
 
-#if !DEBUG_RZG2L_FPGA
-	/* Extended external address setting */
-	mmio_write_32(SPIM_DREAR, DREAR_EAC_EXADDR25);
-#endif
-
 	/* Dummy cycle setting */
-	mmio_write_32(SPIM_DRDMCR, spi_multi_bit_ptn[ptn].cycle);
+	mmio_write_32(SPIM_DRDMCR, dummy_cycle);
 
 	/* Change to SPI flash mode */
 	mmio_write_32(SPIM_DRDRENR, 0x00000000);
 
-	/* Wait until the transfer is complete */
-	do {
-		val = mmio_read_32(SPIM_CMNSR);
-	} while ((val & CMNSR_TEND) == 0);
-
-	/* Timing adjustment */
-	mmio_write_32(SPIM_PHYADJ1, PHYADJ1_DEF_DATA);
-	mmio_write_32(SPIM_PHYADJ2, PHYADJ2_DEF_DATA);
-
-	for (cnt = 0; cnt < ARRAY_SIZE(spi_multi_adj_tbl); cnt++) {
-		/* Wait until the transfer is complete */
-		do {
-			val = mmio_read_32(SPIM_CMNSR);
-		} while ((val & CMNSR_TEND) == 0);
-
-		mmio_write_32(SPIM_PHYADJ1, PHYADJ1_ADJ_DATA);
-		mmio_write_32(SPIM_PHYADJ2, spi_multi_adj_tbl[cnt].phyadj2_data);
-		mmio_write_32(SPIM_PHYCNT, spi_multi_adj_tbl[cnt].phycnt_data);
-
-		dat = *(volatile uint32_t *)(0x2001D210);
-		if (dat == 0x6d08d447) {
-			adj_ok1 = cnt;
-			flg++;
-			break;
-		}
-	}
-
-	for (cnt = 0; cnt < ARRAY_SIZE(spi_multi_adj_tbl); cnt++) {
-		/* Wait until the transfer is complete */
-		do {
-			val = mmio_read_32(SPIM_CMNSR);
-		} while ((val & CMNSR_TEND) == 0);
-
-		mmio_write_32(SPIM_PHYADJ1, PHYADJ1_ADJ_DATA);
-		mmio_write_32(SPIM_PHYADJ2, spi_multi_adj_tbl[cnt].phyadj2_data);
-		mmio_write_32(SPIM_PHYCNT, spi_multi_adj_tbl[cnt].phycnt_data);
-
-		dat = *(volatile uint32_t *)(0x2001D210);
-		if (dat == 0x6d08d447) {
-			adj_ok2 = cnt;
-			flg++;
-			break;
-		}
-	}
-
-	if (flg == 2) {
-		val = (adj_ok1 + adj_ok2) / 2;
-		mmio_write_32(SPIM_PHYADJ1, PHYADJ1_ADJ_DATA);
-		mmio_write_32(SPIM_PHYADJ2, spi_multi_adj_tbl[val].phyadj2_data);
-		mmio_write_32(SPIM_PHYCNT, spi_multi_adj_tbl[val].phycnt_data);
-	} else {
-		ret = -1;
-	}
-
-	return ret;
+	/* Timing adjustment register setting */
+	spi_multi_timing_set();
+	
+	return (0);
 }
