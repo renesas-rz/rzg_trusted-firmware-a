@@ -247,8 +247,6 @@
 #define PHYCNT_WBUF							(1 << 2)
 #define PHYCNT_WBUF2						(1 << 4)
 #define PHYCNT_CKSEL_SLOW					(0 << 16)
-#define PHYCNT_CKSEL_MID1					(1 << 16)
-#define PHYCNT_CKSEL_MID2					(2 << 16)
 #define PHYCNT_CKSEL_FAST					(3 << 16)
 #define PHYCNT_HS							(1 << 18)
 #define PHYCNT_OCT							(1 << 21)
@@ -264,6 +262,7 @@
 #define PHYOFFSET1_DEF_DATA					(0x01511144)
 #define PHYOFFSET2_OCTTMG_HYPER_FLASH		(4 << 8)
 #define PHYOFFSET2_OCTTMG_OCTA_FLASH		(3 << 8)
+#define PHYOFFSET2_DEF_DATA					(0x00000431)
 #define PHYINT_INT							(1 << 0)
 #define PHYINT_WPVAL						(1 << 1)
 #define PHYINT_RSTVAL						(1 << 2)
@@ -272,11 +271,13 @@
 #define PHYINT_RSTEN						(1 << 26)
 
 #define DREAR_EAV_ADDRE_DATA				(2 << 16)
-#define PHYADJ1_DEF_DATA					(0x80000000)
-#define PHYADJ2_DEF_DATA					(0xA5390000)
-#define PHYADJ1_ADJ_DATA					(0x80000032)
-#define PHYADJ2_ADJ_DATA1					(0x00000000)
-#define PHYADJ2_ADJ_DATA2					(0x00000002)
+
+#define DRCMR_CMD_FAST_READ_3B						(0x0B << 16)
+#define DRCMR_CMD_QUAD_OUTPUT_FAST_READ_3B			(0x6B << 16)
+#define DRCMR_CMD_QUAD_INPUT_OUTPUT_FAST_READ_3B	(0xEB << 16)
+#define DRCMR_CMD_FAST_READ_4B						(0x0C << 16)
+#define DRCMR_CMD_QUAD_OUTPUT_FAST_READ_4B			(0x6C << 16)
+#define DRCMR_CMD_QUAD_INPUT_OUTPUT_FAST_READ_4B	(0xEC << 16)
 
 #endif	/* _SPI_MULTI_REG_H_ */
 
