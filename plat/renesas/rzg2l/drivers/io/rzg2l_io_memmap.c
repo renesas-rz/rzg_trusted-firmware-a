@@ -86,7 +86,7 @@ static int memmap_dev_open(const uintptr_t dev_spec __unused,
 	assert(dev_info != NULL);
 	*dev_info = (io_dev_info_t *)&memmap_dev_info; /* cast away const */
 
-	return  spi_multi_setup(SPI_MULTI_ADDR_WIDES_24, SPI_MULTI_BIT_WIDES_1_4_4, DRDMCR_DMCYC_10CYCLE);
+	return  spi_multi_setup(SPI_MULTI_ADDR_WIDES_24, SPI_MULTI_DQ_WIDES_1_4_4, SPI_MULTI_DUMMY_10CYCLE);
 }
 
 
