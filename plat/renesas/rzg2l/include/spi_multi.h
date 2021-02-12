@@ -35,6 +35,5 @@
 #define SPI_MULTI_DUMMY_20CYCLE				(19)
 
 int spi_multi_setup(uint32_t addr_width, uint32_t dq_width, uint32_t dummy_cycle);
-void spi_multi_timing_set(void);
 
 #endif	/* _SPI_MULTI_H_ */
