@@ -44,7 +44,7 @@ static SPI_MULTI_ADDR_WIDE_PTN spi_multi_addr_ptn[2] = {
 	{ DRENR_ADE_ADD31_OUT, DREAR_EAC_EXADDR25 }
 };
 
-void spi_multi_timing_set(void)
+static void spi_multi_timing_set(void)
 {
 
 	/* Timing adjustment register setting */
