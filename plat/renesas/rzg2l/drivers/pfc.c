@@ -84,7 +84,7 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	{
 		{ PFC_ON,  (uintptr_t)PFC_PMC22,  0x0003 },					/* PMC */
 		{ PFC_ON,  (uintptr_t)PFC_PFC22,  0x00000003 },				/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH06, 0x0000000000010101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH06, 0x0000000000020202 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD06, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR06,   0x0000000000010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN06,  0x0000000000000100 }		/* IEN */
@@ -93,7 +93,7 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0101010101010101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0202020202020202 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD07, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR07,   0x0101010101010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN07,  0x0101010101010101 }		/* IEN */
@@ -102,7 +102,7 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	{
 		{ PFC_ON,  (uintptr_t)PFC_PMC23,  0x0003 },					/* PMC */
 		{ PFC_ON,  (uintptr_t)PFC_PFC23,  0x00000003 },				/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000000000101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000000000202 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD08, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR08,   0x0000000000000101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN08,  0x0000000000000100 }		/* IEN */
@@ -111,7 +111,7 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH09, 0x0000000001010101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH09, 0x0000000002020202 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD09, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR09,   0x0000000001010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN09,  0x0000000001010101 }		/* IEN */
