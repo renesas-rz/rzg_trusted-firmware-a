@@ -133,7 +133,7 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{		/* DDR */
 		(uintptr_t)CPG_CLKON_DDR,
 		(uintptr_t)CPG_CLKMON_DDR,
-		0x00000000,
+		0x00030000,
 		CPG_T_CLK
 	},
 #else
@@ -331,7 +331,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* DDR */
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
-		0x00000000,
+		0x007F0000,
 		CPG_T_RST
 	},
 #else
