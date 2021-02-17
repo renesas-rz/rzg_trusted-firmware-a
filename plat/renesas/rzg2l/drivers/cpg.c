@@ -140,7 +140,7 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{		/* DDR */
 		(uintptr_t)CPG_CLKON_DDR,
 		(uintptr_t)CPG_CLKMON_DDR,
-		0x00030000,
+		0x00030003,
 		CPG_T_CLK
 	},
 #endif
@@ -338,7 +338,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* DDR */
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
-		0x007F0000,
+		0x007F007F,
 		CPG_T_RST
 	},
 #endif
@@ -471,8 +471,8 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 };
 
 static CPG_REG_SETTING cpg_static_select_tbl[] = {
-	{ (uintptr_t)CPG_PL3A_DDIV,             0x01110100 },
-	{ (uintptr_t)CPG_PL3_SSEL,              0x01110011 },
+	{ (uintptr_t)CPG_PL3A_DDIV,             0x01000100 },
+	{ (uintptr_t)CPG_PL3_SSEL,              0x01000000 },
 };
 
 static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
