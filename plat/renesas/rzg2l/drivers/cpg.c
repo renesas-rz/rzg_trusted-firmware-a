@@ -171,7 +171,7 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	{		/* H.264 codec */
 		(uintptr_t)CPG_CLKON_H264,
 		(uintptr_t)CPG_CLKMON_H264,
-		0x00010000,
+		0x00010001,
 		CPG_T_CLK
 	},
 	{		/* Camera Data Receive Unit */
@@ -369,7 +369,7 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 	{		/* H.264 codec */
 		(uintptr_t)CPG_RST_H264,
 		(uintptr_t)CPG_RSTMON_H264,
-		0x00030000,
+		0x00030003,
 		CPG_T_RST
 	},
 	{		/* Camera Data Receive Unit */
