@@ -327,8 +327,7 @@ static void program_phy1(uint32_t scl_lanes, uint32_t byte_lanes)
 	write_phy_reg(PHY_DLL_TRIM_CLK, 26 | 0x00000080);
 
 	// Step34
-	tmp = (uint32_t)_MIN(1000000000000ULL / (2 * dram_clk_period * 256), 0x3FFFF);
-	write_phy_reg(PHY_DLL_RECALIB, 26 | (tmp << 8) | 0xAC000000);
+	write_phy_reg(PHY_DLL_RECALIB, 26 | (0x10 << 8) | 0xAC000000);
 
 	// Step35
 	write_phy_reg(SCL_LATENCY, 0x00035076);
@@ -408,6 +407,12 @@ static void program_phy2(void)
 	rmw_phy_reg(DYNAMIC_BIT_LVL, 0xFFFFFFFE, runDABCR);
 	write_phy_reg(DSCL_CNT, (runDSCL << 24) |
 		_MIN(1000000000000 / (2 * dram_clk_period * 256), 0xFFFFFF));
+
+	// Step3
+	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x04000000);
+	rmw_phy_reg(PHY_DLL_RECALIB, 0xFC0000FF,
+		_MIN(1000000000000 / (dram_clk_period * 256), 0x3FFFF) << 8);
+	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x00000000);
 }
 
 static void exec_trainingWRLVL(uint32_t scl_lanes)
