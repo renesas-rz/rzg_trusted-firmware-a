@@ -7,10 +7,10 @@
 #include <stdint.h>
 
 const uint32_t mc_odt_pins_tbl[4] = {
-	0x02000000,
-	0x00000100,
-	0x00020000,
-	0x00000001
+	2,
+	1,
+	2,
+	1
 };
 
 const uint32_t mc_mr1_tbl[2] = {
