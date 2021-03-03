@@ -878,10 +878,45 @@ void ddr_setup(void)
 	// Step2 - Step11
 	cpg_active_ddr(disable_phy_clk);
 
-	// Step12-13
+	// Step12
 	program_mc1(&lp_auto_entry_en);
 
+	// Step13
+	scl_lanes = ((read_mc_reg(DENALI_CTL_133) & 0x1) == 0) ? 3 : 1;
+	byte_lanes = ((read_mc_reg(DENALI_CTL_133) & 0x1) == 0) ? 2 : 1;
+	runABC = (read_mc_reg(DENALI_CTL_413) >> 20) & 0x1;
+	runSCL = (read_mc_reg(DENALI_CTL_413) >> 21) & 0x1;
+	runVREF = (read_mc_reg(DENALI_CTL_413) >> 25) & 0x1;
+
 	// Step14
+	program_phy1(scl_lanes, byte_lanes);
+
+	// Step15
+	while ((read_phy_reg(UNQ_ANALOG_DLL_2) & 0x00000003) != scl_lanes)
+		;
+
+	// Step16
+	rmw_phy_reg(PHY_CTRL0, 0xFFFEFFFF,0x00000000);
+	rmw_mc_reg(DENALI_CTL_64, 0xFFFFFEFF, 0x00000000);
+	rmw_mc_reg(DENALI_CTL_11, 0xFEFFFFFF, 0x01000000);
+	rmw_mc_reg(DENALI_CTL_00, 0xFFFFFFFE, 0x00000001);
+	while ((read_mc_reg(DENALI_CTL_146) & 0x02000000) != 0x02000000)
+		;
+	rmw_phy_reg(DYNAMIC_IE_TIMER, 0xFFF7FFFF, 0x00080000);
+	rmw_mc_reg(DENALI_CTL_401, 0xFF0000FF, 64 << 8);
+	rmw_mc_reg(DENALI_CTL_391, 0xE00000FF, 111 << 8);
+	rmw_mc_reg(DENALI_CTL_134, 0xFFFFFEFF, 0x00000100);
+	udelay(1);
+	rmw_phy_reg(DYNAMIC_IE_TIMER, 0xFFF7FFFF, 0x00000000);
+
+	// Step17
+	cpg_reset_ddr_mc();
+	rmw_phy_reg(PHY_CTRL0, 0xFFFEFFFF, 0x00010000);
+
+	// Step18-19
+	program_mc1(&lp_auto_entry_en);
+
+	// Step20
 	for (i = 0; i < ARRAY_SIZE(swizzle_mc_tbl); i++) {
 		write_mc_reg(swizzle_mc_tbl[i][0], swizzle_mc_tbl[i][1]);
 	}
@@ -889,56 +924,42 @@ void ddr_setup(void)
 		write_phy_reg(swizzle_phy_tbl[i][0], swizzle_phy_tbl[i][1]);
 	}
 
-	// Step15
-	scl_lanes = ((read_mc_reg(DENALI_CTL_133) & 0x1) == 0) ? 3 : 1;
-	byte_lanes = ((read_mc_reg(DENALI_CTL_133) & 0x1) == 0) ? 2 : 1;
-	runABC = (read_mc_reg(DENALI_CTL_413) >> 20) & 0x1;
-	runSCL = (read_mc_reg(DENALI_CTL_413) >> 21) & 0x1;
-	runVREF = (read_mc_reg(DENALI_CTL_413) >> 25) & 0x1;
-
-	// Step16
-	program_phy1(scl_lanes, byte_lanes);
-
-	// Step17
-	while ((read_phy_reg(UNQ_ANALOG_DLL_2) & 0x00000003) != scl_lanes)
-		;
-
-	// Step18
+	// Step21
 	rmw_mc_reg(DENALI_CTL_00, 0xFFFFFFFE, 0x00000001);
 
-	// Step19
+	// Step22
 	while ((read_mc_reg(DENALI_CTL_146) & 0x02000000) != 0x02000000)
 		;
 
-	// Step20
+	// Step23
 	rmw_mc_reg(DENALI_CTL_154, 0xFDFFFFFF, 0x02000000);
 
-	// Step21
+	// Step24
 	exec_trainingWRLVL(scl_lanes);
 
-	// Step22
+	// Step25
 	if (runVREF == 1)
 		exec_trainingVREF(scl_lanes, byte_lanes);
 
-	// Step23
+	// Step26
 	if (runABC == 1)
 		exec_trainingBITLVL(scl_lanes);
 
-	// Step24
+	// Step27
 	opt_delay(scl_lanes, byte_lanes);
 
-	// Step25
+	// Step28
 	if (runSCL == 1)
 		exec_trainingSCL(scl_lanes);
 
-	// Step26
+	// Step29
 	program_phy2();
 
-	// Step27
+	// Step30
 	program_mc2();
 
-	// Step28 is skipped because ECC is unused.
+	// Step31 is skipped because ECC is unused.
 
-	// Step29
+	// Step32
 	rmw_mc_reg(DENALI_CTL_60, 0xFFFFFFF0, lp_auto_entry_en & 0xF);
 }
