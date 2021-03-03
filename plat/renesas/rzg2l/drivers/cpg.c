@@ -755,9 +755,9 @@ static void cpg_reset_setup(void)
 void cpg_active_ddr(void (*disable_phy)(void))
 {
 	/* Assert the reset of DDRTOP */
-	mmio_write_32(CPG_RST_DDR, 0x007F0000);
+	mmio_write_32(CPG_RST_DDR, 0x005F0000);
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007F) != 0x0000007F)
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000005F) != 0x0000005F)
 		;
 
 	/* Start the clocks of DDRTOP */
@@ -782,8 +782,31 @@ void cpg_active_ddr(void (*disable_phy)(void))
 	disable_phy();
 
 	/* De-assert axiY_ARESETn, regARESETn, reset_n */
-	mmio_write_32(CPG_RST_DDR, 0x007D007D);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000007D) != 0x00000000)
+	mmio_write_32(CPG_RST_DDR, 0x005D005D);
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000005D) != 0x00000000)
+		;
+
+	udelay(1);
+}
+
+void cpg_reset_ddr_mc(void)
+{
+	/* Assert rst_n, axiY_ARESETn, regARESETn */
+	mmio_write_32(CPG_RST_DDR, 0x005C0000);
+	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000005C) != 0x0000005C)
+		;
+
+	udelay(1);
+
+	/* De-assert rst_n */
+	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
+
+	udelay(1);
+
+	/* De-assert axiY_ARESETn, regARESETn */
+	mmio_write_32(CPG_RST_DDR, 0x005C005C);
+	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000005C) != 0x00000000)
 		;
 
 	udelay(1);
