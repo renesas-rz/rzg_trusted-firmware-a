@@ -66,8 +66,8 @@ static inline void rmw_phy_reg(uint32_t offset, uint32_t mask, uint32_t val)
 static void disable_phy_clk(void)
 {
 	// Initialization Step9
-	write_phy_reg(PHY_MODE0, 0x00000200);
-	write_phy_reg(PHY_CTRL0, 0x00010001);
+	write_phy_reg(DDRPHY_R77, 0x00000200);
+	write_phy_reg(DDRPHY_R78, 0x00010001);
 }
 
 static void program_mc1(uint8_t *lp_auto_entry_en)
@@ -121,7 +121,7 @@ static void program_mc2(void)
 	uint32_t tmp;
 
 	// Step1
-	main_clk_dly = (read_phy_reg(SCL_LATENCY) >> 4) & 0xF;
+	main_clk_dly = (read_phy_reg(DDRPHY_R21) >> 4) & 0xF;
 	tmp = (read_mc_reg(DENALI_CTL_398) >> 24) & 0x7F;
 	tphy_rdlat = ((main_clk_dly + 1 + 1) * 2) + 2 + ((tmp == 1) ? 2 : 0);
 
@@ -129,7 +129,7 @@ static void program_mc2(void)
 	rmw_mc_reg(DENALI_CTL_391, 0xFFFFFF80, tphy_rdlat & 0x7F);
 }
 
-static void program_phy1(uint32_t scl_lanes, uint32_t byte_lanes)
+static void program_phy1(uint32_t sl_lanes, uint32_t byte_lanes)
 {
 	uint16_t dram_clk_period;
 	uint8_t dram;
@@ -221,85 +221,85 @@ static void program_phy1(uint32_t scl_lanes, uint32_t byte_lanes)
 
 	// Step5
 	tmp = ((WL == 5 ? 0x1 : 0x0) << 16) | 0x00100000;
-	write_phy_reg(PHY_MODE0, tmp);
+	write_phy_reg(DDRPHY_R77, tmp);
 
 	// Step6
-	write_phy_reg(DLLM_WINDOW_SIZE, 0x00000006);
+	write_phy_reg(DDRPHY_R05, 0x00000006);
 
 	// Step7
 	if (dram == 2) {
 		// DDR4
-		write_phy_reg(DDR4_CONFIG_1, 0x00000009);
+		write_phy_reg(DDRPHY_R65, 0x00000009);
 	}
 
 	// Step8
-	write_phy_reg(UNIQUIFY_IO_3, (dram == 2 ? 1 : 0) << 27);
-	write_phy_reg(UNIQUIFY_IO_2, (dram == 2 ? 1 : 0) << 24);
+	write_phy_reg(DDRPHY_R67, (dram == 2 ? 1 : 0) << 27);
+	write_phy_reg(DDRPHY_R47, (dram == 2 ? 1 : 0) << 24);
 
 	// Step9
 	tmp = ((dram == 0 ? 0 : 1) << 15) | ((dram_clk_period < 1000 ? 1 : 0) << 8) | 0x10004000;
-	write_phy_reg(PHY_PAD_CTRL, tmp);
+	write_phy_reg(DDRPHY_R26, tmp);
 
 	// Step10
-	write_phy_reg(PHY_PAD_CTRL_1,
+	write_phy_reg(DDRPHY_R13,
 		clk_drive | (clk_drive << 4) | (clk_drive << 8) | (clk_drive<<12) |
 		(dq_dqs_drive << 16) | (dq_dqs_drive << 20));
 
 	// Step11
 	tmp = dq_dqs_term | ((dram == 2) ? 0 : (dq_dqs_term << 4));
-	write_phy_reg(PHY_PAD_CTRL_2, tmp);
+	write_phy_reg(DDRPHY_R14, tmp);
 
 	// Step12
-	write_phy_reg(PHY_PAD_CTRL_3, 0x00000000);
+	write_phy_reg(DDRPHY_R10, 0x00000000);
 
 	// Step13
 	for (i = 0; i < byte_lanes; i++) {
-		write_phy_reg(PHY_LANE_SEL, 7 * i);
-		write_phy_reg(VREF_TRAINING, (vref_value << 4) | 0x00000004);
+		write_phy_reg(DDRPHY_R29, 7 * i);
+		write_phy_reg(DDRPHY_R66, (vref_value << 4) | 0x00000004);
 	}
 
 	// Step14
-	write_phy_reg(VREF_CA_TRAINING, vref_ca_value);
+	write_phy_reg(DDRPHY_R12, vref_ca_value);
 
 	// Step15
-	write_phy_reg(SCL_WINDOW_TRIM, 0x1A09002D);
+	write_phy_reg(DDRPHY_R61, 0x1A09002D);
 
 	// Step16
-	write_phy_reg(UNQ_ANALOG_DLL_1, 0x00000000);
+	write_phy_reg(DDRPHY_R41, 0x00000000);
 
 	// Step17
-	write_phy_reg(DYNAMIC_IE_TIMER, 0x0000001A);
+	write_phy_reg(DDRPHY_R74, 0x0000001A);
 
 	// Step18
 	tmp = ((dram == 2 ? 0 : 1) << 2) | (CEIL(CL, 2) << 4) | (CEIL(AL, 2) << 8) |
 			(odt_rd_map_cs0 << 16) | (odt_wr_map_cs0 << 24) | 0x00000001;
-	write_phy_reg(SCL_CONFIG_1, tmp);
+	write_phy_reg(DDRPHY_R24, tmp);
 
 	// Step19
 	tmp = (CEIL(CWL, 2) << 8) | ((((WL % 2) == 0) ? 0 : 1) << 24) | 0x80000001;
-	write_phy_reg(SCL_CONFIG_2, tmp);
+	write_phy_reg(DDRPHY_R25, tmp);
 
 	// Step20
-	write_phy_reg(SCL_CONFIG_3, scl_lanes ^ 0x3);
+	write_phy_reg(DDRPHY_R45, sl_lanes ^ 0x3);
 
 	// Step21
-	write_phy_reg(DYNAMIC_WRITE_BIT_LVL, (trim_lat << 4) | (read_lat << 12));
+	write_phy_reg(DDRPHY_R64, (trim_lat << 4) | (read_lat << 12));
 
 	// Step22
 	tmp = ((WL % 2) == 0) & 0x1;
-	write_phy_reg(SCL_CONFIG_4, tmp);
+	write_phy_reg(DDRPHY_R63, tmp);
 
 	// Step23
-	write_phy_reg(SCL_GATE_TIMING, 0x00000170);
+	write_phy_reg(DDRPHY_R72, 0x00000170);
 
 	// Step24
-	write_phy_reg(WRLVL_DYN_ODT, mr2_wl | (mr2 << 16));
+	write_phy_reg(DDRPHY_R38, mr2_wl | (mr2 << 16));
 
 	// Step25
-	write_phy_reg(WRLVL_ON_OFF, mr1 | (mr1_wl << 16));
+	write_phy_reg(DDRPHY_R39, mr1 | (mr1_wl << 16));
 
 	// Step26
-	write_phy_reg(PHY_DLL_RECALIB, 0xAC001000);
+	write_phy_reg(DDRPHY_R27, 0xAC001000);
 
 	// Step27
 	udelay(10);
@@ -307,36 +307,36 @@ static void program_phy1(uint32_t scl_lanes, uint32_t byte_lanes)
 	// Step28 is skipped because dll_mas_dly is unused.
 
 	// Step29
-	write_phy_reg(PHY_DLL_INCR_TRIM_3, 0x00000000);
+	write_phy_reg(DDRPHY_R44, 0x00000000);
 
 	// Step30
-	write_phy_reg(PHY_DLL_INCR_TRIM_1, 0x00000000);
+	write_phy_reg(DDRPHY_R43, 0x00000000);
 
 	// Step31
 	for (i = 0; i < byte_lanes; i++) {
-		write_phy_reg(PHY_LANE_SEL, 6 * i);
-		write_phy_reg(PHY_DLL_TRIM_1, 9);
-		write_phy_reg(PHY_DLL_TRIM_3, 10);
+		write_phy_reg(DDRPHY_R29, 6 * i);
+		write_phy_reg(DDRPHY_R30, 9);
+		write_phy_reg(DDRPHY_R32, 10);
 	}
 
 	// Step32
-	write_phy_reg(PHY_DLL_ADRCTRL, 26 | 0x00000200);
+	write_phy_reg(DDRPHY_R28, 26 | 0x00000200);
 
 	// Step33
-	write_phy_reg(PHY_LANE_SEL, 0);
-	write_phy_reg(PHY_DLL_TRIM_CLK, 26 | 0x00000080);
+	write_phy_reg(DDRPHY_R29, 0);
+	write_phy_reg(DDRPHY_R57, 26 | 0x00000080);
 
 	// Step34
-	write_phy_reg(PHY_DLL_RECALIB, 26 | (0x10 << 8) | 0xAC000000);
+	write_phy_reg(DDRPHY_R27, 26 | (0x10 << 8) | 0xAC000000);
 
 	// Step35
-	write_phy_reg(SCL_LATENCY, 0x00035076);
+	write_phy_reg(DDRPHY_R21, 0x00035076);
 
 	// Step36
-	write_phy_reg(BIT_LVL_CONFIG, 0x00000032);
+	write_phy_reg(DDRPHY_R07, 0x00000032);
 
 	// Step37-2
-	rmw_phy_reg(UNIQUIFY_IO_2, 0xFF800000, 0x00000000);
+	rmw_phy_reg(DDRPHY_R47, 0xFF800000, 0x00000000);
 
 	// Step37-3
 	switch (dram) {
@@ -353,12 +353,12 @@ static void program_phy1(uint32_t scl_lanes, uint32_t byte_lanes)
 		tmp = 0x00000000;
 		break;
 	}
-	write_phy_reg(UNIQUIFY_IO_3, tmp);
-	write_phy_reg(UNIQUIFY_IO_1, 0x00000002);
-	while ((read_phy_reg(UNIQUIFY_IO_1) & 0x00000008) != 0x00000008)
+	write_phy_reg(DDRPHY_R67, tmp);
+	write_phy_reg(DDRPHY_R46, 0x00000002);
+	while ((read_phy_reg(DDRPHY_R46) & 0x00000008) != 0x00000008)
 		;
 
-	write_phy_reg(UNIQUIFY_IO_1, 0x00000000);
+	write_phy_reg(DDRPHY_R46, 0x00000000);
 	udelay(100);
 
 	// Step37-4
@@ -374,76 +374,72 @@ static void program_phy1(uint32_t scl_lanes, uint32_t byte_lanes)
 		tmp = 0x00000000;
 		break;
 	}
-	write_phy_reg(UNIQUIFY_IO_3, tmp);
-	write_phy_reg(UNIQUIFY_IO_1, 0x00000001);
-	while ((read_phy_reg(UNIQUIFY_IO_1) & 0x00000004) != 0x00000004)
+	write_phy_reg(DDRPHY_R67, tmp);
+	write_phy_reg(DDRPHY_R46, 0x00000001);
+	while ((read_phy_reg(DDRPHY_R46) & 0x00000004) != 0x00000004)
 		;
 
-	rmw_phy_reg(UNIQUIFY_IO_1, 0xFFFFFFEF, 0x00000010);
-	rmw_phy_reg(UNIQUIFY_IO_1, 0xFFFFFFEF, 0x00000000);
+	rmw_phy_reg(DDRPHY_R46, 0xFFFFFFEF, 0x00000010);
+	rmw_phy_reg(DDRPHY_R46, 0xFFFFFFEF, 0x00000000);
 	udelay(1);
 
 	// Step38
-	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x00000000);
+	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x00000000);
 
 	// Step39
-	rmw_phy_reg(PHY_CTRL0, 0xFFFFF0FE, (scl_lanes << 8));
+	rmw_phy_reg(DDRPHY_R78, 0xFFFFF0FE, (sl_lanes << 8));
 }
 
 static void program_phy2(void)
 {
 	uint32_t tmp = read_mc_reg(DENALI_CTL_413);
 	uint16_t dram_clk_period;
-	uint8_t runDABCR, runDABCW, runDSCL;
 
 	// Step1
 	dram_clk_period = tmp & 0xFFFF;
-	runDABCR = (tmp >> 22) & 0x1;
-	runDABCW = (tmp >> 23) & 0x1;
-	runDSCL = (tmp >> 21) & 0x1;
 
 	// Step2
-	rmw_phy_reg(DYNAMIC_WRITE_BIT_LVL, 0xFFFFFFFE, runDABCW);
-	rmw_phy_reg(DYNAMIC_BIT_LVL, 0xFFFFFFFE, runDABCR);
-	write_phy_reg(DSCL_CNT, (runDSCL << 24) |
+	rmw_phy_reg(DDRPHY_R64, 0xFFFFFFFE, (tmp >> 23) & 0x1);
+	rmw_phy_reg(DDRPHY_R59, 0xFFFFFFFE, (tmp >> 22) & 0x1);
+	write_phy_reg(DDRPHY_R55, (((tmp >> 21) & 0x1) << 24) |
 		_MIN(1000000000000 / (2 * dram_clk_period * 256), 0xFFFFFF));
 
 	// Step3
-	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x04000000);
-	rmw_phy_reg(PHY_DLL_RECALIB, 0xFC0000FF,
+	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x04000000);
+	rmw_phy_reg(DDRPHY_R27, 0xFC0000FF,
 		_MIN(1000000000000 / (dram_clk_period * 256), 0x3FFFF) << 8);
-	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x00000000);
+	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x00000000);
 }
 
-static void exec_trainingWRLVL(uint32_t scl_lanes)
+static void exec_trainingWRLVL(uint32_t sl_lanes)
 {
-	uint32_t orig_SCL_CONFIG_1;
+	uint32_t tmp;
 
 	// Step2
-	orig_SCL_CONFIG_1 = read_phy_reg(SCL_CONFIG_1);
-	write_phy_reg(SCL_CONFIG_1, orig_SCL_CONFIG_1 | 0x01000000);
+	tmp = read_phy_reg(DDRPHY_R24);
+	write_phy_reg(DDRPHY_R24, tmp | 0x01000000);
 
 	// Step3
-	write_phy_reg(WRLVL_AUTOINC_TRIM, scl_lanes);
+	write_phy_reg(DDRPHY_R37, sl_lanes);
 
 	// Step4
-	write_phy_reg(PHY_DLL_TRIM_2, 0x00010000);
+	write_phy_reg(DDRPHY_R31, 0x00010000);
 
 	// Step5
-	write_phy_reg(SCL_START, 0x50200000);
+	write_phy_reg(DDRPHY_R18, 0x50200000);
 
 	// Step6
-	while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
 	// Step7 - Step8
-	if (((read_phy_reg(WRLVL_CTRL) & scl_lanes) != scl_lanes) ||
-	   ((read_phy_reg(WRLVL_AUTOINC_TRIM) & scl_lanes) != 0)) {
+	if (((read_phy_reg(DDRPHY_R36) & sl_lanes) != sl_lanes) ||
+	   ((read_phy_reg(DDRPHY_R37) & sl_lanes) != 0)) {
 		panic();
 	}
 
 	// Step9
-	write_phy_reg(SCL_CONFIG_1, orig_SCL_CONFIG_1);
+	write_phy_reg(DDRPHY_R24, tmp);
 }
 
 static void write_mr(uint8_t cs, uint8_t mrw_sel, uint16_t mrw_data)
@@ -496,7 +492,7 @@ static void setup_vref_training_registers(
 	udelay(1);
 }
 
-static void exec_trainingVREF(uint32_t scl_lanes, uint32_t byte_lanes)
+static void exec_trainingVREF(uint32_t sl_lanes, uint32_t byte_lanes)
 {
 	uint32_t vref_mid_level_code;
 	uint32_t vref_training_value;
@@ -538,21 +534,21 @@ static void exec_trainingVREF(uint32_t scl_lanes, uint32_t byte_lanes)
 			} else {
 				current_vref = vref_mid_level_code + vref_training_value - sweep_range;
 			}
-			write_phy_reg(PHY_LANE_SEL, 7 * i);
-			write_phy_reg(VREF_TRAINING, (current_vref << 4) | 0x00000001);
+			write_phy_reg(DDRPHY_R29, 7 * i);
+			write_phy_reg(DDRPHY_R66, (current_vref << 4) | 0x00000001);
 		}
 
 		// Step4-2
-		write_phy_reg(SCL_START, 0x30800000);
-		while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+		write_phy_reg(DDRPHY_R18, 0x30800000);
+		while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 			;
 
 		// Step4-3
 		for (i = 0; i < byte_lanes; i++) {
-			if (((read_phy_reg(DYNAMIC_BIT_LVL) >> (14 + i)) & 0x1) == 0x0) {
-				write_phy_reg(PHY_LANE_SEL, i * 6);
-				window_0 = read_phy_reg(VREF_TRAINING_WINDOWS) & 0x3F;
-				window_1 = (read_phy_reg(VREF_TRAINING_WINDOWS) >> 8) & 0x3F;
+			if (((read_phy_reg(DDRPHY_R59) >> (14 + i)) & 0x1) == 0x0) {
+				write_phy_reg(DDRPHY_R29, i * 6);
+				window_0 = read_phy_reg(DDRPHY_R69) & 0x3F;
+				window_1 = (read_phy_reg(DDRPHY_R69) >> 8) & 0x3F;
 				window_diff = (window_0 > window_1) ?
 								window_0 - window_1 : window_1 - window_0;
 				if (window_diff < best_window_diff_so_far[i]) {
@@ -582,40 +578,40 @@ static void exec_trainingVREF(uint32_t scl_lanes, uint32_t byte_lanes)
 				_MIN(all_best_vref_matches[i][j], lowest_best_vref_val);
 		}
 		current_vref = (highest_best_vref_val + lowest_best_vref_val) >> 1;
-		write_phy_reg(PHY_LANE_SEL, 7 * i);
-		write_phy_reg(VREF_TRAINING, current_vref << 4);
+		write_phy_reg(DDRPHY_R29, 7 * i);
+		write_phy_reg(DDRPHY_R66, current_vref << 4);
 	}
 
 	// Step6
-	write_phy_reg(SCL_DATA_0, 0xFF00FF00);
-	write_phy_reg(SCL_DATA_1, 0xFF00FF00);
+	write_phy_reg(DDRPHY_R19, 0xFF00FF00);
+	write_phy_reg(DDRPHY_R20, 0xFF00FF00);
 
 	// Step7
-	write_phy_reg(SCL_START, 0x30800000);
-	while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+	write_phy_reg(DDRPHY_R18, 0x30800000);
+	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
 	// Step8
-	tmp = (read_phy_reg(DYNAMIC_BIT_LVL) >> 14) & scl_lanes;
-	if ((tmp ^ scl_lanes) != scl_lanes) {
+	tmp = (read_phy_reg(DDRPHY_R59) >> 14) & sl_lanes;
+	if ((tmp ^ sl_lanes) != sl_lanes) {
 		panic();
 	}
 
 	// Step9
-	rmw_phy_reg(IP_DQ_DQS_BITWISE_TRIM, 0xFFFFFF7F, 0x00000080);
+	rmw_phy_reg(DDRPHY_R54, 0xFFFFFF7F, 0x00000080);
 
 	// Step10
 	vref_mid_level_code = (read_mc_reg(DENALI_CTL_417) >> 8) & 0xFF;
 	sweep_range = (read_mc_reg(DENALI_CTL_417) >> 16) & 0xFF;
 
 	// Step11
-	orig_cs_config = read_phy_reg(SCL_CONFIG_2) & 0x3;
+	orig_cs_config = read_phy_reg(DDRPHY_R25) & 0x3;
 
 	// Step12
-	setup_vref_training_registers(vref_mid_level_code, scl_lanes, 1);
+	setup_vref_training_registers(vref_mid_level_code, sl_lanes, 1);
 
 	// Step13
-	rmw_phy_reg(VREF_TRAINING, 0xFFFFFFFE, 0x00000001);
+	rmw_phy_reg(DDRPHY_R66, 0xFFFFFFFE, 0x00000001);
 
 	// Step14
 	for (i = 0; i < byte_lanes; i++) {
@@ -646,17 +642,17 @@ static void exec_trainingVREF(uint32_t scl_lanes, uint32_t byte_lanes)
 		setup_vref_training_registers(current_vref, orig_cs_config, 0);
 
 		// Step15-2
-		write_phy_reg(SCL_START, 0x30500000);
-		while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+		write_phy_reg(DDRPHY_R18, 0x30500000);
+		while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 			;
 
 		// Step15-3
-		tmp = (read_phy_reg(DYNAMIC_WRITE_BIT_LVL) >> 20) & scl_lanes;
+		tmp = (read_phy_reg(DDRPHY_R64) >> 20) & sl_lanes;
 		for (i = 0; i < byte_lanes; i++) {
-			if ((tmp ^ scl_lanes) == scl_lanes) {
-				write_phy_reg(PHY_LANE_SEL, i * 6);
-				window_0 = read_phy_reg(VREF_TRAINING_WINDOWS) & 0x3F;
-				window_1 = (read_phy_reg(VREF_TRAINING_WINDOWS) >> 8) & 0x3F;
+			if ((tmp ^ sl_lanes) == sl_lanes) {
+				write_phy_reg(DDRPHY_R29, i * 6);
+				window_0 = read_phy_reg(DDRPHY_R69) & 0x3F;
+				window_1 = (read_phy_reg(DDRPHY_R69) >> 8) & 0x3F;
 				window_diff = (window_0 > window_1) ?
 								window_0 - window_1 : window_1 - window_0;
 				if (window_diff < best_window_diff_so_far[i]) {
@@ -689,83 +685,83 @@ static void exec_trainingVREF(uint32_t scl_lanes, uint32_t byte_lanes)
 	current_vref = (highest_best_vref_val + lowest_best_vref_val) >> 1;
 
 	// Step17
-	setup_vref_training_registers(current_vref, scl_lanes, 0);
+	setup_vref_training_registers(current_vref, sl_lanes, 0);
 
 	// Step18
-	rmw_phy_reg(VREF_TRAINING, 0xFFFFFFFE, 0x00000000);
+	rmw_phy_reg(DDRPHY_R66, 0xFFFFFFFE, 0x00000000);
 
 	// Step19
-	setup_vref_training_registers(current_vref, scl_lanes, 2);
+	setup_vref_training_registers(current_vref, sl_lanes, 2);
 
 	// Step20
-	rmw_phy_reg(IP_DQ_DQS_BITWISE_TRIM, 0xFFFFFF7F, 0x00000000);
+	rmw_phy_reg(DDRPHY_R54, 0xFFFFFF7F, 0x00000000);
 }
 
-static void exec_trainingBITLVL(uint32_t scl_lanes)
+static void exec_trainingBITLVL(uint32_t sl_lanes)
 {
 	uint32_t tmp;
 
 	// Step2
-	write_phy_reg(DISABLE_GATING_FOR_SCL, 0x00000000);
+	write_phy_reg(DDRPHY_R62, 0x00000000);
 
 	// Step3
-	write_phy_reg(SCL_DATA_0, 0xFF00FF00);
-	write_phy_reg(SCL_DATA_1, 0xFF00FF00);
+	write_phy_reg(DDRPHY_R19, 0xFF00FF00);
+	write_phy_reg(DDRPHY_R20, 0xFF00FF00);
 
 	// Step4
-	write_phy_reg(SCL_START, 0x30A00000);
+	write_phy_reg(DDRPHY_R18, 0x30A00000);
 
 	// Step5
-	while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
 	// Step6
-	tmp = (read_phy_reg(DYNAMIC_BIT_LVL) >> 14) & scl_lanes;
-	if ((tmp ^ scl_lanes) != scl_lanes) {
+	tmp = (read_phy_reg(DDRPHY_R59) >> 14) & sl_lanes;
+	if ((tmp ^ sl_lanes) != sl_lanes) {
 		panic();
 	}
 
 	// Step7
-	rmw_phy_reg(IP_DQ_DQS_BITWISE_TRIM, 0xFFFFFF7F, 0x00000080);
+	rmw_phy_reg(DDRPHY_R54, 0xFFFFFF7F, 0x00000080);
 
 	// Step8
-	write_phy_reg(SCL_START, 0x30700000);
+	write_phy_reg(DDRPHY_R18, 0x30700000);
 
 	// Step9
-	while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
 	// Step10
-	tmp = (read_phy_reg(DYNAMIC_WRITE_BIT_LVL) >> 20) & scl_lanes;
-	if ((tmp ^ scl_lanes) != scl_lanes) {
+	tmp = (read_phy_reg(DDRPHY_R64) >> 20) & sl_lanes;
+	if ((tmp ^ sl_lanes) != sl_lanes) {
 		panic();
 	}
 
 	// Step11
-	rmw_phy_reg(IP_DQ_DQS_BITWISE_TRIM, 0xFFFFFF7F, 0x00000000);
+	rmw_phy_reg(DDRPHY_R54, 0xFFFFFF7F, 0x00000000);
 
 	// Step12
-	write_phy_reg(PHY_SCL_START_ADDR, 0x00080000);
+	write_phy_reg(DDRPHY_R51, 0x00080000);
 
 	// Step13
-	write_phy_reg(SCL_START, 0x11200000);
+	write_phy_reg(DDRPHY_R18, 0x11200000);
 
 	// Step14
-	while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
 	// Step15
-	write_phy_reg(PHY_SCL_START_ADDR, 0x00000000);
+	write_phy_reg(DDRPHY_R51, 0x00000000);
 
 	// Step16
-	write_phy_reg(SCL_START, 0x30600000);
+	write_phy_reg(DDRPHY_R18, 0x30600000);
 
 	// Step17
-	while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 }
 
-static void opt_delay(uint32_t scl_lanes, uint32_t byte_lanes)
+static void opt_delay(uint32_t sl_lanes, uint32_t byte_lanes)
 {
 	uint32_t tmp;
 	uint16_t dlls_trim_ca;
@@ -776,7 +772,7 @@ static void opt_delay(uint32_t scl_lanes, uint32_t byte_lanes)
 	int i, j;
 
 	// Step2
-	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x04000000);
+	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x04000000);
 
 	// Step3
 	rmw_mc_reg(DENALI_CTL_56, 0xFFFFFF80, 0x00000011);
@@ -784,21 +780,21 @@ static void opt_delay(uint32_t scl_lanes, uint32_t byte_lanes)
 		;
 
 	// Step4
-	write_phy_reg(PHY_LANE_SEL, 0);
-	dlls_trim_ca = read_phy_reg(PHY_DLL_TRIM_CLK) & 0x7F;
+	write_phy_reg(DDRPHY_R29, 0);
+	dlls_trim_ca = read_phy_reg(DDRPHY_R57) & 0x7F;
 	min_WL = dlls_trim_ca;
 
 	for (i = 0; i < byte_lanes; i++) {
-		write_phy_reg(PHY_LANE_SEL, 6 * i);
-		dlls_trim_2[i] = read_phy_reg(PHY_DLL_TRIM_2) & 0x3F;
+		write_phy_reg(DDRPHY_R29, 6 * i);
+		dlls_trim_2[i] = read_phy_reg(DDRPHY_R31) & 0x3F;
 		min_WL = _MIN(min_WL, dlls_trim_2[i]);
 
-		write_phy_reg(PHY_LANE_SEL, (7 * i) | 0x00000900);
-		op_dqs_trim[i] = read_phy_reg(OP_DQ_DM_DQS_BITWISE_TRIM) & 0x3F;
+		write_phy_reg(DDRPHY_R29, (7 * i) | 0x00000900);
+		op_dqs_trim[i] = read_phy_reg(DDRPHY_R56) & 0x3F;
 		min_WD = _MIN(min_WD, op_dqs_trim[i]);
 		for (j = 0; j < 9; j++) {
-			write_phy_reg(PHY_LANE_SEL, (i * 7) | (j << 8));
-			tmp = read_phy_reg(OP_DQ_DM_DQS_BITWISE_TRIM) & 0x7F;
+			write_phy_reg(DDRPHY_R29, (i * 7) | (j << 8));
+			tmp = read_phy_reg(DDRPHY_R56) & 0x7F;
 			tmp = (tmp & 0x40) ?
 				(op_dqs_trim[i] + (tmp & 0x3F)) : (op_dqs_trim[i] - (tmp & 0x3F));
 			min_WD = _MIN(min_WD, tmp);
@@ -807,19 +803,19 @@ static void opt_delay(uint32_t scl_lanes, uint32_t byte_lanes)
 
 	// Step5
 	tmp = (dlls_trim_ca - min_WL) & 0x7F;
-	write_phy_reg(PHY_LANE_SEL, 0);
-	write_phy_reg(PHY_DLL_TRIM_CLK, tmp | 0x00000080);
-	write_phy_reg(PHY_DLL_ADRCTRL, tmp | 0x00000200);
-	rmw_phy_reg(PHY_DLL_RECALIB, 0xFFFFFF80, tmp);
+	write_phy_reg(DDRPHY_R29, 0);
+	write_phy_reg(DDRPHY_R57, tmp | 0x00000080);
+	write_phy_reg(DDRPHY_R28, tmp | 0x00000200);
+	rmw_phy_reg(DDRPHY_R27, 0xFFFFFF80, tmp);
 
 	for (i = 0; i < byte_lanes; i++) {
 		tmp = (dlls_trim_2[i] - min_WL) & 0x3F;
-		write_phy_reg(PHY_LANE_SEL, 6 * i);
-		rmw_phy_reg(PHY_DLL_TRIM_2, 0xFFFFFFC0, tmp);
+		write_phy_reg(DDRPHY_R29, 6 * i);
+		rmw_phy_reg(DDRPHY_R31, 0xFFFFFFC0, tmp);
 
-		write_phy_reg(PHY_LANE_SEL, (7 * i) | 0x00000900);
+		write_phy_reg(DDRPHY_R29, (7 * i) | 0x00000900);
 		tmp = (op_dqs_trim[i] - min_WD) & 0x3F;
-		rmw_phy_reg(OP_DQ_DM_DQS_BITWISE_TRIM, 0xFFFFFF80, tmp);
+		rmw_phy_reg(DDRPHY_R56, 0xFFFFFF80, tmp);
 	}
 
 	// Step6
@@ -828,50 +824,50 @@ static void opt_delay(uint32_t scl_lanes, uint32_t byte_lanes)
 		;
 
 	// Step6
-	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x00000000);
-	while ((read_phy_reg(UNQ_ANALOG_DLL_2) & 0x3) != scl_lanes)
+	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x00000000);
+	while ((read_phy_reg(DDRPHY_R42) & 0x3) != sl_lanes)
 		;
 }
 
-static void exec_trainingSCL(uint32_t scl_lanes)
+static void exec_trainingSL(uint32_t sl_lanes)
 {
 	// Step2
-	write_phy_reg(DISABLE_GATING_FOR_SCL, 0x00000001);
+	write_phy_reg(DDRPHY_R62, 0x00000001);
 
 	// Step3
-	write_phy_reg(SCL_MAIN_CLK_DELTA, 0x00000010);
+	write_phy_reg(DDRPHY_R34, 0x00000010);
 
 	// Step4
-	write_phy_reg(SCL_DATA_0, 0x789B3DE0);
-	write_phy_reg(SCL_DATA_1, 0xF10E4A56);
+	write_phy_reg(DDRPHY_R19, 0x789B3DE0);
+	write_phy_reg(DDRPHY_R20, 0xF10E4A56);
 
 	// Step5
-	write_phy_reg(SCL_START, 0x11200000);
+	write_phy_reg(DDRPHY_R18, 0x11200000);
 
 	// Step6
-	while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
 	// Step7
-	write_phy_reg(SCL_START, 0x34200000);
+	write_phy_reg(DDRPHY_R18, 0x34200000);
 
 	// Step8
-	while ((read_phy_reg(SCL_START) & 0x10000000) != 0x00000000)
+	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
 	// Step9
-	if ((read_phy_reg(SCL_START) & scl_lanes) != scl_lanes) {
+	if ((read_phy_reg(DDRPHY_R18) & sl_lanes) != sl_lanes) {
 		panic();
 	}
 
 	// Step10
-	write_phy_reg(DISABLE_GATING_FOR_SCL, 0x00000003);
+	write_phy_reg(DDRPHY_R62, 0x00000003);
 }
 
 void ddr_setup(void)
 {
-	uint32_t scl_lanes, byte_lanes;
-	uint8_t runABC, runSCL, runVREF;
+	uint32_t sl_lanes, byte_lanes;
+	uint8_t runBITLVL, runSL, runVREF;
 	uint8_t lp_auto_entry_en = 0;
 	int i;
 
@@ -882,36 +878,36 @@ void ddr_setup(void)
 	program_mc1(&lp_auto_entry_en);
 
 	// Step13
-	scl_lanes = ((read_mc_reg(DENALI_CTL_133) & 0x1) == 0) ? 3 : 1;
+	sl_lanes = ((read_mc_reg(DENALI_CTL_133) & 0x1) == 0) ? 3 : 1;
 	byte_lanes = ((read_mc_reg(DENALI_CTL_133) & 0x1) == 0) ? 2 : 1;
-	runABC = (read_mc_reg(DENALI_CTL_413) >> 20) & 0x1;
-	runSCL = (read_mc_reg(DENALI_CTL_413) >> 21) & 0x1;
+	runBITLVL = (read_mc_reg(DENALI_CTL_413) >> 20) & 0x1;
+	runSL = (read_mc_reg(DENALI_CTL_413) >> 21) & 0x1;
 	runVREF = (read_mc_reg(DENALI_CTL_413) >> 25) & 0x1;
 
 	// Step14
-	program_phy1(scl_lanes, byte_lanes);
+	program_phy1(sl_lanes, byte_lanes);
 
 	// Step15
-	while ((read_phy_reg(UNQ_ANALOG_DLL_2) & 0x00000003) != scl_lanes)
+	while ((read_phy_reg(DDRPHY_R42) & 0x00000003) != sl_lanes)
 		;
 
 	// Step16
-	rmw_phy_reg(PHY_CTRL0, 0xFFFEFFFF,0x00000000);
+	rmw_phy_reg(DDRPHY_R78, 0xFFFEFFFF,0x00000000);
 	rmw_mc_reg(DENALI_CTL_64, 0xFFFFFEFF, 0x00000000);
 	rmw_mc_reg(DENALI_CTL_11, 0xFEFFFFFF, 0x01000000);
 	rmw_mc_reg(DENALI_CTL_00, 0xFFFFFFFE, 0x00000001);
 	while ((read_mc_reg(DENALI_CTL_146) & 0x02000000) != 0x02000000)
 		;
-	rmw_phy_reg(DYNAMIC_IE_TIMER, 0xFFF7FFFF, 0x00080000);
+	rmw_phy_reg(DDRPHY_R74, 0xFFF7FFFF, 0x00080000);
 	rmw_mc_reg(DENALI_CTL_401, 0xFF0000FF, 64 << 8);
 	rmw_mc_reg(DENALI_CTL_391, 0xE00000FF, 111 << 8);
 	rmw_mc_reg(DENALI_CTL_134, 0xFFFFFEFF, 0x00000100);
 	udelay(1);
-	rmw_phy_reg(DYNAMIC_IE_TIMER, 0xFFF7FFFF, 0x00000000);
+	rmw_phy_reg(DDRPHY_R74, 0xFFF7FFFF, 0x00000000);
 
 	// Step17
 	cpg_reset_ddr_mc();
-	rmw_phy_reg(PHY_CTRL0, 0xFFFEFFFF, 0x00010000);
+	rmw_phy_reg(DDRPHY_R78, 0xFFFEFFFF, 0x00010000);
 
 	// Step18-19
 	program_mc1(&lp_auto_entry_en);
@@ -935,22 +931,22 @@ void ddr_setup(void)
 	rmw_mc_reg(DENALI_CTL_154, 0xFDFFFFFF, 0x02000000);
 
 	// Step24
-	exec_trainingWRLVL(scl_lanes);
+	exec_trainingWRLVL(sl_lanes);
 
 	// Step25
 	if (runVREF == 1)
-		exec_trainingVREF(scl_lanes, byte_lanes);
+		exec_trainingVREF(sl_lanes, byte_lanes);
 
 	// Step26
-	if (runABC == 1)
-		exec_trainingBITLVL(scl_lanes);
+	if (runBITLVL == 1)
+		exec_trainingBITLVL(sl_lanes);
 
 	// Step27
-	opt_delay(scl_lanes, byte_lanes);
+	opt_delay(sl_lanes, byte_lanes);
 
 	// Step28
-	if (runSCL == 1)
-		exec_trainingSCL(scl_lanes);
+	if (runSL == 1)
+		exec_trainingSL(sl_lanes);
 
 	// Step29
 	program_phy2();
