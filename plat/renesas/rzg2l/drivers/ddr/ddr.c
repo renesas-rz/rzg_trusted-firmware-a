@@ -91,20 +91,20 @@ static void program_mc1(uint8_t *lp_auto_entry_en)
 	rmw_mc_reg(DENALI_CTL_177, 0xFFFFFFFC, mc_odt_pins_tbl[3] << 0);
 
 	// Step3
-	rmw_mc_reg(DENALI_CTL_70, mc_mr1_tbl[0], mc_mr1_tbl[1]);
-	rmw_mc_reg(DENALI_CTL_73, mc_mr1_tbl[0], mc_mr1_tbl[1]);
+	rmw_mc_reg(DENALI_CTL_70, ~(mc_mr1_tbl[0]), mc_mr1_tbl[1]);
+	rmw_mc_reg(DENALI_CTL_73, ~(mc_mr1_tbl[0]), mc_mr1_tbl[1]);
 
 	// Step4
-	rmw_mc_reg(DENALI_CTL_71, mc_mr2_tbl[0], mc_mr2_tbl[1]);
-	rmw_mc_reg(DENALI_CTL_74, mc_mr2_tbl[0], mc_mr2_tbl[1]);
+	rmw_mc_reg(DENALI_CTL_71, ~(mc_mr2_tbl[0]), mc_mr2_tbl[1]);
+	rmw_mc_reg(DENALI_CTL_74, ~(mc_mr2_tbl[0]), mc_mr2_tbl[1]);
 
 	// Step5
-	rmw_mc_reg(DENALI_CTL_81, mc_mr5_tbl[0], mc_mr5_tbl[1]);
-	rmw_mc_reg(DENALI_CTL_82, mc_mr5_tbl[0], mc_mr5_tbl[1]);
+	rmw_mc_reg(DENALI_CTL_81, ~(mc_mr5_tbl[0]), mc_mr5_tbl[1]);
+	rmw_mc_reg(DENALI_CTL_82, ~(mc_mr5_tbl[0]), mc_mr5_tbl[1]);
 
 	// Step6
-	rmw_mc_reg(DENALI_CTL_83, mc_mr6_tbl[0], mc_mr6_tbl[1]);
-	rmw_mc_reg(DENALI_CTL_84, mc_mr6_tbl[0], mc_mr6_tbl[1]);
+	rmw_mc_reg(DENALI_CTL_83, ~(mc_mr6_tbl[0]), mc_mr6_tbl[1]);
+	rmw_mc_reg(DENALI_CTL_84, ~(mc_mr6_tbl[0]), mc_mr6_tbl[1]);
 
 	// Step7
 	for (i = 0; i < ARRAY_SIZE(mc_phy_settings_tbl); i++) {
