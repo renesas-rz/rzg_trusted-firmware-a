@@ -14,23 +14,23 @@ const uint32_t mc_odt_pins_tbl[4] = {
 };
 
 const uint32_t mc_mr1_tbl[2] = {
-	0xFFFFFD99,
-	0x00000206
+	0x0266,
+	0x0206
 };
 
 const uint32_t mc_mr2_tbl[2] = {
-	0xFFFFF9FF,
-	0x00000200
+	0x0600,
+	0x0200
 };
 
 const uint32_t mc_mr5_tbl[2] = {
-	0xFFFFFFFF,
-	0x00000000
+	0x0000,
+	0x0000
 };
 
 const uint32_t mc_mr6_tbl[2] = {
-	0xFFFFFFFF,
-	0x00000000
+	0x0000,
+	0x0000
 };
 
 const uint32_t mc_phy_settings_tbl[][2] = {
