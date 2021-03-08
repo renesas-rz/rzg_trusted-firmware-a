@@ -73,9 +73,8 @@ int spi_multi_setup(uint32_t addr_width, uint32_t dq_width, uint32_t dummy_cycle
 	/* parameter check */
 	if ((addr_width > SPI_MULTI_ADDR_WIDES_32) ||
 		(dq_width > SPI_MULTI_DQ_WIDES_1_4_4) ||
-		(dummy_cycle > SPI_MULTI_DUMMY_20CYCLE)){
-			return (-1);
-	}
+		(dummy_cycle > SPI_MULTI_DUMMY_20CYCLE))
+		return -1;
 
 	/* Wait until the transfer is complete */
 	do {
@@ -126,6 +125,6 @@ int spi_multi_setup(uint32_t addr_width, uint32_t dq_width, uint32_t dummy_cycle
 
 	/* Timing adjustment register setting */
 	spi_multi_timing_set();
-	
-	return (0);
+
+	return 0;
 }
