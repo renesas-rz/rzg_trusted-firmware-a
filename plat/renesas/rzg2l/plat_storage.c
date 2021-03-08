@@ -13,7 +13,6 @@
 #include <lib/mmio.h>
 #include <tools_share/firmware_image_package.h>
 
-#include "io_private.h"
 #include "rzg2l_def.h"
 #include "sys.h"
 #include "spi_multi.h"
@@ -66,7 +65,7 @@ static int32_t open_fipdrv(const uintptr_t spec)
 	int32_t result;
 
 	result = io_dev_init(fip_dev_handle, boot_io_drv_id);
-	if (result != IO_SUCCESS)
+	if (result != 0)
 		return result;
 
 	return result;
@@ -78,11 +77,11 @@ static int32_t open_memmap(const uintptr_t spec)
 	int32_t result;
 
 	result = io_dev_init(memdrv_dev_handle, 0);
-	if (result != IO_SUCCESS)
+	if (result != 0)
 		return result;
 
 	result = io_open(memdrv_dev_handle, spec, &handle);
-	if (result == IO_SUCCESS)
+	if (result == 0)
 		io_close(handle);
 
 	return result;
@@ -107,7 +106,6 @@ void rzg2l_io_setup(void)
 		register_io_dev_memmap(&memmap);
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
 		spi_multi_setup(SPI_MULTI_ADDR_WIDES_24, SPI_MULTI_DQ_WIDES_1_4_4, SPI_MULTI_DUMMY_10CYCLE);
-	
 	} else {
 		panic();
 	}
@@ -122,12 +120,12 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 	policy = &policies[image_id];
 
 	result = policy->check(policy->image_spec);
-	if (result != IO_SUCCESS)
+	if (result != 0)
 		return result;
 
 	*image_spec = policy->image_spec;
 	*dev_handle = *(policy->dev_handle);
 
-	return IO_SUCCESS;
+	return 0;
 }
 
