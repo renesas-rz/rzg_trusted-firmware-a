@@ -21,7 +21,7 @@ $(eval $(call add_define,BOARD_RZG2L_15MMSQ))
 $(eval $(call add_define,BOARD_RZG2L_EVA))
 $(eval $(call add_define,BOARD_RZG2LC_13MMSQ))
 
-BOARD_TYPE	:= BOARD_RZG2L_EVA
+BOARD_TYPE	:= BOARD_RZG2L_15MMSQ
 $(eval $(call add_define,BOARD_TYPE))
 
 # Enable workarounds for selected Cortex-A55 erratas.
