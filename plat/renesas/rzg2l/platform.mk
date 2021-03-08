@@ -21,7 +21,7 @@ $(eval $(call add_define,BOARD_RZG2L_15MMSQ))
 $(eval $(call add_define,BOARD_RZG2L_EVA))
 $(eval $(call add_define,BOARD_RZG2LC_13MMSQ))
 
-BOARD_TYPE	:= BOARD_RZG2L_15MMSQ
+BOARD_TYPE	:= BOARD_RZG2L_EVA
 $(eval $(call add_define,BOARD_TYPE))
 
 # Enable workarounds for selected Cortex-A55 erratas.
@@ -52,7 +52,7 @@ BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
 					plat/renesas/rzg2l/drivers/cpg.c					\
 					plat/renesas/rzg2l/drivers/spi_multi.c				\
 					plat/renesas/rzg2l/drivers/ddr/ddr.c				\
-					plat/renesas/rzg2l/drivers/io/rzg2l_io_memmap.c		\
+					drivers/io/io_memmap.c								\
 					drivers/io/io_fip.c
 
 # Include GICv3 driver files
