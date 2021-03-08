@@ -665,7 +665,7 @@ static void exec_trainingVREF(uint32_t sl_lanes, uint32_t byte_lanes)
 					num_best_vref_matches[i] += 1;
 				} else {
 					INFO("BL2: VREF training failed during VrefDQ training DRAM side,"
-						 " current_vref = %d\n", current_vref);
+							" current_vref = %d\n", current_vref);
 				}
 			}
 		}
@@ -892,7 +892,7 @@ void ddr_setup(void)
 		;
 
 	// Step16
-	rmw_phy_reg(DDRPHY_R78, 0xFFFEFFFF,0x00000000);
+	rmw_phy_reg(DDRPHY_R78, 0xFFFEFFFF, 0x00000000);
 	rmw_mc_reg(DENALI_CTL_64, 0xFFFFFEFF, 0x00000000);
 	rmw_mc_reg(DENALI_CTL_11, 0xFEFFFFFF, 0x01000000);
 	rmw_mc_reg(DENALI_CTL_00, 0xFFFFFFFE, 0x00000001);
