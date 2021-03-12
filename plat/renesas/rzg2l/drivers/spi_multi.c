@@ -72,7 +72,8 @@ int spi_multi_setup(uint32_t addr_width, uint32_t dq_width, uint32_t dummy_cycle
 
 	/* parameter check */
 	if ((addr_width > SPI_MULTI_ADDR_WIDES_32) ||
-		(dq_width > SPI_MULTI_DQ_WIDES_1_4_4) ||
+		(dq_width > SPI_MULTI_DQ_WIDES_1_4_4)  ||
+		(0 == dummy_cycle)                     ||
 		(dummy_cycle > SPI_MULTI_DUMMY_20CYCLE))
 		return -1;
 
