@@ -22,6 +22,9 @@
 #elif (BOARD_TYPE == RZG2L_SMARC_EVK)
 #include "param_mc_C-010_D4-01-2.c"
 #include "param_swizzle_T1c.c"
+#elif (BOARD_TYPE == RZG2L_21MM_DEVELOPMENT_BOARD)
+#include "param_mc_C-010_D4-01-1.c"
+#include "param_swizzle_T2c.c"
 #elif (BOARD_TYPE == RZG2LC_DEVELOPMENT_BOARD)
 #include "param_mc_C-010_D3-02-2.c"
 #include "param_swizzle_T3cl.c"
