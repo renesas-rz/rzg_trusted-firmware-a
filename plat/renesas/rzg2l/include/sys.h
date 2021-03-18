@@ -7,7 +7,9 @@
 #ifndef __SYS_H__
 #define __SYS_H__
 
-#define MODEMR_BOOT_DEV_MASK    (7)
+#define MASK_BOOTM_DEVICE		(0x0F)
+#define MASK_BOOTM_SECURE		(0x10)
+
 #define BOOT_MODE_ESD           (0)
 #define BOOT_MODE_EMMC_1_8      (1)
 #define BOOT_MODE_EMMC_3_3      (2)
