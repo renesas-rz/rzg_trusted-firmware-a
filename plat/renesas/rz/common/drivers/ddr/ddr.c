@@ -740,7 +740,7 @@ static void opt_delay(uint32_t sl_lanes, uint32_t byte_lanes)
 	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x04000000);
 
 	// Step3
-	rmw_mc_reg(DDRMC_R004, 0xFFFFFF80, 0x00000011);
+	rmw_mc_reg(DDRMC_R004, ~(0x7F << LP_CMD_OFFSET), (0x00000011 << LP_CMD_OFFSET));
 	while (((read_mc_reg(DDRMC_R005) >> 24) & 0x7F) != 0x48)
 		;
 
@@ -784,7 +784,7 @@ static void opt_delay(uint32_t sl_lanes, uint32_t byte_lanes)
 	}
 
 	// Step6
-	rmw_mc_reg(DDRMC_R004, 0xFFFFFF80, 0x00000002);
+	rmw_mc_reg(DDRMC_R004, ~(0x7F << LP_CMD_OFFSET), (0x00000002 << LP_CMD_OFFSET));
 	while (((read_mc_reg(DDRMC_R005) >> 24) & 0x7F) != 0x40)
 		;
 
