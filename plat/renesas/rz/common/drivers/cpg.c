@@ -45,13 +45,14 @@ typedef struct {
 
 static CPG_PLL_SETDATA_146 cpg_pll4_setdata = {
 #if (DDR_PLL4 ==1600)
-	{ CPG_PLL4_CLK1, 0x00003203 },
+	{ CPG_PLL4_CLK1, 0xFAE13203 },
+	{ CPG_PLL4_CLK2, 0x00081000 },
 #elif (DDR_PLL4 == 1333)
-	{ CPG_PLL4_CLK1, 0x40005346 },
+	{ CPG_PLL4_CLK1, 0xA66629C3 },
+	{ CPG_PLL4_CLK2, 0x00080D00 },
 #else
 #error "Unknown Board Type."
 #endif
-	{ CPG_PLL4_CLK2, 0x00082400 },
 	{ CPG_PLL4_STBY, 0x00010001 }
 };
 
