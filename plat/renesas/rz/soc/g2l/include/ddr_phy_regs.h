@@ -90,5 +90,6 @@
 #define	DDRPHY_R76			(0x1F0)
 #define	DDRPHY_R77			(0x200)
 #define	DDRPHY_R78			(0x204)
+#define DDRPHY_R79			(0x240)
 
 #endif	// __DDR_PHY_REGS_H__
