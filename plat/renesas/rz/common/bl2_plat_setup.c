@@ -20,6 +20,7 @@
 #include <scifa.h>
 #include <ddr.h>
 #include <sys_regs.h>
+#include <plat_tzc_def.h>
 #include <rzg2l_def.h>
 #include <rz_private.h>
 
@@ -120,9 +121,8 @@ void bl2_el3_plat_arch_setup(void)
 
 void bl2_platform_setup(void)
 {
-	/* initialize TZC-400 */
-	plat_tzc400_setup(RZG2L_TZC_DDR_BASE);
-	plat_tzc400_setup(RZG2L_TZC_SPI_BASE);
+	/* Setup TZC-400, Access Control */
+	plat_security_setup();
 
 #if !DEBUG_RZG2L_FPGA
 	/* initialize DDR */

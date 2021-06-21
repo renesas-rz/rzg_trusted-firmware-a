@@ -52,12 +52,14 @@ include drivers/arm/gic/v3/gicv3.mk
 
 BL31_SOURCES	+=	lib/cpus/aarch64/cortex_a55.S					\
 					${GICV3_SOURCES}								\
+					drivers/arm/tzc/tzc400.c							\
 					plat/common/plat_gicv3.c						\
 					plat/common/plat_psci_common.c					\
 					plat/renesas/rz/common/bl31_plat_setup.c		\
 					plat/renesas/rz/common/plat_pm.c				\
 					plat/renesas/rz/common/plat_topology.c			\
 					plat/renesas/rz/common/plat_gic.c				\
+					plat/renesas/rz/common/plat_security.c			\
 					plat/renesas/rz/common/aarch64/plat_helpers.S	\
 					plat/renesas/rz/common/drivers/syc.c
 
