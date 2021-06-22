@@ -790,6 +790,13 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	if (type == BOARD_UNKNOWN || rev == BOARD_REV_UNKNOWN) {
 		NOTICE("BL2: Board is %s Rev.---\n", GET_BOARD_NAME(type));
+	} else if (type == BOARD_EK874_RZ_G2E) {
+		char board_rev;
+
+		board_rev = (char) rev;
+		NOTICE("BL2: Board is %s Rev.%s\n",
+			GET_BOARD_NAME(type), &board_rev);
+
 	} else {
 		NOTICE("BL2: Board is %s Rev.%d.%d\n",
 		       GET_BOARD_NAME(type),
