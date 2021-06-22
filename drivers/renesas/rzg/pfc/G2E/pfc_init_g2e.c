@@ -12,6 +12,7 @@
 #include "rcar_def.h"
 
 #include "../pfc_regs.h"
+#include "micro_delay.h"
 
 /* PFC */
 #define GPSR0_SDA4		BIT(17)
@@ -290,6 +291,10 @@
 #define MOD_SEL1_SSI9_A			((uint32_t)0U << 4U)
 #define MOD_SEL1_SSI9_B			((uint32_t)1U << 4U)
 
+#define	SEC_CONF		(0xEE2000B8)
+
+char ek874_board_rev;
+
 static void pfc_reg_write(uint32_t addr, uint32_t data)
 {
 	mmio_write_32(PFC_PMMR, ~data);
@@ -299,6 +304,19 @@ static void pfc_reg_write(uint32_t addr, uint32_t data)
 void pfc_init_g2e(void)
 {
 	uint32_t reg;
+
+	/* GP5_19 Pull-up/down function is enabled */
+	mmio_write_32(PFC_PUEN4, mmio_read_32(PFC_PUEN4) | BIT(17));
+	/* GP5_19 Pull-up is enabled */
+	mmio_write_32(PFC_PUD4, mmio_read_32(PFC_PUD4) | BIT(17));
+
+	rcar_micro_delay(10U);
+
+	reg = mmio_read_32(GPIO_INDT5);
+	if (reg & BIT(19))
+		ek874_board_rev = 'C';
+	else
+		ek874_board_rev = 'E';
 
 	/* initialize module select */
 	pfc_reg_write(PFC_MOD_SEL0,
@@ -697,4 +715,29 @@ void pfc_init_g2e(void)
 	mmio_write_32(GPIO_INOUTSEL4, 0x00000440U);
 	mmio_write_32(GPIO_INOUTSEL5, 0x00080000U);
 	mmio_write_32(GPIO_INOUTSEL6, 0x00000010U);
+
+	/* initialize setting pfc for using eMMC with SDHI3-IF */
+	if (ek874_board_rev  == 'E') {
+		/*
+		 * Initialize Secure Configuration Register to access QSPI
+		 * when eMMC Boot is performed.
+		 */
+		mmio_write_32(SEC_CONF, 0x0155);
+
+		pfc_reg_write(PFC_GPSR4, GPSR4_SD3_DS
+			      | GPSR4_SD3_DAT7
+			      | GPSR4_SD3_DAT6
+			      | GPSR4_SD3_DAT5
+			      | GPSR4_SD3_DAT4
+			      | GPSR4_SD3_DAT3
+			      | GPSR4_SD3_DAT2
+			      | GPSR4_SD3_DAT1
+			      | GPSR4_SD3_DAT0
+			      | GPSR4_SD3_CMD
+			      | GPSR4_SD3_CLK);
+
+		pfc_reg_write(PFC_PUD3, 0x001FF79FU);
+		pfc_reg_write(PFC_PUEN3, 0x001FF800U);
+		pfc_reg_write(PFC_PUEN4, 0x07800000U);
+	}
 }

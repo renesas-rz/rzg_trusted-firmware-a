@@ -39,6 +39,10 @@
 #define HN_ID	{ 0x20U, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU }
 #define EK_ID	HM_ID
 
+#if (RCAR_LSI == RZ_G2E)
+extern char ek874_board_rev;
+#endif /* RCAR_LSI == RZ_G2E */
+
 const char *g_board_tbl[] = {
 	[BOARD_HIHOPE_RZ_G2M] = "HiHope RZ/G2M",
 	[BOARD_HIHOPE_RZ_G2H] = "HiHope RZ/G2H",
@@ -75,11 +79,10 @@ void rzg_get_board_type(uint32_t *type, uint32_t *rev)
 
 	reg = mmio_read_32(RCAR_PRR);
 #if (RCAR_LSI == RZ_G2E)
-	if (reg & RCAR_MINOR_MASK) {
-		*rev = 0x30U;
-	} else {
-		*rev = board_tbl[*type][(uint8_t)(board_id & BOARD_REV_MASK)];
+	if (!(reg & RCAR_MINOR_MASK)) {
+		ek874_board_rev = 'B';
 	}
+		*rev = ek874_board_rev;
 #else
 	if ((reg & PRR_CUT_MASK) == RCAR_M3_CUT_VER11) {
 		*rev = board_tbl[*type][(uint8_t)(board_id & BOARD_REV_MASK)];
