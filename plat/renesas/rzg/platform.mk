@@ -220,6 +220,28 @@ $(eval $(call add_define,RCAR_SYSTEM_RESET_KEEPON_DDR))
 RZG_SOC :=1
 $(eval $(call add_define,RZG_SOC))
 
+# Process RZG_DRAM_ECC flag
+ifndef RZG_DRAM_ECC
+RZG_DRAM_ECC :=0
+endif
+$(eval $(call add_define,RZG_DRAM_ECC))
+
+# Process RZG_DRAM_ECC_FULL flag
+# 0 : ECC Full mode will not be applied
+# 1 : ECC Full mode dual channel will be applied
+# 2 : ECC Full mode single channel will be applied
+ifndef RZG_DRAM_ECC_FULL
+RZG_DRAM_ECC_FULL :=0
+endif
+$(eval $(call add_define,RZG_DRAM_ECC_FULL))
+
+# RZ/G2N and RZ/G2E do not support ECC Full mode dual channel.
+ifeq (${LSI}, $(filter ${LSI}, G2E G2N))
+  ifeq (${RZG_DRAM_ECC_FULL},1)
+    $(error "Error: RZ/${LSI} does not support ECC Full mode dual channel")
+  endif
+endif
+
 include drivers/renesas/common/ddr/ddr.mk
 include drivers/renesas/rzg/qos/qos.mk
 include drivers/renesas/rzg/pfc/pfc.mk
@@ -239,6 +261,7 @@ PLAT_INCLUDES	+=	-Idrivers/renesas/common/ddr		\
 			-Idrivers/renesas/common/io
 
 BL2_SOURCES	+=	plat/renesas/rzg/bl2_plat_setup.c	\
+			plat/renesas/rzg/bl2_fusa.c		\
 			drivers/renesas/rzg/board/board.c
 
 # build the layout images for the bootrom and the necessary srecords
