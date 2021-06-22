@@ -258,11 +258,14 @@ PLAT_INCLUDES	+=	-Idrivers/renesas/common/ddr		\
 			-Idrivers/renesas/common/scif		\
 			-Idrivers/renesas/common/emmc		\
 			-Idrivers/renesas/common/pwrc		\
-			-Idrivers/renesas/common/io
+			-Idrivers/renesas/common/io		\
+			-Iplat/renesas/rzg/include
 
 BL2_SOURCES	+=	plat/renesas/rzg/bl2_plat_setup.c	\
 			plat/renesas/rzg/bl2_fusa.c		\
 			drivers/renesas/rzg/board/board.c
+
+BL31_SOURCES	+=	plat/renesas/rzg/rzg_sip_svc.c
 
 # build the layout images for the bootrom and the necessary srecords
 rzg: rzg_layout_create rzg_srecord
