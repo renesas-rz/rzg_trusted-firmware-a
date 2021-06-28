@@ -22,12 +22,12 @@
 #include "rcar_private.h"
 #include "rcar_version.h"
 
-static const uint64_t BL31_RO_BASE		= BL_CODE_BASE;
-static const uint64_t BL31_RO_LIMIT		= BL_CODE_END;
+#define BL31_RO_BASE		BL_CODE_BASE
+#define BL31_RO_LIMIT		BL_CODE_END
 
 #if USE_COHERENT_MEM
-static const uint64_t BL31_COHERENT_RAM_BASE	= BL_COHERENT_RAM_BASE;
-static const uint64_t BL31_COHERENT_RAM_LIMIT	= BL_COHERENT_RAM_END;
+#define BL31_COHERENT_RAM_BASE	BL_COHERENT_RAM_BASE
+#define BL31_COHERENT_RAM_LIMIT	BL_COHERENT_RAM_END
 #endif /* USE_COHERENT_MEM */
 
 extern void plat_rcar_gic_driver_init(void);
