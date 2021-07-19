@@ -23,6 +23,7 @@ void plat_tzc400_setup(uintptr_t tzc_base);
 void rz_io_setup(void);
 
 typedef struct bl2_to_bl31_params_mem {
+	entry_point_info_t bl32_ep_info;
 	entry_point_info_t bl33_ep_info;
 } bl2_to_bl31_params_mem_t;
 

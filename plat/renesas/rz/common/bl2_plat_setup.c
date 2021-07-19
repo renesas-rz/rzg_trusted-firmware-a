@@ -58,11 +58,16 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	bl_mem_params = get_bl_mem_params_node(image_id);
 
 	switch (image_id) {
-	case BL31_IMAGE_ID:
+	case BL32_IMAGE_ID:
+		memcpy(&params->bl32_ep_info, &bl_mem_params->ep_info,
+			sizeof(entry_point_info_t));
 		break;
 	case BL33_IMAGE_ID:
 		memcpy(&params->bl33_ep_info, &bl_mem_params->ep_info,
 			sizeof(entry_point_info_t));
+		break;
+	default:
+		/* Do nothing in default case */
 		break;
 	}
 
