@@ -7,6 +7,7 @@
 #ifndef __RZG2L_DEF_H__
 #define __RZG2L_DEF_H__
 
+#define RZG2L_BOOT_ROM_BASE         (0x00000000)
 #define RZG2L_MSRAM_BASE            (0x00010000)
 #define RZG2L_ASRAM_BASE            (0x00020000)
 #define RZG2L_DEVICE_BASE           (0x10000000)
@@ -35,6 +36,7 @@
 
 #define RZG2L_SRAM_BASE             (RZG2L_MSRAM_BASE)
 
+#define RZG2L_BOOT_ROM_SIZE         (0x00010000 - RZG2L_BOOT_ROM_BASE)
 #define RZG2L_MSRAM_SIZE            (0x00020000 - RZG2L_MSRAM_BASE)
 #define RZG2L_ASRAM_SIZE            (0x00030000 - RZG2L_ASRAM_BASE)
 #define RZG2L_SRAM_SIZE             (RZG2L_MSRAM_SIZE + RZG2L_ASRAM_SIZE)
