@@ -135,6 +135,10 @@ static void bl31_security_setup(void)
 	const arm_tzc_regions_info_t msram_tzc_regions[] = {
 		{ PLAT_AP_TZC_PROT_SRAM1_BASE, PLAT_AP_TZC_PROT_SRAM1_END,
 			TZC_REGION_S_RDWR, PLAT_TZC_REGION_ACCESS_S_UNPRIV },
+#if TRUSTED_BOARD_BOOT
+		{ PLAT_AP_TZC_PROT_SRAM2_BASE, PLAT_AP_TZC_PROT_SRAM2_END,
+			TZC_REGION_S_RDWR, PLAT_TZC_REGION_ACCESS_S_UNPRIV },
+#endif
 		{}
 	};
 
