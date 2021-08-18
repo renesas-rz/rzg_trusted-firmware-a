@@ -11,24 +11,26 @@ WARMBOOT_ENABLE_DCACHE_EARLY	:= 1
 GICV3_SUPPORT_GIC600			:= 1
 HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
+TRUSTED_BOARD_BOOT				:= 0
 DEBUG_RZG2L_FPGA				:= 0
 $(eval $(call add_define,DEBUG_RZG2L_FPGA))
 
-WA_RZG2L_GIC64BIT              := 1
+WA_RZG2L_GIC64BIT				:= 1
 $(eval $(call add_define,WA_RZG2L_GIC64BIT))
 
 # Enable workarounds for selected Cortex-A55 erratas.
-ERRATA_A55_1530923	:= 1
+ERRATA_A55_1530923				:= 1
 
-PLAT_INCLUDES		:=  -Iplat/renesas/rz/common/include
+PLAT_INCLUDES		:=	-Iplat/renesas/rz/common/include
 
-RZ_TIMER_SOURCES 	:= drivers/delay_timer/generic_delay_timer.c		\
-					   drivers/delay_timer/delay_timer.c
+RZ_TIMER_SOURCES	:=	drivers/delay_timer/generic_delay_timer.c		\
+						drivers/delay_timer/delay_timer.c
 
 DDR_SOURCES		:= plat/renesas/rz/common/drivers/ddr/ddr.c
 
-BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
+BL2_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 					${RZ_TIMER_SOURCES}									\
+					${DYN_CFG_SOURCES}									\
 					common/desc_image_load.c							\
 					drivers/io/io_storage.c								\
 					drivers/io/io_memmap.c								\
@@ -52,7 +54,7 @@ include drivers/arm/gic/v3/gicv3.mk
 
 BL31_SOURCES	+=	lib/cpus/aarch64/cortex_a55.S					\
 					${GICV3_SOURCES}								\
-					drivers/arm/tzc/tzc400.c							\
+					drivers/arm/tzc/tzc400.c						\
 					plat/common/plat_gicv3.c						\
 					plat/common/plat_psci_common.c					\
 					plat/renesas/rz/common/bl31_plat_setup.c		\
@@ -68,3 +70,23 @@ PLAT_BL_COMMON_SOURCES	+=	${XLAT_TABLES_LIB_SRCS}					\
 							plat/renesas/rz/common/plat_rz_common.c	\
 							plat/renesas/rz/common/drivers/scifa.S
 
+ifneq (${TRUSTED_BOARD_BOOT},0)
+
+	# Include common TBB sources
+	AUTH_SOURCES	:=	drivers/auth/img_parser_mod.c
+
+	# Include the selected chain of trust sources.
+	ifeq (${COT},tbbr)
+		AUTH_SOURCES	+=	plat/renesas/rz/common/drivers/auth/tbbr/tbbr_cot.c
+	else
+		$(error Unknown chain of trust ${COT})
+	endif
+
+	# Include RZ TBB sources
+	AUTH_SOURCES	+=	plat/renesas/rz/common/drivers/auth/auth_mod.c				\
+						plat/renesas/rz/common/drivers/auth/sblib/crypto_sblib.c	\
+						plat/renesas/rz/common/drivers/auth/sblib/sblib_parser.c
+
+	BL2_SOURCES		+=	${AUTH_SOURCES}
+
+endif
