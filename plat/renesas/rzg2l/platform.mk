@@ -17,24 +17,30 @@ USE_COHERENT_MEM				:= 0
 ERRATA_A55_1221012	:= 1
 ERRATA_A55_1530923	:= 1
 
-PLAT_INCLUDES	:= -Iplat/renesas/rzg2l/include
+PLAT_INCLUDES	:=  -Iplat/renesas/rzg2l/include						\
+					-Iplat/renesas/rzg2l								\
+					-Idrivers/renesas/rzg2l/io
 
 RZG2L_TIMER_SOURCES := drivers/delay_timer/generic_delay_timer.c	\
 					   drivers/delay_timer/delay_timer.c
 
-BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S					\
-					common/desc_image_load.c						\
-					drivers/io/io_storage.c							\
-					plat/renesas/rzg2l/bl2_plat_setup.c				\
-					plat/renesas/rzg2l/bl2_plat_mem_params_desc.c	\
-					plat/renesas/rzg2l/plat_image_load.c			\
-					plat/renesas/rzg2l/plat_storage.c				\
-					plat/renesas/rzg2l/plat_security.c				\
-					plat/renesas/rzg2l/aarch64/plat_helpers.S		\
-					plat/renesas/rzg2l/drivers/syc.c				\
-					plat/renesas/rzg2l/drivers/pfc.c				\
-					plat/renesas/rzg2l/drivers/cpg.c
-
+BL2_SOURCES		+= 	lib/cpus/aarch64/cortex_a55.S						\
+					common/desc_image_load.c							\
+					drivers/io/io_storage.c								\
+					plat/renesas/rzg2l/bl2_plat_setup.c					\
+					plat/renesas/rzg2l/bl2_plat_mem_params_desc.c		\
+					plat/renesas/rzg2l/plat_image_load.c				\
+					plat/renesas/rzg2l/plat_storage.c					\
+					plat/renesas/rzg2l/plat_security.c					\
+					plat/renesas/rzg2l/aarch64/plat_helpers.S			\
+					plat/renesas/rzg2l/drivers/syc.c					\
+					plat/renesas/rzg2l/drivers/pfc.c					\
+					plat/renesas/rzg2l/drivers/cpg.c					\
+					plat/renesas/rzg2l/drivers/sys.c					\
+					plat/renesas/rzg2l/drivers/ddr/ddr.c				\
+					drivers/io/io_memmap.c								\
+					drivers/io/io_fip.c
+					
 # Include GICv3 driver files
 include drivers/arm/gic/v3/gicv3.mk
 

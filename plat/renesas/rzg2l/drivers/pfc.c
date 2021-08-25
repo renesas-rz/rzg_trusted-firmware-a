@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "pfc_regs.h"
-#include "pfc.h"
+/* #include "pfc.h" */
 #include <lib/mmio.h>
 
 static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
@@ -147,6 +147,9 @@ static void pfc_mux_setup(void)
 			mmio_write_64(pfc_mux_reg_tbl[cnt].sr.reg, pfc_mux_reg_tbl[cnt].sr.val);
 		}
 	}
+
+	mmio_write_32(PFC_PWPR, 0x0);
+	mmio_write_32(PFC_PWPR, PWPR_B0Wl);
 }
 
 static void pfc_qspi_setup(void)
