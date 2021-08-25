@@ -249,8 +249,10 @@
 #define PHYCNT_OCTA_ORDER					(2 << 22)
 #define PHYCNT_ALT_ALIGN					(1 << 30)
 #define PHYCNT_CAL							(1 << 31)
+#define PHYCNT_DEF_DATA						(0x00000260)
 #define PHYOFFSET1_DDRTMG_SPIDRE_1			(2 << 28)
 #define PHYOFFSET1_DDRTMG_SPIDRE_0			(3 << 28)
+#define PHYOFFSET1_DEF_DATA					(0x01511144)
 #define PHYOFFSET2_OCTTMG_HYPER_FLASH		(4 << 8)
 #define PHYOFFSET2_OCTTMG_OCTA_FLASH		(3 << 8)
 #define PHYINT_INT							(1 << 0)
@@ -261,7 +263,6 @@
 #define PHYINT_RSTEN						(1 << 26)
 
 #define DREAR_EAV_ADDRE_DATA				(0x20 << 16)
-#define DATA_READ_COMMAND					(0x6C << 16)
 
 
 #endif	/* _SPI_MULTI_REG_H_ */

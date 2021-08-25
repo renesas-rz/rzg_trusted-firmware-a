@@ -15,33 +15,9 @@
 #include <drivers/io/io_storage.h>
 #include <lib/utils.h>
 #include <lib/mmio.h>
-#include "spi_multi_regs.h"
+#include "spi_multi.h"
 
-#define SPIM_CMNCR_DATA			(0x01aaa200)
-#define SPIM_DRCR_DATA			(0x001f0000)
-#define SPIM_DRCMR_DATA			(0x00030000)
-#define SPIM_DRENR_DATA			(0x00004700)
-#define SPIM_DRDMCR_DATA		(0x00000000)
-#define SPIM_DRDRENR_DATA		(0x00000000)
-#define SPIM_PHYCNT_DATA		(0x00030260)
-#define SPIM_PHYOFFSET1_DATA	(0x31511144)
-
-typedef struct {
-	uintptr_t reg;
-	uint32_t  val;
-} MEMDRV_REG_SETTING;
-
-static MEMDRV_REG_SETTING memdrv_from_set[] = {
-	{ (uintptr_t)SPIM_CMNCR, SPIM_CMNCR_DATA },
-	{ (uintptr_t)SPIM_DRCR, SPIM_DRCR_DATA },
-	{ (uintptr_t)SPIM_DRCMR, SPIM_DRCMR_DATA },
-	{ (uintptr_t)SPIM_DRENR, SPIM_DRENR_DATA },
-	{ (uintptr_t)SPIM_DRDMCR, SPIM_DRDMCR_DATA },
-	{ (uintptr_t)SPIM_DRDRENR, SPIM_DRDRENR_DATA },
-	{ (uintptr_t)SPIM_PHYCNT, SPIM_PHYCNT_DATA },
-	{ (uintptr_t)SPIM_PHYOFFSET1, SPIM_PHYOFFSET1_DATA}
-};
-
+static int spi_multi_init = 0;
 
 /* As we need to be able to keep state for seek, only one file can be open
  * at a time. Make this a structure and point to the entity->info. When we
@@ -109,15 +85,18 @@ static const io_dev_info_t memmap_dev_info = {
 static int memmap_dev_open(const uintptr_t dev_spec __unused,
 			   io_dev_info_t **dev_info)
 {
-	int cnt;
-	
 	assert(dev_info != NULL);
 	*dev_info = (io_dev_info_t *)&memmap_dev_info; /* cast away const */
 	
-	for(cnt = 0; cnt < ARRAY_SIZE(memdrv_from_set) ; cnt++) {
-		mmio_write_32(memdrv_from_set[cnt].reg, memdrv_from_set[cnt].val);
-	}	
-
+	if(spi_multi_init == 0) {
+		spi_multi_init = 1;
+#if DEBUG_SPI_MULTI_SLOW
+		spi_multi_setup(DATA_READ_COMMAND);
+#else
+		spi_multi_setup(FAST_READ_COMMAND);
+#endif
+	}
+	
 	return 0;
 }
 
