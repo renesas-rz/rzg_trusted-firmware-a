@@ -15,6 +15,4 @@
 #define BOOT_MODE_SPI_3_3       (4)
 #define BOOT_MODE_SCIF          (5)
 
-uint32_t sys_get_mode_mr(void);
-
 #endif	/* __SYS_H__ */

@@ -16,7 +16,6 @@
 #include "pfc.h"
 #include "cpg.h"
 #include "syc.h"
-#include "sys.h"
 #include "scifa.h"
 #include "ddr.h"
 #include "rzg2l_def.h"
