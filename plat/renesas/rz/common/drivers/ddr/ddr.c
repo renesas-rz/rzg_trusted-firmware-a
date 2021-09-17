@@ -53,6 +53,7 @@ void ddr_setup(void)
 	uint32_t	tmp;
 	int i;
 
+	INFO("BL2: setup DDR (Rev. %s)\n", ddr_get_version());
 	// Step2 - Step11
 	cpg_active_ddr(disable_phy_clk);
 
