@@ -600,6 +600,9 @@ static CPG_REG_SETTING cpg_sel_gpu2_on_off[] = {
 	{(uintptr_t)CPG_CLKON_GPU, 0x00010001 }
 };
 
+static CPG_REG_SETTING cpg_clk_sdhi_tbl[] = {
+	{(uintptr_t)CPG_PL2SDHI_DSEL, 0x00110022 }
+};
 
 static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 {
@@ -837,6 +840,11 @@ void cpg_early_setup(void)
 	cpg_ctrl_clkrst(&early_setup_tbl[0], ARRAY_SIZE(early_setup_tbl));
 }
 
+static void cpg_clk_sdhi_setup(void)
+{
+	cpg_div_sel_setup(cpg_clk_sdhi_tbl, ARRAY_SIZE(cpg_clk_sdhi_tbl));
+}
+
 void cpg_setup(void)
 {
 	cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_OFF);
@@ -846,4 +854,5 @@ void cpg_setup(void)
 	cpg_clk_on_setup();
 	cpg_reset_setup();
 	cpg_div_sel_dynamic_setup();
+	cpg_clk_sdhi_setup();
 }
