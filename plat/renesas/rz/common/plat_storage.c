@@ -10,21 +10,31 @@
 #include <drivers/io/io_storage.h>
 #include <drivers/io/io_fip.h>
 #include <drivers/io/io_memmap.h>
+#include <io_common.h>
+#include <io_emmcdrv.h>
 #include <lib/mmio.h>
 #include <tools_share/firmware_image_package.h>
 
 #include <rzg2l_def.h>
 #include <sys.h>
 #include <spi_multi.h>
+#include <emmc_def.h>
 
 static uintptr_t memdrv_dev_handle;
 static uintptr_t fip_dev_handle;
+static uintptr_t emmcdrv_dev_handle;
 
 static uintptr_t boot_io_drv_id;
 
-static const io_block_spec_t rzg2l_block_spec = {
+static const io_block_spec_t spirom_block_spec = {
 	.offset = RZG2L_SPIROM_FIP_BASE,
 	.length = RZG2L_SPIROM_FIP_SIZE,
+};
+
+static const io_drv_spec_t emmc_block_spec = {
+	.offset = RZG2L_EMMC_FIP_BASE,
+	.length = RZG2L_EMMC_FIP_SIZE,
+	.partition = PARTITION_ID_CONFIG,
 };
 
 static const io_uuid_spec_t bl31_file_spec = {
@@ -65,6 +75,7 @@ static const io_uuid_spec_t nt_fw_content_cert_file_spec = {
 };
 #endif
 
+static int32_t open_emmcdrv(const uintptr_t spec);
 static int32_t open_memmap(const uintptr_t spec);
 static int32_t open_fipdrv(const uintptr_t spec);
 
@@ -74,10 +85,12 @@ struct plat_io_policy {
 	int32_t (*check)(const uintptr_t spec);
 };
 
-static const struct plat_io_policy policies[] = {
+static const struct plat_io_policy* policies;
+
+static const struct plat_io_policy spirom_policies[] = {
 	[FIP_IMAGE_ID] = {
 			  &memdrv_dev_handle,
-			  (uintptr_t) &rzg2l_block_spec,
+			  (uintptr_t) &spirom_block_spec,
 			  &open_memmap},
 	[BL31_IMAGE_ID] = {
 			   &fip_dev_handle,
@@ -120,6 +133,22 @@ static const struct plat_io_policy policies[] = {
 	{ 0, 0, 0}
 };
 
+static const struct plat_io_policy emmc_policies[] = {
+	[FIP_IMAGE_ID] = {
+				&emmcdrv_dev_handle,
+				(uintptr_t) &emmc_block_spec,
+				&open_emmcdrv},
+    [BL31_IMAGE_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &bl31_file_spec,
+				&open_fipdrv},
+    [BL33_IMAGE_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &bl33_file_spec,
+				&open_fipdrv},
+    { 0, 0, 0}
+};
+
 static int32_t open_fipdrv(const uintptr_t spec)
 {
 	int32_t result;
@@ -147,9 +176,15 @@ static int32_t open_memmap(const uintptr_t spec)
 	return result;
 }
 
+static int32_t open_emmcdrv(const uintptr_t spec)
+{
+    return io_dev_init(emmcdrv_dev_handle, 0);
+}
+
 void rz_io_setup(void)
 {
 	const io_dev_connector_t *memmap;
+	const io_dev_connector_t *emmc;
 	const io_dev_connector_t *rzg2l;
 	uint16_t boot_dev;
 
@@ -166,6 +201,25 @@ void rz_io_setup(void)
 		spi_multi_setup(SPI_MULTI_ADDR_WIDES_24, SPI_MULTI_DQ_WIDES_1_4_4, SPI_MULTI_DUMMY_10CYCLE);
 		register_io_dev_memmap(&memmap);
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
+
+        policies = &spirom_policies[0];
+    }
+    else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
+		     boot_dev == BOOT_MODE_EMMC_3_3) {
+        if (emmc_init() != EMMC_SUCCESS) {
+            NOTICE("BL2: Failed to eMMC driver initialize.\n");
+            panic();
+        }
+        emmc_memcard_power(EMMC_POWER_ON);
+        if (emmc_mount() != EMMC_SUCCESS) {
+            NOTICE("BL2: Failed to eMMC mount operation.\n");
+            panic();
+        }
+
+		rcar_register_io_dev_emmcdrv(&emmc);
+		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
+
+        policies = &emmc_policies[0];
 	} else {
 		panic();
 	}
