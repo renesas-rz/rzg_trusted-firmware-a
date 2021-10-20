@@ -304,7 +304,8 @@ typedef enum {
 	PARTITION_ID_GP_2 = 0x5,	/* General Purpose partition 2 */
 	PARTITION_ID_GP_3 = 0x6,	/* General Purpose partition 3 */
 	PARTITION_ID_GP_4 = 0x7,	/* General Purpose partition 4 */
-	PARTITION_ID_MASK = 0x7		/* [2:0] */
+	PARTITION_ID_MASK = 0x7,	/* [2:0] */
+	PARTITION_ID_CONFIG = 0xFF,	/* Use Ext CSD[179][5:3] */
 } EMMC_PARTITION_ID;
 
 /* card state in R1 response [12:9] */

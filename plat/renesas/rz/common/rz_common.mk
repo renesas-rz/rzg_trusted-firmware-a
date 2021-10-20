@@ -21,7 +21,10 @@ $(eval $(call add_define,WA_RZG2L_GIC64BIT))
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_1530923				:= 1
 
-PLAT_INCLUDES		:=	-Iplat/renesas/rz/common/include
+PLAT_INCLUDES		:=	-Iplat/renesas/rz/common/include				\
+						-Iplat/renesas/rz/common/drivers/emmc			\
+						-Iplat/renesas/rz/common/drivers/io				\
+						-Idrivers/renesas/common/io
 
 RZ_TIMER_SOURCES	:=	drivers/delay_timer/generic_delay_timer.c		\
 						drivers/delay_timer/delay_timer.c
@@ -36,6 +39,13 @@ BL2_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 					drivers/io/io_memmap.c								\
 					drivers/io/io_fip.c									\
 					drivers/arm/tzc/tzc400.c							\
+					plat/renesas/rz/common/drivers/io/io_emmcdrv.c		\
+					plat/renesas/rz/common/drivers/emmc/emmc_interrupt.c\
+					plat/renesas/rz/common/drivers/emmc/emmc_utility.c	\
+					plat/renesas/rz/common/drivers/emmc/emmc_mount.c	\
+					plat/renesas/rz/common/drivers/emmc/emmc_init.c		\
+					plat/renesas/rz/common/drivers/emmc/emmc_read.c		\
+					plat/renesas/rz/common/drivers/emmc/emmc_cmd.c		\
 					plat/renesas/rz/common/bl2_plat_setup.c				\
 					plat/renesas/rz/common/bl2_plat_mem_params_desc.c	\
 					plat/renesas/rz/common/plat_image_load.c			\
