@@ -31,8 +31,6 @@ typedef struct {
 
 static file_state_t current_file = { 0 };
 
-static EMMC_PARTITION_ID emmcdrv_bootpartition = PARTITION_ID_USER;
-
 static io_type_t device_type_emmcdrv(void)
 {
 	return IO_TYPE_MEMMAP;
@@ -137,28 +135,9 @@ static int32_t emmcdrv_block_open(io_dev_info_t *dev_info,
 	current_file.file_pos = 0;
 	current_file.in_use = 1;
 
-	if (emmcdrv_bootpartition == PARTITION_ID_USER) {
-		emmcdrv_bootpartition = mmc_drv_obj.boot_partition_en;
-		if ((emmcdrv_bootpartition == PARTITION_ID_BOOT_1) ||
-		    (emmcdrv_bootpartition == PARTITION_ID_BOOT_2)) {
-			current_file.partition = emmcdrv_bootpartition;
+	current_file.partition = mmc_drv_obj.boot_partition_en;
+	NOTICE("BL2: eMMC boot from partition %d\n", current_file.partition);
 
-			NOTICE("BL2: eMMC boot from partition %d\n",
-			       emmcdrv_bootpartition);
-			goto done;
-		}
-		return IO_FAIL;
-	}
-
-	if ((block_spec->partition == PARTITION_ID_USER) ||
-		(block_spec->partition == PARTITION_ID_BOOT_1) ||
-		(block_spec->partition == PARTITION_ID_BOOT_2)) {
-		current_file.partition = block_spec->partition;
-	} else {
-		current_file.partition = emmcdrv_bootpartition;
-	}
-
-done:
 	if (emmc_select_partition(current_file.partition) != EMMC_SUCCESS) {
 		return IO_FAIL;
 	}

@@ -34,7 +34,6 @@ static const io_block_spec_t spirom_block_spec = {
 static const io_drv_spec_t emmc_block_spec = {
 	.offset = RZG2L_EMMC_FIP_BASE,
 	.length = RZG2L_EMMC_FIP_SIZE,
-	.partition = PARTITION_ID_CONFIG,
 };
 
 static const io_uuid_spec_t bl31_file_spec = {
