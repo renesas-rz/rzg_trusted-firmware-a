@@ -20,9 +20,7 @@ static EMMC_ERROR_CODE emmc_trans_sector(uint32_t *buff_address_virtual);
 uint32_t emmc_interrupt(void)
 {
 	EMMC_ERROR_CODE result;
-	uint32_t end_bit;
-
-	end_bit = BIT20;
+	uint32_t end_bit=BIT20;
 
 	/* SD_INFO */
 	mmc_drv_obj.error_info.info1 = GETR_32(SD_INFO1);
