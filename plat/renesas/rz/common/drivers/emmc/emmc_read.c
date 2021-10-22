@@ -58,12 +58,11 @@ static EMMC_ERROR_CODE emmc_multiple_block_read(uint32_t *buff_address_virtual,
 	if (result != EMMC_SUCCESS) {
 		return result;
 	}
-#if RCAR_BL2_DCACHE == 1
+
 	if (transfer_mode == HAL_MEMCARD_NOT_DMA) {
 		flush_dcache_range((uint64_t) buff_address_virtual,
 				   ((size_t) count << EMMC_SECTOR_SIZE_SHIFT));
 	}
-#endif /* RCAR_BL2_DCACHE == 1 */
 
 	/* ready status check */
 	if ((mmc_drv_obj.r1_card_status & EMMC_R1_READY) == 0) {
