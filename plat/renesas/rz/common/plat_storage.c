@@ -141,10 +141,40 @@ static const struct plat_io_policy emmc_policies[] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl31_file_spec,
 				&open_fipdrv},
+	[BL32_IMAGE_ID] = {
+			   &fip_dev_handle,
+			   (uintptr_t) &bl32_file_spec,
+			   &open_fipdrv},
     [BL33_IMAGE_ID] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl33_file_spec,
 				&open_fipdrv},
+#if TRUSTED_BOARD_BOOT
+	[SOC_FW_KEY_CERT_ID] = {
+			   &fip_dev_handle,
+			   (uintptr_t) &soc_fw_key_cert_file_spec,
+			   &open_fipdrv},
+	[SOC_FW_CONTENT_CERT_ID] = {
+			   &fip_dev_handle,
+			   (uintptr_t) &soc_fw_content_cert_file_spec,
+			   &open_fipdrv},
+	[TRUSTED_OS_FW_KEY_CERT_ID] = {
+			   &fip_dev_handle,
+			   (uintptr_t) &tos_fw_key_cert_file_spec,
+			   &open_fipdrv},
+	[TRUSTED_OS_FW_CONTENT_CERT_ID] = {
+			   &fip_dev_handle,
+			   (uintptr_t) &tos_fw_content_cert_file_spec,
+			   &open_fipdrv},
+	[NON_TRUSTED_FW_KEY_CERT_ID] = {
+			   &fip_dev_handle,
+			   (uintptr_t) &nt_fw_key_cert_file_spec,
+			   &open_fipdrv},
+	[NON_TRUSTED_FW_CONTENT_CERT_ID] = {
+			   &fip_dev_handle,
+			   (uintptr_t) &nt_fw_content_cert_file_spec,
+			   &open_fipdrv},
+#endif
     { 0, 0, 0}
 };
 
