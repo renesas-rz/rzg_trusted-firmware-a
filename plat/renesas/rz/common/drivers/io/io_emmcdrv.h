@@ -8,6 +8,6 @@
 #define IO_EMMCDRV_H
 
 struct io_dev_connector;
-int32_t rcar_register_io_dev_emmcdrv(const io_dev_connector_t **connector);
+int32_t register_io_dev_emmcdrv(const io_dev_connector_t **connector);
 
 #endif /* IO_EMMCDRV_H */
