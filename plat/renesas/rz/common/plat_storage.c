@@ -215,7 +215,7 @@ void rz_io_setup(void)
             panic();
         }
 
-		rcar_register_io_dev_emmcdrv(&emmc);
+		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
 
         policies = &emmc_policies[0];

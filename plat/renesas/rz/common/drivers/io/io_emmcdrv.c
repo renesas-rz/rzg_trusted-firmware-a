@@ -189,7 +189,7 @@ static int32_t emmcdrv_dev_close(io_dev_info_t *dev_info)
 	return IO_SUCCESS;
 }
 
-int32_t rcar_register_io_dev_emmcdrv(const io_dev_connector_t **dev_con)
+int32_t register_io_dev_emmcdrv(const io_dev_connector_t **dev_con)
 {
 	int32_t rc;
 
