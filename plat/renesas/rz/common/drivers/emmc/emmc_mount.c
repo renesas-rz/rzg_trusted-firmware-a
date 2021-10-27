@@ -26,9 +26,9 @@ static void emmc_set_bootpartition(void);
 static void emmc_set_bootpartition(void)
 {
 	mmc_drv_obj.boot_partition_en =
-	    (EMMC_PARTITION_ID) ((mmc_drv_obj.ext_csd_data[179] &
-				  EMMC_BOOT_PARTITION_EN_MASK) >>
-				 EMMC_BOOT_PARTITION_EN_SHIFT);
+		(EMMC_PARTITION_ID) ((mmc_drv_obj.ext_csd_data[179] &
+				EMMC_BOOT_PARTITION_EN_MASK) >>
+				EMMC_BOOT_PARTITION_EN_SHIFT);
 }
 
 static EMMC_ERROR_CODE emmc_card_init(void)
@@ -449,16 +449,16 @@ static void emmc_get_partition_access(void)
 	SETR_32(SD_OPTION, 0x000060EEU);	/* 8 bits width */
 	/* CMD8 (EXT_CSD) */
 	emmc_make_trans_cmd(CMD8_SEND_EXT_CSD, 0x00000000U,
-			    (uint32_t *) (&mmc_drv_obj.ext_csd_data[0]),
-			    EMMC_MAX_EXT_CSD_LENGTH,
-			    HAL_MEMCARD_READ, HAL_MEMCARD_NOT_DMA);
+				(uint32_t *) (&mmc_drv_obj.ext_csd_data[0]),
+				EMMC_MAX_EXT_CSD_LENGTH,
+				HAL_MEMCARD_READ, HAL_MEMCARD_NOT_DMA);
 	mmc_drv_obj.get_partition_access_flag = TRUE;
 	result =
-	    emmc_exec_cmd(EMMC_R1_ERROR_MASK, mmc_drv_obj.response);
+		emmc_exec_cmd(EMMC_R1_ERROR_MASK, mmc_drv_obj.response);
 	mmc_drv_obj.get_partition_access_flag = FALSE;
 	if (result == EMMC_SUCCESS) {
 		mmc_drv_obj.partition_access =
-		    (EMMC_PARTITION_ID) (mmc_drv_obj.ext_csd_data[179]
+			(EMMC_PARTITION_ID) (mmc_drv_obj.ext_csd_data[179]
 					 & PARTITION_ID_MASK);
 	} else if (result == EMMC_ERR_CMD_TIMEOUT) {
 		mmc_drv_obj.partition_access = PARTITION_ID_BOOT_1;
