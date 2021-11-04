@@ -88,46 +88,46 @@ static const struct plat_io_policy* policies;
 
 static const struct plat_io_policy spirom_policies[] = {
 	[FIP_IMAGE_ID] = {
-			  &memdrv_dev_handle,
-			  (uintptr_t) &spirom_block_spec,
-			  &open_memmap},
+				&memdrv_dev_handle,
+				(uintptr_t) &spirom_block_spec,
+				&open_memmap},
 	[BL31_IMAGE_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &bl31_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &bl31_file_spec,
+				&open_fipdrv},
 	[BL32_IMAGE_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &bl32_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &bl32_file_spec,
+				&open_fipdrv},
 	[BL33_IMAGE_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &bl33_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &bl33_file_spec,
+				&open_fipdrv},
 #if TRUSTED_BOARD_BOOT
 	[SOC_FW_KEY_CERT_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &soc_fw_key_cert_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &soc_fw_key_cert_file_spec,
+				&open_fipdrv},
 	[SOC_FW_CONTENT_CERT_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &soc_fw_content_cert_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &soc_fw_content_cert_file_spec,
+				&open_fipdrv},
 	[TRUSTED_OS_FW_KEY_CERT_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &tos_fw_key_cert_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &tos_fw_key_cert_file_spec,
+				&open_fipdrv},
 	[TRUSTED_OS_FW_CONTENT_CERT_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &tos_fw_content_cert_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &tos_fw_content_cert_file_spec,
+				&open_fipdrv},
 	[NON_TRUSTED_FW_KEY_CERT_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &nt_fw_key_cert_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &nt_fw_key_cert_file_spec,
+				&open_fipdrv},
 	[NON_TRUSTED_FW_CONTENT_CERT_ID] = {
-			   &fip_dev_handle,
-			   (uintptr_t) &nt_fw_content_cert_file_spec,
-			   &open_fipdrv},
+				&fip_dev_handle,
+				(uintptr_t) &nt_fw_content_cert_file_spec,
+				&open_fipdrv},
 #endif
 	{ 0, 0, 0}
 };
@@ -137,14 +137,44 @@ static const struct plat_io_policy emmc_policies[] = {
 				&emmcdrv_dev_handle,
 				(uintptr_t) &emmc_block_spec,
 				&open_emmcdrv},
-    [BL31_IMAGE_ID] = {
+	[BL31_IMAGE_ID] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl31_file_spec,
 				&open_fipdrv},
-    [BL33_IMAGE_ID] = {
+	[BL32_IMAGE_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &bl32_file_spec,
+				&open_fipdrv},
+	[BL33_IMAGE_ID] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl33_file_spec,
 				&open_fipdrv},
+#if TRUSTED_BOARD_BOOT
+	[SOC_FW_KEY_CERT_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &soc_fw_key_cert_file_spec,
+				&open_fipdrv},
+	[SOC_FW_CONTENT_CERT_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &soc_fw_content_cert_file_spec,
+				&open_fipdrv},
+	[TRUSTED_OS_FW_KEY_CERT_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &tos_fw_key_cert_file_spec,
+				&open_fipdrv},
+	[TRUSTED_OS_FW_CONTENT_CERT_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &tos_fw_content_cert_file_spec,
+				&open_fipdrv},
+	[NON_TRUSTED_FW_KEY_CERT_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &nt_fw_key_cert_file_spec,
+				&open_fipdrv},
+	[NON_TRUSTED_FW_CONTENT_CERT_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &nt_fw_content_cert_file_spec,
+				&open_fipdrv},
+#endif
     { 0, 0, 0}
 };
 
@@ -177,7 +207,7 @@ static int32_t open_memmap(const uintptr_t spec)
 
 static int32_t open_emmcdrv(const uintptr_t spec)
 {
-    return io_dev_init(emmcdrv_dev_handle, 0);
+	return io_dev_init(emmcdrv_dev_handle, 0);
 }
 
 void rz_io_setup(void)
@@ -201,24 +231,24 @@ void rz_io_setup(void)
 		register_io_dev_memmap(&memmap);
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
 
-        policies = &spirom_policies[0];
-    }
-    else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
-		     boot_dev == BOOT_MODE_EMMC_3_3) {
-        if (emmc_init() != EMMC_SUCCESS) {
-            NOTICE("BL2: Failed to eMMC driver initialize.\n");
-            panic();
-        }
-        emmc_memcard_power(EMMC_POWER_ON);
-        if (emmc_mount() != EMMC_SUCCESS) {
-            NOTICE("BL2: Failed to eMMC mount operation.\n");
-            panic();
-        }
+		policies = &spirom_policies[0];
+	}
+	else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
+		boot_dev == BOOT_MODE_EMMC_3_3) {
+		if (emmc_init() != EMMC_SUCCESS) {
+			NOTICE("BL2: Failed to eMMC driver initialize.\n");
+			panic();
+		}
+		emmc_memcard_power(EMMC_POWER_ON);
+		if (emmc_mount() != EMMC_SUCCESS) {
+			NOTICE("BL2: Failed to eMMC mount operation.\n");
+			panic();
+		}
 
-		rcar_register_io_dev_emmcdrv(&emmc);
+		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
 
-        policies = &emmc_policies[0];
+		policies = &emmc_policies[0];
 	} else {
 		panic();
 	}

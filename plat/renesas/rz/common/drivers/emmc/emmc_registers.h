@@ -145,13 +145,13 @@
  * MMC Clock Frequency
  * (533MHz/4) * 1/x = output clock
  */
-#define MMC_CLK_OFF			0UL	/* Clock output is disabled                                                             */
+#define MMC_CLK_OFF			0UL		/* Clock output is disabled                                 */
 #define MMC_400KHZ			512UL	/* (533MHz/4) * 1/512 = 260 KHz                             */
-#define MMC_20MHZ			8UL	/* (533MHz/4) * 1/8   = 16.7 MHz Normal speed mode         */
-#define MMC_26MHZ			8UL	/* (533MHz/4) * 1/8   = 16.7 MHz High speed mode 26Mhz        */
-#define MMC_52MHZ			4UL	/* (533MHz/4) * 1/4   = 33.3 MHz High speed mode 52Mhz        */
-#define MMC_100MHZ			2UL	/* (533MHz/4) * 1/2   = 66.6 MHz                             */
-#define MMC_200MHZ			1UL	/* (533MHz/4) * 1/1   = 133.3 MHz                             */
+#define MMC_20MHZ			8UL		/* (533MHz/4) * 1/8   = 16.7 MHz Normal speed mode          */
+#define MMC_26MHZ			8UL		/* (533MHz/4) * 1/8   = 16.7 MHz High speed mode 26Mhz      */
+#define MMC_52MHZ			4UL		/* (533MHz/4) * 1/4   = 33.3 MHz High speed mode 52Mhz      */
+#define MMC_100MHZ			2UL		/* (533MHz/4) * 1/2   = 66.6 MHz                            */
+#define MMC_200MHZ			1UL		/* (533MHz/4) * 1/1   = 133.3 MHz                           */
 
 #define MMC_FREQ_52MHZ		52000000UL
 #define MMC_FREQ_26MHZ		26000000UL

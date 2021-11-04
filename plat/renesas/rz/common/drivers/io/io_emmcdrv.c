@@ -62,9 +62,9 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 	sector_count = last_sector - first_sector + 1;
 
 	NOTICE("BL2: Load dst=0x%lx src=(p:%d)0x%llx(%d) len=0x%lx(%d)\n",
-	       buffer,
-	       fp->partition, (fp->base + fp->file_pos),
-	       first_sector, length, sector_count);
+			buffer,
+			fp->partition, (fp->base + fp->file_pos),
+			first_sector, length, sector_count);
 
 //	Temporarily disable DMA.
 //	if ((buffer + length - 1U) <= (uintptr_t)UINT32_MAX) {
@@ -72,15 +72,15 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 //	}
 
     // first sector
-    uint32_t first_offset = (fp->base + fp->file_pos) % EMMC_SECTOR_SIZE;
-    if( 0 < first_offset ) {
-        memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
-        if (emmc_read_sector((uint32_t*)sector_buf,
-				 first_sector, 1, emmc_dma) != EMMC_SUCCESS) {
+	uint32_t first_offset = (fp->base + fp->file_pos) % EMMC_SECTOR_SIZE;
+	if( 0 < first_offset ) {
+		memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
+		if(emmc_read_sector((uint32_t*)sector_buf,
+			first_sector, 1, emmc_dma) != EMMC_SUCCESS) {
 			result = IO_FAIL;
 			goto block_read_done;
-        }
-        else {
+		}
+		else {
 			buffer_offset = EMMC_SECTOR_SIZE - first_offset;
 			buffer_offset = (length < buffer_offset) ? length : buffer_offset;
 
@@ -99,7 +99,7 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 				last_sector, 1, emmc_dma) != EMMC_SUCCESS) {
 			result = IO_FAIL;
 			goto block_read_done;
-        }
+		}
 		else {
 			memcpy((uint8_t *) buffer + (length - last_offset), &sector_buf[0], last_offset);
 			sector_count--;
@@ -122,7 +122,7 @@ block_read_done:
 }
 
 static int32_t emmcdrv_block_open(io_dev_info_t *dev_info,
-				  const uintptr_t spec, io_entity_t *entity)
+				const uintptr_t spec, io_entity_t *entity)
 {
 	const io_drv_spec_t *block_spec = (io_drv_spec_t *) spec;
 
@@ -189,7 +189,7 @@ static int32_t emmcdrv_dev_close(io_dev_info_t *dev_info)
 	return IO_SUCCESS;
 }
 
-int32_t rcar_register_io_dev_emmcdrv(const io_dev_connector_t **dev_con)
+int32_t register_io_dev_emmcdrv(const io_dev_connector_t **dev_con)
 {
 	int32_t rc;
 
