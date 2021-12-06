@@ -887,7 +887,7 @@ void cpg_early_setup(void)
 	cpg_ctrl_clkrst(&early_setup_tbl[0], ARRAY_SIZE(early_setup_tbl));
 }
 
-void cpg_wdtrst_sel_stup(void)
+void cpg_wdtrst_sel_setup(void)
 {
 	uint32_t reg;
 	reg = mmio_read_32(CPG_WDTRST_SEL);
@@ -907,5 +907,5 @@ void cpg_setup(void)
 	cpg_clk_on_setup();
 	cpg_reset_setup();
 	cpg_div_sel_dynamic_setup();
-	cpg_wdtrst_sel_stup();
+	cpg_wdtrst_sel_setup();
 }
