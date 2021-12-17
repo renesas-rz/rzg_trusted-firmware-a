@@ -34,6 +34,11 @@
 #define SPI_MULTI_DUMMY_19CYCLE				(18)
 #define SPI_MULTI_DUMMY_20CYCLE				(19)
 
-int spi_multi_setup(uint32_t addr_width, uint32_t dq_width, uint32_t dummy_cycle);
+#define SPI_MULTI_SUCCESS	(0)
+#define SPI_MULTI_ERROR		(-1)
+
+int spi_multi_setup(void);
+void spi_multi_setup_device(void);
+void spi_multi_timing_set(void);
 
 #endif	/* _SPI_MULTI_H_ */
