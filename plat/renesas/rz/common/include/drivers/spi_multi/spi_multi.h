@@ -40,5 +40,7 @@
 int spi_multi_setup(void);
 void spi_multi_setup_device(void);
 void spi_multi_timing_set(void);
+uint8_t spi_multi_cmd_read(uint8_t command);
+void spi_multi_cmd_write(uint8_t command,uint8_t size,uint32_t data);
 
 #endif	/* _SPI_MULTI_H_ */
