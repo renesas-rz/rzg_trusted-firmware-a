@@ -37,8 +37,8 @@ RZ_TIMER_SOURCES	:=	drivers/delay_timer/generic_delay_timer.c		\
 
 DDR_SOURCES		:= plat/renesas/rz/common/drivers/ddr/ddr.c
 
-SPI_MULTI_SOURCE := plat/renesas/rz/common/drivers/spi_multi/spi_multi.c				\
-					plat/renesas/rz/common/drivers/spi_multi/spi_multi_${SPI_FLASH}.c
+SPI_MULTI_SOURCE := plat/renesas/rz/common/drivers/spi_multi/spi_multi.c					\
+					plat/renesas/rz/common/drivers/spi_multi/${SPI_FLASH}/spi_multi_device.c
 
 BL2_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 					${RZ_TIMER_SOURCES}									\
