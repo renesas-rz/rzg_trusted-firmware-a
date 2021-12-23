@@ -13,8 +13,8 @@
 #define SET_DRENR_ADE_VALUE  DRENR_ADE_ADD23_OUT
 #define SET_DREAR_EAC_VALUE  DREAR_EAC_EXADDR24
 /* In the case of addr width 32bit						*/
-/* #define SET_DRENR_ADE_VALUE     DRENR_ADE_ADD32_OUT	*/
-/* #define SET_DREAR_EAC_VALUE     DREAR_EAC_EXADDR32 	*/
+/* #define SET_DRENR_ADE_VALUE     DRENR_ADE_ADD31_OUT	*/
+/* #define SET_DREAR_EAC_VALUE     DREAR_EAC_EXADDR25 	*/
 
 /* In the case of bit width 1-1-1 and addr width 24bit				*/
 /* #define SET_DRCMR_CMD_VALUE  DRCMR_CMD_FAST_READ_3B				*/
@@ -64,10 +64,16 @@
 					CMNCR_MOIIO1_OUT1    | CMNCR_MOIIO2_OUT1 |						\
 					CMNCR_MOIIO3_OUT1    | CMNCR_DEF_DATA    |						\
 					CMNCR_MD_EXT_READ)
+
+#define SPIM_CMNCR_MANUAL_SET_VALUE (CMNCR_IO0FV_OUT_PREV | CMNCR_IO2FV_OUT_PREV |	\
+					CMNCR_IO3FV_OUT_PREV | CMNCR_MOIIO0_OUT1 |						\
+					CMNCR_MOIIO1_OUT1    | CMNCR_MOIIO2_OUT1 |						\
+					CMNCR_MOIIO3_OUT1    | CMNCR_DEF_DATA |							\
+					CMNCR_MD_MANUAL)
 /* Set SSL delay setting value */
 #define SPIM_SSLDR_SET_VALUE (SSLDR_SCKDL_4_5 | SSLDR_SLNDL_4QSPIn | SSLDR_SPNDL_4QSPIn)
 
-/* Clear the RBE bit */
+/* Set the RBE bit and RCF bit and RBURST */
 #define SPIM_DRCR_SET_VALUE (DRCR_RBE | DRCR_RCF | DRCR_RBURST_32_DATALEN)
 
 /* Set the data read command */
@@ -87,5 +93,17 @@
 /* Change to SPI flash mode */
 #define SPIM_DRDRENR_SET_VALUE (DRDRENR_DRDRE_SDR | DRDRENR_OPDRE_SDR |	\
 				DRDRENR_ADDRE_SDR | DRDRENR_HYPE_SPI)
+/* Set the SDR transfer & SPI flash mode */
+#define SPIM_SMDRENR_SET_VALUE (SMDRENR_HYPE_SPI_FLASH)
+/* Manual Command */
+#define SMCMR_CMD_READ_STATUS_REGISTER   (0x05)
+#define SMCMR_CMD_BIT_SHIFT                (16)
+#define SMWDR0_1BYTE_DATA_BIT_SHIFT        (24)
+
+/* Manual Command  Configure Length */
+#define SPI_MANUAL_COMMAND_SIZE_0      SMENR_SPIDE_NO_SEND
+#define SPI_MANUAL_COMMAND_SIZE_8_BIT  SMENR_SPIDE_8BIT_SEND
+#define SPI_MANUAL_COMMAND_SIZE_16_BIT SMENR_SPIDE_16BIT_SEND
+#define SPI_MANUAL_COMMAND_SIZE_32_BIT SMENR_SPIDE_32BIT_SEND
 
 #endif /* _SPI_MULTI_REG_VALUES_H_ */
