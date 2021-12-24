@@ -12,7 +12,9 @@ GICV3_SUPPORT_GIC600			:= 1
 HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
 TRUSTED_BOARD_BOOT				:= 0
+PROTECTED_CHIPID				:= 1
 DEBUG_RZG2L_FPGA				:= 0
+$(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,DEBUG_RZG2L_FPGA))
 
 WA_RZG2L_GIC64BIT				:= 1
@@ -72,6 +74,8 @@ BL31_SOURCES	+=	lib/cpus/aarch64/cortex_a55.S					\
 					plat/renesas/rz/common/plat_topology.c			\
 					plat/renesas/rz/common/plat_gic.c				\
 					plat/renesas/rz/common/plat_security.c			\
+					plat/renesas/rz/common/rz_plat_sip_handler.c	\
+					plat/renesas/rz/common/rz_sip_svc.c				\
 					plat/renesas/rz/common/aarch64/plat_helpers.S	\
 					plat/renesas/rz/common/drivers/syc.c
 
