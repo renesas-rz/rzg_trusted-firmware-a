@@ -24,6 +24,7 @@
 #define RZG2L_TZC_DDR_BASE          (0x11070000)
 #define RZG2L_DDR_PHY_BASE          (0x11400000)
 #define RZG2L_DDR_MEMC_BASE         (0x11410000)
+#define RZG2L_OTP_BASE              (0x11860000)
 #define RZG2L_GIC_BASE              (0x11900000)
 #define RZG2L_SD0_BASE              (0x11C00000)
 #define RZG2L_SPIROM_BASE           (0x20000000)
