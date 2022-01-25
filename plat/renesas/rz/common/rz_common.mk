@@ -23,15 +23,24 @@ $(eval $(call add_define,WA_RZG2L_GIC64BIT))
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_1530923				:= 1
 
-PLAT_INCLUDES		:=	-Iplat/renesas/rz/common/include				\
-						-Iplat/renesas/rz/common/drivers/emmc			\
-						-Iplat/renesas/rz/common/drivers/io				\
-						-Idrivers/renesas/common/io
+ifndef SPI_FLASH
+  SPI_FLASH = MT25QU512ABB
+endif
+
+PLAT_INCLUDES		:=	-Iplat/renesas/rz/common/include								\
+						-Iplat/renesas/rz/common/drivers/emmc							\
+						-Iplat/renesas/rz/common/drivers/io								\
+						-Idrivers/renesas/common/io										\
+						-Iplat/renesas/rz/common/include/drivers/spi_multi              \
+						-Iplat/renesas/rz/common/include/drivers/spi_multi/${SPI_FLASH}
 
 RZ_TIMER_SOURCES	:=	drivers/delay_timer/generic_delay_timer.c		\
 						drivers/delay_timer/delay_timer.c
 
 DDR_SOURCES		:= plat/renesas/rz/common/drivers/ddr/ddr.c
+
+SPI_MULTI_SOURCE := plat/renesas/rz/common/drivers/spi_multi/spi_multi.c					\
+					plat/renesas/rz/common/drivers/spi_multi/${SPI_FLASH}/spi_multi_device.c
 
 BL2_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 					${RZ_TIMER_SOURCES}									\
@@ -57,8 +66,8 @@ BL2_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 					plat/renesas/rz/common/drivers/syc.c				\
 					plat/renesas/rz/common/drivers/pfc.c				\
 					plat/renesas/rz/common/drivers/cpg.c				\
-					plat/renesas/rz/common/drivers/spi_multi.c			\
-					${DDR_SOURCES}
+					${DDR_SOURCES}										\
+					${SPI_MULTI_SOURCE}
 
 # Include GICv3 driver files
 GICV3_IMPL		:= GIC600
@@ -100,6 +109,7 @@ ifneq (${TRUSTED_BOARD_BOOT},0)
 	AUTH_SOURCES	+=	plat/renesas/rz/common/drivers/auth/auth_mod.c				\
 						plat/renesas/rz/common/drivers/auth/sblib/crypto_sblib.c	\
 						plat/renesas/rz/common/drivers/auth/sblib/sblib_parser.c
+
 
 	BL2_SOURCES		+=	${AUTH_SOURCES}
 
