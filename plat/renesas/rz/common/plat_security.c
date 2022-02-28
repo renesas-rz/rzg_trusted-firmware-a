@@ -113,10 +113,12 @@ void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_reg
 static void bl2_security_setup(void)
 {
 	const arm_tzc_regions_info_t ddr_tzc_regions[] = {
+#if TRUSTED_BOARD_BOOT
 		{PLAT_FW_TZC_PROT_DRAM1_BASE, PLAT_FW_TZC_PROT_DRAM1_END,
 			TZC_REGION_S_RDWR, PLAT_TZC_REGION_ACCESS_S_UNPRIV},
 		{PLAT_TEE_TZC_PROT_DRAM1_BASE, PLAT_TEE_TZC_PROT_DRAM1_END,
 			TZC_REGION_S_RDWR,  PLAT_TZC_REGION_ACCESS_S_UNPRIV},
+#endif /* TRUSTED_BOARD_BOOT */
 		{}
 	};
 
