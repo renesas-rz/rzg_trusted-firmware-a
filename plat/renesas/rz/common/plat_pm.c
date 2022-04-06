@@ -8,10 +8,15 @@
 #include <assert.h>
 #include <lib/psci/psci.h>
 #include <lib/mmio.h>
+#include <common/debug.h>
+#include <lib/bakery_lock.h>
+#include <plat/common/platform.h>
 
 #include <cpg_regs.h>
 #include <sys_regs.h>
 #include <rz_private.h>
+#include <rzg2l_def.h>
+#include <common/bl_common.h>
 
 uintptr_t	gp_warm_ep;
 
@@ -30,6 +35,17 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 	if (coreid > 1)
 		return PSCI_E_INVALID_PARAMS;
 
+	/*  Apply an external reset */
+	if((mmio_read_32(SYS_LP_CTL2) & 0x1) == 0x1){
+		mmio_write_32(pch[coreid][0], 0x00000001);
+		while ((mmio_read_32(pch[coreid][1]) & 0x1) != 0x1)
+			;
+		mmio_write_32(pch[coreid][0], 0x00000000);
+		while ((mmio_read_32(pch[coreid][1]) & 0x1) != 0x0)
+			;
+	}
+
+	/*  Start the core */
 	mmio_write_32(rval[coreid][0], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
 	mmio_write_32(rval[coreid][1], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
 
@@ -61,9 +77,37 @@ static void rzg2l_pwr_domain_on_finish(const psci_power_state_t *target_state)
 #endif
 }
 
+static void rzg2l_pwr_domain_off(const psci_power_state_t *state)
+{
+	unsigned long mpidr = read_mpidr_el1();
+	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
+
+	/* Prevent interrupts from spuriously waking up this cpu */
+	plat_gic_cpuif_disable();
+
+	/*  Enable the transition request interrupt to the Cortex-A55 Sleep Mode */
+	mmio_write_32(SYS_LP_CTL6, (0x00000100 << coreid));
+
+	/* Transition request to Cortex-A55 CoreX Sleep Mode */
+	mmio_write_32(SYS_LP_CTL1, (0x00000100 << coreid));
+
+	/* Confirm that the processing on the Cortex-M33 side is completed */
+	while((mmio_read_32(SYS_LP_CTL5) & (0x00000100 << coreid))!= (0x00000100 << coreid))
+		;
+	/* Enter the Cortex-A55 Sleep Mode */
+	/* Start the Cortex-A55 Sleep Mode. */
+	mmio_write_32(SYS_LP_CTL2, 0x00000001);
+
+	/* Issue Barrier instruction */
+	isb();
+	dsb();
+
+}
+
 const plat_psci_ops_t rzg2l_plat_psci_ops = {
 	.pwr_domain_on						= rzg2l_pwr_domain_on,
 	.pwr_domain_on_finish				= rzg2l_pwr_domain_on_finish,
+	.pwr_domain_off						= rzg2l_pwr_domain_off,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
