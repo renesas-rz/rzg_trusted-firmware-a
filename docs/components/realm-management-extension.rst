@@ -81,6 +81,14 @@ This contract is defined in the `RMM`_ Boot Interface, which can be found at
 There is also a specification of the runtime services provided by TF-A
 to `RMM`_. This can be found at :ref:`runtime_services_and_interface`.
 
+There is a contract between RMM and RMMD that defines the arguments that the
+former needs to take in order to initialize and also the possible return values.
+This contract is defined in the RMM Boot Interface, which can be found at
+:ref:`rmm_el3_boot_interface`.
+
+There is also a specification of the runtime services provided by TF-A
+to RMM. This can be found at :ref:`runtime_services_and_interface`.
+
 Test Realm Payload (TRP)
 *************************
 TRP is a small test payload that runs at R-EL2 and implements a subset of
