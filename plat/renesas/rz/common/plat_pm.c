@@ -104,10 +104,18 @@ static void rzg2l_pwr_domain_off(const psci_power_state_t *state)
 
 }
 
+static void __dead2 rzg2l_system_off(void)
+{
+        wfi();
+        ERROR("RZG System Off: operation not handled.\n");
+        panic();
+}
+
 const plat_psci_ops_t rzg2l_plat_psci_ops = {
 	.pwr_domain_on						= rzg2l_pwr_domain_on,
 	.pwr_domain_on_finish				= rzg2l_pwr_domain_on_finish,
 	.pwr_domain_off						= rzg2l_pwr_domain_off,
+	.system_off                                     = rzg2l_system_off,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
