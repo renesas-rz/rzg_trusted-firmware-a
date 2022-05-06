@@ -46,6 +46,11 @@
 #define GIC700_ESPI_ID_MIN		4096
 #define GIC700_ESPI_ID_MAX		5119
 
+#define GIC700_SPI_ID_MIN		32
+#define GIC700_SPI_ID_MAX		991
+#define GIC700_ESPI_ID_MIN		4096
+#define GIC700_ESPI_ID_MAX		5119
+
 /* Number of retries for PUP update */
 #define GICD_PUP_UPDATE_RETRIES		10000
 
