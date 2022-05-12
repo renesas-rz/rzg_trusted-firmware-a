@@ -28,6 +28,7 @@ extern const uint32_t mc_mr6_tbl[2];
 extern const uint32_t mc_phy_settings_tbl[MC_PHYSET_NUM][2];
 extern const uint32_t swizzle_mc_tbl[SWIZZLE_MC_NUM][2];
 extern const uint32_t swizzle_phy_tbl[SIZZLE_PHY_NUM][2];
+extern const char ddr_an_version[];
 
 // prototypes
 void ddr_setup(void);
@@ -53,7 +54,7 @@ void ddr_setup(void)
 	uint32_t	tmp;
 	int i;
 
-	INFO("BL2: setup DDR (Rev. %s)\n", ddr_get_version());
+	INFO("BL2: setup DDR (Rev. %s)\n", ddr_an_version);
 	// Step2 - Step11
 	cpg_active_ddr(disable_phy_clk);
 
