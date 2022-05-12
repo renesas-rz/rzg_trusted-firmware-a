@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2021, Renesas Electronics Corporation. All rights reserved.
- *
+ * Copyright (c) 2020-2022, Renesas Electronics Corporation. All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause
+ * This code was generated with RZ/G2L, G2UL, Five, A3UL DDR config generation tool v3.0.0
  */
 
 #include <stdint.h>
 #include <ddr_mc_regs.h>
+
+const char ddr_an_version[] = "v3.0.0";
 
 const uint32_t mc_init_tbl[MC_INIT_NUM][2] = {
 	{	DENALI_CTL_00,	0x00000A00	},

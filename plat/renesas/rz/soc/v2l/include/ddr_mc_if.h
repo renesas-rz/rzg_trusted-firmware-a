@@ -9,8 +9,6 @@
 
 #include <ddr_mc_regs.h>
 
-#define AN_VERSION              "2.10"
-
 #define MC_INIT_NUM			(507)
 
 #define LP_CMD_OFFSET		(8)
