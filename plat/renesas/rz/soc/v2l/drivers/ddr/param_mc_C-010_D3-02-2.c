@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <ddr_mc_regs.h>
 
+const char ddr_an_version[] = "v0.0.0";
+
 const uint32_t mc_init_tbl[MC_INIT_NUM][2] = {
 	{	DENALI_CTL_00,	0x00000600	},
 	{	DENALI_CTL_01,	0x00000000	},
