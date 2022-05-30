@@ -106,13 +106,13 @@ static int auth_sblib(const auth_method_param_sblib_t *param,
 
 	/* Get the content certificate that is the parent of the image */
 	content_cert_desc = img_desc->parent;
-	rc = auth_get_param(param->key_cert, content_cert_desc,
+	rc = auth_get_param(param->content_cert, content_cert_desc,
 			&content_cert_ptr, &content_cert_len);
 	return_if_error(rc);
 
 	/* Get the key certificate that is the parent of the content certificate */
 	key_cert_desc = content_cert_desc->parent;
-	rc = auth_get_param(param->content_cert, key_cert_desc,
+	rc = auth_get_param(param->key_cert, key_cert_desc,
 			&key_cert_ptr, &key_cert_len);
 	return_if_error(rc);
 
