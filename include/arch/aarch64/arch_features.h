@@ -172,13 +172,6 @@ static inline bool is_feat_rng_trap_present(void)
 			== ID_AA64PFR1_EL1_RNG_TRAP_SUPPORTED);
 }
 
-static inline bool is_feat_rng_trap_present(void)
-{
-	return (((read_id_aa64pfr1_el1() >> ID_AA64PFR1_EL1_RNDR_TRAP_SHIFT) &
-			ID_AA64PFR1_EL1_RNDR_TRAP_MASK)
-			== ID_AA64PFR1_EL1_RNG_TRAP_SUPPORTED);
-}
-
 static inline unsigned int get_armv9_2_feat_rme_support(void)
 {
 	/*
@@ -295,25 +288,6 @@ static inline bool is_feat_mtpmu_supported(void)
 	unsigned int mtpmu = read_feat_mtpmu_id_field();
 
 	return (mtpmu != 0U) && (mtpmu != ID_AA64DFR0_MTPMU_DISABLED);
-}
-
-/*******************************************************************************
- * Function to identify the presence of FEAT_BRBE (Branch Record Buffer
- * Extension)
- ******************************************************************************/
-static inline bool is_feat_brbe_present(void)
-{
-	return (((read_id_aa64dfr0_el1() >> ID_AA64DFR0_BRBE_SHIFT) &
-		ID_AA64DFR0_BRBE_MASK) == ID_AA64DFR0_BRBE_SUPPORTED);
-}
-
-/*******************************************************************************
- * Function to identify the presence of FEAT_TRBE (Trace Buffer Extension)
- ******************************************************************************/
-static inline bool is_feat_trbe_present(void)
-{
-	return (((read_id_aa64dfr0_el1() >> ID_AA64DFR0_TRACEBUFFER_SHIFT) &
-		ID_AA64DFR0_TRACEBUFFER_MASK) == ID_AA64DFR0_TRACEBUFFER_SUPPORTED);
 }
 
 #endif /* ARCH_FEATURES_H */
