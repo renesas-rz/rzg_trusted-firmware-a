@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2022, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -16,7 +16,7 @@ OUTPUT_ARCH(PLATFORM_LINKER_ARCH)
 ENTRY(__BL2_IMAGE_START__)
 
 MEMORY {
-	HEADER (rw) : ORIGIN = 0x00000000, LENGTH = 0x3000
+	HEADER (rw) : ORIGIN = 0x00000000, LENGTH = STM32MP_HEADER_RESERVED_SIZE
 	RAM (rwx) : ORIGIN = STM32MP_BINARY_BASE, LENGTH = STM32MP_BINARY_SIZE
 }
 
@@ -57,7 +57,11 @@ SECTIONS
          * The strongest and only alignment contraint is MMU 4K page.
          * Indeed as images below will be removed, 4K pages will be re-used.
          */
+#if SEPARATE_CODE_AND_RODATA
+        . = ( STM32MP_BL2_RO_BASE - STM32MP_BINARY_BASE );
+#else
         . = ( STM32MP_BL2_BASE - STM32MP_BINARY_BASE );
+#endif
         __BL2_IMAGE_START__ = .;
         *(.bl2_image*)
         __BL2_IMAGE_END__ = .;

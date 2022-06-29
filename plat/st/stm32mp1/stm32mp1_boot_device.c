@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2019, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2019-2022, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <errno.h>
 
+#include <common/debug.h>
 #include <drivers/nand.h>
 #include <drivers/raw_nand.h>
 #include <drivers/spi_nand.h>
@@ -13,19 +14,14 @@
 #include <lib/utils.h>
 #include <plat/common/platform.h>
 
-#define SZ_512		0x200U
-#define SZ_64M		0x4000000U
-
 #if STM32MP_RAW_NAND || STM32MP_SPI_NAND
 static int get_data_from_otp(struct nand_device *nand_dev, bool is_slc)
 {
-	int result;
 	uint32_t nand_param;
 
 	/* Check if NAND parameters are stored in OTP */
-	result = bsec_shadow_read_otp(&nand_param, NAND_OTP);
-	if (result != BSEC_OK) {
-		ERROR("BSEC: NAND_OTP Error %i\n", result);
+	if (stm32_get_otp_value(NAND_OTP, &nand_param) != 0) {
+		ERROR("BSEC: NAND_OTP Error\n");
 		return -EACCES;
 	}
 
@@ -119,8 +115,8 @@ ecc:
 		}
 	}
 
-	VERBOSE("OTP: Block %i Page %i Size %lli\n", nand_dev->block_size,
-	     nand_dev->page_size, nand_dev->size);
+	VERBOSE("OTP: Block %u Page %u Size %llu\n", nand_dev->block_size,
+		nand_dev->page_size, nand_dev->size);
 
 	return 0;
 }

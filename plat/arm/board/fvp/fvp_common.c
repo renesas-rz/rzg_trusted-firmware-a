@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2022, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -104,9 +104,10 @@ const mmap_region_t plat_arm_mmap[] = {
 #ifdef __aarch64__
 	ARM_MAP_DRAM2,
 #endif
-#if defined(SPD_spmd)
+	/*
+	 * Required to load HW_CONFIG, SPMC and SPs to trusted DRAM.
+	 */
 	ARM_MAP_TRUSTED_DRAM,
-#endif
 #if ENABLE_RME
 	ARM_MAP_RMM_DRAM,
 	ARM_MAP_GPT_L1_DRAM,
@@ -117,11 +118,16 @@ const mmap_region_t plat_arm_mmap[] = {
 #if TRUSTED_BOARD_BOOT
 	/* To access the Root of Trust Public Key registers. */
 	MAP_DEVICE2,
-#if !BL2_AT_EL3
-	ARM_MAP_BL1_RW,
-#endif
 #endif /* TRUSTED_BOARD_BOOT */
-#if SPM_MM
+
+#if CRYPTO_SUPPORT && !BL2_AT_EL3
+	/*
+	 * To access shared the Mbed TLS heap while booting the
+	 * system with Crypto support
+	 */
+	ARM_MAP_BL1_RW,
+#endif /* CRYPTO_SUPPORT && !BL2_AT_EL3 */
+#if SPM_MM || SPMC_AT_EL3
 	ARM_SP_IMAGE_MMAP,
 #endif
 #if ARM_BL31_IN_DRAM
@@ -161,8 +167,6 @@ const mmap_region_t plat_arm_mmap[] = {
 #if SPM_MM
 	ARM_SPM_BUF_EL3_MMAP,
 #endif
-	/* Required by fconf APIs to read HW_CONFIG dtb loaded into DRAM */
-	ARM_DTB_DRAM_NS,
 #if ENABLE_RME
 	ARM_MAP_GPT_L1_DRAM,
 #endif
@@ -192,8 +196,6 @@ const mmap_region_t plat_arm_mmap[] = {
 	V2M_MAP_IOFPGA,
 	MAP_DEVICE0,
 	MAP_DEVICE1,
-	/* Required by fconf APIs to read HW_CONFIG dtb loaded into DRAM */
-	ARM_DTB_DRAM_NS,
 	{0}
 };
 #endif
@@ -444,7 +446,7 @@ void fvp_interconnect_disable(void)
 #endif
 }
 
-#if TRUSTED_BOARD_BOOT
+#if CRYPTO_SUPPORT
 int plat_get_mbedtls_heap(void **heap_addr, size_t *heap_size)
 {
 	assert(heap_addr != NULL);
@@ -452,7 +454,7 @@ int plat_get_mbedtls_heap(void **heap_addr, size_t *heap_size)
 
 	return arm_get_mbedtls_heap(heap_addr, heap_size);
 }
-#endif
+#endif /* CRYPTO_SUPPORT */
 
 void fvp_timer_init(void)
 {

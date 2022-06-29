@@ -29,6 +29,10 @@ vulnerability workarounds should be applied at runtime.
    platform contains at least 1 CPU that requires dynamic mitigation.
    Defaults to 0.
 
+-  ``WORKAROUND_CVE_2022_23960``: Enables mitigation for `CVE-2022-23960`_.
+   This build option should be set to 1 if the target platform contains at
+   least 1 CPU that requires this mitigation. Defaults to 1.
+
 .. _arm_cpu_macros_errata_workarounds:
 
 CPU Errata Workarounds
@@ -292,15 +296,42 @@ For Cortex-A78, the following errata build flags are defined :
    CPU. This needs to be enabled for revisions r1p0, r1p1, and r1p2. The issue
    is present in r0p0 but there is no workaround. It is still open.
 
+-  ``ERRATA_A78_2376745``: This applies errata 2376745 workaround to Cortex-A78
+   CPU. This needs to be enabled for revisions r0p0, r1p0, r1p1, and r1p2, and
+   it is still open.
+
+-  ``ERRATA_A78_2395406``: This applies errata 2395406 workaround to Cortex-A78
+   CPU. This needs to be enabled for revisions r0p0, r1p0, r1p1, and r1p2, and
+   it is still open.
+
 For Cortex-A78 AE, the following errata build flags are defined :
 
-- ``ERRATA_A78_AE_1941500`` : This applies errata 1941500 workaround to Cortex-A78
-   AE CPU. This needs to be enabled for revisions r0p0 and r0p1. This erratum is
-   still open.
+- ``ERRATA_A78_AE_1941500`` : This applies errata 1941500 workaround to
+   Cortex-A78 AE CPU. This needs to be enabled for revisions r0p0 and r0p1.
+   This erratum is still open.
 
-- ``ERRATA_A78_AE_1951502`` : This applies errata 1951502 workaround to Cortex-A78
-  AE CPU. This needs to be enabled for revisions r0p0 and r0p1. This erratum is
-  still open.
+- ``ERRATA_A78_AE_1951502`` : This applies errata 1951502 workaround to
+  Cortex-A78 AE CPU. This needs to be enabled for revisions r0p0 and r0p1. This
+  erratum is still open.
+
+- ``ERRATA_A78_AE_2376748`` : This applies errata 2376748 workaround to
+  Cortex-A78 AE CPU. This needs to be enabled for revisions r0p0 and r0p1. This
+  erratum is still open.
+
+- ``ERRATA_A78_AE_2395408`` : This applies errata 2395408 workaround to
+  Cortex-A78 AE CPU. This needs to be enabled for revisions r0p0 and r0p1. This
+  erratum is still open.
+
+For Cortex-X1 CPU, the following errata build flags are defined:
+
+- ``ERRATA_X1_1821534`` : This applies errata 1821534 workaround to Cortex-X1
+   CPU. This needs to be enabled only for revision <= r1p0 of the CPU.
+
+- ``ERRATA_X1_1688305`` : This applies errata 1688305 workaround to Cortex-X1
+   CPU. This needs to be enabled only for revision <= r1p0 of the CPU.
+
+- ``ERRATA_X1_1827429`` : This applies errata 1827429 workaround to Cortex-X1
+   CPU. This needs to be enabled only for revision <= r1p0 of the CPU.
 
 For Neoverse N1, the following errata build flags are defined :
 
@@ -409,6 +440,22 @@ For Cortex-A710, the following errata build flags are defined :
    Cortex-A710 CPU. This needs to be enabled for revisions r0p0, r1p0 and r2p0
    of the CPU and is still open.
 
+-  ``ERRATA_A710_2267065``: This applies errata 2267065 workaround to
+   Cortex-A710 CPU. This needs to be enabled for revisions r0p0, r1p0 and r2p0
+   of the CPU and is fixed in r2p1.
+
+-  ``ERRATA_A710_2136059``: This applies errata 2136059 workaround to
+   Cortex-A710 CPU. This needs to be enabled for revisions r0p0, r1p0 and r2p0
+   of the CPU and is fixed in r2p1.
+
+-  ``ERRATA_A710_2282622``: This applies errata 2282622 workaround to
+   Cortex-A710 CPU. This needs to be enabled for revisions r0p0, r1p0 and r2p0
+   of the CPU and is fixed in r2p1.
+
+-  ``ERRATA_A710_2008768``: This applies errata 2008768 workaround to
+   Cortex-A710 CPU. This needs to be enabled for revisions r0p0, r1p0 and r2p0
+   of the CPU and is fixed in r2p1.
+
 For Neoverse N2, the following errata build flags are defined :
 
 -  ``ERRATA_N2_2002655``: This applies errata 2002655 workaround to Neoverse-N2
@@ -441,6 +488,67 @@ For Neoverse N2, the following errata build flags are defined :
 -  ``ERRATA_N2_2280757``: This applies errata 2280757 workaround to Neoverse-N2
    CPU. This needs to be enabled for revision r0p0 of the CPU and is still open.
 
+For Cortex-X2, the following errata build flags are defined :
+
+-  ``ERRATA_X2_2002765``: This applies errata 2002765 workaround to Cortex-X2
+   CPU. This needs to be enabled for revisions r0p0, r1p0, and r2p0 of the CPU,
+   it is still open.
+
+-  ``ERRATA_X2_2058056``: This applies errata 2058056 workaround to Cortex-X2
+   CPU. This needs to be enabled for revisions r0p0, r1p0, and r2p0 of the CPU,
+   it is still open.
+
+-  ``ERRATA_X2_2083908``: This applies errata 2083908 workaround to Cortex-X2
+   CPU. This needs to be enabled for revision r2p0 of the CPU, it is still open.
+
+-  ``ERRATA_X2_2017096``: This applies errata 2017096 workaround to
+   Cortex-X2 CPU. This needs to be enabled only for revisions r0p0, r1p0 and
+   r2p0 of the CPU, it is fixed in r2p1.
+
+-  ``ERRATA_X2_2081180``: This applies errata 2081180 workaround to
+   Cortex-X2 CPU. This needs to be enabled only for revisions r0p0, r1p0 and
+   r2p0 of the CPU, it is fixed in r2p1.
+
+-  ``ERRATA_X2_2216384``: This applies errata 2216384 workaround to
+   Cortex-X2 CPU. This needs to be enabled only for revisions r0p0, r1p0 and
+   r2p0 of the CPU, it is fixed in r2p1.
+
+-  ``ERRATA_X2_2147715``: This applies errata 2147715 workaround to
+   Cortex-X2 CPU. This needs to be enabled only for revision r2p0 of the CPU,
+   it is fixed in r2p1.
+
+For Cortex-A510, the following errata build flags are defined :
+
+-  ``ERRATA_A510_1922240``: This applies errata 1922240 workaround to
+   Cortex-A510 CPU. This needs to be enabled only for revision r0p0, it is
+   fixed in r0p1.
+
+-  ``ERRATA_A510_2288014``: This applies errata 2288014 workaround to
+   Cortex-A510 CPU. This needs to be enabled only for revisions r0p0, r0p1,
+   r0p2, r0p3 and r1p0, it is fixed in r1p1.
+
+-  ``ERRATA_A510_2042739``: This applies errata 2042739 workaround to
+   Cortex-A510 CPU. This needs to be enabled only for revisions r0p0, r0p1 and
+   r0p2, it is fixed in r0p3.
+
+-  ``ERRATA_A510_2041909``: This applies errata 2041909 workaround to
+   Cortex-A510 CPU. This needs to be enabled only for revision r0p2 and is fixed
+   in r0p3. The issue is also present in r0p0 and r0p1 but there is no
+   workaround for those revisions.
+
+-  ``ERRATA_A510_2250311``: This applies errata 2250311 workaround to
+   Cortex-A510 CPU. This needs to be enabled for revisions r0p0, r0p1, r0p2,
+   r0p3 and r1p0, it is fixed in r1p1. This workaround disables MPMM even if
+   ENABLE_MPMM=1.
+
+-  ``ERRATA_A510_2218950``: This applies errata 2218950 workaround to
+   Cortex-A510 CPU. This needs to be enabled for revisions r0p0, r0p1, r0p2,
+   r0p3 and r1p0, it is fixed in r1p1.
+
+-  ``ERRATA_A510_2172148``: This applies errata 2172148 workaround to
+   Cortex-A510 CPU. This needs to be enabled for revisions r0p0, r0p1, r0p2,
+   r0p3 and r1p0, it is fixed in r1p1.
+
 DSU Errata Workarounds
 ----------------------
 
@@ -467,6 +575,12 @@ For DSU errata, the following build flags are defined:
    contain the ACP interface **and** the DSU revision is older than r2p0 (on
    r2p0 it is fixed). However, please note that this workaround results in
    increased DSU power consumption on idle.
+
+-  ``ERRATA_DSU_2313941``: This applies errata 2313941 workaround for the
+   affected DSU configurations. This errata applies for those DSUs with
+   revisions r0p0, r1p0, r2p0, r2p1, r3p0, r3p1 and is still open. However,
+   please note that this workaround results in increased DSU power consumption
+   on idle.
 
 CPU Specific optimizations
 --------------------------
@@ -516,6 +630,7 @@ architecture that can be enabled by the platform as desired.
 
 .. _CVE-2017-5715: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-5715
 .. _CVE-2018-3639: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-3639
+.. _CVE-2022-23960: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-23960
 .. _Cortex-A53 MPCore Software Developers Errata Notice: http://infocenter.arm.com/help/topic/com.arm.doc.epm048406/index.html
 .. _Cortex-A57 MPCore Software Developers Errata Notice: http://infocenter.arm.com/help/topic/com.arm.doc.epm049219/index.html
 .. _Cortex-A72 MPCore Software Developers Errata Notice: http://infocenter.arm.com/help/topic/com.arm.doc.epm012079/index.html

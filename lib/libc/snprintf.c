@@ -1,14 +1,25 @@
 /*
- * Copyright (c) 2017-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2022, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <assert.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #include <common/debug.h>
 #include <plat/common/platform.h>
+
+#define get_num_va_args(_args, _lcount)				\
+	(((_lcount) > 1)  ? va_arg(_args, long long int) :	\
+	(((_lcount) == 1) ? va_arg(_args, long int) :		\
+			    va_arg(_args, int)))
+
+#define get_unum_va_args(_args, _lcount)				\
+	(((_lcount) > 1)  ? va_arg(_args, unsigned long long int) :	\
+	(((_lcount) == 1) ? va_arg(_args, unsigned long int) :		\
+			    va_arg(_args, unsigned int)))
 
 #define CHECK_AND_PUT_CHAR(buf, size, chars_printed, ch)	\
 	do {						\
@@ -40,6 +51,12 @@ static void unsigned_num_print(char **s, size_t n, size_t *chars_printed,
 	unsigned int rem;
 	char ascii_a = capitalise ? 'A' : 'a';
 
+	if (radix < 10) {
+		ERROR("snprintf: unsupported radix '%u'.", radix);
+		plat_panic_handler();
+		assert(0); /* Unreachable */
+	}
+
 	do {
 		rem = unum % radix;
 		if (rem < 10U) {
@@ -52,31 +69,14 @@ static void unsigned_num_print(char **s, size_t n, size_t *chars_printed,
 	} while (unum > 0U);
 
 	width = i;
-	if (padn > width) {
-		(*chars_printed) += (size_t)padn;
-	} else {
-		(*chars_printed) += (size_t)width;
+	for (i = padn - width; i > 0; i--) {
+		CHECK_AND_PUT_CHAR(*s, n, *chars_printed, padc);
 	}
-
-	if (*chars_printed < n) {
-
-		if (padn > 0) {
-			while (width < padn) {
-				*(*s)++ = padc;
-				padn--;
-			}
-		}
-
-		while (--i >= 0) {
-			*(*s)++ = num_buf[i];
-		}
-
-		if (padn < 0) {
-			while (width < -padn) {
-				*(*s)++ = padc;
-				padn++;
-			}
-		}
+	for (i = width; i > 0; i--) {
+		CHECK_AND_PUT_CHAR(*s, n, *chars_printed, num_buf[i - 1]);
+	}
+	for (i = width + padn; i < 0; i++) {
+		CHECK_AND_PUT_CHAR(*s, n, *chars_printed, padc);
 	}
 }
 
@@ -89,6 +89,11 @@ static void unsigned_num_print(char **s, size_t n, size_t *chars_printed,
  * %s - string format
  * %u - unsigned decimal format
  * %p - pointer format
+ *
+ * The following length specifiers are supported by this print
+ * %l - long int
+ * %ll - long long int
+ * %z - size_t sized integer formats
  *
  * The following padding specifiers are supported by this print
  * %0NN - Left-pad the number with 0s (NN is a decimal number)
@@ -111,6 +116,7 @@ int vsnprintf(char *s, size_t n, const char *fmt, va_list args)
 	bool left;
 	bool capitalise;
 	size_t chars_printed = 0U;
+	unsigned int l_count;
 
 	if (n == 0U) {
 		/* There isn't space for anything. */
@@ -128,6 +134,7 @@ int vsnprintf(char *s, size_t n, const char *fmt, va_list args)
 		padc ='\0';
 		padn = 0;
 		capitalise = false;
+		l_count = 0;
 
 		if (*fmt == '%') {
 			fmt++;
@@ -162,7 +169,7 @@ loop:
 
 			case 'i':
 			case 'd':
-				num = va_arg(args, int);
+				num = get_num_va_args(args, l_count);
 
 				if (num < 0) {
 					CHECK_AND_PUT_CHAR(s, n, chars_printed,
@@ -180,10 +187,18 @@ loop:
 				string_print(&s, n, &chars_printed, str);
 				break;
 			case 'u':
-				unum = va_arg(args, unsigned int);
+				unum = get_unum_va_args(args, l_count);
 				unsigned_num_print(&s, n, &chars_printed,
 						   unum, 10, padc, padn, false);
 				break;
+			case 'z':
+				l_count = 1;
+				fmt++;
+				goto loop;
+			case 'l':
+				l_count++;
+				fmt++;
+				goto loop;
 			case 'p':
 				unum = (uintptr_t)va_arg(args, void *);
 				if (unum > 0U) {
@@ -196,7 +211,7 @@ loop:
 			case 'X':
 				capitalise = true;
 			case 'x':
-				unum = va_arg(args, unsigned int);
+				unum = get_unum_va_args(args, l_count);
 				unsigned_num_print(&s, n, &chars_printed,
 						   unum, 16, padc, padn,
 						   capitalise);

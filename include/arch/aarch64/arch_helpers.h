@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2021, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2022, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -224,6 +224,7 @@ DEFINE_SYSOP_TYPE_PARAM_FUNC(at, s1e3r)
 DEFINE_SYSOP_PARAM_FUNC(xpaci)
 
 void flush_dcache_range(uintptr_t addr, size_t size);
+void flush_dcache_to_popa_range(uintptr_t addr, size_t size);
 void clean_dcache_range(uintptr_t addr, size_t size);
 void inv_dcache_range(uintptr_t addr, size_t size);
 bool is_dcache_enabled(void);
@@ -274,8 +275,10 @@ DEFINE_SYSOP_TYPE_FUNC(dmb, sy)
 DEFINE_SYSOP_TYPE_FUNC(dmb, st)
 DEFINE_SYSOP_TYPE_FUNC(dmb, ld)
 DEFINE_SYSOP_TYPE_FUNC(dsb, ish)
+DEFINE_SYSOP_TYPE_FUNC(dsb, osh)
 DEFINE_SYSOP_TYPE_FUNC(dsb, nsh)
 DEFINE_SYSOP_TYPE_FUNC(dsb, ishst)
+DEFINE_SYSOP_TYPE_FUNC(dsb, oshst)
 DEFINE_SYSOP_TYPE_FUNC(dmb, oshld)
 DEFINE_SYSOP_TYPE_FUNC(dmb, oshst)
 DEFINE_SYSOP_TYPE_FUNC(dmb, osh)
@@ -529,6 +532,9 @@ DEFINE_RENAME_SYSREG_READ_FUNC(id_aa64mmfr2_el1, ID_AA64MMFR2_EL1)
 DEFINE_RENAME_SYSREG_RW_FUNCS(apiakeyhi_el1, APIAKeyHi_EL1)
 DEFINE_RENAME_SYSREG_RW_FUNCS(apiakeylo_el1, APIAKeyLo_EL1)
 
+/* Armv8.4 Data Independent Timing Register */
+DEFINE_RENAME_SYSREG_RW_FUNCS(dit, DIT)
+
 /* Armv8.5 MTE Registers */
 DEFINE_RENAME_SYSREG_RW_FUNCS(tfsre0_el1, TFSRE0_EL1)
 DEFINE_RENAME_SYSREG_RW_FUNCS(tfsr_el1, TFSR_EL1)
@@ -607,14 +613,13 @@ static inline void tlbipaallos(void)
 }
 
 /*
- * Invalidate cached copies of GPT entries
- * from TLBs by physical address
+ * Invalidate TLBs of GPT entries by Physical address, last level.
  *
  * @pa: the starting address for the range
  *      of invalidation
  * @size: size of the range of invalidation
  */
-void gpt_tlbi_by_pa(uint64_t pa, size_t size);
+void gpt_tlbi_by_pa_ll(uint64_t pa, size_t size);
 
 
 /* Previously defined accessor functions with incomplete register names  */

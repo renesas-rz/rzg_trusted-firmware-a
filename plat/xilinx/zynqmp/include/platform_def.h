@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2014-2022, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -37,11 +37,11 @@
  */
 #ifndef ZYNQMP_ATF_MEM_BASE
 #if !DEBUG && defined(SPD_none) && !SDEI_SUPPORT
-# define BL31_BASE			0xfffea000
-# define BL31_LIMIT			0xffffffff
+# define BL31_BASE			U(0xfffea000)
+# define BL31_LIMIT			U(0x100000000)
 #else
-# define BL31_BASE			0x1000
-# define BL31_LIMIT			0x7ffff
+# define BL31_BASE			U(0x1000)
+# define BL31_LIMIT			U(0x7ffff)
 #endif
 #else
 # define BL31_BASE			(ZYNQMP_ATF_MEM_BASE)
@@ -55,8 +55,8 @@
  * BL32 specific defines.
  ******************************************************************************/
 #ifndef ZYNQMP_BL32_MEM_BASE
-# define BL32_BASE			0x60000000
-# define BL32_LIMIT			0x7fffffff
+# define BL32_BASE			U(0x60000000)
+# define BL32_LIMIT			U(0x7fffffff)
 #else
 # define BL32_BASE			(ZYNQMP_BL32_MEM_BASE)
 # define BL32_LIMIT			(ZYNQMP_BL32_MEM_BASE + ZYNQMP_BL32_MEM_SIZE - 1)
@@ -66,7 +66,7 @@
  * BL33 specific defines.
  ******************************************************************************/
 #ifndef PRELOADED_BL33_BASE
-# define PLAT_ARM_NS_IMAGE_BASE	0x8000000
+# define PLAT_ARM_NS_IMAGE_BASE	U(0x8000000)
 #else
 # define PLAT_ARM_NS_IMAGE_BASE	PRELOADED_BL33_BASE
 #endif
@@ -83,18 +83,19 @@
 /*******************************************************************************
  * Platform specific page table and MMU setup constants
  ******************************************************************************/
-#define XILINX_OF_BOARD_DTB_ADDR	0x100000
-#define XILINX_OF_BOARD_DTB_MAX_SIZE	0x200000
-#define PLAT_DDR_LOWMEM_MAX		0x80000000
+#define XILINX_OF_BOARD_DTB_ADDR	U(0x100000)
+#define XILINX_OF_BOARD_DTB_MAX_SIZE	U(0x200000)
+#define PLAT_DDR_LOWMEM_MAX		U(0x80000000)
 
 #define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 32)
 #define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 32)
 #if (BL31_LIMIT < PLAT_DDR_LOWMEM_MAX)
 #define MAX_MMAP_REGIONS		8
+#define MAX_XLAT_TABLES			6
 #else
 #define MAX_MMAP_REGIONS		7
-#endif
 #define MAX_XLAT_TABLES			5
+#endif
 
 #define CACHE_WRITEBACK_SHIFT   6
 #define CACHE_WRITEBACK_GRANULE (1 << CACHE_WRITEBACK_SHIFT)
