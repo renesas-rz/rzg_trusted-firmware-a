@@ -13,14 +13,14 @@
 #include <rzg2l_def.h>
 #include <rz_sip_svc.h>
 
-#define RZ_SYSC_BASE_DEVID  (RZG2L_SYSC_BASE + 0xA04)
+#define RZ_SYS_BASE_DEVID	(RZG2L_SYSC_BASE + 0x0A04)
 #define RZ_OTP_BASE_DEVID	(RZG2L_OTP_BASE + 0x1178)
 #define RZ_OTP_BASE_CHIPID	(RZG2L_OTP_BASE + 0x1140)
 
 static uintptr_t rz_otp_handler_devid(void *handle, u_register_t x1)
 {
 	uint32_t devid_1 = mmio_read_32(RZ_OTP_BASE_DEVID);
-	uint32_t devid_2 = mmio_read_32(RZ_SYSC_BASE_DEVID);
+	uint32_t devid_2 = mmio_read_32(RZ_SYS_BASE_DEVID);
 	SMC_RET2(handle, devid_1, devid_2);
 }
 
