@@ -84,13 +84,7 @@ struct plat_io_policy {
 	int32_t (*check)(const uintptr_t spec);
 };
 
-static const struct plat_io_policy* policies;
-
-static const struct plat_io_policy spirom_policies[] = {
-	[FIP_IMAGE_ID] = {
-				&memdrv_dev_handle,
-				(uintptr_t) &spirom_block_spec,
-				&open_memmap},
+static struct plat_io_policy policies[] = {
 	[BL31_IMAGE_ID] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl31_file_spec,
@@ -130,52 +124,6 @@ static const struct plat_io_policy spirom_policies[] = {
 				&open_fipdrv},
 #endif
 	{ 0, 0, 0}
-};
-
-static const struct plat_io_policy emmc_policies[] = {
-	[FIP_IMAGE_ID] = {
-				&emmcdrv_dev_handle,
-				(uintptr_t) &emmc_block_spec,
-				&open_emmcdrv},
-	[BL31_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl31_file_spec,
-				&open_fipdrv},
-	[BL32_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl32_file_spec,
-				&open_fipdrv},
-	[BL33_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl33_file_spec,
-				&open_fipdrv},
-#if TRUSTED_BOARD_BOOT
-	[SOC_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &soc_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[SOC_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &soc_fw_content_cert_file_spec,
-				&open_fipdrv},
-	[TRUSTED_OS_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &tos_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[TRUSTED_OS_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &tos_fw_content_cert_file_spec,
-				&open_fipdrv},
-	[NON_TRUSTED_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &nt_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[NON_TRUSTED_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &nt_fw_content_cert_file_spec,
-				&open_fipdrv},
-#endif
-    { 0, 0, 0}
 };
 
 static int32_t open_fipdrv(const uintptr_t spec)
@@ -231,7 +179,11 @@ void rz_io_setup(void)
 		register_io_dev_memmap(&memmap);
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
 
-		policies = &spirom_policies[0];
+		struct plat_io_policy spirom_fip_policy = {
+				&memdrv_dev_handle,
+				(uintptr_t) &spirom_block_spec,
+				&open_memmap};
+		policies[FIP_IMAGE_ID] = spirom_fip_policy;
 	}
 	else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
 		boot_dev == BOOT_MODE_EMMC_3_3) {
@@ -248,7 +200,11 @@ void rz_io_setup(void)
 		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
 
-		policies = &emmc_policies[0];
+		struct plat_io_policy emmc_fip_policy = {
+				&emmcdrv_dev_handle,
+				(uintptr_t) &emmc_block_spec,
+				&open_emmcdrv};
+		policies[FIP_IMAGE_ID] = emmc_fip_policy;
 	} else {
 		panic();
 	}
