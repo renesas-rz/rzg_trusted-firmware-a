@@ -1900,6 +1900,42 @@ element in the boot sequence. If there are no more boot sources then it
 must return 0, otherwise it must return 1. The default implementation
 of this always returns 0.
 
+Function : bl2_plat_mboot_init() [optional]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    Argument : void
+    Return   : void
+
+When the MEASURED_BOOT flag is enabled:
+
+-  This function is used to initialize the backend driver(s) of measured boot.
+-  On the Arm FVP port, this function is used to initialize the Event Log
+   backend driver with the Event Log buffer information (base address and
+   size) received from BL1. It results in panic on error.
+
+When the MEASURED_BOOT flag is disabled, this function doesn't do anything.
+
+Function : bl2_plat_mboot_finish() [optional]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    Argument : void
+    Return   : void
+
+When the MEASURED_BOOT flag is enabled:
+
+-  This function is used to finalize the measured boot backend driver(s),
+   and also, set the information for the next bootloader component to extend
+   the measurement if needed.
+-  On the Arm FVP port, this function is used to pass the Event Log buffer
+   information (base address and size) to non-secure(BL33) and trusted OS(BL32)
+   via nt_fw and tos_fw config respectively. It results in panic on error.
+
+When the MEASURED_BOOT flag is disabled, this function doesn't do anything.
+
 Boot Loader Stage 2 (BL2) at EL3
 --------------------------------
 
