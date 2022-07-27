@@ -672,6 +672,15 @@ Renesas RZ/G2 platform port
 :|F|: drivers/renesas/rzg
 :|F|: tools/renesas/rzg_layout_create
 
+Renesas RZ/G2L platform port
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:|M|: Kirk Garvey <kirk.garvey.xa@bp.renesas.com>
+:|G|: `KirkGarvey`_
+:|F|: docs/plat/rz-g2l.rst
+:|F|: plat/renesas/common
+:|F|: plat/renesas/rz
+:|F|: drivers/renesas/common
+
 RockChip platform port
 ^^^^^^^^^^^^^^^^^^^^^^
 :|M|: Tony Xie <tony.xie@rock-chips.com>
@@ -834,6 +843,7 @@ Conventional Changelog Extensions
 .. _JackyBai: https://github.com/JackyBai
 .. _jenswi-linaro: https://github.com/jenswi-linaro
 .. _jwerner-chromium: https://github.com/jwerner-chromium
+.. _KirkGarvey: https://github.com/KirkGarvey
 .. _kostapr: https://github.com/kostapr
 .. _lachitp: https://github.com/lachitp
 .. _ldts: https://github.com/ldts
