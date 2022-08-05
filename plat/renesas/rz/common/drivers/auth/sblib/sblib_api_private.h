@@ -5,13 +5,13 @@
  */
 
 /*!*****************************************************************************
-* \file             : sblib_api_private.h
-* \par version      : 1.00
-* \par Product Name : Renesas-SB-Lib
-* \par Device(s)    : Does not depend on specific hardware
-* \par Description  : This file defines the public macros, types and
-*                   : declarations in used the SB-Lib.
-*******************************************************************************/
+ * \file             : sblib_api_private.h
+ * \par version      : 1.00
+ * \par Product Name : Renesas-SB-Lib
+ * \par Device(s)    : Does not depend on specific hardware
+ * \par Description  : This file defines the public macros, types and
+ *                   : declarations in used the SB-Lib.
+ ******************************************************************************/
 
 #ifndef SBLIB_API_PRIVATE_H
 #define SBLIB_API_PRIVATE_H
@@ -24,7 +24,8 @@
 #define SB_RET_SUCCESS							((sb_ret_t)0x55555555UL)
 
 /** An image of the same version as the current version is input
-	(verification completed successfully) */
+ * (verification completed successfully)
+ */
 #define SB_RET_SAME_IMAGE_VERSION				((sb_ret_t)0x55005501UL)
 
 /** A internal failure */
@@ -52,7 +53,8 @@
 #define SB_RET_ERR_MANI_TLV_FIELD_ERR			((sb_ret_t)0xAAAA0103UL)
 
 /** The length exceeding the end of the manifest is specified in Length
-	of the TLV field */
+ *  of the TLV field
+ */
 #define SB_RET_ERR_MANI_TLV_INVALID_LEN			((sb_ret_t)0xAAAA0104UL)
 
 /** An invalid image length is set */
@@ -110,19 +112,18 @@
 typedef uint32_t sb_ret_t;
 
 /** SB-Lib Secure Boot API pointer type */
-typedef sb_ret_t (* sb_secure_boot_api_t)(
-				const uint8_t* const p_key_cert,
+typedef sb_ret_t (*sb_secure_boot_api_t)(
+				const uint8_t * const p_key_cert,
 				const uint32_t key_cert_len_max,
-				const uint8_t* const p_code_cert,
+				const uint8_t * const p_code_cert,
 				const uint32_t code_cert_len_max,
-				const uint8_t* const p_mac_tlv);
+				const uint8_t * const p_mac_tlv);
 
 /*!*********************************************************
  * \addtogroup	SBLIBManifestTypes
  * \{*******************************************************/
 /** Key Certificate header structure */
-typedef struct
-{
+typedef struct {
 	/** Magic number unique to KeyCertificate */
 	uint32_t	magic;
 
@@ -137,8 +138,7 @@ typedef struct
 } st_sb_key_cert_header_t;
 
 /** Code Certificate header structure */
-typedef struct
-{
+typedef struct {
 	/** Magic number unique to CodeCertificate */
 	uint32_t	magic;
 

@@ -117,7 +117,7 @@ void qos_init_h3_v30(void)
 
 	/* DRAM Split Address mapping */
 #if (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_4CH) || \
-    (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
+	(RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
 	NOTICE("BL2: DRAM Split is 4ch(DDR %x)\n", (int)qos_init_ddr_phyvalid);
 
 	io_write_32(AXI_ADSPLCR0, ADSPLCR0_ADRMODE_DEFAULT

@@ -22,7 +22,7 @@ uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 					void *handle,
 					u_register_t flags)
 {
-	WARN("%s: Unimplemented RZ SiP Service Call: 0x%x \n", __func__, smc_fid);
+	WARN("%s: Unimplemented RZ SiP Service Call: 0x%x\n", __func__, smc_fid);
 	SMC_RET1(handle, SMC_UNK);
 }
 

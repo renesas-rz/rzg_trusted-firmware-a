@@ -27,15 +27,15 @@ static uintptr_t rzg_sip_handler(unsigned int smc_fid,
 	int32_t		arg[2];
 
 	switch (smc_fid) {
-		case RZG_SIP_SVC_GET_ECC_MODE:
-			arg[0] = RZG_DRAM_ECC;
-			arg[1] = RZG_DRAM_ECC_FULL;
-			SMC_RET2(handle, arg[0], arg[1]);
+	case RZG_SIP_SVC_GET_ECC_MODE:
+		arg[0] = RZG_DRAM_ECC;
+		arg[1] = RZG_DRAM_ECC_FULL;
+		SMC_RET2(handle, arg[0], arg[1]);
 
-		default:
-			WARN("Unimplemented RZG SiP Service Call: ");
-			WARN("0x%x \n", smc_fid);
-			SMC_RET1(handle, SMC_UNK);
+	default:
+		WARN("Unimplemented RZG SiP Service Call: ");
+		WARN("0x%x\n", smc_fid);
+		SMC_RET1(handle, SMC_UNK);
 	}
 }
 

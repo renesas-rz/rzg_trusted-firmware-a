@@ -96,8 +96,8 @@ static int auth_get_param(const auth_param_type_desc_t *param_type_desc,
  *   0 = success, Otherwise = error
  */
 static int auth_sblib(const auth_method_param_sblib_t *param,
-             const auth_img_desc_t *img_desc,
-             void *img, unsigned int img_len)
+		const auth_img_desc_t *img_desc,
+		void *img, unsigned int img_len)
 {
 	const auth_img_desc_t *key_cert_desc, *content_cert_desc;
 	void *data_ptr, *key_cert_ptr, *content_cert_ptr;
@@ -195,8 +195,10 @@ int auth_mod_verify_img(unsigned int img_id,
 	rc = img_parser_check_integrity(img_desc->img_type, img_ptr, img_len);
 	return_if_error(rc);
 
-	/* Authenticate the image using the methods indicated in the image
-	 * descriptor. */
+	/*
+	 * Authenticate the image using the methods indicated in the image
+	 * descriptor.
+	 */
 	if (img_desc->img_auth_methods == NULL)
 		return 1;
 	for (i = 0 ; i < AUTH_METHOD_NUM ; i++) {
@@ -218,7 +220,8 @@ int auth_mod_verify_img(unsigned int img_id,
 	}
 
 	/* Extract the parameters indicated in the image descriptor to
-	 * authenticate the children images. */
+	 * authenticate the children images.
+	 */
 	if (img_desc->authenticated_data != NULL) {
 		for (i = 0 ; i < COT_MAX_VERIFIED_PARAMS ; i++) {
 			if (img_desc->authenticated_data[i].type_desc == NULL) {

@@ -84,7 +84,7 @@ struct plat_io_policy {
 	int32_t (*check)(const uintptr_t spec);
 };
 
-static const struct plat_io_policy* policies;
+static const struct plat_io_policy *policies;
 
 static const struct plat_io_policy spirom_policies[] = {
 	[FIP_IMAGE_ID] = {
@@ -175,7 +175,7 @@ static const struct plat_io_policy emmc_policies[] = {
 				(uintptr_t) &nt_fw_content_cert_file_spec,
 				&open_fipdrv},
 #endif
-    { 0, 0, 0}
+	{ 0, 0, 0}
 };
 
 static int32_t open_fipdrv(const uintptr_t spec)
@@ -232,8 +232,7 @@ void rz_io_setup(void)
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
 
 		policies = &spirom_policies[0];
-	}
-	else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
+	} else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
 		boot_dev == BOOT_MODE_EMMC_3_3) {
 		if (emmc_init() != EMMC_SUCCESS) {
 			NOTICE("BL2: Failed to eMMC driver initialize.\n");

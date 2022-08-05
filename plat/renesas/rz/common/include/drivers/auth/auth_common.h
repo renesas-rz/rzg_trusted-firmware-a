@@ -60,7 +60,7 @@ typedef enum auth_method_type_enum {
 	AUTH_METHOD_SIG,	/* Authenticate by PK operation */
 	AUTH_METHOD_NV_CTR,	/* Authenticate by Non-Volatile Counter */
 	AUTH_METHOD_SBLIB,	/* Authenticate by Renesas RZ/G2L SBLib */
-	AUTH_METHOD_NUM 	/* Number of methods */
+	AUTH_METHOD_NUM		/* Number of methods */
 } auth_method_type_t;
 
 /*
@@ -104,7 +104,7 @@ typedef struct auth_method_desc_s {
 		auth_method_param_hash_t hash;
 		auth_method_param_sig_t sig;
 		auth_method_param_nv_ctr_t nv_ctr;
-		auth_method_param_sblib_t sblib; 
+		auth_method_param_sblib_t sblib;
 	} param;
 } auth_method_desc_t;
 

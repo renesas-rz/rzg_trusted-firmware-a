@@ -55,10 +55,11 @@ void plat_access_control_setup(void)
 {
 	uint32_t i;
 
-	for (i = 0; i < ARRAY_SIZE(sys_acctl); i++)
-	{
+	for (i = 0; i < ARRAY_SIZE(sys_acctl); i++) {
 		uint32_t val = mmio_read_32(sys_acctl[i].reg) & (~sys_acctl[i].msk);
+
 		val |= (sys_acctl[i].val & sys_acctl[i].msk);
+
 		mmio_write_32(sys_acctl[i].reg, val);
 	}
 }
@@ -149,7 +150,7 @@ static void bl31_security_setup(void)
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
 	};
-	
+
 	/* Additional settings for TZC-400 SRAM */
 	plat_tzc400_setup(RZG2L_TZC_MSRAM_BASE, &msram_tzc_regions[0]);
 	plat_tzc400_setup(RZG2L_TZC_ASRAM_BASE, &asram_tzc_regions[0]);

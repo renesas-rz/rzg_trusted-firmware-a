@@ -8,29 +8,29 @@
 #include <ddr_internal.h>
 
 const uint32_t mc_odt_pins_tbl[4] = {
-	0x00000002	,
-	0x00000001	,
-	0x00000002	,
+	0x00000002,
+	0x00000001,
+	0x00000002,
 	0x00000001
 };
 
 const uint32_t mc_mr1_tbl[2] = {
-	0x00000266	,
+	0x00000266,
 	0x00000206
 };
 
 const uint32_t mc_mr2_tbl[2] = {
-	0x00000600	,
+	0x00000600,
 	0x00000200
 };
 
 const uint32_t mc_mr5_tbl[2] = {
-	0x00000000	,
+	0x00000000,
 	0x00000000
 };
 
 const uint32_t mc_mr6_tbl[2] = {
-	0x00000000	,
+	0x00000000,
 	0x00000000
 };
 

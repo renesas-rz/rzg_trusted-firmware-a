@@ -58,7 +58,7 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 	int32_t result = IO_SUCCESS;
 
 	first_sector = (fp->base + fp->file_pos) >> EMMC_SECTOR_SIZE_SHIFT;
-	last_sector = (fp->base + fp->file_pos + length -1 ) >> EMMC_SECTOR_SIZE_SHIFT;
+	last_sector = (fp->base + fp->file_pos + length - 1) >> EMMC_SECTOR_SIZE_SHIFT;
 	sector_count = last_sector - first_sector + 1;
 
 	NOTICE("BL2: Load dst=0x%lx src=(p:%d)0x%llx(%d) len=0x%lx(%d)\n",
@@ -73,14 +73,14 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 
     // first sector
 	uint32_t first_offset = (fp->base + fp->file_pos) % EMMC_SECTOR_SIZE;
-	if( 0 < first_offset ) {
+
+	if (first_offset > 0) {
 		memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
-		if(emmc_read_sector((uint32_t*)sector_buf,
+		if (emmc_read_sector((uint32_t *)sector_buf,
 			first_sector, 1, emmc_dma) != EMMC_SUCCESS) {
 			result = IO_FAIL;
 			goto block_read_done;
-		}
-		else {
+		} else {
 			buffer_offset = EMMC_SECTOR_SIZE - first_offset;
 			buffer_offset = (length < buffer_offset) ? length : buffer_offset;
 
@@ -93,21 +93,21 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 
 	// last sector
 	uint32_t last_offset = (fp->base + fp->file_pos + length) % EMMC_SECTOR_SIZE;
-	if(0 < sector_count && 0 < last_offset) {
+
+	if (0 < sector_count && 0 < last_offset) {
 		memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
-		if (emmc_read_sector((uint32_t*)sector_buf,
+		if (emmc_read_sector((uint32_t *)sector_buf,
 				last_sector, 1, emmc_dma) != EMMC_SUCCESS) {
 			result = IO_FAIL;
 			goto block_read_done;
-		}
-		else {
+		} else {
 			memcpy((uint8_t *) buffer + (length - last_offset), &sector_buf[0], last_offset);
 			sector_count--;
 		}
 	}
 
 	// middle sector
-	if(0 < sector_count) {
+	if (sector_count > 0) {
 		if (emmc_read_sector((uint32_t *)(buffer + buffer_offset),
 				first_sector, sector_count, emmc_dma) != EMMC_SUCCESS) {
 			result = IO_FAIL;

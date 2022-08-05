@@ -536,7 +536,7 @@ static void exec_trainingVREF(uint32_t sl_lanes, uint32_t byte_lanes)
 			}
 		} else {
 			if ((vref_mid_level_code + vref_training_value - sweep_range) > 126) {
-				break; 
+				break;
 			} else {
 				current_vref = vref_mid_level_code + vref_training_value - sweep_range;
 			}
@@ -869,7 +869,7 @@ static void opt_delay(uint32_t sl_lanes, uint32_t byte_lanes)
 		for (j = 0; j < 9; j++) {
 			write_phy_reg(DDRPHY_R29, (i * 7) | (j << 8));
 			tmp = read_phy_reg(DDRPHY_R56) & 0x7F;
- 			tmp = (tmp & 0x40) ?
+			tmp = (tmp & 0x40) ?
 				(op_dqs_trim[i] + (tmp & 0x3F)) : (op_dqs_trim[i] - (tmp & 0x3F));
 			min_WD = _MIN(min_WD, tmp);
 		}

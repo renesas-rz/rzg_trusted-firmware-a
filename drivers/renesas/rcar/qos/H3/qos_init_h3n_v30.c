@@ -121,7 +121,7 @@ void qos_init_h3n_v30(void)
 	panic();
 #endif
 #elif (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_2CH) || \
-    (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
+	(RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
 	NOTICE("BL2: DRAM Split is 2ch(DDR %x)\n", (int)qos_init_ddr_phyvalid);
 
 	io_write_32(AXI_ADSPLCR0, ADSPLCR0_AREA(split_area));

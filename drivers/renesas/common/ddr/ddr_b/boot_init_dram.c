@@ -2089,8 +2089,8 @@ static void dbsc_regset(void)
 
 	/*
 	 * DBTR11.TRDWR : RL +  BL / 2 + Rounddown(tRPST) + PHY_ODTLoff -
-	 * 		  odtlon + tDQSCK - tODTon,min +
-	 * 		  PCB delay (out+in) + tPHY_ODToff
+	 *                odtlon + tDQSCK - tODTon,min +
+	 *                PCB delay (out+in) + tPHY_ODToff
 	 */
 	mmio_write_32(DBSC_DBTR(11),
 		      RL + (16 / 2) + 1 + 2 - js1[js1_ind].odtlon +

@@ -63,13 +63,13 @@ uint8_t spi_multi_cmd_read(uint8_t command)
 		val = mmio_read_32(SPIM_CMNSR);
 	} while ((val & CMNSR_TEND) == 0);
 
-	val=mmio_read_32(SPIM_SMRDR0);
+	val = mmio_read_32(SPIM_SMRDR0);
 
 	r_status = (uint8_t)val;
-	return(r_status);
+	return r_status;
 }
 
-void spi_multi_cmd_write(uint8_t command,uint8_t size,uint32_t data)
+void spi_multi_cmd_write(uint8_t command, uint8_t size, uint32_t data)
 {
 	uint32_t val;
 
@@ -95,8 +95,7 @@ void spi_multi_cmd_write(uint8_t command,uint8_t size,uint32_t data)
 	mmio_write_32(SPIM_SMDRENR, SPIM_SMDRENR_SET_VALUE);
 
 	/* Set the data transfer enable & data write enable  */
-	if (size == SPI_MANUAL_COMMAND_SIZE_0)
-	{
+	if (size == SPI_MANUAL_COMMAND_SIZE_0) {
 		val = SMCR_SPIE;
 	} else {
 		val = SMCR_SPIE | SMCR_SPIWE;
@@ -109,7 +108,7 @@ void spi_multi_cmd_write(uint8_t command,uint8_t size,uint32_t data)
 	} while ((val & CMNSR_TEND) == 0);
 }
 
-int spi_multi_setup( void )
+int spi_multi_setup(void)
 {
 	uint32_t val;
 

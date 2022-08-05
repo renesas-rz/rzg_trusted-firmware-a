@@ -14,17 +14,17 @@
 #define SET_DREAR_EAC_VALUE  DREAR_EAC_EXADDR24
 /* In the case of addr width 32bit						*/
 /* #define SET_DRENR_ADE_VALUE     DRENR_ADE_ADD31_OUT	*/
-/* #define SET_DREAR_EAC_VALUE     DREAR_EAC_EXADDR25 	*/
+/* #define SET_DREAR_EAC_VALUE     DREAR_EAC_EXADDR25	*/
 
 /* In the case of bit width 1-1-1 and addr width 24bit				*/
 /* #define SET_DRCMR_CMD_VALUE  DRCMR_CMD_FAST_READ_3B				*/
 /* #define SET_DRENR_ADB_VALUE  DRENR_ADB_1BIT						*/
 /* #define SET_DRENR_DRDB_VALUE DRENR_DRDB_1BIT						*/
-/* In the case of bit width 1-1-4 and addr width 24bit 				*/
-/* #define SET_DRCMR_CMD_VALUE  DRCMR_CMD_QUAD_OUTPUT_FAST_READ_3B 	*/
+/* In the case of bit width 1-1-4 and addr width 24bit				*/
+/* #define SET_DRCMR_CMD_VALUE  DRCMR_CMD_QUAD_OUTPUT_FAST_READ_3B	*/
 /* #define SET_DRENR_ADB_VALUE  DRENR_ADB_1BIT						*/
 /* #define SET_DRENR_DRDB_VALUE DRENR_DRDB_4BIT						*/
-/* In the case of bit width 1-4-4 and addr width 24bit 				*/
+/* In the case of bit width 1-4-4 and addr width 24bit				*/
 #define SET_DRCMR_CMD_VALUE  DRCMR_CMD_QUAD_INPUT_OUTPUT_FAST_READ_3B
 #define SET_DRENR_ADB_VALUE  DRENR_ADB_4BIT
 #define SET_DRENR_DRDB_VALUE DRENR_DRDB_4BIT
@@ -47,11 +47,11 @@
 
 /* SDR mode serial flash settings */
 #define SPIM_PHYCNT_SET_VALUE (PHYCNT_DEF_DATA | PHYCNT_PHYMEM_SDR_MODE |					\
-                                PHYCNT_WBUF_NOT_USED | PHYCNT_WBUF2_NOT_USED |				\
-                                PHYCNT_CKSEL_SLOW | PHYCNT_HS_OTHER_MODE |					\
-                                PHYCNT_OCT_OTHER_MODE | PHYCNT_EXDS_NOT_USED |				\
-                                PHYCNT_OCTA_HYPER_FLASH | PHYCNT_ALT_ALIGN_NOT_SUPPORTED |	\
-                                PHYCNT_CAL_NOT_PERFOMED)
+								PHYCNT_WBUF_NOT_USED | PHYCNT_WBUF2_NOT_USED |				\
+								PHYCNT_CKSEL_SLOW | PHYCNT_HS_OTHER_MODE |					\
+								PHYCNT_OCT_OTHER_MODE | PHYCNT_EXDS_NOT_USED |				\
+								PHYCNT_OCTA_HYPER_FLASH | PHYCNT_ALT_ALIGN_NOT_SUPPORTED |	\
+								PHYCNT_CAL_NOT_PERFOMED)
 #define SPIM_PHYCNT_SDR_TIM_ADJ_SET_VALUE (SPIM_PHYCNT_SET_VALUE | PHYCNT_CKSEL_FAST)
 
 /* Read timing setting */
@@ -85,7 +85,7 @@
 /* Set the bit width of command and address output to 1 bit and	*/
 /* the address size to 4 byte									*/
 #define SPIM_DRENR_SET_VALUE (DRENR_CDB_1BIT | DRENR_OCDB_1BIT | SET_DRENR_ADB_VALUE |	\
-				DRENR_OPDB_1BIT | SET_DRENR_DRDB_VALUE | DRENR_CDE | DRENR_DME | 		\
+				DRENR_OPDB_1BIT | SET_DRENR_DRDB_VALUE | DRENR_CDE | DRENR_DME |		\
 				SET_DRENR_ADE_VALUE | DRENR_OPDE_NO_OUT)
 /* Dummy cycle setting */
 #define SPIM_DRDMCR_SET_VALUE (SET_DRDMCR_VALUE)

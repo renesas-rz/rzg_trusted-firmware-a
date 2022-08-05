@@ -116,7 +116,7 @@ void qos_init_m3_v11(void)
 	panic();
 #endif
 #elif (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_2CH) || \
-      (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
+		(RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
 	NOTICE("BL2: DRAM Split is 2ch\n");
 	io_write_32(AXI_ADSPLCR0, 0x00000000U);
 	io_write_32(AXI_ADSPLCR1, ADSPLCR0_ADRMODE_DEFAULT

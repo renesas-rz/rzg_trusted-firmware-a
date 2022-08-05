@@ -36,7 +36,7 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 		return PSCI_E_INVALID_PARAMS;
 
 	/*  Apply an external reset */
-	if((mmio_read_32(SYS_LP_CTL2) & 0x1) == 0x1){
+	if ((mmio_read_32(SYS_LP_CTL2) & 0x1) == 0x1) {
 		mmio_write_32(pch[coreid][0], 0x00000001);
 		while ((mmio_read_32(pch[coreid][1]) & 0x1) != 0x1)
 			;
@@ -92,7 +92,7 @@ static void rzg2l_pwr_domain_off(const psci_power_state_t *state)
 	mmio_write_32(SYS_LP_CTL1, (0x00000100 << coreid));
 
 	/* Confirm that the processing on the Cortex-M33 side is completed */
-	while((mmio_read_32(SYS_LP_CTL5) & (0x00000100 << coreid))!= (0x00000100 << coreid))
+	while ((mmio_read_32(SYS_LP_CTL5) & (0x00000100 << coreid)) != (0x00000100 << coreid))
 		;
 	/* Enter the Cortex-A55 Sleep Mode */
 	/* Start the Cortex-A55 Sleep Mode. */

@@ -34,9 +34,9 @@
 
 /* As the saddr, specify high-memory address (> 4 GB) */
 #define	FUSAAREACR(en, size, saddr)     \
-       (((uint32_t)en << 31) | ((uint32_t)size << 24) | (uint32_t)(((uintptr_t)saddr) >> 12))
+		(((uint32_t)en << 31) | ((uint32_t)size << 24) | (uint32_t)(((uintptr_t)saddr) >> 12))
 #define ECCAREACR(ecc, saddr) \
-       (((uint32_t)ecc << 31) | (uint32_t)(((uintptr_t)saddr) >> 12))
+		(((uint32_t)ecc << 31) | (uint32_t)(((uintptr_t)saddr) >> 12))
 
 #define EFUSASEL(x)		((uint32_t)x & 0xff) << 24	/* Setting for Extra Split mode */
 #define DFUSASEL(x)		((uint32_t)x & 0xff) << 16	/* Setting for DRAM */
@@ -177,7 +177,7 @@ static const struct rzg2_ecc_conf rzg2_hihope_rzg2m_conf[] = {
 
 #if (RCAR_LSI == RZ_G2M || RCAR_LSI == RZ_G2H)
 #if (RZG_DRAM_ECC_FULL == 1) /* ECC Full mode dual channel */
-static const uint32_t fusacr = EFUSASEL(0xF0) | DFUSASEL(0xF8)| SFUSASEL(0);
+static const uint32_t fusacr = EFUSASEL(0xF0) | DFUSASEL(0xF8) | SFUSASEL(0);
 static const uint32_t adsplcr0 = ADRMODE(0) | SPLITSEL(1) | AREA(0x1C) | SWP(0);
 static const uint32_t adsplcr1 = SPLITSEL(1) | AREA(0x1C) | SWP(0);
 static const uint32_t adsplcr2 = 0;
@@ -205,7 +205,7 @@ static void bzero64(uintptr_t start, uint64_t size)
 #endif /* ((FUSA_DRAM_CLEAR == 1) && (RZG_DRAM_ECC_FULL != 0)) */
 
 #if (RCAR_LSI == RZ_G2M || RCAR_LSI == RZ_G2H)
-void bl2_ecc_dual_init()
+void bl2_ecc_dual_init(void)
 {
 	int i, num_area;
 	uintptr_t addr[24];
@@ -361,8 +361,7 @@ void bl2_ecc_init(uint32_t major, uint32_t minor)
 #elif (RCAR_LSI == RZ_G2M)
 	bl2_ecc_dual_init();
 
-	if (major == 3)
-	{
+	if (major == 3) {
 		nb_of_conf = ARRAY_SIZE(rzg2_hihope_rzg2m_conf);
 		bl2_ecc_single_init(rzg2_hihope_rzg2m_conf, nb_of_conf);
 	}

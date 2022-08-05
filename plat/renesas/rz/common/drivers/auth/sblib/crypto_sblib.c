@@ -27,7 +27,7 @@ int crypto_sblib_auth(void *data_ptr, size_t len,
 
 	rc = secure_boot_api(key_cert, key_cert_len, content_cert,
 						 content_cert_len, NULL);
-	if(SB_RET_SUCCESS != rc)
+	if (rc != SB_RET_SUCCESS)
 		return CRYPTO_ERR_UNKNOWN;
 
 	return CRYPTO_SUCCESS;

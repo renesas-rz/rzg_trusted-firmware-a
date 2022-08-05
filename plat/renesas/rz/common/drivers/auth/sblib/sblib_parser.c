@@ -61,22 +61,21 @@ static int check_integrity(void *img, unsigned int img_len)
 	int rc;
 	uint32_t magic;
 
-	if(SB_MANIFEST_LEN_MIN > img_len)
+	if (img_len < SB_MANIFEST_LEN_MIN)
 		return IMG_PARSER_ERR_FORMAT;
 
 	magic = *(uint32_t *)img;
 
-	switch(magic)
-	{
-		case KEY_CERT_HEADER_MAGIC_NUMBER:
-			rc = key_cert_parse(img, img_len);
-			break;
-		case CONTENT_CERT_HEADER_MAGIC_NUMBER:
-			rc = content_cert_parse(img, img_len);
-			break;
-		default:
-			rc = IMG_PARSER_ERR_FORMAT;
-			break;
+	switch (magic) {
+	case KEY_CERT_HEADER_MAGIC_NUMBER:
+		rc = key_cert_parse(img, img_len);
+		break;
+	case CONTENT_CERT_HEADER_MAGIC_NUMBER:
+		rc = content_cert_parse(img, img_len);
+		break;
+	default:
+		rc = IMG_PARSER_ERR_FORMAT;
+		break;
 	}
 
 	if (rc != IMG_PARSER_OK)
@@ -108,4 +107,4 @@ static int get_auth_param(const auth_param_type_desc_t *type_desc,
 }
 
 REGISTER_IMG_PARSER_LIB(IMG_PLAT, LIB_NAME, init, \
-			   check_integrity, get_auth_param);
+				check_integrity, get_auth_param);

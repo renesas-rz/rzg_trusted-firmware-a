@@ -45,7 +45,7 @@ typedef struct {
 } CPG_PLL_SETDATA_235;
 
 static CPG_PLL_SETDATA_146 cpg_pll4_setdata = {
-#if (DDR_PLL4 ==1600)
+#if (DDR_PLL4 == 1600)
 	{ CPG_PLL4_CLK1, 0xFAE13203 },
 	{ CPG_PLL4_CLK2, 0x00081000 },
 #elif (DDR_PLL4 == 1333)
@@ -509,7 +509,7 @@ static CPG_REG_SETTING cpg_static_select_tbl[] = {
 
 static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
 	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
-	{ (uintptr_t)CPG_PL2SDHI_DSEL, 		0x00110022 },
+	{ (uintptr_t)CPG_PL2SDHI_DSEL,          0x00110022 },
 };
 
 #define CPG_SEL_PLL1_ON_OFF					(0)
@@ -890,11 +890,13 @@ void cpg_early_setup(void)
 void cpg_wdtrst_sel_setup(void)
 {
 	uint32_t reg;
+
 	reg = mmio_read_32(CPG_WDTRST_SEL);
+
 	reg |=
 		WDTRST_SEL_WDTRSTSEL0 | WDTRST_SEL_WDTRSTSEL0_WEN |
 		WDTRST_SEL_WDTRSTSEL1 | WDTRST_SEL_WDTRSTSEL1_WEN |
-		WDTRST_SEL_WDTRSTSEL2 | WDTRST_SEL_WDTRSTSEL2_WEN ;
+		WDTRST_SEL_WDTRSTSEL2 | WDTRST_SEL_WDTRSTSEL2_WEN;
 	mmio_write_32(CPG_WDTRST_SEL, reg);
 }
 
