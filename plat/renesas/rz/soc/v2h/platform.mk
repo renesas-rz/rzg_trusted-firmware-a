@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
-include plat/renesas/rz/common/rz_common.mk
+include plat/renesas/rz/common/v2h_common.mk
 include plat/renesas/rz/board/${BOARD}/rz_board.mk
 
 PLAT_INCLUDES	+=	-Iplat/renesas/rz/soc/v2h/include
