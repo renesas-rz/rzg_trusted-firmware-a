@@ -1,0 +1,225 @@
+/*
+ * Copyright (c)				 2022, Renesas Electronics Corporation. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#ifndef __CPG_REGS_H__
+#define __CPG_REGS_H__
+
+#define	CPG_BASE					(0x10420000)		/* CPG base address */
+
+CPG_PLLCM33_STBY					(CPG_BASE + 0x000)	/* PLLCM33 standby control register */
+CPG_PLLCM33_CLK1					(CPG_BASE + 0x004)	/* PLLCM33 output clock setting register 1 */
+CPG_PLLCM33_CLK2					(CPG_BASE + 0x008)	/* PLLCM33 output clock setting register 2 */
+CPG_PLLCM33_CLK3					(CPG_BASE + 0x00C)	/* PLLCM33 output clock setting register 3 */
+CPG_PLLCM33_MON						(CPG_BASE + 0x010)	/* PLLCM33 monitor register */
+CPG_PLLCLN_STBY						(CPG_BASE + 0x020)	/* PLLCLN standby control register */
+CPG_PLLCLN_CLK1						(CPG_BASE + 0x024)	/* PLLCLN output clock setting register 1 */
+CPG_PLLCLN_CLK2						(CPG_BASE + 0x028)	/* PLLCLN output clock setting register 2 */
+CPG_PLLCLN_CLK3						(CPG_BASE + 0x02C)	/* PLLCLN output clock setting register 3 */
+CPG_PLLCLN_MON						(CPG_BASE + 0x030)	/* PLLCLN monitor register */
+CPG_PLLDTY_STBY						(CPG_BASE + 0x040)	/* PLLDTY standby control register */
+CPG_PLLDTY_CLK1						(CPG_BASE + 0x044)	/* PLLDTY output clock setting register 1 */
+CPG_PLLDTY_CLK2						(CPG_BASE + 0x048)	/* PLLDTY output clock setting register 2 */
+CPG_PLLDTY_CLK3						(CPG_BASE + 0x04C)	/* PLLDTY output clock setting register 3 */
+CPG_PLLDTY_MON						(CPG_BASE + 0x050)	/* PLLDTY monitor register */
+CPG_PLLCA55_STBY					(CPG_BASE + 0x060)	/* PLLCA55 standby control register */
+CPG_PLLCA55_CLK1					(CPG_BASE + 0x064)	/* PLLCA55 output clock setting register 1 */
+CPG_PLLCA55_CLK2					(CPG_BASE + 0x068)	/* PLLCA55 output clock setting register 2 */
+CPG_PLLCA55_CLK3					(CPG_BASE + 0x06C)	/* PLLCA55 output clock setting register 3 */
+CPG_PLLCA55_MON						(CPG_BASE + 0x070)	/* PLLCA55 monitor register */
+CPG_PLLVDO_STBY						(CPG_BASE + 0x080)	/* PLLVDO standby control register */
+CPG_PLLVDO_CLK1						(CPG_BASE + 0x084)	/* PLLVDO output clock setting register 1 */
+CPG_PLLVDO_CLK2						(CPG_BASE + 0x088)	/* PLLVDO output clock setting register 2 */
+CPG_PLLVDO_CLK3						(CPG_BASE + 0x08C)	/* PLLVDO output clock setting register 3 */
+CPG_PLLVDO_MON						(CPG_BASE + 0x090)	/* PLLVDO monitor register */
+CPG_PLLETH_STBY						(CPG_BASE + 0x0A0)	/* PLLETH standby control register */
+CPG_PLLETH_CLK1						(CPG_BASE + 0x0A4)	/* PLLETH output clock setting register 1 */
+CPG_PLLETH_CLK2						(CPG_BASE + 0x0A8)	/* PLLETH output clock setting register 2 */
+CPG_PLLETH_CLK3						(CPG_BASE + 0x0AC)	/* PLLETH output clock setting register 3 */
+CPG_PLLETH_MON						(CPG_BASE + 0x0B0)	/* PLLETH monitor register */
+CPG_PLLDSI_STBY						(CPG_BASE + 0x0C0)	/* PLLDSI standby control register */
+CPG_PLLDSI_CLK1						(CPG_BASE + 0x0C4)	/* PLLDSI output clock setting register 1 */
+CPG_PLLDSI_CLK2						(CPG_BASE + 0x0C8)	/* PLLDSI output clock setting register 2 */
+CPG_PLLDSI_CLK3						(CPG_BASE + 0x0CC)	/* PLLDSI output clock setting register 3 */
+CPG_PLLDSI_MON						(CPG_BASE + 0x0D0)	/* PLLDSI monitor register */
+CPG_PLLDDR0_STBY					(CPG_BASE + 0x0E0)	/* PLLDDR0 standby control register */
+CPG_PLLDDR0_CLK1					(CPG_BASE + 0x0E4)	/* PLLDDR0 output clock setting register 1 */
+CPG_PLLDDR0_CLK2					(CPG_BASE + 0x0E8)	/* PLLDDR0 output clock setting register 2 */
+CPG_PLLDDR0_CLK3					(CPG_BASE + 0x0EC)	/* PLLDDR0 output clock setting register 3 */
+CPG_PLLDDR0_MON						(CPG_BASE + 0x0F0)	/* PLLDDR0 monitor register*/
+CPG_PLLDDR1_STBY					(CPG_BASE + 0x100)	/* PLLDDR1standby control register*/
+CPG_PLLDDR1_CLK1					(CPG_BASE + 0x104)	/* PLLDDR1output clock setting register 1 */
+CPG_PLLDDR1_CLK2					(CPG_BASE + 0x108)	/* PLLDDR1output clock setting register 2 */
+CPG_PLLDDR1_CLK3					(CPG_BASE + 0x10C)	/* PLLDDR1output clock setting register 3 */
+CPG_PLLDDR1_MON						(CPG_BASE + 0x110)	/* PLLDDR1monitor register */
+CPG_PLLGPU_STBY						(CPG_BASE + 0x120)	/* PLLGPU standby control register */
+CPG_PLLGPU_CLK1						(CPG_BASE + 0x124)	/* PLLGPU output clock setting register 1 */
+CPG_PLLGPU_CLK2						(CPG_BASE + 0x128)	/* PLLGPU output clock setting register 2 */
+CPG_PLLGPU_CLK3						(CPG_BASE + 0x12C)	/* PLLGPU output clock setting register 3 */
+CPG_PLLGPU_MON						(CPG_BASE + 0x130)	/* PLLGPU monitor register */
+CPG_PLLDRP_STBY						(CPG_BASE + 0x140)	/* PLLDRP standby control register */
+CPG_PLLDRP_CLK1						(CPG_BASE + 0x144)	/* PLLDRP output clock setting register 1 */
+CPG_PLLDRP_CLK2						(CPG_BASE + 0x148)	/* PLLDRP output clock setting register 2 */
+CPG_PLLDRP_CLK3						(CPG_BASE + 0x14C)	/* PLLDRP output clock setting register 3 */
+CPG_PLLDRP_MON						(CPG_BASE + 0x150)	/* PLLDRP monitor register */
+CLMA0_CTL						(CPG_BASE + 0x200)	/* CLMA0 control register */
+CLMA1_CTL						(CPG_BASE + 0x204)	/* CLMA1 control register */
+CLMA2_CTL						(CPG_BASE + 0x208)	/* CLMA2 control register */
+CLMA3_CTL						(CPG_BASE + 0x20C)	/* CLMA3 control register */
+CLMA4_CTL						(CPG_BASE + 0x210)	/* CLMA4 control register */
+CLMA5_CTL						(CPG_BASE + 0x214)	/* CLMA5 control register */
+CLMA6_CTL						(CPG_BASE + 0x218)	/* CLMA6 control register */
+CLMA7_CTL						(CPG_BASE + 0x21C)	/* CLMA7 control register */
+CLMA8_CTL						(CPG_BASE + 0x220)	/* CLMA8 control register */
+CLMA9_CTL						(CPG_BASE + 0x224)	/* CLMA9 control register */
+CLMA10_CTL						(CPG_BASE + 0x228)	/* CLMA10 control register */
+CLMA11_CTL						(CPG_BASE + 0x22C)	/* CLMA11 control register */
+CLMA12_CTL						(CPG_BASE + 0x230)	/* CLMA12 control register */
+CLMA13_CTL						(CPG_BASE + 0x234)	/* CLMA13 control register */
+CLMA14_CTL						(CPG_BASE + 0x238)	/* CLMA14 control register */
+CLMA_MON						(CPG_BASE + 0x280)	/* CLMA monitor register */
+CPG_SSEL0						(CPG_BASE + 0x300)	/* Static Mux control */
+CPG_SSEL1						(CPG_BASE + 0x304)	/* Static Mux control */
+CPG_SSEL2						(CPG_BASE + 0x308)	/* Static Mux control */
+CPG_CDDIV0						(CPG_BASE + 0x400)	/* Dynamic Gear control(Counter type) */
+CPG_CDDIV1						(CPG_BASE + 0x404)	/* Dynamic Gear control(Counter type) */
+CPG_CDDIV2						(CPG_BASE + 0x408)	/* Dynamic Gear control(Counter type) */
+CPG_CDDIV3						(CPG_BASE + 0x40c)	/* Dynamic Gear control(Counter type) */
+CPG_CDDIV4						(CPG_BASE + 0x410)	/* Dynamic Gear control(Counter type) */
+CPG_CSDIV0						(CPG_BASE + 0x500)	/* Static Gear control(Sparse type) */
+CPG_CSDIV1						(CPG_BASE + 0x504)	/* Static Gear control(Sparse type) */
+CPG_CLKON_0						(CPG_BASE + 0x600)	/* CGC control */
+CPG_CLKON_1						(CPG_BASE + 0x604)	/* CGC control */
+CPG_CLKON_2						(CPG_BASE + 0x608)	/* CGC control */
+CPG_CLKON_3						(CPG_BASE + 0x60c)	/* CGC control */
+CPG_CLKON_4						(CPG_BASE + 0x610)	/* CGC control */
+CPG_CLKON_5						(CPG_BASE + 0x614)	/* CGC control */
+CPG_CLKON_6						(CPG_BASE + 0x618)	/* CGC control */
+CPG_CLKON_7						(CPG_BASE + 0x61c)	/* CGC control */
+CPG_CLKON_8						(CPG_BASE + 0x620)	/* CGC control */
+CPG_CLKON_9						(CPG_BASE + 0x624)	/* CGC control */
+CPG_CLKON_10						(CPG_BASE + 0x628)	/* CGC control */
+CPG_CLKON_11						(CPG_BASE + 0x62c)	/* CGC control */
+CPG_CLKON_12						(CPG_BASE + 0x630)	/* CGC control */
+CPG_CLKON_13						(CPG_BASE + 0x634)	/* CGC control */
+CPG_CLKON_14						(CPG_BASE + 0x638)	/* CGC control */
+CPG_CLKON_15						(CPG_BASE + 0x63c)	/* CGC control */
+CPG_CLKON_16						(CPG_BASE + 0x640)	/* CGC control */
+CPG_CLKON_17						(CPG_BASE + 0x644)	/* CGC control */
+CPG_CLKON_18						(CPG_BASE + 0x648)	/* CGC control */
+CPG_CLKON_19						(CPG_BASE + 0x64c)	/* CGC control */
+CPG_CLKON_20						(CPG_BASE + 0x650)	/* CGC control */
+CPG_CLKON_21						(CPG_BASE + 0x654)	/* CGC control */
+CPG_CLKON_22						(CPG_BASE + 0x658)	/* CGC control */
+CPG_CLKON_23						(CPG_BASE + 0x65C)	/* CGC control */
+CPG_CLKON_24						(CPG_BASE + 0x660)	/* CGC control */
+CPG_CLKSTATUS0						(CPG_BASE + 0x700)	/* Dynamic gear/mux status monitor */
+CPG_CLKMON_0						(CPG_BASE + 0x800)	/* CGC monitor */
+CPG_CLKMON_1						(CPG_BASE + 0x804)	/* CGC monitor */
+CPG_CLKMON_2						(CPG_BASE + 0x808)	/* CGC monitor */
+CPG_CLKMON_3						(CPG_BASE + 0x80c)	/* CGC monitor */
+CPG_CLKMON_4						(CPG_BASE + 0x810)	/* CGC monitor */
+CPG_CLKMON_5						(CPG_BASE + 0x814)	/* CGC monitor */
+CPG_CLKMON_6						(CPG_BASE + 0x818)	/* CGC monitor */
+CPG_CLKMON_7						(CPG_BASE + 0x81c)	/* CGC monitor */
+CPG_CLKMON_8						(CPG_BASE + 0x820)	/* CGC monitor */
+CPG_CLKMON_9						(CPG_BASE + 0x824)	/* CGC monitor */
+CPG_CLKMON_10						(CPG_BASE + 0x828)	/* CGC monitor */
+CPG_RST_0						(CPG_BASE + 0x900)	/* RESET ON/OFF control */
+CPG_RST_1						(CPG_BASE + 0x904)	/* RESET ON/OFF control */
+CPG_RST_2						(CPG_BASE + 0x908)	/* RESET ON/OFF control */
+CPG_RST_3						(CPG_BASE + 0x90C)	/* RESET ON/OFF control */
+CPG_RST_4						(CPG_BASE + 0x910)	/* RESET ON/OFF control */
+CPG_RST_5						(CPG_BASE + 0x914)	/* RESET ON/OFF control */
+CPG_RST_6						(CPG_BASE + 0x918)	/* RESET ON/OFF control */
+CPG_RST_7						(CPG_BASE + 0x91C)	/* RESET ON/OFF control */
+CPG_RST_8						(CPG_BASE + 0x920)	/* RESET ON/OFF control */
+CPG_RST_9						(CPG_BASE + 0x924)	/* RESET ON/OFF control */
+CPG_RST_10						(CPG_BASE + 0x928)	/* RESET ON/OFF control */
+CPG_RST_11						(CPG_BASE + 0x92C)	/* RESET ON/OFF control */
+CPG_RST_12						(CPG_BASE + 0x930)	/* RESET ON/OFF control */
+CPG_RST_13						(CPG_BASE + 0x934)	/* RESET ON/OFF control */
+CPG_RST_14						(CPG_BASE + 0x938)	/* RESET ON/OFF control */
+CPG_RST_15						(CPG_BASE + 0x93C)	/* RESET ON/OFF control */
+CPG_RST_16						(CPG_BASE + 0x940)	/* RESET ON/OFF control */
+CPG_RST_17						(CPG_BASE + 0x944)	/* RESET ON/OFF control */
+CPG_RSTMON_0						(CPG_BASE + 0xA00)	/* RESET monitor */
+CPG_RSTMON_1						(CPG_BASE + 0xA04)	/* RESET monitor */
+CPG_RSTMON_2						(CPG_BASE + 0xA08)	/* RESET monitor */
+CPG_RSTMON_3						(CPG_BASE + 0xA0C)	/* RESET monitor */
+CPG_RSTMON_4						(CPG_BASE + 0xA10)	/* RESET monitor */
+CPG_RSTMON_5						(CPG_BASE + 0xA14)	/* RESET monitor */
+CPG_RSTMON_6						(CPG_BASE + 0xA18)	/* RESET monitor */
+CPG_RSTMON_7						(CPG_BASE + 0xA1C)	/* RESET monitor */
+CPG_RSTMON_8						(CPG_BASE + 0xA20)	/* RESET monitor */
+CPG_ERRORRST_SEL1					(CPG_BASE + 0xB00)	/* Error reset selection register */
+CPG_ERRORRST_SEL2					(CPG_BASE + 0xB04)	/* Error reset selection register */
+CPG_ERRORRST_SEL3					(CPG_BASE + 0xB08)	/* Error reset selection register */
+CPG_ERRORRST_SEL4					(CPG_BASE + 0xB0C)	/* Error reset selection register */
+CPG_ERRORRST_SEL5					(CPG_BASE + 0xB10)	/* Error reset selection register */
+CPG_ERRORRST_SEL6					(CPG_BASE + 0xB14)	/* Error reset selection register */
+CPG_ERRORRST_SEL7					(CPG_BASE + 0xB18)	/* Error reset selection register */
+CPG_ERRORRST_SEL8					(CPG_BASE + 0xB1C)	/* Error reset selection register */
+CPG_ERROR_RST2						(CPG_BASE + 0xB40)	/* Error reset register */
+CPG_ERROR_RST3						(CPG_BASE + 0xB44)	/* Error reset register */
+CPG_ERROR_RST4						(CPG_BASE + 0xB48)	/* Error reset register */
+CPG_ERROR_RST5						(CPG_BASE + 0xB4C)	/* Error reset register */
+CPG_ERROR_RST6						(CPG_BASE + 0xB50)	/* Error reset register */
+CPG_ERROR_RST7						(CPG_BASE + 0xB54)	/* Error reset register */
+CPG_ERROR_RST8						(CPG_BASE + 0xB58)	/* Error reset register */
+CPG_LP_CTL1						(CPG_BASE + 0xC00)	/* Lowpower Sequence Control Register 1 */
+CPG_LP_CTL2						(CPG_BASE + 0xC04)	/* Lowpower Sequence Control Register 2 */
+CPG_LP_GPU_CTL						(CPG_BASE + 0xC08)	/* GPU Lowpower Sequence Control Register */
+CPG_CM33_CTL						(CPG_BASE + 0xC0C)	/* CM33 Control register */
+CPG_CR8_CORESTATUS					(CPG_BASE + 0xC10)	/* CR8 core status register */
+CPG_CR8_CONFIG1						(CPG_BASE + 0xC14)	/* CR8 core configuration register1 */
+CPG_LP_CM33CTL0						(CPG_BASE + 0xC18)	/* Lowpower Sequence Cortex-M33 Control Register 0 */
+CPG_LP_CM33CTL1						(CPG_BASE + 0xC1C)	/* Lowpower Sequence Cortex-M33 Control Register 1 */
+CPG_LP_CA55_CTL1					(CPG_BASE + 0xC20)	/* Cortex-A55 Clock Control Register 1 */
+CPG_LP_CA55_CTL2					(CPG_BASE + 0xC24)	/* Cortex-A55 Clock Control Register 2 */
+CPG_LP_CA55_CTL3					(CPG_BASE + 0xC28)	/* Cortex-A55 Clock Control Register 3 */
+CPG_LP_CA55_CTL4					(CPG_BASE + 0xC2C)	/* Cortex-A55 Clock Control Register 4 */
+CPG_LP_CA55_CTL5					(CPG_BASE + 0xC30)	/* Cortex-A55 Clock Control Register 5 */
+CPG_LP_CA55_CTL6					(CPG_BASE + 0xC34)	/* Cortex-A55 Clock Control Register 6 */
+CPG_LP_CA55_CTL7					(CPG_BASE + 0xC38)	/* Cortex-A55 Clock Control Register 7 */
+CPG_LP_CR8_CTL1						(CPG_BASE + 0xC3C)	/* CR8SS control register 1 */
+CPG_LP_CR8_CTL3						(CPG_BASE + 0xC44)	/* CR8SS control register 3 */
+CPG_LP_CR8_CTL4						(CPG_BASE + 0xC48)	/* CR8SS control register 4 */
+CPG_LP_PMU_CTL1						(CPG_BASE + 0xC4C)	/* Lowpower Sequence Control Register @ */
+CPG_LP_SRAM_STBY_CTL1					(CPG_BASE + 0xC50)	/* DRP SRAM standby control */
+CPG_LP_SRAM_STBY_CTL2					(CPG_BASE + 0xC54)	/* Shared SRAM standby control 0 */
+CPG_LP_SRAM_STBY_CTL3					(CPG_BASE + 0xC58)	/* Shared SRAM standby control 8 */
+CPG_LP_GIC_CTL1						(CPG_BASE + 0xC5C)	/* GIC control */
+CPG_LP_DDR_CTL1						(CPG_BASE + 0xC60)	/* DDR retention control */
+CPG_LP_OTP_CTL1						(CPG_BASE + 0xC64)	/* OTP control register 1 */
+CPG_LP_CM33CTL_INI					(CPG_BASE + 0xC68)	/* State machine initialization control */
+CPG_LP_CST_CTL1						(CPG_BASE + 0xC6C)	/* CST control register 1 */
+CPG_LP_CST_CTL2						(CPG_BASE + 0xC70)	/* CST control register 2 */
+CPG_LP_CST_CTL3						(CPG_BASE + 0xC74)	/* CST control register 3 */
+CPG_LP_PWC_CTL1						(CPG_BASE + 0xC78)	/* PWC control register 1 */
+CPG_LP_PWC_CTL2						(CPG_BASE + 0xC7C)	/* PWC control register 2 */
+CPG_OSTMTCKE						(CPG_BASE + 0xC80)	/* OSTM enable control */
+CPG_DBGRST						(CPG_BASE + 0xC84)	/* Reset control register when CA55 is debugged */
+OTP_HANDSHAKE_MON					(CPG_BASE + 0xC88)	/* OTP handshake monitor register */
+CPG_OTHERS_INI						(CPG_BASE + 0xC8C)	/* Others area reset control */
+CPG_CM33_STATE_MON					(CPG_BASE + 0xC90)	/* CM33 status monitor */
+CPG_BUS_1_MSTOP						(CPG_BASE + 0xD00)	/* MSTOP register 1 */
+CPG_BUS_2_MSTOP						(CPG_BASE + 0xD04)	/* MSTOP register 2 */
+CPG_BUS_3_MSTOP						(CPG_BASE + 0xD08)	/* MSTOP register 3 */
+CPG_BUS_4_MSTOP						(CPG_BASE + 0xD0C)	/* MSTOP register 4 */
+CPG_BUS_5_MSTOP						(CPG_BASE + 0xD10)	/* MSTOP register 5 */
+CPG_BUS_6_MSTOP						(CPG_BASE + 0xD14)	/* MSTOP register 6 */
+CPG_BUS_7_MSTOP						(CPG_BASE + 0xD18)	/* MSTOP register 7 */
+CPG_BUS_8_MSTOP						(CPG_BASE + 0xD1C)	/* MSTOP register 8 */
+CPG_BUS_9_MSTOP						(CPG_BASE + 0xD20)	/* MSTOP register 9 */
+CPG_BUS_10_MSTOP					(CPG_BASE + 0xD24)	/* MSTOP register 10*/
+CPG_BUS_11_MSTOP					(CPG_BASE + 0xD28)	/* MSTOP register 11 */
+CPG_BUS_12_MSTOP					(CPG_BASE + 0xD2C)	/* MSTOP register 12 */
+CPG_RSV1						(CPG_BASE + 0xE00)	/* Booking register 1 */
+CPG_RSV2						(CPG_BASE + 0xE04)	/* Booking register 2 */
+CPG_RSV3						(CPG_BASE + 0xE08)	/* Booking register 3 */
+CPG_RSV4						(CPG_BASE + 0xE0C)	/* Booking register 4 */
+CPG_RSV5						(CPG_BASE + 0xE10)	/* Booking register 5 */
+CPG_RSV6						(CPG_BASE + 0xE14)	/* Booking register 6 */
