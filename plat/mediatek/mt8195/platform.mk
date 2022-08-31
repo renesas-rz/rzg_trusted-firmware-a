@@ -14,6 +14,7 @@ PLAT_INCLUDES := -I${MTK_PLAT}/common/                            \
                  -I${MTK_PLAT}/common/drivers/timer/              \
                  -I${MTK_PLAT}/common/drivers/uart/               \
                  -I${MTK_PLAT}/common/lpm/                        \
+                 -I${MTK_PLAT_SOC}/drivers/apusys/                \
                  -I${MTK_PLAT_SOC}/drivers/dcm                    \
                  -I${MTK_PLAT_SOC}/drivers/dfd                    \
                  -I${MTK_PLAT_SOC}/drivers/dp/                    \
@@ -59,6 +60,9 @@ BL31_SOURCES += common/desc_image_load.c                              \
                 ${MTK_PLAT_SOC}/aarch64/platform_common.c             \
                 ${MTK_PLAT_SOC}/aarch64/plat_helpers.S                \
                 ${MTK_PLAT_SOC}/bl31_plat_setup.c                     \
+                ${MTK_PLAT_SOC}/drivers/apusys/apupll.c               \
+                ${MTK_PLAT_SOC}/drivers/apusys/apupwr_clkctl.c        \
+		${MTK_PLAT_SOC}/drivers/apusys/mtk_apusys.c           \
                 ${MTK_PLAT_SOC}/drivers/dcm/mtk_dcm.c                 \
                 ${MTK_PLAT_SOC}/drivers/dcm/mtk_dcm_utils.c           \
                 ${MTK_PLAT_SOC}/drivers/dfd/plat_dfd.c                \
@@ -85,6 +89,13 @@ HW_ASSISTED_COHERENCY := 1
 USE_COHERENT_MEM := 0
 CTX_INCLUDE_AARCH32_REGS := 0
 ERRATA_A55_1530923 := 1
+
+ERRATA_A78_1688305 := 1
+ERRATA_A78_1941498 := 1
+ERRATA_A78_1951500 := 1
+ERRATA_A78_1821534 := 1
+ERRATA_A78_2132060 := 1
+ERRATA_A78_2242635 := 1
 
 # indicate the reset vector address can be programmed
 PROGRAMMABLE_RESET_ADDRESS := 1

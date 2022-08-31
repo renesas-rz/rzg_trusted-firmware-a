@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2022, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -124,9 +124,19 @@ int plat_try_next_boot_source(void);
 
 #if MEASURED_BOOT
 int plat_mboot_measure_image(unsigned int image_id, image_info_t *image_data);
+int plat_mboot_measure_critical_data(unsigned int critical_data_id,
+				     const void *base,
+				     size_t size);
 #else
 static inline int plat_mboot_measure_image(unsigned int image_id __unused,
 					   image_info_t *image_data __unused)
+{
+	return 0;
+}
+static inline int plat_mboot_measure_critical_data(
+					unsigned int critical_data_id __unused,
+					const void *base __unused,
+					size_t size __unused)
 {
 	return 0;
 }
@@ -293,6 +303,14 @@ plat_local_state_t plat_get_target_pwr_state(unsigned int lvl,
 			unsigned int ncpu);
 
 /*******************************************************************************
+ * Mandatory BL31 functions when ENABLE_RME=1
+ ******************************************************************************/
+int plat_get_cca_attest_token(uintptr_t buf, size_t *len,
+			       uintptr_t hash, size_t hash_size);
+int plat_get_cca_realm_attest_key(uintptr_t buf, size_t *len,
+				   unsigned int type);
+
+/*******************************************************************************
  * Optional BL31 functions (may be overridden)
  ******************************************************************************/
 void bl31_plat_enable_mmu(uint32_t flags);
@@ -329,6 +347,10 @@ int plat_spm_sp_get_next_address(void **sp_base, size_t *sp_size,
 int plat_spm_core_manifest_load(spmc_manifest_attribute_t *manifest,
 				const void *pm_addr);
 #endif
+#if defined(SPMC_AT_EL3)
+int plat_spmc_shmem_datastore_get(uint8_t **datastore, size_t *size);
+#endif
+
 /*******************************************************************************
  * Mandatory BL image load functions(may be overridden).
  ******************************************************************************/
@@ -379,6 +401,7 @@ int32_t plat_is_smccc_feature_available(u_register_t fid);
 int plat_fwu_set_metadata_image_source(unsigned int image_id,
 				       uintptr_t *dev_handle,
 				       uintptr_t *image_spec);
-void plat_fwu_set_images_source(struct fwu_metadata *metadata);
+void plat_fwu_set_images_source(const struct fwu_metadata *metadata);
+uint32_t plat_fwu_get_boot_idx(void);
 
 #endif /* PLATFORM_H */

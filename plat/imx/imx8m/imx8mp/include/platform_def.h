@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NXP
+ * Copyright 2020-2022 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -36,10 +36,10 @@
 #define PLAT_STOP_OFF_STATE		U(3)
 
 #if defined(NEED_BL2)
-#define BL2_BASE			U(0x960000)
-#define BL2_LIMIT			U(0x980000)
-#define BL31_BASE			U(0x940000)
-#define BL31_LIMIT			U(0x960000)
+#define BL2_BASE			U(0x970000)
+#define BL2_LIMIT			U(0x990000)
+#define BL31_BASE			U(0x950000)
+#define BL31_LIMIT			U(0x970000)
 #define IMX_FIP_BASE			U(0x40310000)
 #define IMX_FIP_SIZE			U(0x000300000)
 #define IMX_FIP_LIMIT			U(FIP_BASE + FIP_SIZE)
@@ -49,8 +49,8 @@
 
 #define PLAT_IMX8MP_BOOT_MMC_BASE	U(0x30B50000) /* SD */
 #else
-#define BL31_BASE			U(0x960000)
-#define BL31_LIMIT			U(0x980000)
+#define BL31_BASE			U(0x970000)
+#define BL31_LIMIT			U(0x990000)
 #endif
 
 #define PLAT_PRI_BITS			U(3)
@@ -61,6 +61,8 @@
 /* non-secure uboot base */
 #define PLAT_NS_IMAGE_OFFSET		U(0x40200000)
 #define PLAT_NS_IMAGE_SIZE		U(0x00200000)
+
+#define BL32_FDT_OVERLAY_ADDR		(PLAT_NS_IMAGE_OFFSET + 0x3000000)
 
 /* GICv3 base address */
 #define PLAT_GICD_BASE			U(0x38800000)

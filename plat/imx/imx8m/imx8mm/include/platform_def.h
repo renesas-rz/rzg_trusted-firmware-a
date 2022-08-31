@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2021-2022, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -58,6 +58,8 @@
 /* non-secure uboot base */
 #define PLAT_NS_IMAGE_OFFSET		U(0x40200000)
 #define PLAT_NS_IMAGE_SIZE		U(0x00200000)
+
+#define BL32_FDT_OVERLAY_ADDR		(PLAT_NS_IMAGE_OFFSET + 0x3000000)
 
 /* GICv3 base address */
 #define PLAT_GICD_BASE			U(0x38800000)
@@ -152,3 +154,7 @@
 #define MAX_IO_HANDLES			3U
 #define MAX_IO_DEVICES			2U
 #define MAX_IO_BLOCK_DEVICES		1U
+
+#define PLAT_IMX8M_DTO_BASE		0x53000000
+#define PLAT_IMX8M_DTO_MAX_SIZE		0x1000
+#define PLAT_IMX_EVENT_LOG_MAX_SIZE	UL(0x400)

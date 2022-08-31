@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2019, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2017-2022, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -20,14 +20,6 @@
 int dt_pmic_status(void);
 
 /*
- * dt_pmic_configure_boot_on_regulators - Configure boot-on and always-on
- * regulators from device tree configuration
- *
- * Returns 0 on success, and negative values on errors
- */
-int dt_pmic_configure_boot_on_regulators(void);
-
-/*
  * initialize_pmic_i2c - Initialize I2C for the PMIC control
  *
  * Returns true if PMIC is available, false if not found, panics on errors
@@ -41,11 +33,26 @@ bool initialize_pmic_i2c(void);
  */
 void initialize_pmic(void);
 
+#if DEBUG
+void print_pmic_info_and_debug(void);
+#else
+static inline void print_pmic_info_and_debug(void)
+{
+}
+#endif
+
 /*
  * pmic_ddr_power_init - Initialize regulators required for DDR
  *
  * Returns 0 on success, and negative values on errors
  */
 int pmic_ddr_power_init(enum ddr_type ddr_type);
+
+/*
+ * pmic_voltages_init - Update voltages for platform init
+ *
+ * Returns 0 on success, and negative values on errors
+ */
+int pmic_voltages_init(void);
 
 #endif /* STM32MP_PMIC_H */

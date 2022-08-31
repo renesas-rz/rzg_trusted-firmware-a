@@ -1,16 +1,14 @@
 /*
- * Copyright (c) 2019-2020, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2019-2022, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
  */
 
 #include <inttypes.h>
-#include <libfdt.h>
-
-#include <platform_def.h>
 
 #include <common/debug.h>
 #include <common/fdt_wrappers.h>
+#include <drivers/clk.h>
 #include <drivers/delay_timer.h>
 #include <drivers/spi_mem.h>
 #include <drivers/st/stm32_gpio.h>
@@ -18,6 +16,9 @@
 #include <drivers/st/stm32mp_reset.h>
 #include <lib/mmio.h>
 #include <lib/utils_def.h>
+#include <libfdt.h>
+
+#include <platform_def.h>
 
 /* Timeout for device interface reset */
 #define TIMEOUT_US_1_MS			1000U
@@ -138,10 +139,6 @@ static int stm32_qspi_wait_cmd(const struct spi_mem_op *op)
 	int ret = 0;
 	uint64_t timeout;
 
-	if (op->data.nbytes == 0U) {
-		return stm32_qspi_wait_for_not_busy();
-	}
-
 	timeout = timeout_init_us(QSPI_CMD_TIMEOUT_US);
 	while ((mmio_read_32(qspi_base() + QSPI_SR) & QSPI_SR_TCF) == 0U) {
 		if (timeout_elapsed(timeout)) {
@@ -161,6 +158,10 @@ static int stm32_qspi_wait_cmd(const struct spi_mem_op *op)
 
 	/* Clear flags */
 	mmio_write_32(qspi_base() + QSPI_FCR, QSPI_FCR_CTCF | QSPI_FCR_CTEF);
+
+	if (ret == 0) {
+		ret = stm32_qspi_wait_for_not_busy();
+	}
 
 	return ret;
 }
@@ -249,11 +250,6 @@ static int stm32_qspi_exec_op(const struct spi_mem_op *op)
 		__func__, op->cmd.opcode, op->cmd.buswidth, op->addr.buswidth,
 		op->dummy.buswidth, op->data.buswidth,
 		op->addr.val, op->data.nbytes);
-
-	ret = stm32_qspi_wait_for_not_busy();
-	if (ret != 0) {
-		return ret;
-	}
 
 	addr_max = op->addr.val + op->data.nbytes + 1U;
 
@@ -364,7 +360,7 @@ static void stm32_qspi_release_bus(void)
 
 static int stm32_qspi_set_speed(unsigned int hz)
 {
-	unsigned long qspi_clk = stm32mp_clk_get_rate(stm32_qspi.clock_id);
+	unsigned long qspi_clk = clk_get_rate(stm32_qspi.clock_id);
 	uint32_t prescaler = UINT8_MAX;
 	uint32_t csht;
 	int ret;
@@ -494,7 +490,7 @@ int stm32_qspi_init(void)
 	stm32_qspi.clock_id = (unsigned long)info.clock;
 	stm32_qspi.reset_id = (unsigned int)info.reset;
 
-	stm32mp_clk_enable(stm32_qspi.clock_id);
+	clk_enable(stm32_qspi.clock_id);
 
 	ret = stm32mp_reset_assert(stm32_qspi.reset_id, TIMEOUT_US_1_MS);
 	if (ret != 0) {

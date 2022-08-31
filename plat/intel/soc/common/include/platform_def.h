@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2019-2020, ARM Limited and Contributors. All rights reserved.
- * Copyright (c) 2019-2020, Intel Corporation. All rights reserved.
+ * Copyright (c) 2019-2022, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2019-2022, Intel Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,8 +13,10 @@
 #include <common/tbbr/tbbr_img_def.h>
 #include <plat/common/common_def.h>
 
+/* Platform Type */
 #define PLAT_SOCFPGA_STRATIX10			1
 #define PLAT_SOCFPGA_AGILEX			2
+#define PLAT_SOCFPGA_N5X			3
 
 /* sysmgr.boot_scratch_cold4 & 5 used for CPU release address for SPL */
 #define PLAT_CPU_RELEASE_ADDR			0xffd12210
@@ -166,9 +168,17 @@
 #define PLAT_UART1_BASE		(0xFFC02100)
 
 #define CRASH_CONSOLE_BASE	PLAT_UART0_BASE
+#define PLAT_INTEL_UART_BASE	PLAT_UART0_BASE
 
+#ifndef SIMICS_BUILD
 #define PLAT_BAUDRATE		(115200)
 #define PLAT_UART_CLOCK		(100000000)
+
+#else
+#define PLAT_BAUDRATE		(4800)
+#define PLAT_UART_CLOCK		(76800)
+
+#endif
 
 /*******************************************************************************
  * PHY related constants
@@ -182,7 +192,7 @@
  * System counter frequency related constants
  ******************************************************************************/
 #define PLAT_SYS_COUNTER_FREQ_IN_TICKS	(400000000)
-#define PLAT_SYS_COUNTER_FREQ_IN_MHZ	(400)
+#define PLAT_SYS_COUNTER_CONVERT_TO_MHZ	(1000000)
 
 #define PLAT_INTEL_SOCFPGA_GICD_BASE	PLAT_GICD_BASE
 #define PLAT_INTEL_SOCFPGA_GICC_BASE	PLAT_GICC_BASE

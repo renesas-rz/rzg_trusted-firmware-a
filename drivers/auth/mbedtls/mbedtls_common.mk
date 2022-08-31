@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2020, Arm Limited. All rights reserved.
+# Copyright (c) 2015-2022, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -16,7 +16,7 @@ endif
 MBEDTLS_INC		=	-I${MBEDTLS_DIR}/include
 
 # Specify mbed TLS configuration file
-MBEDTLS_CONFIG_FILE	:=	"<drivers/auth/mbedtls/mbedtls_config.h>"
+MBEDTLS_CONFIG_FILE	?=	"<drivers/auth/mbedtls/mbedtls_config.h>"
 $(eval $(call add_define,MBEDTLS_CONFIG_FILE))
 
 MBEDTLS_SOURCES	+=		drivers/auth/mbedtls/mbedtls_common.c
@@ -48,6 +48,7 @@ LIBMBEDTLS_SRCS		:= $(addprefix ${MBEDTLS_DIR}/library/,	\
 					rsa_internal.c				\
 					x509.c 					\
 					x509_crt.c 				\
+					constant_time.c 			\
 					)
 
 # The platform may define the variable 'TF_MBEDTLS_KEY_ALG' to select the key
@@ -96,6 +97,18 @@ else
     TF_MBEDTLS_USE_AES_GCM	:=	0
 endif
 
+ifeq ($(MEASURED_BOOT),1)
+    ifeq (${TPM_HASH_ALG}, sha256)
+        TF_MBEDTLS_TPM_HASH_ALG_ID	:=	TF_MBEDTLS_SHA256
+    else ifeq (${TPM_HASH_ALG}, sha384)
+        TF_MBEDTLS_TPM_HASH_ALG_ID	:=	TF_MBEDTLS_SHA384
+    else ifeq (${TPM_HASH_ALG}, sha512)
+        TF_MBEDTLS_TPM_HASH_ALG_ID	:=	TF_MBEDTLS_SHA512
+    else
+        $(error "TPM_HASH_ALG not defined.")
+    endif
+endif
+
 # Needs to be set to drive mbed TLS configuration correctly
 $(eval $(call add_defines,\
     $(sort \
@@ -104,6 +117,10 @@ $(eval $(call add_defines,\
         TF_MBEDTLS_HASH_ALG_ID \
         TF_MBEDTLS_USE_AES_GCM \
 )))
+
+ifeq ($(MEASURED_BOOT),1)
+  $(eval $(call add_define,TF_MBEDTLS_TPM_HASH_ALG_ID))
+endif
 
 $(eval $(call MAKE_LIB,mbedtls))
 

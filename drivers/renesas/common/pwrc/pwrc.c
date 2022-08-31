@@ -305,7 +305,7 @@ void rcar_pwrc_enable_interrupt_wakeup(u_register_t mpidr)
 	shift_fiq = WUP_FIQ_SHIFT + cpu;
 
 	mmio_clrbits_32(reg, ((uint32_t) 1 << shift_irq) |
-			     ((uint32_t) 1 << shift_fiq));
+		      ((uint32_t) 1 << shift_fiq));
 	rcar_lock_release();
 }
 
