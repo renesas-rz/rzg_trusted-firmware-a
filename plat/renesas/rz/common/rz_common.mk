@@ -93,6 +93,10 @@ PLAT_BL_COMMON_SOURCES	+=	${XLAT_TABLES_LIB_SRCS}					\
 							plat/renesas/rz/common/plat_rz_common.c	\
 							plat/renesas/rz/common/drivers/scifa.S
 
+ifneq (${ENABLE_STACK_PROTECTOR},0)
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/common/rz_stack_protector.c
+endif
+
 ifneq (${TRUSTED_BOARD_BOOT},0)
 
 	# Include common TBB sources
