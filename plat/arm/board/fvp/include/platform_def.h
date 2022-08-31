@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2014-2022, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -63,8 +63,24 @@
 /* No SCP in FVP */
 #define PLAT_ARM_SCP_TZC_DRAM1_SIZE	UL(0x0)
 
-#define PLAT_ARM_DRAM2_BASE		ULL(0x880000000)
-#define PLAT_ARM_DRAM2_SIZE		UL(0x80000000)
+#define PLAT_ARM_DRAM2_BASE	ULL(0x880000000) /* 36-bit range */
+#define PLAT_ARM_DRAM2_SIZE	ULL(0x780000000) /* 30 GB */
+
+#define FVP_DRAM3_BASE	ULL(0x8800000000) /* 40-bit range */
+#define FVP_DRAM3_SIZE	ULL(0x7800000000) /* 480 GB */
+#define FVP_DRAM3_END	(FVP_DRAM3_BASE + FVP_DRAM3_SIZE - 1U)
+
+#define FVP_DRAM4_BASE	ULL(0x88000000000) /* 44-bit range */
+#define FVP_DRAM4_SIZE	ULL(0x78000000000) /* 7.5 TB */
+#define FVP_DRAM4_END	(FVP_DRAM4_BASE + FVP_DRAM4_SIZE - 1U)
+
+#define FVP_DRAM5_BASE	ULL(0x880000000000) /* 48-bit range */
+#define FVP_DRAM5_SIZE	ULL(0x780000000000) /* 120 TB */
+#define FVP_DRAM5_END	(FVP_DRAM5_BASE + FVP_DRAM5_SIZE - 1U)
+
+#define FVP_DRAM6_BASE	ULL(0x8800000000000) /* 52-bit range */
+#define FVP_DRAM6_SIZE	ULL(0x7800000000000) /* 1920 TB */
+#define FVP_DRAM6_END	(FVP_DRAM6_BASE + FVP_DRAM6_SIZE - 1U)
 
 /* Range of kernel DTB load address */
 #define FVP_DTB_DRAM_MAP_START		ULL(0x82000000)
@@ -74,6 +90,31 @@
 					FVP_DTB_DRAM_MAP_START,		\
 					FVP_DTB_DRAM_MAP_SIZE,		\
 					MT_MEMORY | MT_RO | MT_NS)
+
+#if SPMC_AT_EL3
+/*
+ * Number of Secure Partitions supported.
+ * SPMC at EL3, uses this count to configure the maximum number of supported
+ * secure partitions.
+ */
+#define SECURE_PARTITION_COUNT		1
+
+/*
+ * Number of Normal World Partitions supported.
+ * SPMC at EL3, uses this count to configure the maximum number of supported
+ * NWd partitions.
+ */
+#define NS_PARTITION_COUNT		1
+
+/*
+ * Number of Logical Partitions supported.
+ * SPMC at EL3, uses this count to configure the maximum number of supported
+ * logical partitions.
+ */
+#define MAX_EL3_LP_DESCS_COUNT		1
+
+#endif /* SPMC_AT_EL3 */
+
 /*
  * Load address of BL33 for this platform port
  */
@@ -87,31 +128,39 @@
 # if SPM_MM
 #  define PLAT_ARM_MMAP_ENTRIES		10
 #  if ENABLE_RME
-#   define MAX_XLAT_TABLES		10
+#   define MAX_XLAT_TABLES		11
 #  else
 #   define MAX_XLAT_TABLES		9
-# endif
+#  endif
 #  define PLAT_SP_IMAGE_MMAP_REGIONS	30
 #  define PLAT_SP_IMAGE_MAX_XLAT_TABLES	10
+# elif SPMC_AT_EL3
+#  define PLAT_ARM_MMAP_ENTRIES		13
+#  define MAX_XLAT_TABLES		11
 # else
 #  define PLAT_ARM_MMAP_ENTRIES		9
 #  if USE_DEBUGFS
 #   if ENABLE_RME
-#    define MAX_XLAT_TABLES		9
+#    define MAX_XLAT_TABLES		10
 #   else
 #    define MAX_XLAT_TABLES		8
 #   endif
 #  else
 #   if ENABLE_RME
-#    define MAX_XLAT_TABLES		8
+#    define MAX_XLAT_TABLES		9
 #   else
 #    define MAX_XLAT_TABLES		7
 #   endif
 #  endif
 # endif
 #elif defined(IMAGE_BL32)
-# define PLAT_ARM_MMAP_ENTRIES		9
-# define MAX_XLAT_TABLES		6
+# if SPMC_AT_EL3
+#  define PLAT_ARM_MMAP_ENTRIES		270
+#  define MAX_XLAT_TABLES		10
+# else
+#  define PLAT_ARM_MMAP_ENTRIES		9
+#  define MAX_XLAT_TABLES		6
+# endif
 #elif !USE_ROMLIB
 # define PLAT_ARM_MMAP_ENTRIES		11
 # define MAX_XLAT_TABLES		5
@@ -144,12 +193,10 @@
  * PLAT_ARM_MAX_BL2_SIZE is calculated using the current BL2 debug size plus a
  * little space for growth.
  */
-#if TRUSTED_BOARD_BOOT
-#if COT_DESC_IN_DTB
+#if TRUSTED_BOARD_BOOT && COT_DESC_IN_DTB
 # define PLAT_ARM_MAX_BL2_SIZE	(UL(0x1E000) - FVP_BL2_ROMLIB_OPTIMIZATION)
-#else
+#elif CRYPTO_SUPPORT
 # define PLAT_ARM_MAX_BL2_SIZE	(UL(0x1D000) - FVP_BL2_ROMLIB_OPTIMIZATION)
-#endif
 #else
 # define PLAT_ARM_MAX_BL2_SIZE	(UL(0x13000) - FVP_BL2_ROMLIB_OPTIMIZATION)
 #endif
@@ -187,17 +234,17 @@
  * Size of cacheable stacks
  */
 #if defined(IMAGE_BL1)
-# if TRUSTED_BOARD_BOOT
+# if CRYPTO_SUPPORT
 #  define PLATFORM_STACK_SIZE		UL(0x1000)
 # else
 #  define PLATFORM_STACK_SIZE		UL(0x500)
-# endif
+# endif /* CRYPTO_SUPPORT */
 #elif defined(IMAGE_BL2)
-# if TRUSTED_BOARD_BOOT
+# if CRYPTO_SUPPORT
 #  define PLATFORM_STACK_SIZE		UL(0x1000)
 # else
 #  define PLATFORM_STACK_SIZE		UL(0x600)
-# endif
+# endif /* CRYPTO_SUPPORT */
 #elif defined(IMAGE_BL2U)
 # define PLATFORM_STACK_SIZE		UL(0x400)
 #elif defined(IMAGE_BL31)
@@ -247,6 +294,7 @@
 #define PLAT_ARM_TRP_UART_CLK_IN_HZ	V2M_IOFPGA_UART3_CLK_IN_HZ
 
 #define PLAT_FVP_SMMUV3_BASE		UL(0x2b400000)
+#define PLAT_ARM_SMMUV3_ROOT_REG_OFFSET UL(0x20000)
 
 /* CCI related constants */
 #define PLAT_FVP_CCI400_BASE		UL(0x2c090000)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2022, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -284,12 +284,10 @@
 					ARM_EL3_TZC_DRAM1_SIZE,		\
 					MT_MEMORY | MT_RW | EL3_PAS)
 
-#if defined(SPD_spmd)
 #define ARM_MAP_TRUSTED_DRAM	MAP_REGION_FLAT(			\
 					PLAT_ARM_TRUSTED_DRAM_BASE,	\
 					PLAT_ARM_TRUSTED_DRAM_SIZE,	\
 					MT_MEMORY | MT_RW | MT_SECURE)
-#endif
 
 #if ENABLE_RME
 #define ARM_MAP_RMM_DRAM	MAP_REGION_FLAT(			\
@@ -381,7 +379,7 @@
  * The max number of regions like RO(code), coherent and data required by
  * different BL stages which need to be mapped in the MMU.
  */
-#define ARM_BL_REGIONS			6
+#define ARM_BL_REGIONS			7
 
 #define MAX_MMAP_REGIONS		(PLAT_ARM_MMAP_ENTRIES +	\
 					 ARM_BL_REGIONS)
@@ -620,7 +618,7 @@
  * Trusted DRAM (if available) or the DRAM region secured by the TrustZone
  * controller.
  */
-# if SPM_MM
+# if SPM_MM || SPMC_AT_EL3
 #  define TSP_SEC_MEM_BASE		(ARM_AP_TZC_DRAM1_BASE + ULL(0x200000))
 #  define TSP_SEC_MEM_SIZE		(ARM_AP_TZC_DRAM1_SIZE - ULL(0x200000))
 #  define BL32_BASE			(ARM_AP_TZC_DRAM1_BASE + ULL(0x200000))
@@ -666,12 +664,13 @@
 
 /*
  * BL32 is mandatory in AArch32. In AArch64, undefine BL32_BASE if there is no
- * SPD and no SPM-MM, as they are the only ones that can be used as BL32.
+ * SPD and no SPM-MM and no SPMC-AT-EL3, as they are the only ones that can be
+ * used as BL32.
  */
 #if defined(__aarch64__) && !JUNO_AARCH32_EL3_RUNTIME
-# if defined(SPD_none) && !SPM_MM
+# if defined(SPD_none) && !SPM_MM && !SPMC_AT_EL3
 #  undef BL32_BASE
-# endif /* defined(SPD_none) && !SPM_MM */
+# endif /* defined(SPD_none) && !SPM_MM || !SPMC_AT_EL3 */
 #endif /* defined(__aarch64__) && !JUNO_AARCH32_EL3_RUNTIME */
 
 /*******************************************************************************

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2021, ARM Limited and Contributors. All rights reserved.
+# Copyright (c) 2014-2022, ARM Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -12,6 +12,8 @@ FIPTOOL ?= fiptool${BIN_EXT}
 PROJECT := $(notdir ${FIPTOOL})
 OBJECTS := fiptool.o tbbr_config.o
 V ?= 0
+OPENSSL_DIR := /usr
+
 
 override CPPFLAGS += -D_GNU_SOURCE -D_XOPEN_SOURCE=700
 HOSTCCFLAGS := -Wall -Werror -pedantic -std=c99
@@ -20,7 +22,14 @@ ifeq (${DEBUG},1)
 else
   HOSTCCFLAGS += -O2
 endif
-LDLIBS := -lcrypto
+
+# Include library directories where OpenSSL library files are located.
+# For a normal installation (i.e.: when ${OPENSSL_DIR} = /usr or
+# /usr/local), binaries are located under the ${OPENSSL_DIR}/lib/
+# directory. However, for a local build of OpenSSL, the built binaries are
+# located under the main project directory (i.e.: ${OPENSSL_DIR}, not
+# ${OPENSSL_DIR}/lib/).
+LDLIBS := -L${OPENSSL_DIR}/lib -L${OPENSSL_DIR} -lcrypto
 
 ifeq (${V},0)
   Q := @
@@ -28,7 +37,7 @@ else
   Q :=
 endif
 
-INCLUDE_PATHS := -I../../include/tools_share
+INCLUDE_PATHS := -I../../include/tools_share  -I${OPENSSL_DIR}/include
 
 HOSTCC ?= gcc
 

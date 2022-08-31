@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2022, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,6 +9,7 @@
 
 #include <arch.h>
 #include <asm_macros.S>
+#include <assert_macros.S>
 #include <context.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 
@@ -237,15 +238,20 @@
 
 	/*
 	 * If Data Independent Timing (DIT) functionality is implemented,
-	 * always enable DIT in EL3
+	 * always enable DIT in EL3.
+	 * First assert that the FEAT_DIT build flag matches the feature id
+	 * register value for DIT.
 	 */
+#if ENABLE_FEAT_DIT
+#if ENABLE_ASSERTIONS
 	mrs	x0, id_aa64pfr0_el1
 	ubfx	x0, x0, #ID_AA64PFR0_DIT_SHIFT, #ID_AA64PFR0_DIT_LENGTH
 	cmp	x0, #ID_AA64PFR0_DIT_SUPPORTED
-	bne	1f
+	ASM_ASSERT(eq)
+#endif /* ENABLE_ASSERTIONS */
 	mov	x0, #DIT_BIT
 	msr	DIT, x0
-1:
+#endif
 	.endm
 
 /* -----------------------------------------------------------------------------
@@ -460,6 +466,14 @@
 		add	x0, x0, :lo12:__NOBITS_START__
 		adrp	x1, __NOBITS_END__
 		add	x1, x1, :lo12:__NOBITS_END__
+		sub	x1, x1, x0
+		bl	inv_dcache_range
+#endif
+#if defined(IMAGE_BL2) && SEPARATE_BL2_NOLOAD_REGION
+		adrp	x0, __BL2_NOLOAD_START__
+		add	x0, x0, :lo12:__BL2_NOLOAD_START__
+		adrp	x1, __BL2_NOLOAD_END__
+		add	x1, x1, :lo12:__BL2_NOLOAD_END__
 		sub	x1, x1, x0
 		bl	inv_dcache_range
 #endif

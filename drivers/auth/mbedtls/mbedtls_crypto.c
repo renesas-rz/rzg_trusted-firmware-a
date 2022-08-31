@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2022, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -23,6 +23,16 @@
 #include <plat/common/platform.h>
 
 #define LIB_NAME		"mbed TLS"
+
+#if MEASURED_BOOT
+/*
+ * CRYPTO_MD_MAX_SIZE value is as per current stronger algorithm available
+ * so make sure that mbed TLS MD maximum size must be lesser than this.
+ */
+CASSERT(CRYPTO_MD_MAX_SIZE >= MBEDTLS_MD_MAX_SIZE,
+	assert_mbedtls_md_size_overflow);
+
+#endif /* MEASURED_BOOT */
 
 /*
  * AlgorithmIdentifier  ::=  SEQUENCE  {
@@ -50,6 +60,7 @@ static void init(void)
 	mbedtls_init();
 }
 
+#if TRUSTED_BOARD_BOOT
 /*
  * Verify a signature.
  *
@@ -208,24 +219,49 @@ static int verify_hash(void *data_ptr, unsigned int data_len,
 
 	return CRYPTO_SUCCESS;
 }
+#endif /* TRUSTED_BOARD_BOOT */
 
 #if MEASURED_BOOT
+/*
+ * Map a generic crypto message digest algorithm to the corresponding macro used
+ * by Mbed TLS.
+ */
+static inline mbedtls_md_type_t md_type(enum crypto_md_algo algo)
+{
+	switch (algo) {
+	case CRYPTO_MD_SHA512:
+		return MBEDTLS_MD_SHA512;
+	case CRYPTO_MD_SHA384:
+		return MBEDTLS_MD_SHA384;
+	case CRYPTO_MD_SHA256:
+		return MBEDTLS_MD_SHA256;
+	default:
+		/* Invalid hash algorithm. */
+		return MBEDTLS_MD_NONE;
+	}
+}
+
 /*
  * Calculate a hash
  *
  * output points to the computed hash
  */
-int calc_hash(unsigned int alg, void *data_ptr,
-	      unsigned int data_len, unsigned char *output)
+static int calc_hash(enum crypto_md_algo md_algo, void *data_ptr,
+		     unsigned int data_len,
+		     unsigned char output[CRYPTO_MD_MAX_SIZE])
 {
 	const mbedtls_md_info_t *md_info;
 
-	md_info = mbedtls_md_info_from_type((mbedtls_md_type_t)alg);
+	md_info = mbedtls_md_info_from_type(md_type(md_algo));
 	if (md_info == NULL) {
 		return CRYPTO_ERR_HASH;
 	}
 
-	/* Calculate the hash of the data */
+	/*
+	 * Calculate the hash of the data, it is safe to pass the
+	 * 'output' hash buffer pointer considering its size is always
+	 * bigger than or equal to MBEDTLS_MD_MAX_SIZE.
+	 */
 	return mbedtls_md(md_info, data_ptr, data_len, output);
 }
 #endif /* MEASURED_BOOT */
@@ -332,7 +368,7 @@ static int auth_decrypt(enum crypto_dec_algo dec_algo, void *data_ptr,
 /*
  * Register crypto library descriptor
  */
-#if MEASURED_BOOT
+#if MEASURED_BOOT && TRUSTED_BOARD_BOOT
 #if TF_MBEDTLS_USE_AES_GCM
 REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, calc_hash,
 		    auth_decrypt);
@@ -340,11 +376,13 @@ REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, calc_hash,
 REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, calc_hash,
 		    NULL);
 #endif
-#else /* MEASURED_BOOT */
+#elif TRUSTED_BOARD_BOOT
 #if TF_MBEDTLS_USE_AES_GCM
 REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash,
 		    auth_decrypt);
 #else
 REGISTER_CRYPTO_LIB(LIB_NAME, init, verify_signature, verify_hash, NULL);
 #endif
-#endif /* MEASURED_BOOT */
+#elif MEASURED_BOOT
+REGISTER_CRYPTO_LIB(LIB_NAME, init, calc_hash);
+#endif /* MEASURED_BOOT && TRUSTED_BOARD_BOOT */

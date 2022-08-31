@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2021-2022, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -28,7 +28,12 @@
 #define USBD_CONFIGURATION_STRING	"DFU Config"
 #define USBD_INTERFACE_STRING		"DFU Interface"
 
+#if STM32MP13
+#define USB_DFU_ITF_NUM			2
+#endif
+#if STM32MP15
 #define USB_DFU_ITF_NUM			6
+#endif
 
 #define USB_DFU_CONFIG_DESC_SIZ		USB_DFU_DESC_SIZ(USB_DFU_ITF_NUM)
 
@@ -98,11 +103,18 @@ static const uint8_t usb_stm32mp1_config_desc[USB_DFU_CONFIG_DESC_SIZ] = {
 	/* Descriptor of DFU interface 0 Alternate setting 0..N */
 	USBD_DFU_IF_DESC(0),
 	USBD_DFU_IF_DESC(1),
+#if USB_DFU_ITF_NUM > 2
 	USBD_DFU_IF_DESC(2),
+#endif
+#if USB_DFU_ITF_NUM > 3
 	USBD_DFU_IF_DESC(3),
+#endif
+#if USB_DFU_ITF_NUM > 4
 	USBD_DFU_IF_DESC(4),
+#endif
+#if USB_DFU_ITF_NUM > 5
 	USBD_DFU_IF_DESC(5),
-
+#endif
 	/* DFU Functional Descriptor */
 	0x09, /* blength = 9 Bytes */
 	DFU_DESCRIPTOR_TYPE, /* DFU Functional Descriptor */
@@ -115,6 +127,13 @@ static const uint8_t usb_stm32mp1_config_desc[USB_DFU_CONFIG_DESC_SIZ] = {
 };
 
 /* The user strings: one by alternate as defined in USBD_DFU_IF_DESC */
+#if STM32MP13
+const char *const if_desc_string[USB_DFU_ITF_NUM] = {
+	"@SSBL /0x03/1*16Me",
+	"@virtual /0xF1/1*512Ba"
+};
+#endif
+#if STM32MP15
 const char *const if_desc_string[USB_DFU_ITF_NUM] = {
 	"@Partition0 /0x00/1*256Ke",
 	"@FSBL /0x01/1*1Me",
@@ -123,6 +142,7 @@ const char *const if_desc_string[USB_DFU_ITF_NUM] = {
 	"@Partition4 /0x04/1*16Me",
 	"@virtual /0xF1/1*512Ba"
 };
+#endif
 
 /* Buffer to build the unicode string provided to USB device stack */
 static uint8_t usb_str_dec[USBD_MAX_STR_DESC_SIZ];
@@ -157,27 +177,28 @@ static void stm32mp1_get_string(const char *desc, uint8_t *unicode, uint16_t *le
 static void update_serial_num_string(void)
 {
 	uint8_t i;
-	uint32_t result;
 	char serial_string[SIZ_STRING_SERIAL + 2U];
-	uint32_t deviceserial[UID_WORD_NB];
+	/* serial number is set to 0 */
+	uint32_t deviceserial[UID_WORD_NB] = {0U, 0U, 0U};
+	uint32_t otp;
+	uint32_t len;
 	uint16_t length;
 
-	for (i = 0U; i < UID_WORD_NB; i++) {
-		result = bsec_shadow_register(i + UID0_OTP);
-		if (result != BSEC_OK) {
-			ERROR("BSEC: UID%d Shadowing Error\n", i);
-			break;
-		}
-		result = bsec_read_otp(&deviceserial[i], i + UID0_OTP);
-		if (result != BSEC_OK) {
-			ERROR("BSEC: UID%d Read Error\n", i);
-			break;
-		}
+	if (stm32_get_otp_index(UID_OTP, &otp, &len) != 0) {
+		ERROR("BSEC: Get UID_OTP number Error\n");
+		return;
 	}
-	/* On bsec error: serial number is set to 0 */
-	if (result != BSEC_OK) {
-		for (i = 0; i < UID_WORD_NB; i++) {
-			deviceserial[i] = 0U;
+
+	if ((len / __WORD_BIT) != UID_WORD_NB) {
+		ERROR("BSEC: Get UID_OTP length Error\n");
+		return;
+	}
+
+	for (i = 0; i < UID_WORD_NB; i++) {
+		if (bsec_shadow_read_otp(&deviceserial[i], i + otp) !=
+		    BSEC_OK) {
+			ERROR("BSEC: UID%d Error\n", i);
+			return;
 		}
 	}
 	/* build serial number with OTP value as in ROM code */
@@ -353,9 +374,11 @@ struct usb_handle *usb_dfu_plat_init(void)
 	stm32mp1_usb_init_driver(&usb_core_handle, &pcd_handle,
 				 (uint32_t *)USB_OTG_BASE);
 
+#if STM32MP15
 	/* STM32MP15 = keep the configuration from ROM code */
 	usb_core_handle.ep0_state = USBD_EP0_DATA_IN;
 	usb_core_handle.dev_state = USBD_STATE_CONFIGURED;
+#endif
 
 	/* Update the serial number string descriptor from the unique ID */
 	update_serial_num_string();
@@ -375,12 +398,22 @@ uint8_t usb_dfu_get_phase(uint8_t alt)
 	uint8_t ret;
 
 	switch (alt) {
+#if STM32MP13
+	case 0:
+		ret = PHASE_SSBL;
+		break;
+	case 1:
+		ret = PHASE_CMD;
+		break;
+#endif
+#if STM32MP15
 	case 3:
 		ret = PHASE_SSBL;
 		break;
 	case 5:
 		ret = PHASE_CMD;
 		break;
+#endif
 	default:
 		ret = PHASE_RESET;
 		break;

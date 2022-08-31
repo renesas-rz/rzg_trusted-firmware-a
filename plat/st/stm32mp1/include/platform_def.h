@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2022, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -40,6 +40,9 @@
 #define BL33_BINARY_TYPE		U(0x0)
 #else /* STM32MP_USE_STM32IMAGE */
 #define FIP_IMAGE_NAME			"fip"
+#define METADATA_PART_1			"metadata1"
+#define METADATA_PART_2			"metadata2"
+
 #endif /* STM32MP_USE_STM32IMAGE */
 
 #define STM32MP_PRIMARY_CPU		U(0x0)
@@ -68,6 +71,13 @@
 #define BL2_LIMIT			(STM32MP_BL2_BASE + \
 					 STM32MP_BL2_SIZE)
 
+#define BL2_RO_BASE			STM32MP_BL2_RO_BASE
+#define BL2_RO_LIMIT			(STM32MP_BL2_RO_BASE + \
+					 STM32MP_BL2_RO_SIZE)
+
+#define BL2_RW_BASE			STM32MP_BL2_RW_BASE
+#define BL2_RW_LIMIT			(STM32MP_BL2_RW_BASE + \
+					 STM32MP_BL2_RW_SIZE)
 /*******************************************************************************
  * BL32 specific defines.
  ******************************************************************************/

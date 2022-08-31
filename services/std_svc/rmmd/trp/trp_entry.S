@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2021, Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2022, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <asm_macros.S>
-#include <services/gtsi_svc.h>
-#include <services/rmi_svc.h>
+#include <services/rmmd_svc.h>
 #include "trp_private.h"
 
 .global trp_head
@@ -33,8 +32,19 @@
 	 */
 trp_head:
 	bl	plat_set_my_stack
-	bl	plat_is_my_cpu_primary
-	cbz	x0, trp_secondary_cpu_entry
+
+	/*
+	 * Find out whether this is a cold or warm boot
+	 */
+	ldr	x1, cold_boot_flag
+	cbz	x1, warm_boot
+
+	/*
+	 * Update cold boot flag to indicate cold boot is done
+	 */
+	adr	x2, cold_boot_flag
+	str	xzr, [x2]
+
 
 	/* ---------------------------------------------
 	 * Zero out BSS section
@@ -47,11 +57,19 @@ trp_head:
 	bl	trp_setup
 
 	bl	trp_main
-trp_secondary_cpu_entry:
-	mov_imm	x0, RMI_RMM_REQ_COMPLETE
+warm_boot:
+	mov_imm	x0, RMMD_RMI_REQ_COMPLETE
 	mov	x1, xzr
 	smc	#0
 	b	trp_handler
+
+	/*
+	 * Flag to mark if it is a cold boot.
+	 * 1: cold boot, 0: warmboot.
+	 */
+.align 3
+cold_boot_flag:
+	.dword		1
 
 	/* ---------------------------------------------
 	 *   Direct SMC call to BL31 service provided by

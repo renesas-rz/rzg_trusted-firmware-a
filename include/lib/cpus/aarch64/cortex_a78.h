@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, ARM Limited. All rights reserved.
+ * Copyright (c) 2019-2022, ARM Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,6 +10,9 @@
 #include <lib/utils_def.h>
 
 #define CORTEX_A78_MIDR					U(0x410FD410)
+
+/* Cortex-A78 loop count for CVE-2022-23960 mitigation */
+#define CORTEX_A78_BHB_LOOP_COUNT			U(32)
 
 /*******************************************************************************
  * CPU Extended Control register specific definitions.
@@ -32,8 +35,10 @@
 #define CORTEX_A78_ACTLR_TAM_BIT			(ULL(1) << 30)
 
 #define CORTEX_A78_ACTLR2_EL1				S3_0_C15_C1_1
+#define CORTEX_A78_ACTLR2_EL1_BIT_0			(ULL(1) << 0)
 #define CORTEX_A78_ACTLR2_EL1_BIT_1			(ULL(1) << 1)
 #define CORTEX_A78_ACTLR2_EL1_BIT_2			(ULL(1) << 2)
+#define CORTEX_A78_ACTLR2_EL1_BIT_40			(ULL(1) << 40)
 
 /*******************************************************************************
  * CPU Activity Monitor Unit register specific definitions.

@@ -21,6 +21,10 @@ ENABLE_SVE_FOR_NS	:= 0
 
 WORKAROUND_CVE_2017_5715	:=	0
 
+ARM_XLAT_TABLES_LIB_V1         :=      1
+$(eval $(call assert_boolean,ARM_XLAT_TABLES_LIB_V1))
+$(eval $(call add_define,ARM_XLAT_TABLES_LIB_V1))
+
 ifdef ZYNQMP_ATF_MEM_BASE
     $(eval $(call add_define,ZYNQMP_ATF_MEM_BASE))
 
@@ -45,11 +49,11 @@ endif
 
 
 ifdef ZYNQMP_WDT_RESTART
-$(eval $(call add_define,ZYNQMP_WDT_RESTART))
+    $(eval $(call add_define,ZYNQMP_WDT_RESTART))
 endif
 
 ifdef ZYNQMP_IPI_CRC_CHECK
-  $(warning "ZYNQMP_IPI_CRC_CHECK macro is deprecated...instead please use IPI_CRC_CHECK.")
+    $(warning "ZYNQMP_IPI_CRC_CHECK macro is deprecated...instead please use IPI_CRC_CHECK.")
 endif
 
 ifdef IPI_CRC_CHECK
@@ -118,6 +122,7 @@ BL31_SOURCES		+=	plat/xilinx/zynqmp/zynqmp_ehf.c			\
 endif
 
 BL31_CPPFLAGS		+=	-fno-jump-tables
+TF_CFLAGS_aarch64	+=	-mbranch-protection=none
 
 ifneq (${RESET_TO_BL31},1)
   $(error "Using BL31 as the reset vector is only one option supported on ZynqMP. Please set RESET_TO_BL31 to 1.")

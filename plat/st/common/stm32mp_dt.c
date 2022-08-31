@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2022, ARM Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,16 +7,13 @@
 #include <assert.h>
 #include <errno.h>
 
+#include <common/debug.h>
+#include <common/fdt_wrappers.h>
+#include <drivers/st/regulator.h>
+#include <drivers/st/stm32_gpio.h>
 #include <libfdt.h>
 
 #include <platform_def.h>
-
-#include <common/debug.h>
-#include <common/fdt_wrappers.h>
-#include <drivers/st/stm32_gpio.h>
-#include <drivers/st/stm32mp1_ddr.h>
-#include <drivers/st/stm32mp1_ram.h>
-
 #include <stm32mp_dt.h>
 
 static void *fdt;
@@ -262,37 +259,46 @@ uint32_t dt_get_ddr_size(void)
  ******************************************************************************/
 uint32_t dt_get_pwr_vdd_voltage(void)
 {
-	int node, pwr_regulators_node;
-	const fdt32_t *cuint;
+	struct rdev *regul = dt_get_vdd_regulator();
+	uint16_t min;
 
-	node = fdt_node_offset_by_compatible(fdt, -1, DT_PWR_COMPAT);
+	if (regul == NULL) {
+		return 0;
+	}
+
+	regulator_get_range(regul, &min, NULL);
+
+	return (uint32_t)min * 1000U;
+}
+
+/*******************************************************************************
+ * This function retrieves VDD supply regulator from DT.
+ * Returns an rdev taken from supply node, NULL otherwise.
+ ******************************************************************************/
+struct rdev *dt_get_vdd_regulator(void)
+{
+	int node = fdt_node_offset_by_compatible(fdt, -1, DT_PWR_COMPAT);
+
 	if (node < 0) {
-		INFO("%s: Cannot read PWR node in DT\n", __func__);
-		return 0;
+		return NULL;
 	}
 
-	pwr_regulators_node = fdt_subnode_offset(fdt, node, "pwr-regulators");
-	if (pwr_regulators_node < 0) {
-		INFO("%s: Cannot read pwr-regulators node in DT\n", __func__);
-		return 0;
-	}
+	return regulator_get_by_supply_name(fdt, node, "vdd");
+}
 
-	cuint = fdt_getprop(fdt, pwr_regulators_node, "vdd-supply", NULL);
-	if (cuint == NULL) {
-		return 0;
-	}
+/*******************************************************************************
+ * This function retrieves CPU supply regulator from DT.
+ * Returns an rdev taken from supply node, NULL otherwise.
+ ******************************************************************************/
+struct rdev *dt_get_cpu_regulator(void)
+{
+	int node = fdt_path_offset(fdt, "/cpus/cpu@0");
 
-	node = fdt_node_offset_by_phandle(fdt, fdt32_to_cpu(*cuint));
 	if (node < 0) {
-		return 0;
+		return NULL;
 	}
 
-	cuint = fdt_getprop(fdt, node, "regulator-min-microvolt", NULL);
-	if (cuint == NULL) {
-		return 0;
-	}
-
-	return fdt32_to_cpu(*cuint);
+	return regulator_get_by_supply_name(fdt, node, "cpu");
 }
 
 /*******************************************************************************
@@ -308,6 +314,57 @@ const char *dt_get_board_model(void)
 	}
 
 	return (const char *)fdt_getprop(fdt, node, "model", NULL);
+}
+
+/*******************************************************************************
+ * dt_find_otp_name: get OTP ID and length in DT.
+ * name: sub-node name to look up.
+ * otp: pointer to read OTP number or NULL.
+ * otp_len: pointer to read OTP length in bits or NULL.
+ * return value: 0 if no error, an FDT error value otherwise.
+ ******************************************************************************/
+int dt_find_otp_name(const char *name, uint32_t *otp, uint32_t *otp_len)
+{
+	int node;
+	int len;
+	const fdt32_t *cuint;
+
+	if ((name == NULL) || (otp == NULL)) {
+		return -FDT_ERR_BADVALUE;
+	}
+
+	node = fdt_node_offset_by_compatible(fdt, -1, DT_BSEC_COMPAT);
+	if (node < 0) {
+		return node;
+	}
+
+	node = fdt_subnode_offset(fdt, node, name);
+	if (node < 0) {
+		ERROR("nvmem node %s not found\n", name);
+		return node;
+	}
+
+	cuint = fdt_getprop(fdt, node, "reg", &len);
+	if ((cuint == NULL) || (len != (2 * (int)sizeof(uint32_t)))) {
+		ERROR("Malformed nvmem node %s: ignored\n", name);
+		return -FDT_ERR_BADVALUE;
+	}
+
+	if (fdt32_to_cpu(*cuint) % sizeof(uint32_t)) {
+		ERROR("Misaligned nvmem %s element: ignored\n", name);
+		return -FDT_ERR_BADVALUE;
+	}
+
+	if (otp != NULL) {
+		*otp = fdt32_to_cpu(*cuint) / sizeof(uint32_t);
+	}
+
+	if (otp_len != NULL) {
+		cuint++;
+		*otp_len = fdt32_to_cpu(*cuint) * CHAR_BIT;
+	}
+
+	return 0;
 }
 
 /*******************************************************************************
@@ -329,6 +386,9 @@ int fdt_get_gpio_bank_pin_count(unsigned int bank)
 
 	fdt_for_each_subnode(node, fdt, pinctrl_node) {
 		const fdt32_t *cuint;
+		int pin_count;
+		int len;
+		int i;
 
 		if (fdt_getprop(fdt, node, "gpio-controller", NULL) == NULL) {
 			continue;
@@ -347,12 +407,22 @@ int fdt_get_gpio_bank_pin_count(unsigned int bank)
 			return 0;
 		}
 
-		cuint = fdt_getprop(fdt, node, "ngpios", NULL);
-		if (cuint == NULL) {
-			return -FDT_ERR_NOTFOUND;
+		/* Parse gpio-ranges with its 4 parameters */
+		cuint = fdt_getprop(fdt, node, "gpio-ranges", &len);
+		len /= sizeof(*cuint);
+		if ((len % 4) != 0) {
+			return -FDT_ERR_BADVALUE;
 		}
 
-		return (int)fdt32_to_cpu(*cuint);
+		/* Get the last defined gpio line (offset + nb of pins) */
+		pin_count = fdt32_to_cpu(*(cuint + 1)) + fdt32_to_cpu(*(cuint + 3));
+		for (i = 0; i < len / 4; i++) {
+			pin_count = MAX(pin_count, (int)(fdt32_to_cpu(*(cuint + 1)) +
+							 fdt32_to_cpu(*(cuint + 3))));
+			cuint += 4;
+		}
+
+		return pin_count;
 	}
 
 	return 0;

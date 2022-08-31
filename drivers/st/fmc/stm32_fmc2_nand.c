@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021, STMicroelectronics - All Rights Reserved
+ * Copyright (c) 2019-2022, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
  */
@@ -9,11 +9,8 @@
 #include <limits.h>
 #include <stdint.h>
 
-#include <libfdt.h>
-
-#include <platform_def.h>
-
 #include <common/debug.h>
+#include <drivers/clk.h>
 #include <drivers/delay_timer.h>
 #include <drivers/raw_nand.h>
 #include <drivers/st/stm32_fmc2_nand.h>
@@ -21,6 +18,9 @@
 #include <drivers/st/stm32mp_reset.h>
 #include <lib/mmio.h>
 #include <lib/utils_def.h>
+#include <libfdt.h>
+
+#include <platform_def.h>
 
 /* Timeout for device interface reset */
 #define TIMEOUT_US_1_MS			1000U
@@ -162,7 +162,7 @@ static uintptr_t fmc2_base(void)
 static void stm32_fmc2_nand_setup_timing(void)
 {
 	struct stm32_fmc2_nand_timings tims;
-	unsigned long hclk = stm32mp_clk_get_rate(stm32_fmc2.clock_id);
+	unsigned long hclk = clk_get_rate(stm32_fmc2.clock_id);
 	unsigned long hclkp = FMC2_PSEC_PER_MSEC / (hclk / 1000U);
 	unsigned long timing, tar, tclr, thiz, twait;
 	unsigned long tset_mem, tset_att, thold_mem, thold_att;
@@ -515,7 +515,7 @@ static int stm32_fmc2_read_page(struct nand_device *nand,
 	unsigned int s;
 	int ret;
 
-	VERBOSE(">%s page %i buffer %lx\n", __func__, page, buffer);
+	VERBOSE(">%s page %u buffer %lx\n", __func__, page, buffer);
 
 	ret = nand_read_page_cmd(page, 0U, 0U, 0U);
 	if (ret != 0) {
@@ -909,7 +909,7 @@ int stm32_fmc2_init(void)
 	}
 
 	/* Enable Clock */
-	stm32mp_clk_enable(stm32_fmc2.clock_id);
+	clk_enable(stm32_fmc2.clock_id);
 
 	/* Reset IP */
 	ret = stm32mp_reset_assert(stm32_fmc2.reset_id, TIMEOUT_US_1_MS);
