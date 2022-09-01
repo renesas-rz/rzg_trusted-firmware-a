@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -37,7 +37,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 	int ret;
 
 	/* initialize console driver */
-	ret = console_rzg2l_register(
+	ret = console_rz_register(
 							RZG2L_SCIF0_BASE,
 							RZG2L_UART_INCK_HZ,
 							RZG2L_UART_BARDRATE,

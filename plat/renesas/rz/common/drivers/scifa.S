@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -56,13 +56,13 @@
 #define BRR_C_RSHIFT	(5)
 #define BRR_C_SUB		(1)
 
-	.globl	console_rzg2l_register
-	.globl	console_rzg2l_init
-	.globl	console_rzg2l_putc
-	.globl	console_rzg2l_flush
+	.globl	console_rz_register
+	.globl	console_rz_init
+	.globl	console_rz_putc
+	.globl	console_rz_flush
 
 	/* -----------------------------------------------
-	 * int console_rzg2l_register(
+	 * int console_rz_register(
 	 *      uintptr_t base, uint32_t clk, uint32_t baud,
 	 *      console_t *console)
 	 * Function to initialize and register a new console.
@@ -76,17 +76,18 @@
 	 * Clobber list : x0, x1, x2, x6, x7, x14
 	 * -----------------------------------------------
 	 */
-func console_rzg2l_register
+func console_rz_register
 	mov	x7, x30
 	mov	x6, x3
 	cbz	x6, register_fail
 	str	x0, [x6, #CONSOLE_T_BASE]
 
-	bl	console_rzg2l_init
+	bl	console_rz_init
 
 	mov	x0, x6
 	mov	x30, x7
-	finish_console_register rzg2l, putc=1, getc=0, flush=1
+	/* TODO: KTG: according to docs/change-log.md 'finish_console_register' is deprecated. Research usage of non-deprecated alternative */
+	finish_console_register rz, putc=1, getc=0, flush=1
 	b l_ret
 
 register_fail:
@@ -94,14 +95,14 @@ register_fail:
 
 l_ret:
 	ret	x7
-endfunc console_rzg2l_register
+endfunc console_rz_register
 
 	/* -----------------------------------------------
-	 * int console_rzg2l_init(unsigned long base_addr,
+	 * int console_rz_init(unsigned long base_addr,
 	 * unsigned int uart_clk, unsigned int baud_rate)
 	 * Function to initialize the console without a
 	 * C Runtime to print debug information. This
-	 * function will be accessed by console_rzg2l_register
+	 * function will be accessed by console_rz_register
 	 * and crash reporting.
 	 * In: x0 - console base address
 	 *     w1 - Uart clock in Hz
@@ -110,7 +111,7 @@ endfunc console_rzg2l_register
 	 * Clobber list : x3
 	 * -----------------------------------------------
 	 */
-func console_rzg2l_init
+func console_rz_init
 	mov w3, #(SCR_INIT)
 	strh w3, [x0, #SCR]
 
@@ -163,10 +164,10 @@ func console_rzg2l_init
 
 	mov	x0, #1
 	ret
-endfunc console_rzg2l_init
+endfunc console_rz_init
 
 	/* --------------------------------------------------------
-	 * int console_rzg2l_putc(int c, console_t *console)
+	 * int console_rz_putc(int c, console_t *console)
 	 * Function to output a character over the console. It
 	 * returns the character printed on success or -1 on error.
 	 * In : w0 - character to be printed
@@ -175,7 +176,7 @@ endfunc console_rzg2l_init
 	 * Clobber list : x2
 	 * --------------------------------------------------------
 	 */
-func console_rzg2l_putc
+func console_rz_putc
 	ldr x1, [x1, #CONSOLE_T_BASE]
 	cmp w0, #0xA
 	/* Prepend '\r' to '\n' */
@@ -202,10 +203,10 @@ func console_rzg2l_putc
 	strh w2, [x1, #FSR]
 
 	ret
-endfunc console_rzg2l_putc
+endfunc console_rz_putc
 
 	/* ---------------------------------------------
-	 * int console_rzg2l_flush(console_t *console)
+	 * int console_rz_flush(console_t *console)
 	 * Function to force a write of all buffered
 	 * data that hasn't been output. It returns 0
 	 * upon successful completion, otherwise it
@@ -215,7 +216,7 @@ endfunc console_rzg2l_putc
 	 * Clobber list : x1
 	 * ---------------------------------------------
 	 */
-func console_rzg2l_flush
+func console_rz_flush
 	ldr x0, [x0, #CONSOLE_T_BASE]
 1:
 	/* Check TEND flag */
@@ -226,4 +227,4 @@ func console_rzg2l_flush
 
 	mov	w0, #0
 	ret
-endfunc console_rzg2l_flush
+endfunc console_rz_flush

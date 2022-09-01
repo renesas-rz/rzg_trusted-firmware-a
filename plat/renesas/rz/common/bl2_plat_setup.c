@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -42,7 +42,7 @@ static const mmap_region_t rzg2l_mmap[] = {
 	{0}
 };
 
-static console_t rzg2l_bl31_console;
+static console_t rzg2l_bl2_console;
 
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
@@ -100,15 +100,15 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	cpg_setup();
 
 	/* initialize console driver */
-	ret = console_rzg2l_register(
+	ret = console_rz_register(
 							RZG2L_SCIF0_BASE,
 							RZG2L_UART_INCK_HZ,
 							RZG2L_UART_BARDRATE,
-							&rzg2l_bl31_console);
+							&rzg2l_bl2_console);
 	if (!ret)
 		panic();
 
-	console_set_scope(&rzg2l_bl31_console,
+	console_set_scope(&rzg2l_bl2_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 }
 
