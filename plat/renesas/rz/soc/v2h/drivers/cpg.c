@@ -1712,7 +1712,7 @@ static void cpg_pll_start_146(CPG_PLL_SETDATA_146 *pdata)
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
 {
-#if !DEBUG_RZG2L_FPGA
+#if !DEBUG_RZV2H_FPGA
 	uint32_t val = 0;
 
 	/* PLL4 startup */
@@ -1733,7 +1733,7 @@ static void cpg_pll_setup(void)
 	/* Set PLL6 to normal mode */
 	cpg_pll_start_146(&cpg_pll6_setdata);
 
-#if !DEBUG_RZG2L_FPGA
+#if !DEBUG_RZV2H_FPGA
 	/* PLL4 normal mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
@@ -1755,7 +1755,7 @@ static void cpg_div_sel_setup(CPG_REG_SETTING *tbl, uint32_t size)
 	}
 
 #if 0
-#if !DEBUG_RZG2L_FPGA
+#if !DEBUG_RZV2H_FPGA
 	/* Wait for completion of settings */
 	while (mmio_read_32(CPG_CLKSTATUS) != 0)
 		;

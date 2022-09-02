@@ -7,9 +7,9 @@
 #ifndef __DDR_MC_REGS_H__
 #define __DDR_MC_REGS_H__
 
-#include <rzg2l_def.h>
+#include <rzv2h_def.h>
 
-#define DDR_MC_BASE			RZG2L_DDR_MEMC_BASE
+#define DDR_MC_BASE			RZV2H_DDR0_MEMC_BASE
 #define MC_INIT_NUM			(507)
 
 #define	DENALI_CTL_00		(0x0000)

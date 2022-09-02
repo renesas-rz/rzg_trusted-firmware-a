@@ -1,66 +1,78 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __RZG2L_DEF_H__
-#define __RZG2L_DEF_H__
+#ifndef __RZV2H_DEF_H__
+#define __RZV2H_DEF_H__
 
-#define RZG2L_BOOT_ROM_BASE         (0x00000000)
-#define RZG2L_MSRAM_BASE            (0x00010000)
-#define RZG2L_ASRAM_BASE            (0x00020000)
-#define RZG2L_DEVICE_BASE           (0x10000000)
-#define RZG2L_SCIF0_BASE            (0x1004B800)
-#define RZG2L_SPIMULT_BASE          (0x10060000)
-#define RZG2L_SPIMULT_WBUF_BASE     (0x10070000)
-#define RZG2L_SYC_BASE              (0x11000000)
-#define RZG2L_CPG_BASE              (0x11010000)
-#define RZG2L_SYSC_BASE             (0x11020000)
-#define RZG2L_GPIO_BASE             (0x11030000)
-#define RZG2L_TZC_ASRAM_BASE        (0x11040000)
-#define RZG2L_TZC_MSRAM_BASE        (0x11050000)
-#define RZG2L_TZC_SPI_BASE          (0x11060000)
-#define RZG2L_TZC_DDR_BASE          (0x11070000)
-#define RZG2L_DDR_PHY_BASE          (0x11400000)
-#define RZG2L_DDR_MEMC_BASE         (0x11410000)
-#define RZG2L_OTP_BASE              (0x11860000)
-#define RZG2L_GIC_BASE              (0x11900000)
-#define RZG2L_SD0_BASE              (0x11C00000)
-#define RZG2L_SPIROM_BASE           (0x20000000)
-#define RZG2L_DDR1_BASE             (0x40000000)
-#define RZG2L_DDR2_BASE             (0x80000000)
-#define RZG2L_DDR3_BASE             (0x100000000)
+#define RZV2H_BOOT_ROM_BASE         (0x00000000)
+#define RZV2H_MSRAM_BASE            (0x00010000)	//TODO: KTG: Update
+#define RZV2H_ASRAM_BASE            (0x00020000)	//TODO: KTG: Update
+#define RZV2H_DEVICE_BASE           (0x10000000)
+#define RZV2H_SCIF0_BASE            (0x11C01400)
+#define RZV2H_SPIMULT_BASE          (0x12800000)
+#define RZV2H_SPIMULT_WBUF_BASE     (0x10070000)	//TODO: KTG: Update
+#define RZV2H_SYC_BASE              (0x14010000)
+#define RZV2H_CPG_BASE              (0x10420000)
+#define RZV2H_SYSC_BASE             (0x10430000)	//TODO: KTG: Confirm
+#define RZV2H_GPIO_BASE             (0x10410000)
+#define RZV2H_TZC_ASRAM_BASE        (0x13CB0000)	//TODO: KTG: Confirm
+#define RZV2H_TZC_MSRAM_BASE        (0x10460000)	//TODO: KTG: Confirm
+#define RZV2H_TZC_SPI_BASE          (0x10470000)	//TODO: KTG: Confirm
+#define RZV2H_TZC_DDR00_BASE        (0x13C60000)
+#define RZV2H_TZC_DDR01_BASE        (0x13C70000)
+#define RZV2H_TZC_DDR10_BASE        (0x13C80000)
+#define RZV2H_TZC_DDR11_BASE        (0x13C90000)
+#define RZV2H_DDR0_PHY_BASE         (0x1A000000)
+#define RZV2H_DDR1_PHY_BASE         (0x1C000000)
+#define RZV2H_DDR0_MEMC_BASE        (0x1E000000)
+#define RZV2H_DDR1_MEMC_BASE        (0x1E010000)
 
-#define RZG2L_GICD_BASE             (RZG2L_GIC_BASE)
-#define RZG2L_GICR_BASE             (RZG2L_GIC_BASE + 0x00040000)
+#define RZG2L_DDR_MEMC_BASE 		(0x1E000000)	//TODO: KTG: Remove, temporary scaffold code
+#define RZG2L_DDR_PHY_BASE			(0x1A000000)	//TODO: KTG: Remove, temporary scaffold code
 
-#define RZG2L_SRAM_BASE             (RZG2L_MSRAM_BASE)
+#define RZV2H_OTP_BASE              (0x10450000)
+#define RZV2H_GIC_BASE              (0x14900000)
+#define RZV2H_SD0_BASE              (0x15C00000)	//TODO: KTG: Confirm
+#define RZV2H_SPIROM_BASE           (0x20000000)	//TODO: KTG: Update
+#define RZV2H_DDR1_BASE             (0x40000000)	//TODO: KTG: Confirm
+#define RZV2H_DDR2_BASE             (0x140000000)	//TODO: KTG: Confirm
+#define RZV2H_DDR3_BASE             (0x240000000)	//TODO: KTG: Confirm
+#define RZV2H_DDR4_BASE             (0x340000000)	//TODO: KTG: Confirm
 
-#define RZG2L_BOOT_ROM_SIZE         (0x00010000 - RZG2L_BOOT_ROM_BASE)
-#define RZG2L_MSRAM_SIZE            (0x00020000 - RZG2L_MSRAM_BASE)
-#define RZG2L_ASRAM_SIZE            (0x00030000 - RZG2L_ASRAM_BASE)
-#define RZG2L_SRAM_SIZE             (RZG2L_MSRAM_SIZE + RZG2L_ASRAM_SIZE)
-#define RZG2L_DEVICE_SIZE           (0x15000000 - RZG2L_DEVICE_BASE)
-#define RZG2L_SPIROM_SIZE           (0x30000000 - RZG2L_SPIROM_BASE)
-#define RZG2L_DDR1_SIZE             (RZG2L_DDR2_BASE - RZG2L_DDR1_BASE)
-#define RZG2L_DDR2_SIZE             (RZG2L_DDR3_BASE - RZG2L_DDR2_BASE)
+#define RZV2H_GICD_BASE             (RZV2H_GIC_BASE)				//TODO: KTG: Update
+#define RZV2H_GICR_BASE             (RZV2H_GIC_BASE + 0x00040000)	//TODO: KTG: Update
 
-#define RZG2L_SPIROM_FIP_BASE       (RZG2L_SPIROM_BASE + 0x0001D200)
-#define RZG2L_SPIROM_FIP_SIZE       (0x30000000 - RZG2L_SPIROM_FIP_BASE)
+#define RZV2H_SRAM_BASE             (RZV2H_MSRAM_BASE)
 
-#define RZG2L_EMMC_FIP_BASE         (0x00020000)
-#define RZG2L_EMMC_FIP_SIZE         (0x001DFFFF)
+#define RZV2H_BOOT_ROM_SIZE         (0x00010000 - RZV2H_BOOT_ROM_BASE)		//TODO: KTG: Update
+#define RZV2H_MSRAM_SIZE            (0x00020000 - RZV2H_MSRAM_BASE)			//TODO: KTG: Update
+#define RZV2H_ASRAM_SIZE            (0x00030000 - RZV2H_ASRAM_BASE)			//TODO: KTG: Update
+#define RZV2H_SRAM_SIZE             (RZV2H_MSRAM_SIZE + RZV2H_ASRAM_SIZE)	//TODO: KTG: Update
+#define RZV2H_DEVICE_SIZE           (0x15000000 - RZV2H_DEVICE_BASE)		//TODO: KTG: Update
+#define RZV2H_SPIROM_SIZE           (0x30000000 - RZV2H_SPIROM_BASE)		//TODO: KTG: Update
+#define RZV2H_DDR1_SIZE             (RZV2H_DDR2_BASE - RZV2H_DDR1_BASE)		
+#define RZV2H_DDR2_SIZE             (RZV2H_DDR3_BASE - RZV2H_DDR2_BASE)
+#define RZV2H_DDR3_SIZE             (RZV2H_DDR4_BASE - RZV2H_DDR3_BASE)
+//#define RZV2H_DDR4_SIZE             (xxxxxx - RZV2H_DDR4_BASE)			//TODO: KTG: Update
 
-#define RZG2L_SYC_INCK_HZ           (24000000)
-#define RZG2L_UART_INCK_HZ          (100000000)
-#define RZG2L_UART_BARDRATE         (115200)
+#define RZV2H_SPIROM_FIP_BASE       (RZV2H_SPIROM_BASE + 0x0001D200)		//TODO: KTG: Update
+#define RZV2H_SPIROM_FIP_SIZE       (0x30000000 - RZV2H_SPIROM_FIP_BASE)	//TODO: KTG: Update
+
+#define RZV2H_EMMC_FIP_BASE         (0x00020000)							//TODO: KTG: Update
+#define RZV2H_EMMC_FIP_SIZE         (0x001DFFFF)							//TODO: KTG: Update
+
+#define RZV2H_SYC_INCK_HZ           (24000000)								//TODO: KTG: Update
+#define RZV2H_UART_INCK_HZ          (100000000)								//TODO: KTG: Update	
+#define RZV2H_UART_BARDRATE         (115200)								//TODO: KTG: Update
 
 /* Boot Info base address */
-#define RZG2L_BOOTINFO_BASE         (RZG2L_SRAM_BASE)
+#define RZV2H_BOOTINFO_BASE         (RZV2H_SRAM_BASE)						//TODO: KTG: Update
 
 /* Base address where parameters to BL31 are stored */
-#define PARAMS_BASE                 (RZG2L_SRAM_BASE + 0x0001F000)
-#define PARAMS_SIZE                 (0x1000)
+#define PARAMS_BASE                 (RZV2H_SRAM_BASE + 0x0001F000)			//TODO: KTG: Update
+#define PARAMS_SIZE                 (0x1000)								//TODO: KTG: Update
 
-#endif /* __RZG2L_DEF_H__ */
+#endif /* __RZV2H_DEF_H__ */
