@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -26,7 +26,7 @@
 
 #define PLATFORM_SYSTEM_COUNT	U(1)
 #define PLATFORM_CLUSTER_COUNT	U(1)
-#define PLATFORM_CORE_COUNT		U(2)
+#define PLATFORM_CORE_COUNT		U(4)
 
 #define PLAT_MAX_PWR_LVL		MPIDR_AFFLVL2
 #define PLAT_NUM_PWR_DOMAINS	(PLATFORM_CORE_COUNT + \
