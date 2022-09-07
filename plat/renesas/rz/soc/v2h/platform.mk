@@ -4,10 +4,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
+#Set the platform and SOC specific header files 1st
+PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/v2h/include
+
 include plat/renesas/rz/common/v2h_common.mk
 include plat/renesas/rz/board/${BOARD}/rz_board.mk
-
-PLAT_INCLUDES	+=	-Iplat/renesas/rz/soc/v2h/include
 
 BL2_SOURCES		+=	plat/renesas/rz/soc/v2h/bl2_plat_setup.c		\
 					plat/renesas/rz/soc/v2h/drivers/cpg.c

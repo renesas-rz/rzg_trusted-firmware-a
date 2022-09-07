@@ -5,10 +5,7 @@
  */
 
 #include <stdint.h>
-//KTG: TODO: Sort out path to V2H cpg_regs.
-//#include <cpg_regs.h>
-#include <../../v2h/include/cpg_regs.h>
-//TODO: END
+#include <cpg_regs.h>
 #include <lib/mmio.h>
 #include <drivers/delay_timer.h>
 #include <cpg_opt.h>

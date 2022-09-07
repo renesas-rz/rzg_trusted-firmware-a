@@ -27,7 +27,7 @@ ifndef SPI_FLASH
   SPI_FLASH = MT25QU512ABB
 endif
 
-PLAT_INCLUDES			:=	-Iplat/renesas/rz/common/include								\
+PLAT_INCLUDES			+=	-Iplat/renesas/rz/common/include								\
 							-Iplat/renesas/rz/common/drivers/emmc							\
 							-Iplat/renesas/rz/common/drivers/io								\
 							-Idrivers/renesas/common/io										\
