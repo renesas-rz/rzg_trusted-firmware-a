@@ -68,7 +68,6 @@ BL2_SOURCES				+=	common/desc_image_load.c							\
 							plat/renesas/rz/common/bl2_plat_mem_params_desc.c	\
 							plat/renesas/rz/common/plat_image_load.c			\
 							plat/renesas/rz/common/plat_storage.c				\
-							plat/renesas/rz/common/drivers/pfc.c				\
 							${RZ_TIMER_SOURCES}									\
 							${DYN_CFG_SOURCES}									\
 							${DDR_SOURCES}										\

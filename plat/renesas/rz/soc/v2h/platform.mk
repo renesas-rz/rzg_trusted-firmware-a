@@ -11,7 +11,8 @@ include plat/renesas/rz/common/v2h_common.mk
 include plat/renesas/rz/board/${BOARD}/rz_board.mk
 
 BL2_SOURCES		+=	plat/renesas/rz/soc/v2h/bl2_plat_setup.c		\
-					plat/renesas/rz/soc/v2h/drivers/cpg.c
+					plat/renesas/rz/soc/v2h/drivers/cpg.c			\
+					plat/renesas/rz/soc/v2h/drivers/pfc.c
 
 BL31_SOURCES	+=	plat/renesas/rz/soc/v2h/bl31_plat_setup.c
 
