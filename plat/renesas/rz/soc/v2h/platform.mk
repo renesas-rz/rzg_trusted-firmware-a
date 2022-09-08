@@ -14,6 +14,7 @@ BL2_SOURCES		+=	plat/renesas/rz/soc/v2h/bl2_plat_setup.c		\
 					plat/renesas/rz/soc/v2h/drivers/cpg.c			\
 					plat/renesas/rz/soc/v2h/drivers/pfc.c
 
-BL31_SOURCES	+=	plat/renesas/rz/soc/v2h/bl31_plat_setup.c
+BL31_SOURCES	+=	plat/renesas/rz/soc/v2h/bl31_plat_setup.c		\
+					plat/renesas/rz/soc/v2h/drivers/plat_pm.c
 
 DDR_SOURCES		+=	plat/renesas/rz/soc/v2h/drivers/ddr/ddr_v2h.c

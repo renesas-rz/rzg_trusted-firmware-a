@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,13 +15,15 @@
 #include <cpg_regs.h>
 #include <sys_regs.h>
 #include <rz_private.h>
-#include <rzg2l_def.h>
+#include <rzv2h_def.h>
 #include <common/bl_common.h>
 
 uintptr_t	gp_warm_ep;
 
-static int rzg2l_pwr_domain_on(u_register_t mpidr)
+static int rzv2h_pwr_domain_on(u_register_t mpidr)
 {
+#if 0
+	//TODO: KTG: System registers need update
 	const uint32_t rval[2][2] = {
 		{ SYS_CA55_CFG_RVAL0, SYS_CA55_CFG_RVAH0 },
 		{ SYS_CA55_CFG_RVAL1, SYS_CA55_CFG_RVAH1 }
@@ -34,6 +36,8 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 
 	if (coreid > 1)
 		return PSCI_E_INVALID_PARAMS;
+
+//TODO: KTG: Confirm sequence
 
 	/*  Apply an external reset */
 	if ((mmio_read_32(SYS_LP_CTL2) & 0x1) == 0x1) {
@@ -65,20 +69,21 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 	mmio_write_32(pch[coreid][0], 0x00080000);
 	while ((mmio_read_32(pch[coreid][1]) & 0x1) != 0x0)
 		;
-
+#endif
 	return PSCI_E_SUCCESS;
 }
 
-static void rzg2l_pwr_domain_on_finish(const psci_power_state_t *target_state)
+static void rzv2h_pwr_domain_on_finish(const psci_power_state_t *target_state)
 {
-#if !DEBUG_RZG2L_FPGA
+#if !DEBUG_RZV2H_FPGA
 	plat_gic_pcpu_init();
 	plat_gic_cpuif_enable();
 #endif
 }
 
-static void rzg2l_pwr_domain_off(const psci_power_state_t *state)
+static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
 {
+//TODO: KTG: Confirm sequence
 	unsigned long mpidr = read_mpidr_el1();
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
@@ -104,17 +109,17 @@ static void rzg2l_pwr_domain_off(const psci_power_state_t *state)
 
 }
 
-const plat_psci_ops_t rzg2l_plat_psci_ops = {
-	.pwr_domain_on						= rzg2l_pwr_domain_on,
-	.pwr_domain_on_finish				= rzg2l_pwr_domain_on_finish,
-	.pwr_domain_off						= rzg2l_pwr_domain_off,
+const plat_psci_ops_t rzv2h_plat_psci_ops = {
+	.pwr_domain_on						= rzv2h_pwr_domain_on,
+	.pwr_domain_on_finish				= rzv2h_pwr_domain_on_finish,
+	.pwr_domain_off						= rzv2h_pwr_domain_off,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 			const plat_psci_ops_t **psci_ops)
 {
 	gp_warm_ep = sec_entrypoint;
-	*psci_ops = &rzg2l_plat_psci_ops;
+	*psci_ops = &rzv2h_plat_psci_ops;
 
 	return 0;
 }
