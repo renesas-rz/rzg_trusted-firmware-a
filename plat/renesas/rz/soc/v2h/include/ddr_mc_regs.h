@@ -7,7 +7,7 @@
 #ifndef __DDR_MC_REGS_H__
 #define __DDR_MC_REGS_H__
 
-#include <rzv2h_def.h>
+#include <rz_soc_def.h>
 
 #define DDR_MC_BASE			RZV2H_DDR0_MEMC_BASE
 #define MC_INIT_NUM			(507)

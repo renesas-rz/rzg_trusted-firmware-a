@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <common/desc_image_load.h>
 #include <plat/common/platform.h>
-#include <rzg2l_def.h>
+#include <rz_soc_def.h>
 
 #if (RZG2L_BL33_EXECUTION_EL == 0)
 #define BL33_MODE MODE_EL1

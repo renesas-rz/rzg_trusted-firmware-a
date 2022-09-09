@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <lib/mmio.h>
-#include <rzg2l_def.h>
+#include <rz_soc_def.h>
 
-#define SYC_BASE	RZG2L_SYC_BASE
+#define SYC_BASE	RZ_SOC_SYC_BASE
 
 #define CNTCR		(0x000)
 #define CNTFID0		(0x020)

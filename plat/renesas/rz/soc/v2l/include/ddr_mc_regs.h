@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,7 +7,7 @@
 #ifndef __DDR_MC_REGS_H__
 #define __DDR_MC_REGS_H__
 
-#include <rzg2l_def.h>
+#include <rz_soc_def.h>
 
 #define DDR_MC_BASE			RZG2L_DDR_MEMC_BASE
 #define MC_INIT_NUM			(507)

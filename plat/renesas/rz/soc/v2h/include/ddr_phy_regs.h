@@ -7,7 +7,7 @@
 #ifndef __DDR_PHY_REGS_H__
 #define __DDR_PHY_REGS_H__
 
-#include <rzv2h_def.h>
+#include <rz_soc_def.h>
 
 #define DDR_PHY_BASE		RZV2H_DDR0_PHY_BASE		//TODO: KTG: Confirm
 

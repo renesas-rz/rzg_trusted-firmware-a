@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,7 +11,7 @@
 #include <drivers/arm/gicv3.h>
 #include <plat/common/platform.h>
 
-#include <rzg2l_def.h>
+#include <rz_soc_def.h>
 #include <rz_private.h>
 
 uintptr_t plat_rdistif_base_addrs[PLATFORM_CORE_COUNT];
@@ -23,8 +23,8 @@ static unsigned int plat_mpidr_to_core_pos(u_register_t mpidr)
 }
 
 const gicv3_driver_data_t rzg2l_gic_data = {
-	.gicd_base = RZG2L_GICD_BASE,
-	.gicr_base = RZG2L_GICR_BASE,
+	.gicd_base = RZ_SOC_GICD_BASE,
+	.gicr_base = RZ_SOC_GICR_BASE,
 	.rdistif_num = PLATFORM_CORE_COUNT,
 	.rdistif_base_addrs = plat_rdistif_base_addrs,
 	.mpidr_to_core_pos = plat_mpidr_to_core_pos,

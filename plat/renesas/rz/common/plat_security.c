@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,7 +8,7 @@
 #include <lib/mmio.h>
 #include <common/debug.h>
 
-#include "rzg2l_def.h"
+#include "rz_soc_def.h"
 #include "sys_regs.h"
 #include "plat_tzc_def.h"
 

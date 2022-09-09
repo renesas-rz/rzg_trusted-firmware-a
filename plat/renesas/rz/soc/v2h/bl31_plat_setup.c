@@ -14,7 +14,7 @@
 #include <scifa.h>
 #include <plat_tzc_def.h>
 #include <rz_private.h>
-#include <rzv2h_def.h>
+#include <rz_soc_def.h>
 
 static const mmap_region_t rzv2h_mmap[] = {
 	MAP_REGION_FLAT(RZV2H_SRAM_BASE, RZV2H_SRAM_SIZE,

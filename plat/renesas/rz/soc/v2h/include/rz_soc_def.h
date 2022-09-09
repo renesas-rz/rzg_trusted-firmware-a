@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __RZV2H_DEF_H__
-#define __RZV2H_DEF_H__
+#ifndef __RZ_SOC_DEF_H__
+#define __RZ_SOC_DEF_H__
 
 #define RZV2H_BOOT_ROM_BASE         (0x00000000)
 #define RZV2H_MSRAM_BASE            (0x00010000)	//TODO: KTG: Update
@@ -30,8 +30,8 @@
 #define RZV2H_DDR0_MEMC_BASE        (0x1E000000)
 #define RZV2H_DDR1_MEMC_BASE        (0x1E010000)
 
-#define RZG2L_DDR_MEMC_BASE 		(0x1E000000)	//TODO: KTG: Remove, temporary scaffold code
-#define RZG2L_DDR_PHY_BASE			(0x1A000000)	//TODO: KTG: Remove, temporary scaffold code
+#define RZV2H_DDR_MEMC_BASE 		(0x1E000000)	//TODO: KTG: Remove, temporary scaffold code
+#define RZV2H_DDR_PHY_BASE			(0x1A000000)	//TODO: KTG: Remove, temporary scaffold code
 
 #define RZV2H_OTP_BASE              (0x10450000)
 #define RZV2H_GIC_BASE              (0x14900000)
@@ -71,8 +71,30 @@
 /* Boot Info base address */
 #define RZV2H_BOOTINFO_BASE         (RZV2H_SRAM_BASE)						//TODO: KTG: Update
 
+/* Definitions used in common code */
+
 /* Base address where parameters to BL31 are stored */
 #define PARAMS_BASE                 (RZV2H_SRAM_BASE + 0x0001F000)			//TODO: KTG: Update
 #define PARAMS_SIZE                 (0x1000)								//TODO: KTG: Update
 
-#endif /* __RZV2H_DEF_H__ */
+#define RZ_SOC_BOOTINFO_BASE		RZV2H_BOOTINFO_BASE
+
+#define RZ_SOC_SYC_BASE				RZV2H_SYC_BASE
+
+#define RZ_SOC_GICD_BASE			RZV2H_GICD_BASE
+#define RZ_SOC_GICR_BASE			RZV2H_GICR_BASE
+
+#define RZ_SOC_TZC_ASRAM_BASE		RZV2H_TZC_ASRAM_BASE
+#define RZ_SOC_TZC_MSRAM_BASE		RZV2H_TZC_MSRAM_BASE
+
+#define RZ_SOC_SPIROM_FIP_BASE		RZV2H_SPIROM_FIP_BASE
+#define RZ_SOC_SPIROM_FIP_SIZE		RZV2H_SPIROM_FIP_SIZE
+
+#define RZ_SOC_EMMC_FIP_BASE		RZV2H_EMMC_FIP_BASE
+#define RZ_SOC_EMMC_FIP_SIZE		RZV2H_EMMC_FIP_SIZE
+
+#define RZ_SOC_SYSC_BASE_DEVID 		(RZV2H_SYSC_BASE + 0xA04)
+#define RZ_SOC_OTP_BASE_DEVID		(RZV2H_OTP_BASE + 0x1178)
+#define RZ_SOC_OTP_BASE_CHIPID		(RZV2H_OTP_BASE + 0x1140)
+
+#endif /* __RZ_SOC_DEF_H__ */

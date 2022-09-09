@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,7 +15,7 @@
 #include <cpg_regs.h>
 #include <sys_regs.h>
 #include <rz_private.h>
-#include <rzg2l_def.h>
+#include <rz_soc_def.h>
 #include <common/bl_common.h>
 
 uintptr_t	gp_warm_ep;

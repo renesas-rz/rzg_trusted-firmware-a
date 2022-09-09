@@ -15,7 +15,7 @@
 #include <cpg_regs.h>
 #include <sys_regs.h>
 #include <rz_private.h>
-#include <rzv2h_def.h>
+#include <rz_soc_def.h>
 #include <common/bl_common.h>
 
 uintptr_t	gp_warm_ep;

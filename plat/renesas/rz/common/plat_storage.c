@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,7 +15,7 @@
 #include <lib/mmio.h>
 #include <tools_share/firmware_image_package.h>
 
-#include <rzg2l_def.h>
+#include <rz_soc_def.h>
 #include <sys.h>
 #include <spi_multi.h>
 #include <emmc_def.h>
@@ -27,13 +27,13 @@ static uintptr_t emmcdrv_dev_handle;
 static uintptr_t boot_io_drv_id;
 
 static const io_block_spec_t spirom_block_spec = {
-	.offset = RZG2L_SPIROM_FIP_BASE,
-	.length = RZG2L_SPIROM_FIP_SIZE,
+	.offset = RZ_SOC_SPIROM_FIP_BASE,
+	.length = RZ_SOC_SPIROM_FIP_SIZE,
 };
 
 static const io_drv_spec_t emmc_block_spec = {
-	.offset = RZG2L_EMMC_FIP_BASE,
-	.length = RZG2L_EMMC_FIP_SIZE,
+	.offset = RZ_SOC_EMMC_FIP_BASE,
+	.length = RZ_SOC_EMMC_FIP_SIZE,
 };
 
 static const io_uuid_spec_t bl31_file_spec = {
@@ -217,7 +217,7 @@ void rz_io_setup(void)
 	const io_dev_connector_t *rzg2l;
 	uint16_t boot_dev;
 
-	boot_dev = *((uint16_t *)RZG2L_BOOTINFO_BASE) & MASK_BOOTM_DEVICE;
+	boot_dev = *((uint16_t *)RZ_SOC_BOOTINFO_BASE) & MASK_BOOTM_DEVICE;
 
 	boot_io_drv_id = FIP_IMAGE_ID;
 

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __RZG2L_DEF_H__
-#define __RZG2L_DEF_H__
+#ifndef __RZ_SOC_DEF_H__
+#define __RZ_SOC_DEF_H__
 
 #define RZG2L_BOOT_ROM_BASE         (0x00000000)
 #define RZG2L_MSRAM_BASE            (0x00010000)
@@ -59,8 +59,30 @@
 /* Boot Info base address */
 #define RZG2L_BOOTINFO_BASE         (RZG2L_SRAM_BASE)
 
+/* Definitions used in common code */
+
 /* Base address where parameters to BL31 are stored */
 #define PARAMS_BASE                 (RZG2L_SRAM_BASE + 0x0001F000)
 #define PARAMS_SIZE                 (0x1000)
 
-#endif /* __RZG2L_DEF_H__ */
+#define RZ_SOC_BOOTINFO_BASE		RZG2L_BOOTINFO_BASE
+
+#define RZ_SOC_SYC_BASE				RZG2L_SYC_BASE
+
+#define RZ_SOC_GICD_BASE			RZG2L_GICD_BASE
+#define RZ_SOC_GICR_BASE			RZG2L_GICR_BASE
+
+#define RZ_SOC_TZC_ASRAM_BASE		RZG2L_TZC_ASRAM_BASE
+#define RZ_SOC_TZC_MSRAM_BASE		RZG2L_TZC_MSRAM_BASE
+
+#define RZ_SOC_SPIROM_FIP_BASE		RZG2L_SPIROM_FIP_BASE
+#define RZ_SOC_SPIROM_FIP_SIZE		RZG2L_SPIROM_FIP_SIZE
+
+#define RZ_SOC_EMMC_FIP_BASE		RZG2L_EMMC_FIP_BASE
+#define RZ_SOC_EMMC_FIP_SIZE		RZG2L_EMMC_FIP_SIZE
+
+#define RZ_SOC_SYSC_BASE_DEVID 		(RZG2L_SYSC_BASE + 0xA04)
+#define RZ_SOC_OTP_BASE_DEVID		(RZG2L_OTP_BASE + 0x1178)
+#define RZ_SOC_OTP_BASE_CHIPID		(RZG2L_OTP_BASE + 0x1140)
+
+#endif /* __RZ_SOC_DEF_H__ */

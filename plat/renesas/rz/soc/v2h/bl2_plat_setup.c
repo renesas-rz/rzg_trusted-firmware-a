@@ -21,7 +21,7 @@
 #include <ddr.h>
 #include <sys_regs.h>
 #include <plat_tzc_def.h>
-#include <rzv2h_def.h>
+#include <rz_soc_def.h>
 #include <rz_private.h>
 
 static const mmap_region_t rzv2h_mmap[] = {
