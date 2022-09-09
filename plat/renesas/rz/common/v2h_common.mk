@@ -21,6 +21,12 @@ WA_RZG2L_GIC64BIT				:= 1
 $(eval $(call add_define,WA_RZG2L_GIC64BIT))
 
 # Enable workarounds for selected Cortex-A55 erratas.
+ERRATA_A55_768277				:= 1
+ERRATA_A55_778703 				:= 1
+ERRATA_A55_798797 				:= 1
+ERRATA_A55_846532 				:= 1
+ERRATA_A55_903758 				:= 1
+ERRATA_A55_1221012				:= 1
 ERRATA_A55_1530923				:= 1
 
 ifndef SPI_FLASH
