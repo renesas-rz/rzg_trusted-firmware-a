@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2020-2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -51,6 +51,9 @@
 
 #define RZG2L_EMMC_FIP_BASE         (0x00020000)
 #define RZG2L_EMMC_FIP_SIZE         (0x001DFFFF)
+
+#define RZG2L_SD_FIP_BASE           (0x00010000)
+#define RZG2L_SD_FIP_SIZE           (0x001DFFFF)
 
 #define RZG2L_SYC_INCK_HZ           (24000000)
 #define RZG2L_UART_INCK_HZ          (100000000)

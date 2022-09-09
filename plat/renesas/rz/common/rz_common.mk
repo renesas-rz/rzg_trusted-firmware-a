@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, Renesas Electronics Corporation. All rights reserved.
+# Copyright (c) 2021-2022, Renesas Electronics Corporation. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -32,7 +32,8 @@ PLAT_INCLUDES		:=	-Iplat/renesas/rz/common/include								\
 						-Iplat/renesas/rz/common/drivers/io								\
 						-Idrivers/renesas/common/io										\
 						-Iplat/renesas/rz/common/include/drivers/spi_multi              \
-						-Iplat/renesas/rz/common/include/drivers/spi_multi/${SPI_FLASH}
+						-Iplat/renesas/rz/common/include/drivers/spi_multi/${SPI_FLASH} \
+						-Iplat/renesas/rz/common/drivers/sd								\
 
 RZ_TIMER_SOURCES	:=	drivers/delay_timer/generic_delay_timer.c		\
 						drivers/delay_timer/delay_timer.c
@@ -41,6 +42,19 @@ DDR_SOURCES		:= plat/renesas/rz/common/drivers/ddr/ddr.c
 
 SPI_MULTI_SOURCE := plat/renesas/rz/common/drivers/spi_multi/spi_multi.c					\
 					plat/renesas/rz/common/drivers/spi_multi/${SPI_FLASH}/spi_multi_device.c
+
+SD_SOURCES		:= plat/renesas/rz/common/drivers/sd/boot_esddev.c		\
+				   plat/renesas/rz/common/drivers/sd/sd_init.c			\
+				   plat/renesas/rz/common/drivers/sd/sd_mount.c			\
+				   plat/renesas/rz/common/drivers/sd/sd_util.c			\
+				   plat/renesas/rz/common/drivers/sd/sd_cd.c			\
+				   plat/renesas/rz/common/drivers/sd/sd_cmd.c			\
+				   plat/renesas/rz/common/drivers/sd/sd_int.c			\
+				   plat/renesas/rz/common/drivers/sd/sd_trns.c			\
+				   plat/renesas/rz/common/drivers/sd/sd_read.c			\
+				   plat/renesas/rz/common/drivers/sd/sd_main.c			\
+				   plat/renesas/rz/common/drivers/io/io_sddrv.c
+
 
 BL2_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 					${RZ_TIMER_SOURCES}									\
@@ -67,7 +81,8 @@ BL2_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 					plat/renesas/rz/common/drivers/pfc.c				\
 					plat/renesas/rz/common/drivers/cpg.c				\
 					${DDR_SOURCES}										\
-					${SPI_MULTI_SOURCE}
+					${SPI_MULTI_SOURCE}									\
+					${SD_SOURCES}
 
 # Include GICv3 driver files
 GICV3_IMPL		:= GIC600
