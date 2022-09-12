@@ -74,12 +74,6 @@ supporting tools:
     source code, as it may not be available in the default package repositories.
     Please refer to the OpenSSL project documentation for more information.
 
-   .. note::
-
-    OpenSSL 3.0 has to be built from source code, as it's not available in
-    the default package repositories in recent Ubuntu versions. Please refer
-    to the OpenSSL project documentation for more information.
-
 The following libraries are required for Trusted Board Boot and Measured Boot
 support:
 
