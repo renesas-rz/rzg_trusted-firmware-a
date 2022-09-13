@@ -7,7 +7,7 @@
 #ifndef __CPG_REGS_H__
 #define __CPG_REGS_H__
 
-#define	CPG_BASE					(0x10420000)
+#include <rz_soc_def.h>				/* Get the CPG base address */
 
 #define	CPG_PLLCM33_STBY			(CPG_BASE + 0x000)	/* PLLCM33 standby control register */
 #define	CPG_PLLCM33_CLK1			(CPG_BASE + 0x004)	/* PLLCM33 output clock setting register 1 */
