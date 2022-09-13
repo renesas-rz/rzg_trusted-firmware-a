@@ -84,6 +84,7 @@ static void rzv2h_pwr_domain_on_finish(const psci_power_state_t *target_state)
 static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
 {
 //TODO: KTG: Confirm sequence
+#if 0
 	unsigned long mpidr = read_mpidr_el1();
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
@@ -102,7 +103,7 @@ static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
 	/* Enter the Cortex-A55 Sleep Mode */
 	/* Start the Cortex-A55 Sleep Mode. */
 	mmio_write_32(SYS_LP_CTL2, 0x00000001);
-
+#endif
 	/* Issue Barrier instruction */
 	isb();
 	dsb();
