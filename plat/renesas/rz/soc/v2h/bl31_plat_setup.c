@@ -38,7 +38,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 
 	/* initialize console driver */
 	ret = console_rz_register(
-							RZV2H_SCIF0_BASE,
+							RZV2H_SCIF_BASE,
 							RZV2H_UART_INCK_HZ,
 							RZV2H_UART_BARDRATE,
 							&rzv2h_bl31_console);

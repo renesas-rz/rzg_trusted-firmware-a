@@ -101,7 +101,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	/* initialize console driver */
 	ret = console_rz_register(
-							RZV2H_SCIF0_BASE,
+							RZV2H_SCIF_BASE,
 							RZV2H_UART_INCK_HZ,
 							RZV2H_UART_BARDRATE,
 							&rzv2h_bl2_console);

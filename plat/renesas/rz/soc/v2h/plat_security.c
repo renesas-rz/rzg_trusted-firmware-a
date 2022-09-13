@@ -124,8 +124,8 @@ static void bl2_security_setup(void)
 	};
 
 	/* initialize TZC-400 */
-	plat_tzc400_setup(RZV2H_TZC_DDR00_BASE, &ddr_tzc_regions[0]);
-	plat_tzc400_setup(RZV2H_TZC_SPI_BASE, NULL);
+	plat_tzc400_setup(RZV2H_TZC400_DDR00_BASE, &ddr_tzc_regions[0]);
+	plat_tzc400_setup(RZV2H_TZC400_xSPI_BASE, NULL);
 
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
