@@ -576,6 +576,12 @@ u_register_t psci_smc_handler(uint32_t smc_fid,
 			ret = (u_register_t)psci_system_suspend(x1, x2);
 			break;
 
+#if PSCI_OS_INIT_MODE
+		case PSCI_SET_SUSPEND_MODE:
+			ret = (u_register_t)psci_set_suspend_mode(x1);
+			break;
+#endif
+
 #if ENABLE_PSCI_STAT
 		case PSCI_STAT_RESIDENCY_AARCH64:
 			ret = psci_stat_residency(x1, (unsigned int) x2);
