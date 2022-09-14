@@ -226,4 +226,14 @@
 #define	CPG_RSV5					(CPG_BASE + 0xE10)	/* Booking register 5 */
 #define	CPG_RSV6					(CPG_BASE + 0xE14)	/* Booking register 6 */
 
+
+#define CPG_LP_CTL1_STBY					(0x00000001)
+#define CPG_LP_CTL1_STBY_MSK				(0x00000001)
+#define CPG_LP_CTL1_CA55SLEEP_REQ			(0x00000100)
+#define CPG_LP_CTL1_CA55SLEEP_REQ_MSK		(0x00000F00)
+#define CPG_LP_CTL1_STBY_CA55ST				(0x00010000)
+#define CPG_LP_CTL1_STBY_CA55ST_MSK			(0x00010000)
+#define CPG_LP_CTL1_CA55SLEEP_ACK			(0x01000000)
+#define CPG_LP_CTL1_CA55SLEEP_ACK_MSK		(0x0F000000)
+
 #endif	/* __CPG_REGS_H__ */
