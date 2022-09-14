@@ -2771,6 +2771,10 @@ allocated in a special area if it cannot fit in the platform's global static
 data, for example in DRAM. The Distributor can then be powered down using an
 implementation-defined sequence.
 
+If the build option ``PSCI_OS_INIT_MODE`` is enabled, the generic code expects
+the platform to return PSCI_E_SUCCESS on success, or either PSCI_E_DENIED or
+PSCI_E_INVALID_PARAMS as appropriate for any invalid requests.
+
 plat_psci_ops.pwr_domain_pwr_down_wfi()
 .......................................
 
