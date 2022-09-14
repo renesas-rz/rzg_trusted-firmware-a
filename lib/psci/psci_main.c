@@ -567,6 +567,10 @@ u_register_t psci_smc_handler(uint32_t smc_fid,
 			ret = psci_migrate_info_up_cpu();
 			break;
 
+		case PSCI_FEATURES:
+			ret = (u_register_t)psci_features(x1);
+			break;
+
 		case PSCI_NODE_HW_STATE_AARCH64:
 			ret = (u_register_t)psci_node_hw_state(
 					x1, (unsigned int) x2);
