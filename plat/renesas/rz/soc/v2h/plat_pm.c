@@ -22,20 +22,25 @@ uintptr_t	gp_warm_ep;
 
 static int rzv2h_pwr_domain_on(u_register_t mpidr)
 {
-#if 0
-	//TODO: KTG: System registers need update
-	const uint32_t rval[2][2] = {
-		{ SYS_CA55_CFG_RVAL0, SYS_CA55_CFG_RVAH0 },
-		{ SYS_CA55_CFG_RVAL1, SYS_CA55_CFG_RVAH1 }
+
+	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
+		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
+		{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
+		{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
+		{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
 	};
+#if 0
 	const uint32_t pch[2][2] = {
 		{ CPG_CORE0_PCHCTL, CPG_CORE0_PCHMON },
 		{ CPG_CORE1_PCHCTL, CPG_CORE1_PCHMON }
 	};
+#endif
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
-	if (coreid > 1)
+	if (coreid >= PLATFORM_CORE_COUNT)
 		return PSCI_E_INVALID_PARAMS;
+#if 0
+
 
 //TODO: KTG: Confirm sequence
 
@@ -48,11 +53,11 @@ static int rzv2h_pwr_domain_on(u_register_t mpidr)
 		while ((mmio_read_32(pch[coreid][1]) & 0x1) != 0x0)
 			;
 	}
-
+#endif
 	/*  Start the core */
 	mmio_write_32(rval[coreid][0], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
 	mmio_write_32(rval[coreid][1], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
-
+#if 0
 	/* Assert PORESET */
 	mmio_write_32(CPG_RST_CA55, (0x00010000 << coreid));
 	while ((mmio_read_32(CPG_RSTMON_CA55) & (0x1 << coreid)) == 0x0)
@@ -83,6 +88,18 @@ static void rzv2h_pwr_domain_on_finish(const psci_power_state_t *target_state)
 
 static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
 {
+	#if 0
+	//TODO: KTG: CPG doc 'V2H_LP_Control_Notes_all_20220617.xlsx' tab 'CA55 Sleep(V2H)' indicates something like the 
+	//			below except a WFI/WFe instruction is required. Also, function is power down but sequence below (and
+	//			for RZ/G2L code below) is for sleep
+
+	/* Request transition to Cortex-A55 CoreX Sleep Mode */
+	mmio_write_32(CPG_LP_CTL1, (CPG_LP_CTL1_CA55SLEEP_REQ << coreid));	
+	/* Prevent interrupts from spuriously waking up this cpu */
+	plat_gic_cpuif_disable();
+	//TODO: KTG: a WFI or WFE instruction should be below
+#endif
+
 //TODO: KTG: Confirm sequence
 #if 0
 	unsigned long mpidr = read_mpidr_el1();
