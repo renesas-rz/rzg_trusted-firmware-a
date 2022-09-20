@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -882,17 +882,25 @@ void cpg_reset_ddr_mc(void)
 	udelay(1);
 }
 
+static void cpu_cpg_setup(void)
+{
+	while ((mmio_read_32(CPG_CLKSTATUS) & CLKSTATUS_DIVPL1_STS) != 0x00000000)
+		;
+	mmio_write_32(CPG_PL1_DDIV, PL1_DDIV_DIVPL1_SET_WEN | PL1_DDIV_DIVPL1_SET_1_1);
+	while ((mmio_read_32(CPG_CLKSTATUS) & CLKSTATUS_DIVPL1_STS) != 0x00000000)
+		;
+}
+
 void cpg_early_setup(void)
 {
+	cpu_cpg_setup();
 	cpg_ctrl_clkrst(&early_setup_tbl[0], ARRAY_SIZE(early_setup_tbl));
 }
 
 void cpg_wdtrst_sel_setup(void)
 {
 	uint32_t reg;
-
 	reg = mmio_read_32(CPG_WDTRST_SEL);
-
 	reg |=
 		WDTRST_SEL_WDTRSTSEL0 | WDTRST_SEL_WDTRSTSEL0_WEN |
 		WDTRST_SEL_WDTRSTSEL1 | WDTRST_SEL_WDTRSTSEL1_WEN |

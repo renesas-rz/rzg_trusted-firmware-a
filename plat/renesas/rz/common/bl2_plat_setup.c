@@ -15,6 +15,7 @@
 #include <plat/common/common_def.h>
 #include <lib/mmio.h>
 #include <pfc.h>
+#include <cpg_regs.h>
 #include <cpg.h>
 #include <syc.h>
 #include <scifa.h>
@@ -23,6 +24,7 @@
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
 #include <rz_private.h>
+#include <drivers/delay_timer.h>
 
 static const mmap_region_t rzg2l_mmap[] = {
 #if TRUSTED_BOARD_BOOT
@@ -42,7 +44,7 @@ static const mmap_region_t rzg2l_mmap[] = {
 	{0}
 };
 
-static console_t rzg2l_bl2_console;
+static console_t rzg2l_bl31_console;
 
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
@@ -99,16 +101,35 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	/* setup Clock and Reset */
 	cpg_setup();
 
+	/* USB 2.0 Phy workaround for RZ/G2L,LC	*/
+	if (((mmio_read_32(SYS_LSI_DEVID) & 0x0FFFFFFF) == 0x841C447) &&
+	    ((mmio_read_32(0x11861124) & 0xf00) == 0x700) &&
+	    ((mmio_read_32(0x11861128) & 0xf00) == 0x700))
+	{
+		mmio_write_32(CPG_CLKON_USB, 0x000F000F);
+		while ((mmio_read_32(CPG_CLKMON_USB) & 0x0000000F) != 0x0000000F)
+			;
+		mmio_write_32(CPG_RST_USB, 0x000F000F);
+		while ((mmio_read_32(CPG_RSTMON_USB) & 0x0000000F) != 0x00000000)
+			;
+		mmio_write_32(0x11c40014, 0x00021506);
+		mmio_write_32(0x11c40010, 0x01021506);
+
+		mmio_write_32(CPG_CLKON_USB, 0x000F0000);
+		while ((mmio_read_32(CPG_CLKMON_USB) & 0x00000000) != 0x00000000)
+			;
+	}
+
 	/* initialize console driver */
 	ret = console_rz_register(
 							RZG2L_SCIF0_BASE,
 							RZG2L_UART_INCK_HZ,
 							RZG2L_UART_BARDRATE,
-							&rzg2l_bl2_console);
+							&rzg2l_bl31_console);
 	if (!ret)
 		panic();
 
-	console_set_scope(&rzg2l_bl2_console,
+	console_set_scope(&rzg2l_bl31_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 }
 

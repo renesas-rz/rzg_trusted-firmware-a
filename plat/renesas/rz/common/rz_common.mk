@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, Renesas Electronics Corporation. All rights reserved.
+# Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -92,6 +92,10 @@ include lib/xlat_tables_v2/xlat_tables.mk
 PLAT_BL_COMMON_SOURCES	+=	${XLAT_TABLES_LIB_SRCS}					\
 							plat/renesas/rz/common/plat_rz_common.c	\
 							plat/renesas/rz/common/drivers/scifa.S
+
+ifneq (${ENABLE_STACK_PROTECTOR},0)
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/common/rz_stack_protector.c
+endif
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 
