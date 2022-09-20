@@ -98,10 +98,18 @@ static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
 	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
 }
 
+static void __dead2 rzv2h_system_off(void)
+{
+	wfi();
+	ERROR("RZG System Off: operation not handled.\n");
+	panic();
+}
+
 const plat_psci_ops_t rzv2h_plat_psci_ops = {
 	.pwr_domain_on						= rzv2h_pwr_domain_on,
 	.pwr_domain_on_finish				= rzv2h_pwr_domain_on_finish,
 	.pwr_domain_off						= rzv2h_pwr_domain_off,
+	.system_off							= rzv2h_system_off,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
