@@ -88,43 +88,14 @@ static void rzv2h_pwr_domain_on_finish(const psci_power_state_t *target_state)
 
 static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
 {
-	#if 0
-	//TODO: KTG: CPG doc 'V2H_LP_Control_Notes_all_20220617.xlsx' tab 'CA55 Sleep(V2H)' indicates something like the 
-	//			below except a WFI/WFe instruction is required. Also, function is power down but sequence below (and
-	//			for RZ/G2L code below) is for sleep
+	unsigned long mpidr = read_mpidr_el1();
+	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
 	/* Request transition to Cortex-A55 CoreX Sleep Mode */
 	mmio_write_32(CPG_LP_CTL1, (CPG_LP_CTL1_CA55SLEEP_REQ << coreid));	
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
-	//TODO: KTG: a WFI or WFE instruction should be below
-#endif
-
-//TODO: KTG: Confirm sequence
-#if 0
-	unsigned long mpidr = read_mpidr_el1();
-	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
-
-	/* Prevent interrupts from spuriously waking up this cpu */
-	plat_gic_cpuif_disable();
-
-	/*  Enable the transition request interrupt to the Cortex-A55 Sleep Mode */
-	mmio_write_32(SYS_LP_CTL6, (0x00000100 << coreid));
-
-	/* Transition request to Cortex-A55 CoreX Sleep Mode */
-	mmio_write_32(SYS_LP_CTL1, (0x00000100 << coreid));
-
-	/* Confirm that the processing on the Cortex-M33 side is completed */
-	while ((mmio_read_32(SYS_LP_CTL5) & (0x00000100 << coreid)) != (0x00000100 << coreid))
-		;
-	/* Enter the Cortex-A55 Sleep Mode */
-	/* Start the Cortex-A55 Sleep Mode. */
-	mmio_write_32(SYS_LP_CTL2, 0x00000001);
-#endif
-	/* Issue Barrier instruction */
-	isb();
-	dsb();
-
+	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
 }
 
 const plat_psci_ops_t rzv2h_plat_psci_ops = {
