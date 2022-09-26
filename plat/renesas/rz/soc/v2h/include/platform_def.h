@@ -49,7 +49,7 @@
 #else
 #define BL2_BASE				(0x08104000)
 #endif
-#define BL2_LIMIT				(0x0811F000)
+#define BL2_LIMIT				(0x08180000)
 
 /*******************************************************************************
  * BL31 specific defines.
