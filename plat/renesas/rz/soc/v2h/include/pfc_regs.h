@@ -433,23 +433,22 @@ typedef struct {
 typedef struct {
 	int			flg;
 	uintptr_t	reg;
-	uint16_t	val;
-} PFC_REG_UINT16;
-
-typedef struct {
-	int			flg;
-	uintptr_t	reg;
 	uint32_t	val;
 } PFC_REG_UINT32;
 
 typedef struct {
+	int			flg;
+	uintptr_t	reg;
+	uint64_t	val;
+} PFC_REG_UINT64;
+
+typedef struct {
 	PFC_REG_UINT8	pmc;
 	PFC_REG_UINT32	pfc;
-	PFC_REG_UINT32	iolh;
-	PFC_REG_UINT32	pupd;
-	PFC_REG_UINT32	sr;
-	PFC_REG_UINT32	ien;
+	PFC_REG_UINT64	iolh;
+	PFC_REG_UINT64	pupd;
+	PFC_REG_UINT64	sr;
+	PFC_REG_UINT64	ien;
 } PFC_REGS;
-
 
 #endif	/* __PFC_REGS_H__ */
