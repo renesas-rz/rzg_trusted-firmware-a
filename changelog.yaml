@@ -801,6 +801,9 @@ subsections:
       - title: Firmware Handoff
         scope: handoff
 
+      - title: Semihosting
+        scope: semihosting
+
   - title: Drivers
 
     subsections:
