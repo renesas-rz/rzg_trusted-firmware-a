@@ -44,7 +44,9 @@
 
 #define RZV2H_GIC_BASE				(0x14900000)
 
-#define RZV2H_SD0_BASE				(0x15C00000)	//TODO: KTG: Confirm
+#define RZV2H_SD0_BASE				(0x15C00000)
+#define RZV2H_SD1_BASE				(0x15C10000)
+#define RZV2H_SD2_BASE				(0x15C20000)
 
 #define RZV2H_DDR0_PHY_BASE			(0x1A000000)
 #define RZV2H_DDR1_PHY_BASE			(0x1C000000)
@@ -118,5 +120,10 @@
 #define SYS_BASE					RZV2H_SYSC_BASE
 #define PFC_BASE					RZV2H_GPIO_BASE
 #define CPG_BASE					RZV2H_CPG_BASE
+
+/* eMMC registers */
+#define MMC0_SD_BASE				RZV2H_SD0_BASE
+#define MMC1_SD_BASE				RZV2H_SD1_BASE
+#define MMC2_SD_BASE				RZV2H_SD2_BASE
 
 #endif /* __RZ_SOC_DEF_H__ */

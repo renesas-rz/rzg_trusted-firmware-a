@@ -27,6 +27,7 @@
 #define RZG2L_OTP_BASE              (0x11860000)
 #define RZG2L_GIC_BASE              (0x11900000)
 #define RZG2L_SD0_BASE              (0x11C00000)
+#define RZG2L_SD1_BASE              (0x11C10000)
 #define RZG2L_SPIROM_BASE           (0x20000000)
 #define RZG2L_DDR1_BASE             (0x40000000)
 #define RZG2L_DDR2_BASE             (0x80000000)
@@ -80,6 +81,10 @@
 
 #define RZ_SOC_EMMC_FIP_BASE		RZG2L_EMMC_FIP_BASE
 #define RZ_SOC_EMMC_FIP_SIZE		RZG2L_EMMC_FIP_SIZE
+
+/* eMMC registers */
+#define MMC0_SD_BASE				RZG2L_SD0_BASE
+#define MMC1_SD_BASE				RZG2L_SD1_BASE
 
 #define RZ_SOC_SYSC_BASE_DEVID 		(RZG2L_SYSC_BASE + 0xA04)
 #define RZ_SOC_OTP_BASE_DEVID		(RZG2L_OTP_BASE + 0x1178)
