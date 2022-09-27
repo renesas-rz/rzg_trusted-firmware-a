@@ -1609,7 +1609,8 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 	uint32_t cmp;
 
 	for (i = 0; i < num; i++, array++) {
-		mmio_write_32(array->reg.addr, array->reg.val);
+		/* CPG registers can be written multiple multiple times so read current value and 'or' in new data */
+		mmio_write_32(array->reg.addr, (array->reg.val | mmio_read_32(array->reg.addr)));
 
 		/*
 		 * This generic function needs to handle case where Montitor for clock
@@ -1617,7 +1618,7 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 		 * it is looking for a LOW to indicate reset release.
 		 */
 		mask = array->mon.val;
-		cmp  = array->mon.val;
+		cmp  = mask;
 		if (array->type == CPG_T_RST)
 			cmp = ~cmp;
 
