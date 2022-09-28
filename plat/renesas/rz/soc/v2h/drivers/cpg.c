@@ -10,11 +10,15 @@
 #include <drivers/delay_timer.h>
 #include <cpg_opt.h>
 
-#define	CPG_OFF			(0)
-#define	CPG_ON			(1)
+#define	CPG_OFF							(0)
+#define	CPG_ON							(1)
 
-#define CPG_T_CLK		(0)
-#define CPG_T_RST		(1)
+#define CPG_T_CLK						(0)
+#define CPG_T_RST						(1)
+
+/* Read-Modify-Write given MSTOP register to remove modeule stops of bits in given 'val' */
+#define REMOVE_MSTOPS_RMW(reg, val)		mmio_write_32((reg), mmio_read_32((reg)) & (~(val)))
+
 
 typedef struct {
 	uintptr_t addr;
@@ -1771,6 +1775,88 @@ static void cpg_div_sel_dynamic_setup(void)
 	cpg_div_sel_setup(cpg_dynamic_select_tbl, ARRAY_SIZE(cpg_dynamic_select_tbl));
 }
 #endif
+
+static void cpg_mstop_setup(void)
+{
+	REMOVE_MSTOPS_RMW(CPG_BUS_1_MSTOP,    CPG_BUS_1_MSTOP_TMZ400_ACPU_SRAM
+										| CPG_BUS_1_MSTOP_TZC400_PCIe1
+										| CPG_BUS_1_MSTOP_TZC400_ACPU_RCPU
+										| CPG_BUS_1_MSTOP_TZC400_PCIe0);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_2_MSTOP,    CPG_BUS_2_MSTOP_A_DMAC
+										| CPG_BUS_2_MSTOP_TZC400_DDR0_0
+										| CPG_BUS_2_MSTOP_TZC400_DDR0_1
+										| CPG_BUS_2_MSTOP_TZC400_DDR1_0
+										| CPG_BUS_2_MSTOP_TZC400_DDR1_1
+										| CPG_BUS_2_MSTOP_TZC400_R8
+										| CPG_BUS_2_MSTOP_TZC400_A55
+										| CPG_BUS_2_MSTOP_TZC400_PCIe
+										| CPG_BUS_2_MSTOP_ACPU_OSTM0
+										| CPG_BUS_2_MSTOP_ACPU_OSTM1
+										| CPG_BUS_2_MSTOP_TSU1);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_3_MSTOP,    CPG_BUS_3_MSTOP_SYC
+										| CPG_BUS_3_MSTOP_ACPU_SRAM
+										| CPG_BUS_3_MSTOP_ACPU_DMAC0
+										| CPG_BUS_3_MSTOP_ACPU_DMAC1
+										| CPG_BUS_3_MSTOP_GPU
+										| CPG_BUS_3_MSTOP_GIC_GIC
+										| CPG_BUS_3_MSTOP_ADC
+										| CPG_BUS_3_MSTOP_RTC
+										| CPG_BUS_3_MSTOP_SCIF);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_4_MSTOP,    CPG_BUS_4_MSTOP_XSPI_TZC400
+										| CPG_BUS_4_MSTOP_GPI0
+										| CPG_BUS_4_MSTOP_CGP
+										| CPG_BUS_4_MSTOP_SYSC
+										| CPG_BUS_4_MSTOP_TZC400_M33
+										| CPG_BUS_4_MSTOP_TZC400_XSPI
+										| CPG_BUS_4_MSTOP_MHU);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_5_MSTOP,    CPG_BUS_5_MSTOP_TSU0
+										| CPG_BUS_5_MSTOP_MCPU_SRAM0
+										| CPG_BUS_5_MSTOP_MCPU_SRAM1
+										| CPG_BUS_5_MSTOP_XSPI
+										| CPG_BUS_5_MSTOP_MCPU_DMAC
+										| CPG_BUS_5_MSTOP_MCPU_OSTM0
+										| CPG_BUS_5_MSTOP_MCPU_OSTM1);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_6_MSTOP,    CPG_BUS_6_MSTOP_POEG_A_GPT0
+										| CPG_BUS_6_MSTOP_POEG_B_GPT0
+										| CPG_BUS_6_MSTOP_POEG_C_GPT0
+										| CPG_BUS_6_MSTOP_POEG_D_GPT0
+										| CPG_BUS_6_MSTOP_POEG_A_GPT1
+										| CPG_BUS_6_MSTOP_POEG_B_GPT1
+										| CPG_BUS_6_MSTOP_POEG_C_GPT1
+										| CPG_BUS_6_MSTOP_POEG_D_GPT1);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_7_MSTOP,    CPG_BUS_7_MSTOP_USB2_HOST0
+										| CPG_BUS_7_MSTOP_USB2_HOST1
+										| CPG_BUS_7_MSTOP_USB2_FUNCTION
+										| CPG_BUS_7_MSTOP_USB2_PHY0
+										| CPG_BUS_7_MSTOP_USB2_PHY1
+										| CPG_BUS_7_MSTOP_USB3_HOST0
+										| CPG_BUS_7_MSTOP_USB3_HOST1
+										| CPG_BUS_7_MSTOP_USB3_PHY0
+										| CPG_BUS_7_MSTOP_USB3_PHY1);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_8_MSTOP,    CPG_BUS_8_MSTOP_PCIe_PHY
+										| CPG_BUS_8_MSTOP_SD0
+										| CPG_BUS_8_MSTOP_SD1
+										| CPG_BUS_8_MSTOP_SD2
+										| CPG_BUS_8_MSTOP_GBETH0
+										| CPG_BUS_8_MSTOP_GBETH1);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_9_MSTOP,    CPG_BUS_9_MSTOP_DSI_LINK
+										| CPG_BUS_9_MSTOP_DSI_DPHY);
+
+	REMOVE_MSTOPS_RMW(CPG_BUS_10_MSTOP,   CPG_BUS_10_MSTOP_LCDC_DU
+										| CPG_BUS_10_MSTOP_LCDC_FCPVD
+										| CPG_BUS_10_MSTOP_LCDC_VSPD
+										| CPG_BUS_10_MSTOP_CAN_FD
+										| CPG_BUS_10_MSTOP_CAN_I3C);
+}
+
 static void cpg_clk_on_setup(void)
 {
 	cpg_ctrl_clkrst(&cpg_clk_on_tbl[0], ARRAY_SIZE(cpg_clk_on_tbl));
@@ -1867,6 +1953,8 @@ void cpg_setup(void)
 	//cpg_div_sel_static_setup();
 	//cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_ON);
 	//cpg_pll_setup();
+
+	cpg_mstop_setup();
 	cpg_clk_on_setup();
 	cpg_reset_setup();
 	//cpg_div_sel_dynamic_setup();
