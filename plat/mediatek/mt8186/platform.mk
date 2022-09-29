@@ -8,6 +8,7 @@ MTK_PLAT     := plat/mediatek
 MTK_PLAT_SOC := ${MTK_PLAT}/${PLAT}
 
 PLAT_INCLUDES := -I${MTK_PLAT}/common/                            \
+                 -I${MTK_PLAT}/common/lpm                         \
                  -I${MTK_PLAT}/drivers/cirq/                      \
                  -I${MTK_PLAT}/drivers/gic600/                    \
                  -I${MTK_PLAT}/drivers/gpio/                      \
