@@ -30,45 +30,338 @@ typedef struct {
 	CPG_REG_SETTING mon;
 	uint32_t  type;
 } CPG_SETUP_DATA;
-#if 0
-typedef struct {
-	CPG_REG_SETTING		clk1_dat;
-	CPG_REG_SETTING		clk2_dat;
-	CPG_REG_SETTING		stby_dat;
-} CPG_PLL_SETDATA_146;
 
 typedef struct {
-	CPG_REG_SETTING		clk1_dat;
-	CPG_REG_SETTING		clk2_dat;
-	CPG_REG_SETTING		clk3_dat;
-	CPG_REG_SETTING		clk4_dat;
-	CPG_REG_SETTING		clk5_dat;
-	CPG_REG_SETTING		stby_dat;
-} CPG_PLL_SETDATA_235;
+	CPG_REG_SETTING stby;
+	CPG_REG_SETTING clk1;
+	CPG_REG_SETTING clk2;
+	CPG_REG_SETTING clk3;
+	CPG_REG_SETTING mon;
+} CPG_PLL_SETTINGS;
 
-static CPG_PLL_SETDATA_146 cpg_pll4_setdata = {
-#if (DDR_PLL4 == 1600)
-	{ CPG_PLL4_CLK1, 0xFAE13203 },
-	{ CPG_PLL4_CLK2, 0x00081000 },
-#elif (DDR_PLL4 == 1333)
-	{ CPG_PLL4_CLK1, 0xA66629C3 },
-	{ CPG_PLL4_CLK2, 0x00080D00 },
-#else
-#error "Unknown Board Type."
-#endif
-	{ CPG_PLL4_STBY, 0x00010001 }
+#define	CPG_PLL_CM33_INDEX					(0)
+#define	CPG_PLL_CLN_INDEX					(1)
+#define	CPG_PLL_DTY_INDEX					(2)
+#define	CPG_PLL_CA55_INDEX					(3)
+#define	CPG_PLL_VDO_INDEX					(4)
+#define	CPG_PLL_ETH_INDEX					(5)
+#define	CPG_PLL_DSI_INDEX					(6)
+#define	CPG_PLL_DDDR0_INDEX					(7)
+#define	CPG_PLL_DDDR1_INDEX					(8)
+#define	CPG_PLL_GPU_INDEX					(9)
+#define	CPG_PLL_DRP_INDEX					(10)
+
+static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
+
+	{	/* CM33 */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLCM33_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLCM33_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLCM33_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLCM33_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLCM33_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* CLN */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLCLN_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLCLN_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLCLN_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLCLN_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLCLN_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* DTY */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLDTY_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLDTY_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLDTY_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLDTY_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLDTY_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* CA55 */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLCA55_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLCA55_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLCA55_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLCA55_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLCA55_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* VDO */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLVDO_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLVDO_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLVDO_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLVDO_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLVDO_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* ETH */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLETH_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLETH_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLETH_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLETH_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLETH_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* DSI */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLDSI_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLDSI_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLDSI_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLDSI_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLDSI_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* DDR0 */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLDDR0_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLDDR0_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLDDR0_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLDDR0_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLDDR0_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* DDR1 */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLDDR1_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLDDR1_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLDDR1_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLDDR1_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLDDR1_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* GPU */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLGPU_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLGPU_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLGPU_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLGPU_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLGPU_MON,
+				.val  = 0x00000000,
+				},
+	},
+
+	{	/* DRP */
+		.stby =  {
+				.addr = (uintptr_t)CPG_PLLDRP_STBY,
+				.val  = 0x00000000,
+				},
+
+		.clk1 =  {
+				.addr = (uintptr_t)CPG_PLLDRP_CLK1,
+				.val  = 0x00000000,
+				},
+
+
+		.clk2 =  {
+				.addr = (uintptr_t)CPG_PLLDRP_CLK2,
+				.val  = 0x00000000,
+				},
+
+		.clk3 =  {
+				.addr = (uintptr_t)CPG_PLLDRP_CLK3,
+				.val  = 0x00000000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_PLLDRP_MON,
+				.val  = 0x00000000,
+				},
+	},
 };
 
-static CPG_PLL_SETDATA_146 cpg_pll6_setdata = {
-	{ CPG_PLL6_CLK1, 0x00003e83 },
-	{ CPG_PLL6_CLK2, 0x00082D02 },
-	{ CPG_PLL6_STBY, 0x00010001 }, /* SSC OFF */
-};
-
-#define	CPG_PLL2_INDEX					(0)
-#define	CPG_PLL3_INDEX					(1)
-#define	CPG_PLL5_INDEX					(2)
-#endif
 static const CPG_SETUP_DATA early_setup_tbl[] = {
 	{	/* CGC_SYC_0_CNT_CLK */
 		.reg =  {
@@ -746,30 +1039,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 	},
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 static CPG_SETUP_DATA cpg_reset_tbl[] = {
 
 	{	/* CM33 Part 1 */
@@ -1401,93 +1670,21 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 
 		.type = CPG_T_RST
 	},
-
-
-#if 0
-	{	/*  */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_5,
-				.val  = 0x00000000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_2,
-				.val  = 0x00000000,
-				},
-
-		.type = CPG_T_RST
-	},
-#endif
-
-#if 0
-	{		/* MTU */
-		(uintptr_t)CPG_RST_MTU,
-		(uintptr_t)CPG_RSTMON_MTU,
-		0x00010000,
-		CPG_T_RST
-	},
-
-	{		/* POE3 */
-		(uintptr_t)CPG_RST_POE3,
-		(uintptr_t)CPG_RSTMON_POE3,
-		0x00010000,
-		CPG_T_RST
-	},
-
-	{		/* H.264 codec */
-		(uintptr_t)CPG_RST_H264,
-		(uintptr_t)CPG_RSTMON_H264,
-		0x00030003,
-		CPG_T_RST
-	},
-
-	{		/* Sampling Rate Converter */
-		(uintptr_t)CPG_RST_SRC,
-		(uintptr_t)CPG_RSTMON_SRC,
-		0x00010000,
-		CPG_T_RST
-	},
-
-	{		/* ETHER */
-		(uintptr_t)CPG_RST_ETH,
-		(uintptr_t)CPG_RSTMON_ETH,
-		0x00030000,
-		CPG_T_RST
-	},
-
-	{		/* IrDA */
-		(uintptr_t)CPG_RST_IRDA,
-		(uintptr_t)CPG_RSTMON_IRDA,
-		0x00010000,
-		CPG_T_RST
-	},
-
-	{		/* GPIO */
-		(uintptr_t)CPG_RST_GPIO,
-		(uintptr_t)CPG_RSTMON_GPIO,
-		0x00070007,
-		CPG_T_RST
-	},
-
-	{	/* Thermal Sensor Unit */
-		(uintptr_t)CPG_RST_TSU,
-		(uintptr_t)CPG_RSTMON_TSU,
-		0x00010000,
-		CPG_T_RST
-	},
-#endif
 };
-#if 0
+
 static CPG_REG_SETTING cpg_static_select_tbl[] = {
-	{ (uintptr_t)CPG_PL3A_DDIV,             0x01000100 },
-	{ (uintptr_t)CPG_PL3_SSEL,              0x01000000 },
+	{ (uintptr_t)CPG_CSDIV0,				0x00000000 },
+	{ (uintptr_t)CPG_CSDIV1,				0x00000000 },
 };
 
 static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
-	{ (uintptr_t)CPG_PL4_DSEL,              0x00010001 },
-	{ (uintptr_t)CPG_PL2SDHI_DSEL,          0x00110022 },
+	{ (uintptr_t)CPG_CDDIV0,				0x00000000 },
+	{ (uintptr_t)CPG_CDDIV1,				0x00000000 },
+	{ (uintptr_t)CPG_CDDIV2,				0x00000000 },
+	{ (uintptr_t)CPG_CDDIV3,				0x00000000 },
+	{ (uintptr_t)CPG_CDDIV4,				0x00000000 },
 };
-
+#if 0
 #define CPG_SEL_PLL1_ON_OFF					(0)
 #define CPG_SEL_PLL2_1_ON_OFF				(1)
 #define CPG_SEL_PLL2_2_ON_OFF				(2)
@@ -1615,7 +1812,6 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 	for (i = 0; i < num; i++, array++) {
 		/* CPG registers can be written multiple multiple times so read current value and 'or' in new data */
 		mmio_write_32(array->reg.addr, (array->reg.val | mmio_read_32(array->reg.addr)));
-
 		/*
 		 * This generic function needs to handle case where Montitor for clock
 		 * is looking for a HIGH as clock active whereas  Montitoring a reset
@@ -1630,7 +1826,8 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 					;
 	}
 }
-#if 0
+
+#if 0 //TODO: KTG: 
 static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 {
 	uint32_t cnt;
@@ -1638,58 +1835,72 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 	CPG_REG_SETTING *ptr;
 
 	switch (sel) {
+
 	case CPG_SEL_PLL1_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll1_on_off);
 		ptr = &cpg_sel_pll1_on_off[0];
 		break;
+
 	case CPG_SEL_PLL2_1_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll2_1_on_off);
 		ptr = &cpg_sel_pll2_1_on_off[0];
 		break;
+
 	case CPG_SEL_PLL2_2_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll2_2_on_off);
 		ptr = &cpg_sel_pll2_2_on_off[0];
 		break;
+
 	case CPG_SEL_PLL3_1_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll3_1_on_off);
 		ptr = &cpg_sel_pll3_1_on_off[0];
 		break;
+
 	case CPG_SEL_PLL3_2_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll3_2_on_off);
 		ptr = &cpg_sel_pll3_2_on_off[0];
 		break;
+
 	case CPG_SEL_PLL3_3_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll3_3_on_off);
 		ptr = &cpg_sel_pll3_3_on_off[0];
 		break;
+
 	case CPG_SEL_PLL5_1_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll5_1_on_off);
 		ptr = &cpg_sel_pll5_1_on_off[0];
 		break;
+
 	case CPG_SEL_PLL5_3_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll5_3_on_off);
 		ptr = &cpg_sel_pll5_3_on_off[0];
 		break;
+
 	case CPG_SEL_PLL5_4_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll5_4_on_off);
 		ptr = &cpg_sel_pll5_4_on_off[0];
 		break;
+
 	case CPG_SEL_PLL6_1_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_pll6_1_on_off);
 		ptr = &cpg_sel_pll6_1_on_off[0];
 		break;
+	
 	case CPG_SEL_GPU1_1_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_gpu1_1_on_off);
 		ptr = &cpg_sel_gpu1_1_on_off[0];
 		break;
+
 	case CPG_SEL_GPU1_2_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_gpu1_2_on_off);
 		ptr = &cpg_sel_gpu1_2_on_off[0];
 		break;
+
 	case CPG_SEL_GPU2_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_gpu2_on_off);
 		ptr = &cpg_sel_gpu2_on_off[0];
 		break;
+
 	default:
 		break;
 	}
@@ -1701,51 +1912,28 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 			mmio_write_32(ptr[cnt].addr, (mmio_read_32(ptr[cnt].addr) | (ptr[cnt].val & 0xFFFF0000)));
 		}
 	}
-
 }
-
-static void cpg_pll_start_146(CPG_PLL_SETDATA_146 *pdata)
-{
-	mmio_write_32(pdata->clk1_dat.addr, pdata->clk1_dat.val);
-	mmio_write_32(pdata->clk2_dat.addr, pdata->clk2_dat.val);
-	mmio_write_32(pdata->stby_dat.addr, pdata->stby_dat.val);
-}
+#endif
 
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
 {
-#if !DEBUG_RZV2H_FPGA
 	uint32_t val = 0;
+	int i;
+	int pll_num = ARRAY_SIZE(cpg_pll_tbl);
+	CPG_PLL_SETTINGS const *p_pll = &cpg_pll_tbl[0];
 
-	/* PLL4 startup */
-	/* PLL4 standby mode transition confirmation */
-	do {
-		val = mmio_read_32(CPG_PLL4_MON);
-	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) != 0);
+	for (i = 0; i < pll_num; i++, p_pll++) {
+		mmio_write_32(p_pll->clk1.addr, p_pll->clk1.val);
+		mmio_write_32(p_pll->clk2.addr, p_pll->clk2.val);
+		mmio_write_32(p_pll->clk3.addr, p_pll->clk3.val);
+		mmio_write_32(p_pll->stby.addr, p_pll->stby.val);
 
-	/* PLL6 startup */
-	/* PLL6 standby mode transition confirmation */
-	do {
-		val = mmio_read_32(CPG_PLL6_MON);
-	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) != 0);
-#endif
-
-	/* Set PLL4 to normal mode */
-	cpg_pll_start_146(&cpg_pll4_setdata);
-	/* Set PLL6 to normal mode */
-	cpg_pll_start_146(&cpg_pll6_setdata);
-
-#if !DEBUG_RZV2H_FPGA
-	/* PLL4 normal mode transition confirmation */
-	do {
-		val = mmio_read_32(CPG_PLL4_MON);
-	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
-
-	/* PLL6 normal mode transition confirmation */
-	do {
-		val = mmio_read_32(CPG_PLL6_MON);
-	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) == 0);
-#endif
+		/* PLL standby mode transition confirmation */
+		do {
+			val = mmio_read_32(p_pll->mon.addr);
+		} while ((val & (CPG_PLL_MON_PLLn_RESETB | CPG_PLL_MON_PLLn_LOCK)) != 0);
+	}
 }
 
 static void cpg_div_sel_setup(CPG_REG_SETTING *tbl, uint32_t size)
@@ -1774,7 +1962,6 @@ static void cpg_div_sel_dynamic_setup(void)
 {
 	cpg_div_sel_setup(cpg_dynamic_select_tbl, ARRAY_SIZE(cpg_dynamic_select_tbl));
 }
-#endif
 
 static void cpg_mstop_setup(void)
 {
@@ -1933,7 +2120,7 @@ void cpg_early_setup(void)
 {
 	cpg_ctrl_clkrst(&early_setup_tbl[0], ARRAY_SIZE(early_setup_tbl));
 }
-#if 0
+#if 0 //TODO: KTG
 static void cpg_wdtrst_sel_setup(void)
 {
 	uint32_t reg;
@@ -1947,17 +2134,18 @@ static void cpg_wdtrst_sel_setup(void)
 	mmio_write_32(CPG_WDTRST_SEL, reg);
 }
 #endif
+
 void cpg_setup(void)
 {
 	//cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_OFF);
-	//cpg_div_sel_static_setup();
+	cpg_div_sel_static_setup();
 	//cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_ON);
-	//cpg_pll_setup();
+	cpg_pll_setup();
 
 	cpg_mstop_setup();
 	cpg_clk_on_setup();
 	cpg_reset_setup();
-	//cpg_div_sel_dynamic_setup();
+	cpg_div_sel_dynamic_setup();
 	//cpg_wdtrst_sel_setup();
 }
 
