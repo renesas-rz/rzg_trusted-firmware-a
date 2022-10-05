@@ -1,11 +1,6 @@
 /*
-<<<<<<< HEAD
- * Copyright (c) 2013-2021, Arm Limited and Contributors. All rights reserved.
- * Copyright (c) 2021, Renesas Electronics Corporation. All rights reserved.
-=======
  * Copyright (c) 2013-2022, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
->>>>>>> upstream/v2.7/rz
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
