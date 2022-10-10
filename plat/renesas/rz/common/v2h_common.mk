@@ -29,25 +29,16 @@ ERRATA_A55_903758 				:= 1
 ERRATA_A55_1221012				:= 1
 ERRATA_A55_1530923				:= 1
 
-ifndef SPI_FLASH
-  SPI_FLASH = MT25QU512ABB
-endif
-
 PLAT_INCLUDES			+=	-Iplat/renesas/rz/common/include								\
 							-Iplat/renesas/rz/common/drivers/emmc							\
 							-Iplat/renesas/rz/common/drivers/io								\
 							-Idrivers/renesas/common/io										\
-							-Iplat/renesas/rz/common/include/drivers/spi_multi              \
-							-Iplat/renesas/rz/common/include/drivers/spi_multi/${SPI_FLASH}
+							-Iplat/renesas/rz/common/include/drivers/spi_multi
 
 RZ_TIMER_SOURCES		:=	drivers/delay_timer/generic_delay_timer.c			\
 							drivers/delay_timer/delay_timer.c
 
-DDR_SOURCES				:= 	plat/renesas/rz/common/drivers/ddr/ddr.c
-
-SPI_MULTI_SOURCE 		:= 	plat/renesas/rz/common/drivers/spi_multi/spi_multi.c					\
-							plat/renesas/rz/common/drivers/spi_multi/${SPI_FLASH}/spi_multi_device.c
-
+DDR_SOURCES				:=	plat/renesas/rz/common/drivers/ddr/ddr.c
 
 BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 							drivers/arm/tzc/tzc400.c
@@ -80,6 +71,7 @@ BL2_SOURCES				+=	common/desc_image_load.c							\
 							${RZ_TIMER_SOURCES}									\
 							${DYN_CFG_SOURCES}									\
 							${DDR_SOURCES}										\
+							${XSPI_SOURCE}										\
 							${SPI_MULTI_SOURCE}
 
 # Include GICv3 driver files
