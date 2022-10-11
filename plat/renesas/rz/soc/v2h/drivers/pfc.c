@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <pfc_regs.h>
+#include <sys_regs.h>
 #include <lib/mmio.h>
 
 
@@ -62,7 +63,7 @@ static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0000000000020002 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0000000000030003 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD07, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR07,   0x0000000000010001 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
@@ -72,7 +73,7 @@ static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000002020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000003030303 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD08, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR08,   0x0000000001010101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
@@ -84,7 +85,7 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH09, 0x0000000000020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH09, 0x0000000000030303 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD09, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR09,   0x0000000000010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN09,  0x0000000000000100 }		/* IEN */
@@ -94,12 +95,15 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH0A, 0x0202020202020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH0A, 0x0303030303030303 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD0A, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR0A,   0x0101010101010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN0A,  0x0101010101010101 }		/* IEN */
 	},
 };
+
+static const uint64_t pfc_iolh_tbl[4] = {0x0000000000000000, 0x0101010101010101, 0x0202020202020202, 0x0303030303030303};
+static uint32_t pfc_sys_lsi_otppoc;
 
 #if 0
 static void pfc_mux_setup(void)
@@ -140,13 +144,21 @@ static void pfc_qspi_setup(void)
 	int      cnt;
 
 	for (cnt = 0; cnt < PFC_QSPI_TBL_NUM; cnt++) {
-		//if (SYS_LSI_OTPPOC & ??) //TODO: KTG: Do some required action to decide what IO drive to use dependat on 1.8V or 3V3 level
-		{
-			/* IOLH */
-			if (pfc_qspi_reg_tbl[cnt].iolh.flg == PFC_ON) {
-				mmio_write_64(pfc_qspi_reg_tbl[cnt].iolh.reg, pfc_qspi_reg_tbl[cnt].iolh.val);
+		/* IOLH */
+		if (pfc_qspi_reg_tbl[cnt].iolh.flg == PFC_ON) {
+			uint32_t index = 0;
+
+			if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_SPI18_DS_MASK)) {
+				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_SPI18_E_MASK) >> SYS_LSI_OTPPOC_SPI18_E_OFFSET);
 			}
+			else if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_SPI33_DS_MASK)) {
+				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_SPI33_E_MASK) >> SYS_LSI_OTPPOC_SPI33_E_OFFSET);
+			}
+
+			/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
+			mmio_write_64(pfc_qspi_reg_tbl[cnt].iolh.reg, (pfc_iolh_tbl[index] & pfc_qspi_reg_tbl[cnt].iolh.val));
 		}
+
 		/* PUPD */
 		if (pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_qspi_reg_tbl[cnt].pupd.reg, pfc_qspi_reg_tbl[cnt].pupd.val);
@@ -160,7 +172,7 @@ static void pfc_qspi_setup(void)
 
 static void pfc_sd_setup(void)
 {
-	int      cnt;
+	int cnt;
 
 	/* Since SDx is 3.3V, the initial value will be set. */
 	// TOD0: KTG: Is there a SD Voltage option- or is it automated in V2H?
@@ -169,22 +181,27 @@ static void pfc_sd_setup(void)
 
 	//TODO: KTG: Looks like we may need to configure SD0 to be either eSD or eMMC - consider details of this later
 
+
+
 	for (cnt = 0; cnt < PFC_SD_TBL_NUM; cnt++) {
-		/* PMC */
-		if (pfc_sd_reg_tbl[cnt].pmc.flg == PFC_ON) {
-			mmio_write_8(pfc_sd_reg_tbl[cnt].pmc.reg, pfc_sd_reg_tbl[cnt].pmc.val);
-		}
-		/* PFC */
-		if (pfc_sd_reg_tbl[cnt].pfc.flg == PFC_ON) {
-			mmio_write_32(pfc_sd_reg_tbl[cnt].pfc.reg, pfc_sd_reg_tbl[cnt].pfc.val);
-		}
-		//if (SYS_LSI_OTPPOC & ??) //TODO: KTG: Do some required action to decide what IO drive to use dependat on 1.8V or 3V3 level
-		{
-			/* IOLH */
-			if (pfc_sd_reg_tbl[cnt].iolh.flg == PFC_ON) {
-				mmio_write_64(pfc_sd_reg_tbl[cnt].iolh.reg, pfc_sd_reg_tbl[cnt].iolh.val);
+		/* IOLH */
+		if (pfc_sd_reg_tbl[cnt].iolh.flg == PFC_ON) {
+			uint32_t index = 0;
+
+			if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_SD_DS_MASK)) {
+				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_SD_E_MASK) >> SYS_LSI_OTPPOC_SD_E_OFFSET);
 			}
+			else if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_EMMC18_DS_MASK)) {
+				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EMMC18_E_MASK) >> SYS_LSI_OTPPOC_EMMC18_E_OFFSET);
+			}
+			else if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_EMMC33_DS_MASK)) {
+				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EMMC33_E_MASK) >> SYS_LSI_OTPPOC_EMMC33_E_OFFSET);
+			}
+
+			/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
+			mmio_write_64(pfc_sd_reg_tbl[cnt].iolh.reg, (pfc_iolh_tbl[index] & pfc_sd_reg_tbl[cnt].iolh.val));
 		}
+
 		/* PUPD */
 		if (pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].pupd.reg, pfc_sd_reg_tbl[cnt].pupd.val);
@@ -202,6 +219,8 @@ static void pfc_sd_setup(void)
 
 void pfc_setup(void)
 {
+	pfc_sys_lsi_otppoc = mmio_read_32(SYS_LSI_OTPPOC);
+
 	//pfc_mux_setup();	//TODO: KTG: Confirm if this is required
 	pfc_qspi_setup();
 	pfc_sd_setup();
