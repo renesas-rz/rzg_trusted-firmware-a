@@ -80,10 +80,10 @@ static int rzv2h_pwr_domain_on(u_register_t mpidr)
 
 static void rzv2h_pwr_domain_on_finish(const psci_power_state_t *target_state)
 {
-#if !DEBUG_RZV2H_FPGA
+#if !DEBUG_FPGA
 	plat_gic_pcpu_init();
 	plat_gic_cpuif_enable();
-#endif
+#endif /*DEBUG_FPGA */
 }
 
 static void rzv2h_pwr_domain_off(const psci_power_state_t *state)

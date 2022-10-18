@@ -13,9 +13,10 @@ HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
-DEBUG_RZG2L_FPGA				:= 0
+DEBUG_FPGA						:= 0
+
 $(eval $(call add_define,PROTECTED_CHIPID))
-$(eval $(call add_define,DEBUG_RZG2L_FPGA))
+$(eval $(call add_define,DEBUG_FPGA))
 
 WA_RZG2L_GIC64BIT				:= 1
 $(eval $(call add_define,WA_RZG2L_GIC64BIT))

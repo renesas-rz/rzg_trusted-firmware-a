@@ -73,11 +73,11 @@ void bl31_platform_setup(void)
 	/* Setup TZC-400 */
 	plat_security_setup();
 
-#if !DEBUG_RZG2L_FPGA
+#if !DEBUG_FPGA
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
-#endif
+#endif /* DEBUG_FPGA */
 }
 
 entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)

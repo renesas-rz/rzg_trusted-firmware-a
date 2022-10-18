@@ -133,7 +133,7 @@ void bl2_platform_setup(void)
 	/* Setup TZC-400, Access Control */
 	plat_security_setup();
 
-#if !DEBUG_RZV2H_FPGA
+#if !DEBUG_FPGA
 	/* initialize DDR */
 	ddr_setup();
 #endif /* DEBUG_FPGA */
