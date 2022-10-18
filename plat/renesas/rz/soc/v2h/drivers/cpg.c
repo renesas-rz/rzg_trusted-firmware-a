@@ -56,23 +56,23 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* CM33 */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLCM33_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00000001,
 				},
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLCM33_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003203,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLCM33_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x00082400,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLCM33_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -84,23 +84,23 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* CLN */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLCLN_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00000001,
 				},
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLCLN_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003203,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLCLN_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x00082400,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLCLN_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -112,23 +112,23 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DTY */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLDTY_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00000001,
 				},
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLDTY_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003203,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLDTY_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x00082400,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLDTY_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -140,23 +140,23 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* CA55 */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLCA55_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00000001,
 				},
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLCA55_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x80003543,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLCA55_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x00082700,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLCA55_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -168,23 +168,23 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* VDO */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLVDO_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00000001,
 				},
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLVDO_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003482,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLVDO_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x000C1A01,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLVDO_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -201,18 +201,18 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLETH_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003E83,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLETH_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x00082D01,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLETH_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -229,18 +229,18 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLDSI_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003182,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLDSI_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x000C1803,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLDSI_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -257,18 +257,18 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLDDR0_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003203,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLDDR0_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x00081001,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLDDR0_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -285,18 +285,18 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLDDR1_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003203,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLDDR1_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x00081001,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLDDR1_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -308,23 +308,23 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* GPU */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLGPU_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00000004,
 				},
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLGPU_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003482,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLGPU_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x000C1A01,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLGPU_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -336,23 +336,23 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DRP */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLDRP_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00000001,
 				},
 
 		.clk1 =  {
 				.addr = (uintptr_t)CPG_PLLDRP_CLK1,
-				.val  = 0x00000000,
+				.val  = 0x00003482,
 				},
 
 
 		.clk2 =  {
 				.addr = (uintptr_t)CPG_PLLDRP_CLK2,
-				.val  = 0x00000000,
+				.val  = 0x000C1A01,
 				},
 
 		.clk3 =  {
 				.addr = (uintptr_t)CPG_PLLDRP_CLK3,
-				.val  = 0x00000000,
+				.val  = 0x00008003,
 				},
 
 		.mon =  {
@@ -1821,9 +1821,10 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 		cmp  = mask;
 		if (array->type == CPG_T_RST)
 			cmp = ~cmp;
-
+#if !DEBUG_FPGA
 		while ((mmio_read_32(array->mon.addr) & mask) != (cmp & mask))
 					;
+#endif /* DEBUG_FPGA */
 	}
 }
 
@@ -1918,7 +1919,6 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
 {
-	uint32_t val = 0;
 	int i;
 	int pll_num = ARRAY_SIZE(cpg_pll_tbl);
 	CPG_PLL_SETTINGS const *p_pll = &cpg_pll_tbl[0];
@@ -1928,11 +1928,15 @@ static void cpg_pll_setup(void)
 		mmio_write_32(p_pll->clk2.addr, p_pll->clk2.val);
 		mmio_write_32(p_pll->clk3.addr, p_pll->clk3.val);
 		mmio_write_32(p_pll->stby.addr, p_pll->stby.val);
+#if !DEBUG_FPGA
+		uint32_t val;
 
 		/* PLL standby mode transition confirmation */
 		do {
 			val = mmio_read_32(p_pll->mon.addr);
-		} while ((val & (CPG_PLL_MON_PLLn_RESETB | CPG_PLL_MON_PLLn_LOCK)) != 0);
+		} while ( (val & (CPG_PLL_MON_PLLn_RESETB | CPG_PLL_MON_PLLn_LOCK))
+					!= (CPG_PLL_MON_PLLn_RESETB | CPG_PLL_MON_PLLn_LOCK));
+#endif /* DEBUG_FPGA */
 	}
 }
 
@@ -1945,11 +1949,11 @@ static void cpg_div_sel_setup(CPG_REG_SETTING *tbl, uint32_t size)
 	}
 
 #if 0
-#if !DEBUG_RZV2H_FPGA
+#if !DEBUG_FPGA
 	/* Wait for completion of settings */
 	while (mmio_read_32(CPG_CLKSTATUS) != 0)
 		;
-#endif
+#endif /* DEBUG_FPGA */
 #endif
 }
 
