@@ -115,10 +115,19 @@ static void bl2_security_setup(void)
 {
 	const arm_tzc_regions_info_t ddr_tzc_regions[] = {
 #if TRUSTED_BOARD_BOOT
-		{PLAT_FW_TZC_PROT_DRAM1_BASE, PLAT_FW_TZC_PROT_DRAM1_END,
-			TZC_REGION_S_RDWR, PLAT_TZC_REGION_ACCESS_S_UNPRIV},
-		{PLAT_TEE_TZC_PROT_DRAM1_BASE, PLAT_TEE_TZC_PROT_DRAM1_END,
-			TZC_REGION_S_RDWR,  PLAT_TZC_REGION_ACCESS_S_UNPRIV},
+		{
+			.base = PLAT_FW_TZC_PROT_DRAM1_BASE,
+			.end  = PLAT_FW_TZC_PROT_DRAM1_END,
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+
+		{
+			.base = PLAT_TEE_TZC_PROT_DRAM1_BASE,
+			.end  = PLAT_TEE_TZC_PROT_DRAM1_END,
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
 	};
@@ -137,16 +146,24 @@ static void bl31_security_setup(void)
 {
 	const arm_tzc_regions_info_t msram_tzc_regions[] = {
 #if TRUSTED_BOARD_BOOT
-		{ PLAT_AP_TZC_PROT_SRAM1_BASE, PLAT_AP_TZC_PROT_SRAM1_END,
-			TZC_REGION_S_RDWR, PLAT_TZC_REGION_ACCESS_S_UNPRIV },
+		{
+			.base = PLAT_AP_TZC_PROT_SRAM1_BASE,
+			.end  = PLAT_AP_TZC_PROT_SRAM1_END,
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
 	};
 
 	const arm_tzc_regions_info_t asram_tzc_regions[] = {
 #if TRUSTED_BOARD_BOOT
-		{ PLAT_AP_TZC_PROT_SRAM2_BASE, PLAT_AP_TZC_PROT_SRAM2_END,
-			TZC_REGION_S_RDWR, PLAT_TZC_REGION_ACCESS_S_UNPRIV },
+		{ 
+			.base = PLAT_AP_TZC_PROT_SRAM2_BASE,
+			.end  = PLAT_AP_TZC_PROT_SRAM2_END,
+			.sec_attr = TZC_REGION_S_RDWR, 
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
 	};
