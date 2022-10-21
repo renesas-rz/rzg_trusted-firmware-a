@@ -44,7 +44,6 @@ SPI_MULTI_SOURCE := plat/renesas/rz/common/drivers/spi_multi/spi_multi.c					\
 
 BL2_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 					${RZ_TIMER_SOURCES}									\
-					${DYN_CFG_SOURCES}									\
 					common/desc_image_load.c							\
 					drivers/io/io_storage.c								\
 					drivers/io/io_memmap.c								\
