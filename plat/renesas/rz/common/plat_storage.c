@@ -140,52 +140,6 @@ static struct plat_io_policy policies[] = {
 	{ 0, 0, 0}
 };
 
-static const struct plat_io_policy sd_policies[] = {
-	[FIP_IMAGE_ID] = {
-				&sddrv_dev_handle,
-				(uintptr_t) &sd_block_spec,
-				&open_sddrv},
-	[BL31_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl31_file_spec,
-				&open_fipdrv},
-	[BL32_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl32_file_spec,
-				&open_fipdrv},
-	[BL33_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl33_file_spec,
-				&open_fipdrv},
-#if TRUSTED_BOARD_BOOT
-	[SOC_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &soc_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[SOC_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &soc_fw_content_cert_file_spec,
-				&open_fipdrv},
-	[TRUSTED_OS_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &tos_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[TRUSTED_OS_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &tos_fw_content_cert_file_spec,
-				&open_fipdrv},
-	[NON_TRUSTED_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &nt_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[NON_TRUSTED_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &nt_fw_content_cert_file_spec,
-				&open_fipdrv},
-#endif
-    { 0, 0, 0}
-};
-
 static int32_t open_fipdrv(const uintptr_t spec)
 {
 	int32_t result;
@@ -249,7 +203,11 @@ void rz_io_setup(void)
 		register_io_dev_sddrv(&sd);
 		io_dev_open(sd, 0, &sddrv_dev_handle);
 
-		policies[FIP_IMAGE_ID] =  sd_policies[0];
+		struct plat_io_policy sd_fip_policy = {
+				&sddrv_dev_handle,
+				(uintptr_t) &sd_block_spec,
+				&open_sddrv};
+		policies[FIP_IMAGE_ID] =  sd_fip_policy;
 	}
 	else if (stat_md_boot == BOOT_MODE_SPI_1_8 ||
 		stat_md_boot == BOOT_MODE_SPI_3_3) {
