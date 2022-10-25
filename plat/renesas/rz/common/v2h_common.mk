@@ -70,7 +70,6 @@ BL2_SOURCES				+=	common/desc_image_load.c							\
 							plat/renesas/rz/common/plat_image_load.c			\
 							plat/renesas/rz/common/plat_storage.c				\
 							${RZ_TIMER_SOURCES}									\
-							${DYN_CFG_SOURCES}									\
 							${DDR_SOURCES}										\
 							${XSPI_SOURCE}										\
 							${SPI_MULTI_SOURCE}
