@@ -87,7 +87,7 @@ HOSTCC ?= gcc
 
 all: --openssl ${BINARY}
 
-${BINARY}: ${OBJECTS} Makefile
+${BINARY}: --openssl ${OBJECTS} Makefile
 	@echo "  HOSTLD  $@"
 	@echo 'const char build_msg[] = "Built : "__TIME__", "__DATE__; \
                 const char platform_msg[] = "${PLAT_MSG}";' | \
