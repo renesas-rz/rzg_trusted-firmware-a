@@ -44,3 +44,9 @@ tags
 # Node.js
 node_modules/
 tools/renesas/bptool
+
+# common python virtual environment directories
+.env/
+env/
+.venv/
+venv/
