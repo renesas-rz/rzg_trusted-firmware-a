@@ -240,7 +240,7 @@ static void bl31_security_setup(void)
 #if TRUSTED_BOARD_BOOT
 		{ 
 			.base = PLAT_AP_TZC_PROT_SRAM3_BASE,				//TODO: KTG: SRAM sections used by CR8 need to be established
-			.end  = PLAT_AP_TZC_PROT_SRAM5_END,
+			.end  = PLAT_AP_TZC_PROT_SRAM3_END,
 			.sec_attr = TZC_REGION_S_RDWR, 
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
