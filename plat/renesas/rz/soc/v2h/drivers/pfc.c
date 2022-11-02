@@ -10,53 +10,10 @@
 #include <sys_regs.h>
 #include <lib/mmio.h>
 
+#define PFC_TBL_LEN							(2)
+#define PFC_QSPI_TBL_NUM					(2)
+#define PFC_SD_TBL_NUM						(2)
 
-//#define PFC_MUX_TBL_NUM		(4)
-#define PFC_QSPI_TBL_NUM	(2)
-#define PFC_SD_TBL_NUM		(2)
-
-//KTG: TODO: It looks like the main boot modes I/O pins are all hard coded so don't need enabling as pin functions. Confirm if some exotic peripheral pins need to be present like QSDx_CD, XSPI0_WP etc, in which case pin functions could be required.
-#if 0
-static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
-	/* SDHI 0 */
-	{
-		{ PFC_ON,  (uintptr_t)PFC_PMC22,  0x03 },			/* PMC */
-		{ PFC_ON,  (uintptr_t)PFC_PFC22,  0x00000011 },		/* PFC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* IOLH */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* PUPD */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* SR */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* IEN */
-	},
-	/* SDHI 1) */
-	{
-		{ PFC_ON,  (uintptr_t)PFC_PMC23,  0x03 },			/* PMC */
-		{ PFC_ON,  (uintptr_t)PFC_PFC23,  0x00000011 },		/* PFC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* IOLH */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* PUPD */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* SR */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* IEN */
-	},
-
-	/* P38(scif0) */
-	{
-		{ PFC_ON,  (uintptr_t)PFC_PMC22,  0x03 },			/* PMC */
-		{ PFC_ON,  (uintptr_t)PFC_PFC22,  0x00000011 },		/* PFC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* IOLH */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* PUPD */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* SR */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* IEN */
-	},
-	/* P39(scif0) */
-	{
-		{ PFC_ON,  (uintptr_t)PFC_PMC23,  0x07 },			/* PMC */
-		{ PFC_ON,  (uintptr_t)PFC_PFC23,  0x00000111 },		/* PFC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* IOLH */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* PUPD */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* SR */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }				/* IEN */
-	}
-};
-#endif
 
 static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
 	/* QSPI0 CLK (P7.0), CS0 (P7.2) */
@@ -80,7 +37,8 @@ static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
 	},
 };
 
-static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
+/* SDHI 0 */
+static PFC_REGS pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	/* SD0_CLK (P9.0), SD0_CMD (P9.1), SD0_RSTN (P9.2) */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
@@ -102,63 +60,48 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	},
 };
 
-static const uint64_t pfc_iolh_tbl[4] = {0x0000000000000000, 0x0101010101010101, 0x0202020202020202, 0x0303030303030303};
-static uint32_t pfc_sys_lsi_otppoc;
+static const PFC_REGS * pfc_boot_mode_tbls[] = {
+	pfc_sd_reg_tbl,
+	pfc_sd_reg_tbl,
+	pfc_sd_reg_tbl,
+	pfc_qspi_reg_tbl,
+	pfc_qspi_reg_tbl,
+	pfc_sd_reg_tbl		// TODO: KTG: SCIF
+};
 
-#if 0
-static void pfc_mux_setup(void)
+
+static void pfc_drive_setup(void)
 {
-	int      cnt;
+	static const uint64_t pfc_iolh_drive_tbl[4] = {0x0000000000000000, 0x0101010101010101, 0x0202020202020202, 0x0303030303030303};
+	/* Get the boot mode */
+	uint32_t boot_mode = mmio_read_32(SYS_LSI_MODE) & SYS_LSI_MODE_MASK;
 
-	/* multiplexer terminal switching */
-	mmio_write_32(PFC_PWPR, PWPR_REGWE_A);
+	if (boot_mode < SYS_LSI_MODE_COUNT) {
+		const PFC_REGS * p_pins_tbl = pfc_boot_mode_tbls[boot_mode];
+		uint32_t sys_lsi_otppoc = mmio_read_32(SYS_LSI_OTPPOC);
+		uint64_t pfc_iolh_drive = 0;
+		int cnt;
 
-	for (cnt = 0; cnt < PFC_MUX_TBL_NUM; cnt++) {
-		/* PMC */
-		if (pfc_mux_reg_tbl[cnt].pmc.flg == PFC_ON) {
-			mmio_write_8(pfc_mux_reg_tbl[cnt].pmc.reg, pfc_mux_reg_tbl[cnt].pmc.val);
+		if (0 != (sys_lsi_otppoc & (SYS_LSI_OTPPOC_EN_x_DS_MASK << (SYS_LSI_OTPPOC_EN_x_DS_BASE + (SYS_LSI_OTPPOC_EN_x_DS_WIDTH * boot_mode))))) {
+			uint32_t index = sys_lsi_otppoc & ((SYS_LSI_OTPPOC_x_E_MASK << (SYS_LSI_OTPPOC_x_E_WIDTH * boot_mode)) >> (SYS_LSI_OTPPOC_x_E_WIDTH * boot_mode));
+
+			pfc_iolh_drive = pfc_iolh_drive_tbl[index];
 		}
-		/* PFC */
-		if (pfc_mux_reg_tbl[cnt].pfc.flg == PFC_ON) {
-			mmio_write_32(pfc_mux_reg_tbl[cnt].pfc.reg, pfc_mux_reg_tbl[cnt].pfc.val);
-		}
-		/* IOLH */
-		if (pfc_mux_reg_tbl[cnt].iolh.flg == PFC_ON) {
-			mmio_write_64(pfc_mux_reg_tbl[cnt].iolh.reg, pfc_mux_reg_tbl[cnt].iolh.val);
-		}
-		/* PUPD */
-		if (pfc_mux_reg_tbl[cnt].pupd.flg == PFC_ON) {
-			mmio_write_64(pfc_mux_reg_tbl[cnt].pupd.reg, pfc_mux_reg_tbl[cnt].pupd.val);
-		}
-		/* SR */
-		if (pfc_mux_reg_tbl[cnt].sr.flg == PFC_ON) {
-			mmio_write_64(pfc_mux_reg_tbl[cnt].sr.reg, pfc_mux_reg_tbl[cnt].sr.val);
+
+		for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+			if (p_pins_tbl[cnt].iolh.flg == PFC_ON) {
+				/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
+				mmio_write_64(p_pins_tbl[cnt].iolh.reg, (pfc_iolh_drive & p_pins_tbl[cnt].iolh.val));
+			}
 		}
 	}
-
-	mmio_write_32(PFC_PWPR, 0x0);
 }
-#endif
+
 static void pfc_qspi_setup(void)
 {
-	int      cnt;
+	int cnt;
 
 	for (cnt = 0; cnt < PFC_QSPI_TBL_NUM; cnt++) {
-		/* IOLH */
-		if (pfc_qspi_reg_tbl[cnt].iolh.flg == PFC_ON) {
-			uint32_t index = 0;
-
-			if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_SPI18_DS_MASK)) {
-				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_SPI18_E_MASK) >> SYS_LSI_OTPPOC_SPI18_E_OFFSET);
-			}
-			else if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_SPI33_DS_MASK)) {
-				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_SPI33_E_MASK) >> SYS_LSI_OTPPOC_SPI33_E_OFFSET);
-			}
-
-			/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
-			mmio_write_64(pfc_qspi_reg_tbl[cnt].iolh.reg, (pfc_iolh_tbl[index] & pfc_qspi_reg_tbl[cnt].iolh.val));
-		}
-
 		/* PUPD */
 		if (pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_qspi_reg_tbl[cnt].pupd.reg, pfc_qspi_reg_tbl[cnt].pupd.val);
@@ -174,34 +117,7 @@ static void pfc_sd_setup(void)
 {
 	int cnt;
 
-	/* Since SDx is 3.3V, the initial value will be set. */
-	// TOD0: KTG: Is there a SD Voltage option- or is it automated in V2H?
-	//mmio_write_32(PFC_SD_ch0, 1);
-	//mmio_write_32(PFC_SD_ch1, 0);
-
-	//TODO: KTG: Looks like we may need to configure SD0 to be either eSD or eMMC - consider details of this later
-
-
-
 	for (cnt = 0; cnt < PFC_SD_TBL_NUM; cnt++) {
-		/* IOLH */
-		if (pfc_sd_reg_tbl[cnt].iolh.flg == PFC_ON) {
-			uint32_t index = 0;
-
-			if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_SD_DS_MASK)) {
-				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_SD_E_MASK) >> SYS_LSI_OTPPOC_SD_E_OFFSET);
-			}
-			else if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_EMMC18_DS_MASK)) {
-				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EMMC18_E_MASK) >> SYS_LSI_OTPPOC_EMMC18_E_OFFSET);
-			}
-			else if (0 != (pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EN_EMMC33_DS_MASK)) {
-				index = ((pfc_sys_lsi_otppoc & SYS_LSI_OTPPOC_EMMC33_E_MASK) >> SYS_LSI_OTPPOC_EMMC33_E_OFFSET);
-			}
-
-			/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
-			mmio_write_64(pfc_sd_reg_tbl[cnt].iolh.reg, (pfc_iolh_tbl[index] & pfc_sd_reg_tbl[cnt].iolh.val));
-		}
-
 		/* PUPD */
 		if (pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].pupd.reg, pfc_sd_reg_tbl[cnt].pupd.val);
@@ -219,9 +135,7 @@ static void pfc_sd_setup(void)
 
 void pfc_setup(void)
 {
-	pfc_sys_lsi_otppoc = mmio_read_32(SYS_LSI_OTPPOC);
-
-	//pfc_mux_setup();	//TODO: KTG: Confirm if this is required
 	pfc_qspi_setup();
 	pfc_sd_setup();
+	pfc_drive_setup();
 }
