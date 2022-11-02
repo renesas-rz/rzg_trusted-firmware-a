@@ -13,28 +13,6 @@
 #define PFC_TBL_LEN						(2)
 
 
-static PFC_REGS  pfc_qspi_reg_tbl[PFC_TBL_LEN] = {
-	/* QSPI0 CLK (P7.0), CS0 (P7.2) */
-	{
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0000000000030003 },		/* IOLH */
-		{ PFC_ON,  (uintptr_t)PFC_PUPD07, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR07,   0x0000000000010001 },		/* SR */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
-	},
-
-	/* QSPI0 IO0-IO3 (P8.0 - P8.3) */
-	{
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000003030303 },		/* IOLH */
-		{ PFC_ON,  (uintptr_t)PFC_PUPD08, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR08,   0x0000000001010101 },		/* SR */
-		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
-	},
-};
-
 /* SDHI 0 */
 static PFC_REGS pfc_sd_reg_tbl[PFC_TBL_LEN] = {
 	/* SD0_CLK (P9.0), SD0_CMD (P9.1), SD0_RSTN (P9.2) */
@@ -55,6 +33,28 @@ static PFC_REGS pfc_sd_reg_tbl[PFC_TBL_LEN] = {
 		{ PFC_ON,  (uintptr_t)PFC_PUPD0A, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR0A,   0x0101010101010101 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN0A,  0x0101010101010101 }		/* IEN */
+	},
+};
+
+static PFC_REGS  pfc_qspi_reg_tbl[PFC_TBL_LEN] = {
+	/* QSPI0 CLK (P7.0), CS0 (P7.2) */
+	{
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0000000000030003 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD07, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR07,   0x0000000000010001 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
+	},
+
+	/* QSPI0 IO0-IO3 (P8.0 - P8.3) */
+	{
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000003030303 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD08, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR08,   0x0000000001010101 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	},
 };
 
@@ -85,6 +85,57 @@ static const PFC_REGS * pfc_boot_mode_tbls[SYS_LSI_MODE_COUNT] = {
 	pfc_scif_reg_tbl
 };
 
+static void pfc_sd_setup(void)
+{
+	int cnt;
+
+	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+		/* PUPD */
+		if (pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
+			mmio_write_64(pfc_sd_reg_tbl[cnt].pupd.reg, pfc_sd_reg_tbl[cnt].pupd.val);
+		}
+		/* SR */
+		if (pfc_sd_reg_tbl[cnt].sr.flg == PFC_ON) {
+			mmio_write_64(pfc_sd_reg_tbl[cnt].sr.reg, pfc_sd_reg_tbl[cnt].sr.val);
+		}
+		/* IEN */
+		if (pfc_sd_reg_tbl[cnt].ien.flg == PFC_ON) {
+			mmio_write_64(pfc_sd_reg_tbl[cnt].ien.reg, pfc_sd_reg_tbl[cnt].ien.val);
+		}
+	}
+}
+
+static void pfc_qspi_setup(void)
+{
+	int cnt;
+
+	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+		/* PUPD */
+		if (pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
+			mmio_write_64(pfc_qspi_reg_tbl[cnt].pupd.reg, pfc_qspi_reg_tbl[cnt].pupd.val);
+		}
+		/* SR */
+		if (pfc_qspi_reg_tbl[cnt].sr.flg == PFC_ON) {
+			mmio_write_64(pfc_qspi_reg_tbl[cnt].sr.reg, pfc_qspi_reg_tbl[cnt].sr.val);
+		}
+	}
+}
+
+static void pfc_scif_setup(void)
+{
+	int cnt;
+
+	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+		/* PUPD */
+		if (pfc_scif_reg_tbl[cnt].pupd.flg == PFC_ON) {
+			mmio_write_64(pfc_scif_reg_tbl[cnt].pupd.reg, pfc_scif_reg_tbl[cnt].pupd.val);
+		}
+		/* SR */
+		if (pfc_scif_reg_tbl[cnt].sr.flg == PFC_ON) {
+			mmio_write_64(pfc_scif_reg_tbl[cnt].sr.reg, pfc_scif_reg_tbl[cnt].sr.val);
+		}
+	}
+}
 
 static void pfc_drive_setup(void)
 {
@@ -113,62 +164,10 @@ static void pfc_drive_setup(void)
 	}
 }
 
-static void pfc_qspi_setup(void)
-{
-	int cnt;
-
-	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
-		/* PUPD */
-		if (pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
-			mmio_write_64(pfc_qspi_reg_tbl[cnt].pupd.reg, pfc_qspi_reg_tbl[cnt].pupd.val);
-		}
-		/* SR */
-		if (pfc_qspi_reg_tbl[cnt].sr.flg == PFC_ON) {
-			mmio_write_64(pfc_qspi_reg_tbl[cnt].sr.reg, pfc_qspi_reg_tbl[cnt].sr.val);
-		}
-	}
-}
-
-static void pfc_sd_setup(void)
-{
-	int cnt;
-
-	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
-		/* PUPD */
-		if (pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
-			mmio_write_64(pfc_sd_reg_tbl[cnt].pupd.reg, pfc_sd_reg_tbl[cnt].pupd.val);
-		}
-		/* SR */
-		if (pfc_sd_reg_tbl[cnt].sr.flg == PFC_ON) {
-			mmio_write_64(pfc_sd_reg_tbl[cnt].sr.reg, pfc_sd_reg_tbl[cnt].sr.val);
-		}
-		/* IEN */
-		if (pfc_sd_reg_tbl[cnt].ien.flg == PFC_ON) {
-			mmio_write_64(pfc_sd_reg_tbl[cnt].ien.reg, pfc_sd_reg_tbl[cnt].ien.val);
-		}
-	}
-}
-
-static void pfc_scif_setup(void)
-{
-	int cnt;
-
-	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
-		/* PUPD */
-		if (pfc_scif_reg_tbl[cnt].pupd.flg == PFC_ON) {
-			mmio_write_64(pfc_scif_reg_tbl[cnt].pupd.reg, pfc_scif_reg_tbl[cnt].pupd.val);
-		}
-		/* SR */
-		if (pfc_scif_reg_tbl[cnt].sr.flg == PFC_ON) {
-			mmio_write_64(pfc_scif_reg_tbl[cnt].sr.reg, pfc_scif_reg_tbl[cnt].sr.val);
-		}
-	}
-}
-
 void pfc_setup(void)
 {
-	pfc_qspi_setup();
 	pfc_sd_setup();
+	pfc_qspi_setup();
 	pfc_scif_setup();
 	pfc_drive_setup();
 }
