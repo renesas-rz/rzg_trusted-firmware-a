@@ -10,12 +10,10 @@
 #include <sys_regs.h>
 #include <lib/mmio.h>
 
-#define PFC_TBL_LEN							(2)
-#define PFC_QSPI_TBL_NUM					(2)
-#define PFC_SD_TBL_NUM						(2)
+#define PFC_TBL_LEN						(2)
 
 
-static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
+static PFC_REGS  pfc_qspi_reg_tbl[PFC_TBL_LEN] = {
 	/* QSPI0 CLK (P7.0), CS0 (P7.2) */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
@@ -38,7 +36,7 @@ static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
 };
 
 /* SDHI 0 */
-static PFC_REGS pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
+static PFC_REGS pfc_sd_reg_tbl[PFC_TBL_LEN] = {
 	/* SD0_CLK (P9.0), SD0_CMD (P9.1), SD0_RSTN (P9.2) */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
@@ -60,13 +58,31 @@ static PFC_REGS pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	},
 };
 
-static const PFC_REGS * pfc_boot_mode_tbls[] = {
+/* SCIF */
+static PFC_REGS pfc_scif_reg_tbl[PFC_TBL_LEN] = {
+	/* SCIF_RXD (P6.0), SCIF_TXD (P6.1) */
+	{
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH06, 0x0000000000000003 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD06, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR06,   0x0000000000000003 },		/* SR */
+		{ PFC_ON,  (uintptr_t)NULL,       0x0000000000000000 }		/* IEN */
+	},
+
+	/* Padding to make same length as other pin tables */
+	{
+		{0}
+	},
+};
+
+static const PFC_REGS * pfc_boot_mode_tbls[SYS_LSI_MODE_COUNT] = {
 	pfc_sd_reg_tbl,
 	pfc_sd_reg_tbl,
 	pfc_sd_reg_tbl,
 	pfc_qspi_reg_tbl,
 	pfc_qspi_reg_tbl,
-	pfc_sd_reg_tbl		// TODO: KTG: SCIF
+	pfc_scif_reg_tbl
 };
 
 
@@ -101,7 +117,7 @@ static void pfc_qspi_setup(void)
 {
 	int cnt;
 
-	for (cnt = 0; cnt < PFC_QSPI_TBL_NUM; cnt++) {
+	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
 		/* PUPD */
 		if (pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_qspi_reg_tbl[cnt].pupd.reg, pfc_qspi_reg_tbl[cnt].pupd.val);
@@ -117,7 +133,7 @@ static void pfc_sd_setup(void)
 {
 	int cnt;
 
-	for (cnt = 0; cnt < PFC_SD_TBL_NUM; cnt++) {
+	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
 		/* PUPD */
 		if (pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].pupd.reg, pfc_sd_reg_tbl[cnt].pupd.val);
@@ -133,9 +149,26 @@ static void pfc_sd_setup(void)
 	}
 }
 
+static void pfc_scif_setup(void)
+{
+	int cnt;
+
+	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+		/* PUPD */
+		if (pfc_scif_reg_tbl[cnt].pupd.flg == PFC_ON) {
+			mmio_write_64(pfc_scif_reg_tbl[cnt].pupd.reg, pfc_scif_reg_tbl[cnt].pupd.val);
+		}
+		/* SR */
+		if (pfc_scif_reg_tbl[cnt].sr.flg == PFC_ON) {
+			mmio_write_64(pfc_scif_reg_tbl[cnt].sr.reg, pfc_scif_reg_tbl[cnt].sr.val);
+		}
+	}
+}
+
 void pfc_setup(void)
 {
 	pfc_qspi_setup();
 	pfc_sd_setup();
+	pfc_scif_setup();
 	pfc_drive_setup();
 }
