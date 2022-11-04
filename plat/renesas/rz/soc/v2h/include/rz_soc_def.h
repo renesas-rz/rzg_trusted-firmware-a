@@ -85,15 +85,15 @@
 #define RZV2H_SPIROM_FIP_BASE		(RZV2H_XSPI_MEMORY_MAP_BASE + 0x0001D200)	//TODO: KTG: Update - 0x1D20
 #define RZV2H_SPIROM_FIP_SIZE		(RZV2H_PCIe_MIRROR_BASE - RZV2H_SPIROM_FIP_BASE)
 
-#define RZV2H_EMMC_FIP_BASE			(0x00020000UL)							//TODO: KTG: Update
-#define RZV2H_EMMC_FIP_SIZE			(0x001DFFFFUL)							//TODO: KTG: Update
+#define RZV2H_EMMC_FIP_BASE			(0x08140000UL)							//TODO: KTG: Update
+#define RZV2H_EMMC_FIP_SIZE			(0x0003FFFFUL)							//TODO: KTG: Update
 
 #define RZV2H_SYC_INCK_HZ			(24000000UL)							//TODO: KTG: Update
 #define RZV2H_UART_INCK_HZ			(100000000UL)							//TODO: KTG: Update	
 #define RZV2H_UART_BARDRATE			(115200UL)
 
 /* Boot Info base address */
-#define RZV2H_BOOTINFO_BASE			(RZV2H_SRAM_BASE)						//TODO: KTG: Update
+#define RZV2H_BOOTINFO_BASE			(RZV2H_ASRAM_BASE)
 
 /* Definitions used in common code */
 
