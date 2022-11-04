@@ -45,12 +45,7 @@
  * BL2 specific defines.
  ******************************************************************************/
 #if !TRUSTED_BOARD_BOOT
-#if !DEBUG_FPGA
 #define BL2_BASE				(0x08103000)
-#else
-#define BL2_BASE				(0x00001000)
-#endif /* DEBUG_FPGA */
-
 #else
 #define BL2_BASE				(0x08104000)
 #endif
