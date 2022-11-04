@@ -16,8 +16,11 @@
 #define CPG_T_CLK						(0)
 #define CPG_T_RST						(1)
 
-/* Read-Modify-Write given MSTOP register to remove modeule stops of bits in given 'val' */
-#define REMOVE_MSTOPS_RMW(reg, val)		mmio_write_32((reg), mmio_read_32((reg)) & (~(val)))
+/* 
+ * Read-Modify-Write given MSTOP register to remove modeule stops of bits in given 'val'. Corrosponding MSTOP bit 
+ * enable in top word also need to be set 
+ * */
+#define REMOVE_MSTOPS_RMW(reg, val)		mmio_write_32((reg), ((mmio_read_32((reg)) & (~(val))) | ((val) << 16U))  )
 
 
 typedef struct {
