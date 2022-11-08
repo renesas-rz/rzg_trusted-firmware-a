@@ -74,7 +74,6 @@
 #define RZV2H_MSRAM_SIZE			(RZV2H_SRAM_SIZE*2)
 #define RZV2H_ASRAM_SIZE			(RZV2H_SRAM_SIZE)
 #define RZV2H_R8SRAM_SIZE			(RZV2H_SRAM_SIZE)
-//#define RZV2H_SRAM_SIZE				(RZV2H_MSRAM_SIZE + RZV2H_ASRAM_SIZE)	//TODO: KTG: Update
 #define RZV2H_DEVICE_SIZE			(0x20000000UL - RZV2H_DEVICE_BASE)
 #define RZV2H_SPIROM_SIZE			(RZV2H_PCIe_MIRROR_BASE - RZV2H_XSPI_MEMORY_MAP_BASE)
 #define RZV2H_DDR1_SIZE				(RZV2H_DDR2_BASE - RZV2H_DDR1_BASE)		
@@ -82,24 +81,29 @@
 #define RZV2H_DDR3_SIZE				(RZV2H_DDR4_BASE - RZV2H_DDR3_BASE)
 //#define RZV2H_DDR4_SIZE			(xxxxxx - RZV2H_DDR4_BASE)			//TODO: KTG: Update
 
-#define RZV2H_SPIROM_FIP_BASE		(RZV2H_XSPI_MEMORY_MAP_BASE + 0x0001D200)	//TODO: KTG: Update - 0x1D20
+/*
+ *  0x20000 has been chosen as FIP base as that leaves room at start of xSPI Flash
+ * to store a 128K BL2 image.
+ */
+#define RZV2H_BL2_SIZE_MAX			(0x00020000U)	/* This value is not checked/enforced anywhwere */
+#define RZV2H_SPIROM_FIP_BASE		(RZV2H_XSPI_MEMORY_MAP_BASE + RZV2H_BL2_SIZE_MAX)
 #define RZV2H_SPIROM_FIP_SIZE		(RZV2H_PCIe_MIRROR_BASE - RZV2H_SPIROM_FIP_BASE)
 
-#define RZV2H_EMMC_FIP_BASE			(0x08140000UL)							//TODO: KTG: Update
-#define RZV2H_EMMC_FIP_SIZE			(0x0003FFFFUL)							//TODO: KTG: Update
+#define RZV2H_EMMC_FIP_BASE			(PARAMS_BASE + PARAMS_SIZE)				//TODO: KTG: Confirm
+#define RZV2H_EMMC_FIP_SIZE			(0x00078000UL) 						    //TODO: KTG: Confirm
 
 #define RZV2H_SYC_INCK_HZ			(24000000UL)							//TODO: KTG: Update
 #define RZV2H_UART_INCK_HZ			(100000000UL)							//TODO: KTG: Update	
 #define RZV2H_UART_BARDRATE			(115200UL)
 
-/* Boot Info base address */
+/* Boot Info base address for BL2 */
 #define RZV2H_BOOTINFO_BASE			(RZV2H_ASRAM_BASE)
 
 /* Definitions used in common code */
 
 /* Base address where parameters to BL31 are stored */
-#define PARAMS_BASE					(RZV2H_SRAM_BASE + 0x0001F000)			//TODO: KTG: Update
-#define PARAMS_SIZE					(0x1000UL)								//TODO: KTG: Update
+#define PARAMS_BASE					(0x08104000 + RZV2H_BL2_SIZE_MAX)		//TODO: KTG: Confirm
+#define PARAMS_SIZE					(0x1000UL)								//TODO: KTG: Confirm
 
 #define RZ_SOC_BOOTINFO_BASE		RZV2H_BOOTINFO_BASE
 
