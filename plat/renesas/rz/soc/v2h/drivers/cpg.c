@@ -1813,8 +1813,13 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 	uint32_t cmp;
 
 	for (i = 0; i < num; i++, array++) {
-		/* CPG registers can be written multiple multiple times so read current value and 'or' in new data */
-		mmio_write_32(array->reg.addr, (array->reg.val | mmio_read_32(array->reg.addr)));
+		/* 
+		 * CPG registers can be written multiple times so read current value and 'or' in new data.
+		 * Upper 16bits are enables for lower 16bits so write the upper 16bits with same value as lower value.
+		 */
+		uint32_t val = (array->reg.val & 0xFFFF) | ((array->reg.val & 0xFFFF) << 16);
+		mmio_write_32(array->reg.addr, (val | mmio_read_32(array->reg.addr)));
+
 		/*
 		 * This generic function needs to handle case where Montitor for clock
 		 * is looking for a HIGH as clock active whereas  Montitoring a reset
