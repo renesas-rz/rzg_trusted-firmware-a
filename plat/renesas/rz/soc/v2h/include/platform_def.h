@@ -49,7 +49,8 @@
 #else
 #define BL2_BASE				(0x08104000)
 #endif
-#define BL2_LIMIT				(0x08180000)
+#define BL2_LIMIT				(0x08124000)
+
 
 /*******************************************************************************
  * BL31 specific defines.
@@ -82,8 +83,8 @@
 #define MAX_MMAP_REGIONS		U(9)
 #endif
 
-#define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 32)
-#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 32)
+#define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 36)
+#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 36)		/* Max Physical Address is 0xF_FFFF_FFFF */
 
 /*******************************************************************************
  * Declarations and constants to access the mailboxes safely. Each mailbox is
