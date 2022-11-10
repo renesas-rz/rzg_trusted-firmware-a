@@ -21,7 +21,6 @@
 #include "esdif.h"
 #include "sys_sel.h"
 #include "sd.h"
-#include "ut_define.h"
 
 /**********************************************************************************************************************
  Macro definitions
@@ -53,7 +52,7 @@
  * Return Value : SD_OK : card is inserted
  *              : SD_ERR: card is not inserted
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_check_media(void)
+int32_t esd_check_media(void)
 {
     SDHNDL    *p_hndl;
 
@@ -78,7 +77,7 @@ SD_DRV_CODE_SEC int32_t esd_check_media(void)
  * Return Value : SD_OK : card is inserted
  *              : SD_ERR: card is not inserted
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_check_media(SDHNDL *hndl)
+int32_t _sd_check_media(SDHNDL *hndl)
 {
     return SD_OK;    /* Inserted */
 }
@@ -94,7 +93,7 @@ SD_DRV_CODE_SEC int32_t _sd_check_media(SDHNDL *hndl)
  * Return Value : != 0 : interrupt ocurred
  *              : == 0 : interrupt not ocurred
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_get_ext_cd_int(SDHNDL *hndl)
+int32_t _sd_get_ext_cd_int(SDHNDL *hndl)
 {
     uint16_t reg;
     uint16_t sift;

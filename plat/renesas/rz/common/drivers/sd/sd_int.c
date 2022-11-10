@@ -21,7 +21,6 @@
 #include "esdif.h"
 #include "sys_sel.h"
 #include "sd.h"
-#include "ut_define.h"
 
 /**********************************************************************************************************************
  Macro definitions
@@ -49,7 +48,7 @@
  *              : uint16_t mask2 : SD_INFO1_MASK2 bits value
  * Return Value : SD_OK : end of succeed
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t    _sd_set_int_mask(SDHNDL *hndl, uint16_t mask1, uint16_t mask2)
+int32_t  _sd_set_int_mask(SDHNDL *hndl, uint16_t mask1, uint16_t mask2)
 {
     esddev_loc_cpu();
     
@@ -79,7 +78,7 @@ SD_DRV_CODE_SEC int32_t    _sd_set_int_mask(SDHNDL *hndl, uint16_t mask1, uint16
  *              : uint16_t mask2 : SD_INFO1_MASK2 bits value
  * Return Value : SD_OK : end of succeed
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_clear_int_mask(SDHNDL *hndl, uint16_t mask1, uint16_t mask2)
+int32_t _sd_clear_int_mask(SDHNDL *hndl, uint16_t mask1, uint16_t mask2)
 {
     esddev_loc_cpu();
     
@@ -109,7 +108,7 @@ SD_DRV_CODE_SEC int32_t _sd_clear_int_mask(SDHNDL *hndl, uint16_t mask1, uint16_
  *              : SD_ERR: end of error
  * Remark       : SD_INFO1 and SD_INFO2 bits are not cleared
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_clear_info(SDHNDL *hndl, uint16_t clear_info1, uint16_t clear_info2)
+int32_t _sd_clear_info(SDHNDL *hndl, uint16_t clear_info1, uint16_t clear_info2)
 {
     esddev_loc_cpu();
     
@@ -135,7 +134,7 @@ SD_DRV_CODE_SEC int32_t _sd_clear_info(SDHNDL *hndl, uint16_t clear_info1, uint1
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_get_int(SDHNDL *hndl)
+int32_t _sd_get_int(SDHNDL *hndl)
 {
     uint16_t info1;
     uint16_t info2;
@@ -178,7 +177,7 @@ SD_DRV_CODE_SEC int32_t _sd_get_int(SDHNDL *hndl)
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_check_int(void)
+int32_t esd_check_int(void)
 
 {
     SDHNDL *p_hndl;

@@ -21,7 +21,6 @@
 #include "esdif.h"
 #include "sys_sel.h"
 #include "sd.h"
-#include "ut_define.h"
 
 #include <assert.h>
 
@@ -58,7 +57,7 @@ SDHNDL *SDHandle[NUM_PORT];
  *              : SD_ERR: end of error
  *              : SD_ERR_CPU_IF : CPU-IF function error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_init(uintptr_t base, void *workarea, int32_t cd_port)
+int32_t esd_init(uintptr_t base, void *workarea, int32_t cd_port)
 {
     int32_t  i;
     int32_t  j;
@@ -169,10 +168,6 @@ ErrExit:
  * End of function esd_init
  *********************************************************************************************************************/
 
-#if 0
-
-#endif
-
 /**********************************************************************************************************************
  * Function Name: _sd_init_hndl
  * Description  : initialize following SD handle members
@@ -189,7 +184,7 @@ ErrExit:
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_init_hndl(SDHNDL *hndl, uint32_t mode, uint32_t voltage)
+int32_t _sd_init_hndl(SDHNDL *hndl, uint32_t mode, uint32_t voltage)
 {
     int32_t i;
 
