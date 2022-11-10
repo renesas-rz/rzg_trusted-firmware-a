@@ -21,7 +21,6 @@
 #include "esdif.h"
 #include "sys_sel.h"
 #include "sd.h"
-#include "ut_define.h"
 
 /**********************************************************************************************************************
  Macro definitions
@@ -38,7 +37,7 @@
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
-SD_DRV_ZIDATA_SEC static uint16_t stat_buff[64/sizeof(uint16_t)];
+static uint16_t stat_buff[64/sizeof(uint16_t)];
 
 /**********************************************************************************************************************
  * Function Name: esd_mount
@@ -65,7 +64,7 @@ SD_DRV_ZIDATA_SEC static uint16_t stat_buff[64/sizeof(uint16_t)];
  *              : SD_OK : end of succeed
  *              : other: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_mount(uint32_t mode, uint32_t voltage)
+int32_t esd_mount(uint32_t mode, uint32_t voltage)
 {
     SDHNDL     *p_hndl;
     uint8_t  spec;
@@ -210,7 +209,7 @@ ERR_EXIT:
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_card_init(SDHNDL *hndl)
+int32_t _sd_card_init(SDHNDL *hndl)
 {
     int32_t ret;
     int32_t i;
@@ -401,7 +400,7 @@ SD_DRV_CODE_SEC int32_t _sd_card_init(SDHNDL *hndl)
  *              : *** About reason not to issue CMD45 unconditionally
  *              : *** See esd_select_partition() function column
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_mem_mount(SDHNDL *hndl)
+int32_t _sd_mem_mount(SDHNDL *hndl)
 {
     /* Case of combo, already supplied data transfer clock */
     if((hndl->media_type & SD_MEDIA_IO) == 0)
@@ -424,7 +423,7 @@ SD_DRV_CODE_SEC int32_t _sd_mem_mount(SDHNDL *hndl)
     if(_sd_card_select_partition(hndl, 1) == SD_OK)
     {
         /* Get changed partition ID from device */
-        int32_t tmp_id;
+        int32_t tmp_id = 0;
         if(_esd_get_partition_id(hndl, &tmp_id) == SD_OK)
         {
             /* Save ID obtained from device */
@@ -495,7 +494,7 @@ ERR_EXIT:
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error.
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_set_mem_speed(SDHNDL *hndl)
+int32_t _sd_set_mem_speed(SDHNDL *hndl)
 {
     /* Query func */
     if(_sd_card_switch_func(hndl,0x00FF,0xFF00) != SD_OK)
@@ -543,7 +542,7 @@ ERR_EXIT:
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_card_switch_func(SDHNDL *hndl, uint16_t h_arg, uint16_t l_arg)
+int32_t _sd_card_switch_func(SDHNDL *hndl, uint16_t h_arg, uint16_t l_arg)
 {
     int32_t i;
     uint8_t *p_rw_buff = (uint8_t *)stat_buff;
@@ -585,7 +584,7 @@ SD_DRV_CODE_SEC int32_t _sd_card_switch_func(SDHNDL *hndl, uint16_t h_arg, uint1
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_card_get_status(SDHNDL *hndl)
+int32_t _sd_card_get_status(SDHNDL *hndl)
 {
     int32_t ret;
     int32_t i;
@@ -640,7 +639,7 @@ SD_DRV_CODE_SEC int32_t _sd_card_get_status(SDHNDL *hndl)
  * Arguments    : SDHNDL *hndl : SD handle
  * Return Value : SD_OK : end of succeed
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_card_get_scr(SDHNDL *hndl)
+int32_t _sd_card_get_scr(SDHNDL *hndl)
 {
     uint8_t *p_rw_buff = (uint8_t *)stat_buff;
 
@@ -679,7 +678,7 @@ SD_DRV_CODE_SEC int32_t _sd_card_get_scr(SDHNDL *hndl)
  * Return Value : SD_OK : end of succeed.
  * Remark       : transfer type is PIO
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_read_byte(SDHNDL *hndl, uint16_t cmd, uint16_t h_arg,
+int32_t _sd_read_byte(SDHNDL *hndl, uint16_t cmd, uint16_t h_arg,
     uint16_t l_arg, uint8_t *readbuff, uint16_t byte)
 {
     /* ---- Disable SD_SECCNT ---- */
@@ -796,7 +795,7 @@ ErrExit:
  *              : SD_ERR: end of error
  * Remark       : transfer type is PIO
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_calc_erase_sector(SDHNDL *hndl)
+int32_t _sd_calc_erase_sector(SDHNDL *hndl)
 {
     uint16_t au;
     uint16_t erase_size;
@@ -844,7 +843,7 @@ SD_DRV_CODE_SEC int32_t _sd_calc_erase_sector(SDHNDL *hndl)
  * Call functions : _sd_read_byte, _sd_card_send_cmd_arg
  * Note         : rw_buff needs 512Byte area
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC static int32_t _sd_card_query_partitions(SDHNDL *hndl, int32_t sub, uint8_t *rw_buff)
+static int32_t _sd_card_query_partitions(SDHNDL *hndl, int32_t sub, uint8_t *rw_buff)
 {
     /* ---- Get QUERY PARTITIONS (issue CMD45) ---- */
     if(_sd_read_byte(hndl,CMD45,(uint16_t)(sub<<8),0,rw_buff,SD_QUERY_PARTITION_LIST_BYTE) == SD_OK)
@@ -890,7 +889,7 @@ SD_DRV_CODE_SEC static int32_t _sd_card_query_partitions(SDHNDL *hndl, int32_t s
  *              :  - I want to return the error value at the time of CMD43 execution,
  *              :    so temporarily evacuate so that CMD13 is not overwritten
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_card_select_partition(SDHNDL *hndl, int32_t id)
+int32_t _sd_card_select_partition(SDHNDL *hndl, int32_t id)
 {
     /* ==== SELECT PARTITIONS(Physical partition #id) ==== */
     if(_sd_card_send_cmd_arg(hndl,CMD43,SD_RESP_R1b,(uint16_t)(id<<8),0x0000) == SD_OK)
@@ -929,7 +928,7 @@ SD_DRV_CODE_SEC int32_t _sd_card_select_partition(SDHNDL *hndl, int32_t id)
  *              : the subsequent SINGLE/MULTI_READ will result in an error(SD_ERR_ILL_READ).
  *              : Therefore, it does not issue CMD45 to non-compliant devices.
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _esd_get_partition_id(SDHNDL *hndl, int32_t *id)
+int32_t _esd_get_partition_id(SDHNDL *hndl, int32_t *id)
 {
 
     /* Issue the QUERY_PARTITION(CMD45) command  */
@@ -955,7 +954,7 @@ SD_DRV_CODE_SEC int32_t _esd_get_partition_id(SDHNDL *hndl, int32_t *id)
  * Remark       : Get directly from device when partition is selected
  *              : Therefore,it does not issue CMD45
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_get_partition_id(int32_t *id)
+int32_t esd_get_partition_id(int32_t *id)
 {
     SDHNDL    *p_hndl;
 

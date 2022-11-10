@@ -19,14 +19,7 @@
  *********************************************************************************************************************/
 #include <assert.h>
 #include <esdif.h>
-#include <boot_esd_if.h>
-#include <ut_define.h>
 #include <sd.h>
-#include <boot_esd_if.h>
-#include <boot_common.h>
-#include <cpg_iodefine.h>
-
-uint64_t gl_uwWorkBuffer[ ESD_SIZE_OF_INIT / sizeof(uint64_t) ];         /* WorkSpace for eSD driver Library */
 
 /**********************************************************************************************************************
  Macro definitions
@@ -43,7 +36,8 @@ uint64_t gl_uwWorkBuffer[ ESD_SIZE_OF_INIT / sizeof(uint64_t) ];         /* Work
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
-static void esd_init_param( stESD_BOOT_OUTPUT* pstOutput );
+static uint32_t sd_drv_rw_buffer[SD_SECTOR_SIZE / sizeof(uint32_t)];
+static uint64_t sd_drv_work_area[ESD_SIZE_OF_INIT / sizeof(uint64_t)];         /* WorkSpace for eSD driver Library */
 
 /**********************************************************************************************************************
  * Function Name: esd_main
@@ -52,27 +46,24 @@ static void esd_init_param( stESD_BOOT_OUTPUT* pstOutput );
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_main(void)
+int32_t esd_main(void)
 {
 	int32_t subret;
 	uint16_t ubcardtype;
 	uint8_t  ubcardspeed;
 	uint8_t  ubcardcapacity;
-	stESD_BOOT_OUTPUT stesdboot_output;
+	int32_t  ipartition_number;
 
 	subret=0;
-	esd_init_param( (stESD_BOOT_OUTPUT* )&stesdboot_output );
-
-	subret=0;
-	subret = esd_init(_SDHI0_BASE_,gl_uwWorkBuffer,SD_CD_SOCKET);
+	subret = esd_init(_SDHI0_BASE_, sd_drv_work_area, SD_CD_SOCKET);
 	if (SD_OK != subret) {
 		NOTICE("BL2: Failed to esd_init.\n");
 		return SD_ERR;
     }
 
 	subret=0;
-	subret = esd_set_buffer((void *)RAM_LSBLOCK_ADDR,   /* Specify format buffer that has 512byte */
-									SD_SECTOR_SIZE);    /* format buffer size is specify */
+	subret = esd_set_buffer((void *)sd_drv_rw_buffer,     /* Specify format buffer that has 512byte */
+							sizeof(sd_drv_rw_buffer));    /* format buffer size is specify */
 	if (SD_OK != subret) {
 		NOTICE("BL2: Failed to esd_set_buffer.\n");
 		return SD_ERR;
@@ -116,31 +107,14 @@ SD_DRV_CODE_SEC int32_t esd_main(void)
     }
 
 	subret=0;
-    subret = esd_get_partition_id(
-		 (int32_t *)&stesdboot_output.ipartition_number );
+    ipartition_number = 0;
+    subret = esd_get_partition_id(&ipartition_number);
 	if (SD_OK != subret) {
 		NOTICE("BL2: Failed to esd_get_partition_id.\n");
 		return SD_ERR;
 	}
 
-	subret=0;
-    subret = esd_read_sect(( uint8_t *)0x44000000, 1, 1);
-	if (SD_OK != subret) {
-		NOTICE("BL2: Failed to esd_read_sect.\n");
-		return SD_ERR;
-	}
-
     return SD_OK;
-}
-
-static void esd_init_param( stESD_BOOT_OUTPUT* pstOutput )
-{
-    pstOutput->ipartition_number      = -1;
-    pstOutput->ierror_code            = -1;
-    pstOutput->iloadersize_blkno      = -1;
-    pstOutput->iloadersize_blknum     = -1;
-    pstOutput->iloaderprog_blkno      = -1;
-    pstOutput->iloaderprog_blknum     = -1;
 }
 
 /* End of File */

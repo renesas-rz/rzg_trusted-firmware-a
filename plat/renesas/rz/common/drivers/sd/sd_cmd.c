@@ -21,7 +21,6 @@
 #include "esdif.h"
 #include "sys_sel.h"
 #include "sd.h"
-#include "ut_define.h"
 
 /**********************************************************************************************************************
  Macro definitions
@@ -109,7 +108,7 @@ static const uint8_t TimeValue[16]={
     0,10,12,13,15,20,25,30,35,40,45,50,55,60,70,80
 };
 
-SD_DRV_CODE_SEC static void _sd_get_info2(SDHNDL *hndl);
+static void _sd_get_info2(SDHNDL *hndl);
 
 /**********************************************************************************************************************
  * Function Name: _sd_send_cmd
@@ -120,7 +119,7 @@ SD_DRV_CODE_SEC static void _sd_get_info2(SDHNDL *hndl);
  *              : SD_ERR: end of error
  * Remark       : not get response and check response errors
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_send_cmd(SDHNDL *hndl, uint16_t cmd)
+int32_t _sd_send_cmd(SDHNDL *hndl, uint16_t cmd)
 {
     int32_t time;
     
@@ -208,7 +207,7 @@ SD_DRV_CODE_SEC int32_t _sd_send_cmd(SDHNDL *hndl, uint16_t cmd)
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_send_acmd(SDHNDL *hndl, uint16_t cmd, uint16_t h_arg,
+int32_t _sd_send_acmd(SDHNDL *hndl, uint16_t cmd, uint16_t h_arg,
         uint16_t l_arg)
 {
     /* ---- Issue CMD 55 ---- */
@@ -248,7 +247,7 @@ SD_DRV_CODE_SEC int32_t _sd_send_acmd(SDHNDL *hndl, uint16_t cmd, uint16_t h_arg
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_send_mcmd(SDHNDL *hndl, uint16_t cmd, uint32_t startaddr)
+int32_t _sd_send_mcmd(SDHNDL *hndl, uint16_t cmd, uint32_t startaddr)
 {
     _sd_set_arg(hndl,(uint16_t)(startaddr>>16),(uint16_t)startaddr);
     /* ---- Issue command ---- */
@@ -301,7 +300,7 @@ SD_DRV_CODE_SEC int32_t _sd_send_mcmd(SDHNDL *hndl, uint16_t cmd, uint32_t start
  * Remark       : if argument value is zero,
  *              : use macro function, that is _sd_card_send_cmd()
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_card_send_cmd_arg(SDHNDL *hndl, uint16_t cmd, int32_t resp,
+int32_t _sd_card_send_cmd_arg(SDHNDL *hndl, uint16_t cmd, int32_t resp,
         uint16_t h_arg, uint16_t l_arg)
 {
     int32_t ret;
@@ -331,7 +330,7 @@ SD_DRV_CODE_SEC int32_t _sd_card_send_cmd_arg(SDHNDL *hndl, uint16_t cmd, int32_
  *              : SD_ERR: end of error
  * Remark       : SD_ARG0 and SD_ARG1 are like little endian order
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC void _sd_set_arg(SDHNDL *hndl, uint16_t h_arg, uint16_t l_arg)
+void _sd_set_arg(SDHNDL *hndl, uint16_t h_arg, uint16_t l_arg)
 {
     sd_outp(hndl,SD_ARG0,l_arg);
     sd_outp(hndl,SD_ARG1,h_arg);
@@ -351,7 +350,7 @@ SD_DRV_CODE_SEC void _sd_set_arg(SDHNDL *hndl, uint16_t h_arg, uint16_t l_arg)
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_card_send_ocr(SDHNDL *hndl, int32_t type)
+int32_t _sd_card_send_ocr(SDHNDL *hndl, int32_t type)
 {
     int32_t ret;
     int32_t i;
@@ -470,7 +469,7 @@ SD_DRV_CODE_SEC int32_t _sd_card_send_ocr(SDHNDL *hndl, int32_t type)
  * Return Value : SD_OK : no error detected
  *              : SD_ERR: any errors detected
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_check_resp_error(SDHNDL *hndl)
+int32_t _sd_check_resp_error(SDHNDL *hndl)
 {
     uint16_t status;
     int32_t bit;
@@ -530,7 +529,7 @@ SD_DRV_CODE_SEC int32_t _sd_check_resp_error(SDHNDL *hndl)
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_get_resp(SDHNDL *hndl, int32_t resp)
+int32_t _sd_get_resp(SDHNDL *hndl, int32_t resp)
 {
     uint32_t status;
     uint16_t *p_ptr;
@@ -647,7 +646,7 @@ SD_DRV_CODE_SEC int32_t _sd_get_resp(SDHNDL *hndl, int32_t resp)
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_check_csd(SDHNDL *hndl)
+int32_t _sd_check_csd(SDHNDL *hndl)
 {
     uint32_t transpeed;
     uint32_t timevalue;
@@ -750,7 +749,7 @@ SD_DRV_CODE_SEC int32_t _sd_check_csd(SDHNDL *hndl)
  * Arguments    : SDHNDL *hndl : SD handle
  * Return Value : SD_OK : end of succeed
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_check_info2_err(SDHNDL *hndl)
+int32_t _sd_check_info2_err(SDHNDL *hndl)
 {
     uint16_t info2;
     int32_t bit;
@@ -787,7 +786,7 @@ SD_DRV_CODE_SEC int32_t _sd_check_info2_err(SDHNDL *hndl)
  * Arguments    : SDHNDL *hndl : SD handle
  * Return Value : none.
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC static void _sd_get_info2(SDHNDL *hndl)
+static void _sd_get_info2(SDHNDL *hndl)
 {
     uint16_t info2_reg;
 

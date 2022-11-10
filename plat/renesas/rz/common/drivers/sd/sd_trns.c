@@ -21,7 +21,6 @@
 #include "esdif.h"
 #include "sys_sel.h"
 #include "sd.h"
-#include "ut_define.h"
 
 /**********************************************************************************************************************
  Macro definitions
@@ -54,7 +53,7 @@
  *              : SD_ERR: end of error.
  * Remark       : transfer finished, check CMD12 sequence refer to All end
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_software_trans(SDHNDL *hndl, uint8_t *buff, uint32_t cnt, int32_t dir)
+int32_t _sd_software_trans(SDHNDL *hndl, uint8_t *buff, uint32_t cnt, int32_t dir)
 {
     int32_t j;
     int32_t (*func)(uint8_t * arg1, uintptr_t arg2, uint32_t arg3);
@@ -119,7 +118,7 @@ SD_DRV_CODE_SEC int32_t _sd_software_trans(SDHNDL *hndl, uint8_t *buff, uint32_t
  *              : SD_OK : end of succeed
  *              : SD_ERR: end of error.
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_dma_trans(SDHNDL *hndl, uint32_t cnt)
+int32_t _sd_dma_trans(SDHNDL *hndl, uint32_t cnt)
 {
     /* ---- Check DMA transfer end  --- */
     /* Timeout value is depend on transfer size */

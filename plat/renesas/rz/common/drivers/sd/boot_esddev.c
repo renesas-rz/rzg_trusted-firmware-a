@@ -19,36 +19,11 @@
  *********************************************************************************************************************/
 #include <stdint.h>
 #include "esdif.h"            /* eSD driver library header */
-#include "boot_esd_if.h"      /* eSD boot interface header */
-#include "boot_esd.h"         /* eSD boot header */
 #include <drivers/delay_timer.h>
 #
 /**********************************************************************************************************************
  Macro definitions
  *********************************************************************************************************************/
-#ifdef _UT_
-#define SD_DEV_CODE_SEC
-#define SD_DEV_CODE_SEC_RAM
-#define SD_DEV_RODATA_SEC
-#define SD_DEV_RWDATA_SEC
-#define SD_DEV_ZIDATA_SEC
-#else
-
-/*
-#define SD_DEV_CODE_SEC     __attribute__((section("CODE_esd_normal")))
-#define SD_DEV_CODE_SEC_RAM __attribute__((section("P_RAM")))
-#define SD_DEV_RODATA_SEC   __attribute__((section("CONST_esd_normal")))
-#define SD_DEV_RWDATA_SEC   __attribute__((section("DATA_esd_normal")))
-#define SD_DEV_ZIDATA_SEC   __attribute__((section("BSS_esd_normal")))
-*/
-
-#define SD_DEV_CODE_SEC
-#define SD_DEV_CODE_SEC_RAM
-#define SD_DEV_RODATA_SEC
-#define SD_DEV_RWDATA_SEC
-#define SD_DEV_ZIDATA_SEC
-
-#endif
 
 /**********************************************************************************************************************
  Local Typedef definitions
@@ -70,7 +45,7 @@
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_init ( void )
+int32_t esddev_init ( void )
 {
     int32_t iret = SD_ERR;
 
@@ -90,7 +65,7 @@ SD_DEV_CODE_SEC int32_t esddev_init ( void )
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_power_on ( void )
+int32_t esddev_power_on ( void )
 {
     int32_t iret = SD_ERR;
 
@@ -114,7 +89,7 @@ SD_DEV_CODE_SEC int32_t esddev_power_on ( void )
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_power_off ( void )
+int32_t esddev_power_off ( void )
 {
     int32_t iret = SD_ERR;
 
@@ -139,7 +114,7 @@ SD_DEV_CODE_SEC int32_t esddev_power_off ( void )
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_write_data ( uint8_t *buff , uintptr_t reg_addr , uint32_t num )
+int32_t esddev_write_data ( uint8_t *buff , uintptr_t reg_addr , uint32_t num )
 {
     int32_t iret = SD_ERR;
 
@@ -169,7 +144,7 @@ SD_DEV_CODE_SEC int32_t esddev_write_data ( uint8_t *buff , uintptr_t reg_addr ,
  *                SD_DIV_128  :complete setting to devide by 128
  *                SD_DIV_256  :complete setting to devide by 256
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC uint32_t esddev_get_clockdiv ( int32_t clock )
+uint32_t esddev_get_clockdiv ( int32_t clock )
 {
     uint32_t uiret_clkdiv;
 
@@ -221,7 +196,7 @@ SD_DEV_CODE_SEC uint32_t esddev_get_clockdiv ( int32_t clock )
  * Note         : Not implement
  *              : Check whether selected port or mode at CALLER
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_set_port(int32_t mode)
+int32_t esddev_set_port(int32_t mode)
 {
     int32_t iret = SD_ERR;
 
@@ -244,7 +219,7 @@ SD_DEV_CODE_SEC int32_t esddev_set_port(int32_t mode)
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_int_wait ( int32_t msec )
+int32_t esddev_int_wait ( int32_t msec )
 {
     int32_t iret = SD_ERR;
     int32_t isubret = SD_ERR;
@@ -285,7 +260,7 @@ SD_DEV_CODE_SEC int32_t esddev_int_wait ( int32_t msec )
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_loc_cpu ( void )
+int32_t esddev_loc_cpu ( void )
 {
     int32_t iret = SD_ERR;
 
@@ -310,7 +285,7 @@ SD_DEV_CODE_SEC int32_t esddev_loc_cpu ( void )
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_unl_cpu ( void )
+int32_t esddev_unl_cpu ( void )
 {
     int32_t iret = SD_ERR;
 
@@ -339,7 +314,7 @@ SD_DEV_CODE_SEC int32_t esddev_unl_cpu ( void )
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_init_dma(uintptr_t buffadr, uintptr_t regadr, uint32_t cnt, int32_t dir)
+int32_t esddev_init_dma(uintptr_t buffadr, uintptr_t regadr, uint32_t cnt, int32_t dir)
 {
     return(SD_ERR);
 }
@@ -355,7 +330,7 @@ SD_DEV_CODE_SEC int32_t esddev_init_dma(uintptr_t buffadr, uintptr_t regadr, uin
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_wait_dma_end ( uint32_t cnt )
+int32_t esddev_wait_dma_end ( uint32_t cnt )
 {
     return(SD_ERR);
 }
@@ -371,7 +346,7 @@ SD_DEV_CODE_SEC int32_t esddev_wait_dma_end ( uint32_t cnt )
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_disable_dma ( void )
+int32_t esddev_disable_dma ( void )
 {
     return(SD_ERR);
 }
@@ -389,7 +364,7 @@ SD_DEV_CODE_SEC int32_t esddev_disable_dma ( void )
  * Return Value : SD_OK    : 0
  *              : SD_ERR   : -1.
  *********************************************************************************************************************/
-SD_DEV_CODE_SEC int32_t esddev_read_data ( uint8_t *buff, uintptr_t reg_addr, uint32_t num )
+int32_t esddev_read_data ( uint8_t *buff, uintptr_t reg_addr, uint32_t num )
 {
 
     int32_t iret = SD_ERR;

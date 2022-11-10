@@ -21,7 +21,6 @@
 #include "esdif.h"
 #include "sys_sel.h"
 #include "sd.h"
-#include "ut_define.h"
 
 /**********************************************************************************************************************
  Macro definitions
@@ -50,7 +49,7 @@
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error.
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_set_clock(SDHNDL *hndl, int32_t clock, int32_t enable)
+int32_t _sd_set_clock(SDHNDL *hndl, int32_t clock, int32_t enable)
 {
     uint32_t div;
 
@@ -97,7 +96,7 @@ SD_DRV_CODE_SEC int32_t _sd_set_clock(SDHNDL *hndl, int32_t clock, int32_t enabl
  * Remark       : before execute this function, check card supporting bus width
  *              : SD memory card is 4bits support mandatory
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_set_port(SDHNDL *hndl, int32_t port)
+int32_t _sd_set_port(SDHNDL *hndl, int32_t port)
 {
     uint16_t reg;
     uint16_t arg;
@@ -160,7 +159,7 @@ SD_DRV_CODE_SEC int32_t _sd_set_port(SDHNDL *hndl, int32_t port)
  *              : SD_WP_HW (1): not write protected
  * Remark       : don't check CSD write protect bits and ROM card
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_iswp(SDHNDL *hndl)
+int32_t _sd_iswp(SDHNDL *hndl)
 {
     int32_t wp;
 
@@ -192,7 +191,7 @@ SD_DRV_CODE_SEC int32_t _sd_iswp(SDHNDL *hndl)
  *              : -1 : no bit has 1'b
  * Remark       : just 16bits value can be applied
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_bit_search(uint16_t data)
+int32_t _sd_bit_search(uint16_t data)
 {
     int32_t i;
 
@@ -220,7 +219,7 @@ SD_DRV_CODE_SEC int32_t _sd_bit_search(uint16_t data)
  *              : SD_ERR: end of error
  * Remark       : if hndl->error was already set, no overwrite it
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_set_err(SDHNDL *hndl, int32_t error)
+int32_t _sd_set_err(SDHNDL *hndl, int32_t error)
 {
     if (hndl->error == SD_OK)
     {
@@ -254,7 +253,7 @@ SD_DRV_CODE_SEC int32_t _sd_set_err(SDHNDL *hndl, int32_t error)
  * Remark       : if pointer has NULL ,the value isn't returned
  *              : only SD memory card, speed mode has meaning
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_get_type(uint16_t *type, uint8_t *speed, uint8_t *capa)
+int32_t esd_get_type(uint16_t *type, uint8_t *speed, uint8_t *capa)
 {
     SDHNDL *p_hndl;
 
@@ -299,7 +298,7 @@ SD_DRV_CODE_SEC int32_t esd_get_type(uint16_t *type, uint8_t *speed, uint8_t *ca
  *              : SD_ERR: end of error
  * Remark       : protect area is just the number of all sectors
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t _sd_get_size(SDHNDL *hndl, uint32_t area)
+int32_t _sd_get_size(SDHNDL *hndl, uint32_t area)
 {
     uint32_t c_mult;
     uint32_t c_size;
@@ -369,7 +368,7 @@ SD_DRV_CODE_SEC int32_t _sd_get_size(SDHNDL *hndl, uint32_t area)
  *              : SD_ERR: end of error
  * Remark       : if applied to CPRM, allocating more than 8K bytes
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_set_buffer(void *buff, uint32_t size)
+int32_t esd_set_buffer(void *buff, uint32_t size)
 {
     SDHNDL *p_hndl;
 

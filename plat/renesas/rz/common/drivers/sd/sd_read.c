@@ -21,7 +21,6 @@
 #include "esdif.h"
 #include "sys_sel.h"
 #include "sd.h"
-#include "ut_define.h"
 
 /**********************************************************************************************************************
  Macro definitions
@@ -38,7 +37,7 @@
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC static int32_t _sd_single_read(SDHNDL *hndl, uint8_t *buff, uint32_t psn, int32_t mode);
+static int32_t _sd_single_read(SDHNDL *hndl, uint8_t *buff, uint32_t psn, int32_t mode);
 
 /**********************************************************************************************************************
  * Function Name: esd_read_sect
@@ -53,7 +52,7 @@ SD_DRV_CODE_SEC static int32_t _sd_single_read(SDHNDL *hndl, uint8_t *buff, uint
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error.
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC int32_t esd_read_sect(uint8_t *buff, uint32_t psn, int32_t cnt)
+int32_t esd_read_sect(uint8_t *buff, uint32_t psn, int32_t cnt)
 {
 
     SDHNDL *p_hndl;
@@ -446,7 +445,6 @@ ErrExit :
  * Return Value : SD_OK : end of succeed
  *              : SD_ERR: end of error
  *********************************************************************************************************************/
-SD_DRV_CODE_SEC
 static int32_t _sd_single_read(SDHNDL *p_hndl, uint8_t *buff, uint32_t psn,
         int32_t mode)
 {
