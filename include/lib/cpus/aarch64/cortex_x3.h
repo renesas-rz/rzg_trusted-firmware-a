@@ -63,10 +63,4 @@
 #define CORTEX_X3_CPUACTLR3_EL1			S3_0_C15_C1_2
 #define CORTEX_X3_CPUACTLR3_EL1_BIT_47		(ULL(1) << 47)
 
-/*******************************************************************************
- * CPU Auxiliary Control register 2 specific definitions.
- ******************************************************************************/
-#define CORTEX_X3_CPUACTLR2_EL1			S3_0_C15_C1_1
-#define CORTEX_X3_CPUACTLR2_EL1_BIT_36		(ULL(1) << 36)
-
 #endif /* CORTEX_X3_H */
