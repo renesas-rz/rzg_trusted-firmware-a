@@ -113,16 +113,6 @@ static void read_feat_rng_trap(void)
 #endif
 }
 
-/******************************************************************
- * Feature : FEAT_RNG_TRAP (Trapping support for RNDR/RNDRRS)
- *****************************************************************/
-static void read_feat_rng_trap(void)
-{
-#if (ENABLE_FEAT_RNG_TRAP == FEAT_STATE_1)
-	feat_detect_panic(is_feat_rng_trap_present(), "RNG_TRAP");
-#endif
-}
-
 /***********************************************************************************
  * TF-A supports many Arm architectural features starting from arch version
  * (8.0 till 8.7+). These features are mostly enabled through build flags. This
