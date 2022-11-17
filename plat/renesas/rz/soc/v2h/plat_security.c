@@ -180,15 +180,15 @@ static void bl2_security_setup(void)
 	const arm_tzc_regions_info_t ddr_tzc_regions[] = {
 #if TRUSTED_BOARD_BOOT
 		{
-			.base = PLAT_FW_TZC_PROT_DRAM00_BASE,
-			.end  = PLAT_FW_TZC_PROT_DRAM00_END,
+			.base = PLAT_FW_TZC_PROT_DRAM01_BASE,
+			.end  = PLAT_FW_TZC_PROT_DRAM01_END,
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 
 		{
-			.base = PLAT_TEE_TZC_PROT_DRAM00_BASE,
-			.end  = PLAT_TEE_TZC_PROT_DRAM00_END,
+			.base = PLAT_TEE_TZC_PROT_DRAM01_BASE,
+			.end  = PLAT_TEE_TZC_PROT_DRAM01_END,
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
@@ -198,7 +198,7 @@ static void bl2_security_setup(void)
 
 	/* initialize TZC-400 */
 	plat_tzc400_setup(RZV2H_TZC400_DDR00_BASE, &ddr_tzc_regions[0]);
-	plat_tzc400_setup(RZV2H_TZC400_DDR01_BASE, NULL);			//TODO: KTG: Confirm
+	plat_tzc400_setup(RZV2H_TZC400_DDR01_BASE, &ddr_tzc_regions[0]);			//TODO: KTG: Confirm
 	plat_tzc400_setup(RZV2H_TZC400_DDR10_BASE, NULL);			//TODO: KTG: Confirm
 	plat_tzc400_setup(RZV2H_TZC400_DDR11_BASE, NULL);			//TODO: KTG: Confirm
 	plat_tzc400_setup(RZV2H_TZC400_xSPI_BASE,  NULL);

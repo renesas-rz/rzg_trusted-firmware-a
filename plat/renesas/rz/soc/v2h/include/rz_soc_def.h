@@ -57,12 +57,12 @@
 #define RZV2H_DDR_MEMC_BASE			RZV2H_DDR0_MEMC_BASE	//TODO: KTG: Remove, temporary scaffold code
 #define RZV2H_DDR_PHY_BASE			RZV2H_DDR0_PHY_BASE		//TODO: KTG: Remove, temporary scaffold code
 
-#define RZV2H_SPIROM_BASE			(0x020000000ULL)
-#define RZV2H_PCIe_MIRROR_BASE		(0x030000000ULL)
-#define RZV2H_DDR1_BASE				(0x040000000ULL)	
-#define RZV2H_DDR2_BASE				(0x140000000ULL)
-#define RZV2H_DDR3_BASE				(0x240000000ULL)
-#define RZV2H_DDR4_BASE				(0x340000000ULL)
+#define RZV2H_SPIROM_BASE			(0x20000000ULL)
+#define RZV2H_PCIe_MIRROR_BASE		(0x30000000ULL)
+#define RZV2H_DDR0_BASE             (0x40000000ULL)
+#define RZV2H_DDR1_BASE             (0x240000000ULL)
+#define RZV2H_PCIe0_BASE            (0x440000000ULL)
+#define RZV2H_PCIe1_BASE            (0xA40000000ULL)
 
 #define RZV2H_GICD_BASE				(RZV2H_GIC_BASE)				//TODO: KTG: Update
 #define RZV2H_GICR_BASE				(RZV2H_GIC_BASE + 0x00040000)	//TODO: KTG: Update
@@ -76,10 +76,9 @@
 #define RZV2H_R8SRAM_SIZE			(RZV2H_SRAM_SIZE)
 #define RZV2H_DEVICE_SIZE			(0x20000000UL - RZV2H_DEVICE_BASE)
 #define RZV2H_SPIROM_SIZE			(RZV2H_PCIe_MIRROR_BASE - RZV2H_XSPI_MEMORY_MAP_BASE)
-#define RZV2H_DDR1_SIZE				(RZV2H_DDR2_BASE - RZV2H_DDR1_BASE)		
-#define RZV2H_DDR2_SIZE				(RZV2H_DDR3_BASE - RZV2H_DDR2_BASE)
-#define RZV2H_DDR3_SIZE				(RZV2H_DDR4_BASE - RZV2H_DDR3_BASE)
-//#define RZV2H_DDR4_SIZE			(xxxxxx - RZV2H_DDR4_BASE)			//TODO: KTG: Update
+#define RZV2H_DDR0_SIZE             (RZV2H_DDR1_BASE - RZV2H_DDR0_BASE)
+#define RZV2H_DDR1_SIZE             (RZV2H_PCIe0_BASE - RZV2H_DDR1_BASE)
+
 
 /*
  *  0x20000 has been chosen as FIP base as that leaves room at start of xSPI Flash
@@ -98,6 +97,7 @@
 
 /* Boot Info base address for BL2 */
 #define RZV2H_BOOTINFO_BASE			(RZV2H_ASRAM_BASE)
+#define RZV2H_BOOTINFO_SIZE			(0x3000)
 
 /* Definitions used in common code */
 
