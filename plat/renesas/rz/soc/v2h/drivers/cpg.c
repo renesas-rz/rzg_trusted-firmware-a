@@ -2027,7 +2027,10 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_6_MSTOP_POEG_A_GPT1
 										| CPG_BUS_6_MSTOP_POEG_B_GPT1
 										| CPG_BUS_6_MSTOP_POEG_C_GPT1
-										| CPG_BUS_6_MSTOP_POEG_D_GPT1);
+										| CPG_BUS_6_MSTOP_POEG_D_GPT1
+										| CPG_BUS_6_MSTOP_DDR_0_P0_TZC400
+										| CPG_BUS_6_MSTOP_DDR_0_P1_TZC400
+										| CPG_BUS_6_MSTOP_DDR_0_P2_TZC400);
 
 	REMOVE_MSTOPS_RMW(CPG_BUS_7_MSTOP,    CPG_BUS_7_MSTOP_USB2_HOST0
 										| CPG_BUS_7_MSTOP_USB2_HOST1
@@ -2037,7 +2040,14 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_7_MSTOP_USB3_HOST0
 										| CPG_BUS_7_MSTOP_USB3_HOST1
 										| CPG_BUS_7_MSTOP_USB3_PHY0
-										| CPG_BUS_7_MSTOP_USB3_PHY1);
+										| CPG_BUS_7_MSTOP_USB3_PHY1
+										| CPG_BUS_7_MSTOP_DDR_0_P3_TZC400
+										| CPG_BUS_7_MSTOP_DDR_0_P4_TZC400
+										| CPG_BUS_7_MSTOP_DDR_1_P0_TZC400
+										| CPG_BUS_7_MSTOP_DDR_1_P1_TZC400
+										| CPG_BUS_7_MSTOP_DDR_1_P2_TZC400
+										| CPG_BUS_7_MSTOP_DDR_1_P3_TZC400
+										| CPG_BUS_7_MSTOP_DDR_1_P4_TZC400);
 
 	REMOVE_MSTOPS_RMW(CPG_BUS_8_MSTOP,    CPG_BUS_8_MSTOP_PCIe_PHY
 										| CPG_BUS_8_MSTOP_SD0
@@ -2053,8 +2063,13 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_10_MSTOP_LCDC_FCPVD
 										| CPG_BUS_10_MSTOP_LCDC_VSPD
 										| CPG_BUS_10_MSTOP_CAN_FD
-										| CPG_BUS_10_MSTOP_CAN_I3C);
+										| CPG_BUS_10_MSTOP_CAN_I3C
+										| CPG_BUS_10_MSTOP_DDRPHY0
+										| CPG_BUS_10_MSTOP_DDRPHY1
+										| CPG_BUS_10_MSTOP_DDR_MEMC0
+										| CPG_BUS_10_MSTOP_DDR_MEMC1);
 }
+
 
 static void cpg_clk_on_setup(void)
 {
