@@ -59,7 +59,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* CM33 */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLCM33_STBY,
-				.val  = 0x00000001,
+				.val  = 0x00010001,
 				},
 
 		.clk1 =  {
@@ -87,7 +87,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* CLN */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLCLN_STBY,
-				.val  = 0x00000001,
+				.val  = 0x00010001,
 				},
 
 		.clk1 =  {
@@ -115,7 +115,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DTY */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLDTY_STBY,
-				.val  = 0x00000001,
+				.val  = 0x00010001,
 				},
 
 		.clk1 =  {
@@ -143,7 +143,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* CA55 */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLCA55_STBY,
-				.val  = 0x00000001,
+				.val  = 0x00010001,
 				},
 
 		.clk1 =  {
@@ -171,7 +171,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* VDO */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLVDO_STBY,
-				.val  = 0x00000001,
+				.val  = 0x00010001,
 				},
 
 		.clk1 =  {
@@ -255,7 +255,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DDR0 */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLDDR0_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00010001,
 				},
 
 		.clk1 =  {
@@ -283,7 +283,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DDR1 */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLDDR1_STBY,
-				.val  = 0x00000000,
+				.val  = 0x00010001,
 				},
 
 		.clk1 =  {
@@ -339,7 +339,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DRP */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLDRP_STBY,
-				.val  = 0x00000001,
+				.val  = 0x00010001,
 				},
 
 		.clk1 =  {
