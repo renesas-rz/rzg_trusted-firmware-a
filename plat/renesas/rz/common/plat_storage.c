@@ -214,16 +214,16 @@ void rz_io_setup(void)
 {
 	const io_dev_connector_t *memmap;
 	const io_dev_connector_t *emmc;
-	const io_dev_connector_t *rzg2l;
+	const io_dev_connector_t *rzsoc;
 	uint16_t boot_dev;
 
 	boot_dev = *((uint16_t *)RZ_SOC_BOOTINFO_BASE) & MASK_BOOTM_DEVICE;
 
 	boot_io_drv_id = FIP_IMAGE_ID;
 
-	register_io_dev_fip(&rzg2l);
+	register_io_dev_fip(&rzsoc);
 
-	io_dev_open(rzg2l, 0, &fip_dev_handle);
+	io_dev_open(rzsoc, 0, &fip_dev_handle);
 
 	if (boot_dev == BOOT_MODE_SPI_1_8 ||
 		boot_dev == BOOT_MODE_SPI_3_3) {
@@ -233,7 +233,7 @@ void rz_io_setup(void)
 
 		policies = &spirom_policies[0];
 	} else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
-		boot_dev == BOOT_MODE_EMMC_3_3) {
+				boot_dev == BOOT_MODE_EMMC_3_3) {
 		if (emmc_init() != EMMC_SUCCESS) {
 			NOTICE("BL2: Failed to eMMC driver initialize.\n");
 			panic();
