@@ -887,34 +887,6 @@ The function returns 0 on success. Any other value means the counter value
 either could not be updated or the authentication image descriptor indicates
 that it is not allowed to be updated.
 
-Function: plat_convert_pk()
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-    Argument : void *, unsigned int, void **, unsigned int *
-    Return   : int
-
-This function is optional when Trusted Board Boot is enabled, and only
-used if the platform saves a hash of the ROTPK.
-First argument is the Distinguished Encoding Rules (DER) ROTPK.
-Second argument is its size.
-Third argument is used to return a pointer to a buffer, which hash should
-be the one saved in OTP.
-Fourth argument is a pointer to return its size.
-
-Most platforms save the hash of the ROTPK, but some may save slightly different
-information - e.g the hash of the ROTPK plus some related information.
-Defining this function allows to transform the ROTPK used to verify
-the signature to the buffer (a platform specific public key) which
-hash is saved in OTP.
-
-The default implementation copies the input key and length to the output without
-modification.
-
-The function returns 0 on success. Any other value means the expected
-public key buffer cannot be extracted.
-
 Dynamic Root of Trust for Measurement support (in BL31)
 -------------------------------------------------------
 
@@ -1529,22 +1501,6 @@ Function : plat_is_smccc_feature_available()
 This function returns SMC_ARCH_CALL_SUCCESS if the platform supports
 the SMCCC function specified in the argument; otherwise returns
 SMC_ARCH_CALL_NOT_SUPPORTED.
-
-Function : plat_can_cmo()
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-    Argument : void
-    Return   : uint64_t
-
-When CONDITIONAL_CMO flag is enabled:
-
-- This function indicates whether cache management operations should be
-  performed. It returns 0 if CMOs should be skipped and non-zero
-  otherwise.
-- The function must not clobber x1, x2 and x3. It's also not safe to rely on
-  stack. Otherwise obey AAPCS.
 
 Function : plat_can_cmo()
 ~~~~~~~~~~~~~~~~~~~~~~~~~
