@@ -16,15 +16,6 @@
 #include <rz_private.h>
 #include <rz_soc_def.h>
 
-static const mmap_region_t rzv2h_mmap[] = {
-	MAP_REGION_FLAT(RZV2H_SRAM_BASE, RZV2H_SRAM_SIZE,
-			MT_MEMORY | MT_RW | MT_SECURE),
-	MAP_REGION_FLAT(RZV2H_DEVICE_BASE, RZV2H_DEVICE_SIZE,
-			MT_DEVICE | MT_RW | MT_SECURE),
-	MAP_REGION_FLAT(RZV2H_DDR1_BASE, RZV2H_DDR1_SIZE,
-			MT_MEMORY | MT_RW | MT_SECURE),
-	{0}
-};
 
 static console_t rzv2h_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
@@ -61,6 +52,16 @@ void bl31_plat_arch_setup(void)
 						MT_CODE | MT_SECURE),
 		MAP_REGION_FLAT(BL_RO_DATA_BASE, BL_RO_DATA_END - BL_RO_DATA_BASE,
 						MT_RO_DATA | MT_SECURE),
+		{0}
+	};
+
+	const mmap_region_t rzv2h_mmap[] = {
+		MAP_REGION_FLAT(RZV2H_SRAM_BASE, RZV2H_SRAM_SIZE,
+				MT_MEMORY | MT_RW | MT_SECURE),
+		MAP_REGION_FLAT(RZV2H_DEVICE_BASE, RZV2H_DEVICE_SIZE,
+				MT_DEVICE | MT_RW | MT_SECURE),
+		MAP_REGION_FLAT(RZV2H_DDR0_BASE, RZV2H_DDR0_SIZE,
+				MT_MEMORY | MT_RW | MT_SECURE),
 		{0}
 	};
 
