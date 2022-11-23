@@ -12,6 +12,7 @@
 #include <arch_helpers.h>
 #include <rz_soc_def.h>
 #include <rz_sip_svc.h>
+#include <sys_regs.h>
 
 
 static uintptr_t rz_otp_handler_devid(void *handle, u_register_t x1)
