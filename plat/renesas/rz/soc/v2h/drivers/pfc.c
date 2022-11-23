@@ -141,7 +141,7 @@ static void pfc_drive_setup(void)
 {
 	static const uint64_t pfc_iolh_drive_tbl[4] = {0x0000000000000000, 0x0101010101010101, 0x0202020202020202, 0x0303030303030303};
 	/* Get the boot mode */
-	uint32_t boot_mode = mmio_read_32(SYS_LSI_MODE) & SYS_LSI_MODE_MASK;
+	uint16_t boot_mode = *((uint16_t *)RZ_SOC_BOOTINFO_BASE);
 
 	if (boot_mode < SYS_LSI_MODE_COUNT) {
 		const PFC_REGS * p_pins_tbl = pfc_boot_mode_tbls[boot_mode];
