@@ -141,10 +141,12 @@ void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_reg
 {
 	uint8_t num_filters;
 	unsigned int region_index = 1U;
-	const arm_tzc_regions_info_t *p;
-	const arm_tzc_regions_info_t init_tzc_regions[] = {
-		{0}
-	};
+	const arm_tzc_regions_info_t * p = tzc_regions;
+
+	if (NULL == p) {
+		ERROR("Invalid Trust Zone Configuration\n");
+		return;
+	}
 
 	INFO("Configuring TrustZone Controller\n");
 
@@ -152,12 +154,9 @@ void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_reg
 
 	tzc400_disable_filters();
 
-	tzc400_configure_region0(TZC_REGION_S_RDWR, PLAT_TZC_REGION_ACCESS_NS_UNPRIV);
-
-	if (tzc_regions == NULL)
-		p = init_tzc_regions;
-	else
-		p = tzc_regions;
+	/* Region 0 configuration is always supplied */
+	tzc400_configure_region0(p->sec_attr, p->nsaid_permissions);
+	p++;
 
 	num_filters = tzc400_get_num_filters(tzc_base);
 
@@ -180,6 +179,14 @@ static void bl2_security_setup(void)
 	const arm_tzc_regions_info_t ddr_tzc_regions[] = {
 #if TRUSTED_BOARD_BOOT
 		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+		},
+
+		{
 			.base = PLAT_FW_TZC_PROT_DRAM01_BASE,
 			.end  = PLAT_FW_TZC_PROT_DRAM01_END,
 			.sec_attr = TZC_REGION_S_RDWR,
@@ -192,17 +199,40 @@ static void bl2_security_setup(void)
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
+#else
+		{
+			/* Default Region 0: Complete access */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
 	};
 
+	const arm_tzc_regions_info_t xspi_tzc_regions[] = {
+		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+		},
+
+		{
+			.base = RZV2H_XSPI_MEMORY_MAP_BASE,
+			.end  = (RZV2H_XSPI_MEMORY_MAP_BASE + RZV2H_SPIROM_SIZE -1ULL),
+			.sec_attr = TZC_REGION_S_RD,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+
+		{}
+	};
+
 	/* initialize TZC-400 */
-	plat_tzc400_setup(RZV2H_TZC400_DDR00_BASE, &ddr_tzc_regions[0]);
-	plat_tzc400_setup(RZV2H_TZC400_DDR01_BASE, &ddr_tzc_regions[0]);			//TODO: KTG: Confirm
-	plat_tzc400_setup(RZV2H_TZC400_DDR10_BASE, NULL);			//TODO: KTG: Confirm
-	plat_tzc400_setup(RZV2H_TZC400_DDR11_BASE, NULL);			//TODO: KTG: Confirm
-	plat_tzc400_setup(RZV2H_TZC400_xSPI_BASE,  NULL);
-	plat_tzc400_setup(RZV2H_TZC400_PCIe_BASE,  NULL);
+	plat_tzc400_setup(RZV2H_TZC400_DDR01_BASE, &ddr_tzc_regions[0]);
+	plat_tzc400_setup(RZV2H_TZC400_xSPI_BASE,  &xspi_tzc_regions[0]);
 
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
@@ -215,8 +245,24 @@ static void bl31_security_setup(void)
 	const arm_tzc_regions_info_t msram_tzc_regions[] = {
 #if TRUSTED_BOARD_BOOT
 		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+		},
+
+		{
 			.base = PLAT_AP_TZC_PROT_SRAM0_BASE,
 			.end  = PLAT_AP_TZC_PROT_SRAM1_END,
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+#else
+		{
+			/* Default Region 0: Complete access */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
@@ -225,11 +271,26 @@ static void bl31_security_setup(void)
 	};
 
 	const arm_tzc_regions_info_t asram_tzc_regions[] = {
+		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+		},
 #if TRUSTED_BOARD_BOOT
 		{
 			.base = PLAT_AP_TZC_PROT_SRAM2_BASE,
 			.end  = PLAT_AP_TZC_PROT_SRAM2_END,
 			.sec_attr = TZC_REGION_S_RDWR, 
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+#else
+		{
+			/* Default Region 0: Complete access */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
@@ -238,10 +299,26 @@ static void bl31_security_setup(void)
 
 	const arm_tzc_regions_info_t r8sram_tzc_regions[] = {
 #if TRUSTED_BOARD_BOOT
+		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+		},
+
 		{ 
 			.base = PLAT_AP_TZC_PROT_SRAM3_BASE,				//TODO: KTG: SRAM sections used by CR8 need to be established
 			.end  = PLAT_AP_TZC_PROT_SRAM3_END,
 			.sec_attr = TZC_REGION_S_RDWR, 
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+#else
+		{
+			/* Default Region 0: Complete access */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
