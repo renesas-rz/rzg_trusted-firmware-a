@@ -10,7 +10,7 @@
 #define MASK_BOOTM_DEVICE		(0x0007)
 #define MASK_BOOTM_SECURE		(0x8000)
 
-#define BOOT_MODE_ESD 			(0)
+#define BOOT_MODE_ESD			(0)
 #define BOOT_MODE_EMMC_3_3		(1)
 #define BOOT_MODE_SPI_3_3		(2)
 #define BOOT_MODE_SCIF			(3)

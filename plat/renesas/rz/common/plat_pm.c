@@ -95,7 +95,7 @@ static void rzg2l_pwr_domain_off(const psci_power_state_t *state)
 	while ((mmio_read_32(SYS_LP_CTL5) & (0x00000100 << coreid)) != (0x00000100 << coreid))
 		;
 	/* Enter the Cortex-A55 Sleep Mode */
-	/* Start the Cortex-A55 Sleep Mode. */
+	/* Start the Cortex-A55 Sleep Mode */
 	mmio_write_32(SYS_LP_CTL2, 0x00000001);
 
 	/* Issue Barrier instruction */
@@ -106,9 +106,9 @@ static void rzg2l_pwr_domain_off(const psci_power_state_t *state)
 
 static void __dead2 rzg2l_system_off(void)
 {
-        wfi();
-        ERROR("RZG System Off: operation not handled.\n");
-        panic();
+	wfi();
+	ERROR("RZG System Off: operation not handled.\n");
+	panic();
 }
 
 const plat_psci_ops_t rzg2l_plat_psci_ops = {

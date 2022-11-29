@@ -86,7 +86,7 @@ entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
 
 	next_image_info = (type == NON_SECURE)
 			? &from_bl2.bl33_ep_info : &from_bl2.bl32_ep_info;
-	
+
 	if (next_image_info->pc)
 		return next_image_info;
 	else

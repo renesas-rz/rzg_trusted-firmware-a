@@ -900,6 +900,7 @@ void cpg_early_setup(void)
 void cpg_wdtrst_sel_setup(void)
 {
 	uint32_t reg;
+
 	reg = mmio_read_32(CPG_WDTRST_SEL);
 	reg |=
 		WDTRST_SEL_WDTRSTSEL0 | WDTRST_SEL_WDTRSTSEL0_WEN |

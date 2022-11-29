@@ -34,8 +34,7 @@
 #define XSPI_COMMAND_TIMEOUT	(100000u)
 
 
-typedef struct
-{
+typedef struct {
 	uint16_t instruction;
 	uint8_t	 direction : 3;		/* Direction */
 	uint8_t	 latency   : 5;		/* Latency (cycle) */
@@ -44,8 +43,7 @@ typedef struct
 	uint8_t	 inst_size : 4;		/* Instruction size (byte) */
 } st_xspi_cmd_t;
 
-typedef struct
-{
+typedef struct {
 	uint8_t	 cmd_idx;
 	uint32_t addr;
 	uint32_t data;
@@ -59,8 +57,6 @@ static const st_xspi_cmd_t mx25_cmds[] = {
 	{0x6600u,		XSPI_OUT,	 0u,		   0u,		   0u,		  1u},	/* MX25_RSTEN */
 	{0x9900u,		XSPI_OUT,	 0u,		   0u,		   0u,		  1u},	/* MX25_RST */
 };
-
-
 
 static int xspi_single_command(const st_xspi_cmd_info_t * const p_cmd_info)
 {
@@ -90,7 +86,7 @@ static int xspi_single_command(const st_xspi_cmd_info_t * const p_cmd_info)
 
 	mmio_write_32(XSPI_INTC, mmio_read_32(XSPI_INTC) | XSPI_INTC_CMDCMPC_MSK);
 
-	return (0u == timeout) ? XSPI_ERROR : XSPI_SUCCESS;
+	return (timeout == 0u) ? XSPI_ERROR : XSPI_SUCCESS;
 }
 
 static int xspi_reset(void)
@@ -103,7 +99,7 @@ static int xspi_reset(void)
 	m_cmd_info.addr = 0;
 
 	ret = xspi_single_command(&m_cmd_info);
-	if (XSPI_SUCCESS == ret) {
+	if (ret == XSPI_SUCCESS) {
 		m_cmd_info.cmd_idx = MX25_RST;
 		ret = xspi_single_command(&m_cmd_info);
 	}
@@ -122,10 +118,10 @@ static int xspi_read_identification(void)
 	m_cmd_info.addr = 0;
 
 	while (count > 0U) {
-		if (XSPI_SUCCESS == xspi_single_command(&m_cmd_info)) {
+		if (xspi_single_command(&m_cmd_info) == XSPI_SUCCESS) {
 			/* Command success */
 			id = mmio_read_32(XSPI_CDD0BUF0) & DEVID_ID_MASK;
-			if ( (DEVICE_ID_BAD != id) && (DEVICE_ID_ERROR != id) && (prev_id == id)) {
+			if ((id != DEVICE_ID_BAD) && (id != DEVICE_ID_ERROR) && (prev_id == id)) {
 				/* Hardware ID is valid and has been repeated on two consecutive reads so exit the while loop and then function */
 				break;
 			}
@@ -152,7 +148,7 @@ int xspi_setup(void)
 	mmio_write_32(XSPI_INTC,		XSPI_BMCFG_SET_VALUE);
 
 	ret = xspi_reset();
-	if (XSPI_SUCCESS == ret)
+	if (ret == XSPI_SUCCESS)
 		ret = xspi_read_identification();
 
 	return ret;

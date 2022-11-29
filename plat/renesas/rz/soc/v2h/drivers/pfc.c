@@ -76,7 +76,7 @@ static PFC_REGS pfc_scif_reg_tbl[PFC_TBL_LEN] = {
 	},
 };
 
-static const PFC_REGS * pfc_boot_mode_tbls[SYS_LSI_MODE_COUNT] = {
+static const PFC_REGS *pfc_boot_mode_tbls[SYS_LSI_MODE_COUNT] = {
 	pfc_sd_reg_tbl,
 	pfc_sd_reg_tbl,
 	pfc_sd_reg_tbl,
@@ -144,7 +144,7 @@ static void pfc_drive_setup(void)
 	uint16_t boot_mode = *((uint16_t *)RZ_SOC_BOOTINFO_BASE);
 
 	if (boot_mode < SYS_LSI_MODE_COUNT) {
-		const PFC_REGS * p_pins_tbl = pfc_boot_mode_tbls[boot_mode];
+		const PFC_REGS *p_pins_tbl = pfc_boot_mode_tbls[boot_mode];
 		uint32_t sys_lsi_otppoc = mmio_read_32(SYS_LSI_OTPPOC);
 		uint64_t pfc_iolh_drive = 0;
 		int cnt;

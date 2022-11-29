@@ -40,8 +40,6 @@ static int rzv2h_pwr_domain_on(u_register_t mpidr)
 	if (coreid >= PLATFORM_CORE_COUNT)
 		return PSCI_E_INVALID_PARAMS;
 #if 0
-
-
 //TODO: KTG: Confirm sequence
 
 	/*  Apply an external reset */
@@ -92,7 +90,7 @@ static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
 	/* Request transition to Cortex-A55 CoreX Sleep Mode */
-	mmio_write_32(CPG_LP_CTL1, (CPG_LP_CTL1_CA55SLEEP_REQ << coreid));	
+	mmio_write_32(CPG_LP_CTL1, (CPG_LP_CTL1_CA55SLEEP_REQ << coreid));
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
 	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */

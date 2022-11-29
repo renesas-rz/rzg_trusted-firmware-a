@@ -80,7 +80,6 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	return 0;
 }
 
-
 void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 								u_register_t arg3, u_register_t arg4)
 {
@@ -103,9 +102,8 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	/* USB 2.0 Phy workaround for RZ/G2L,LC	*/
 	if (((mmio_read_32(SYS_LSI_DEVID) & 0x0FFFFFFF) == 0x841C447) &&
-	    ((mmio_read_32(0x11861124) & 0xf00) == 0x700) &&
-	    ((mmio_read_32(0x11861128) & 0xf00) == 0x700))
-	{
+		((mmio_read_32(0x11861124) & 0xf00) == 0x700) &&
+		((mmio_read_32(0x11861128) & 0xf00) == 0x700)) {
 		mmio_write_32(CPG_CLKON_USB, 0x000F000F);
 		while ((mmio_read_32(CPG_CLKMON_USB) & 0x0000000F) != 0x0000000F)
 			;

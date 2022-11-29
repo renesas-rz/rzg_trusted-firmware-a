@@ -141,9 +141,9 @@ void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_reg
 {
 	uint8_t num_filters;
 	unsigned int region_index = 1U;
-	const arm_tzc_regions_info_t * p = tzc_regions;
+	const arm_tzc_regions_info_t *p = tzc_regions;
 
-	if (NULL == p) {
+	if (p == NULL) {
 		ERROR("Invalid Trust Zone Configuration\n");
 		return;
 	}
@@ -222,7 +222,7 @@ static void bl2_security_setup(void)
 
 		{
 			.base = RZV2H_XSPI_MEMORY_MAP_BASE,
-			.end  = (RZV2H_XSPI_MEMORY_MAP_BASE + RZV2H_SPIROM_SIZE -1ULL),
+			.end  = (RZV2H_XSPI_MEMORY_MAP_BASE + RZV2H_SPIROM_SIZE - 1ULL),
 			.sec_attr = TZC_REGION_S_RD,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},

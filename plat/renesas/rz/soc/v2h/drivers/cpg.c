@@ -16,11 +16,11 @@
 #define CPG_T_CLK						(0)
 #define CPG_T_RST						(1)
 
-/* 
- * Read-Modify-Write given MSTOP register to remove modeule stops of bits in given 'val'. Corrosponding MSTOP bit 
- * enable in top word also need to be set 
- * */
-#define REMOVE_MSTOPS_RMW(reg, val)		mmio_write_32((reg), ((mmio_read_32((reg)) & (~(val))) | ((val) << 16U))  )
+/*
+ * Read-Modify-Write given MSTOP register to remove modeule stops of bits in given 'val'. Corrosponding MSTOP bit
+ * enable in top word also need to be set
+ */
+#define REMOVE_MSTOPS_RMW(reg, val)		mmio_write_32((reg), ((mmio_read_32((reg)) & (~(val))) | ((val) << 16U)))
 
 
 typedef struct {
@@ -1813,11 +1813,12 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 	uint32_t cmp;
 
 	for (i = 0; i < num; i++, array++) {
-		/* 
-		 * CPG registers can be written multiple times so read current value and 'or' in new data.
-		 * Upper 16bits are enables for lower 16bits so write the upper 16bits with same value as lower value.
+		/*
+		 * CPG registers can be written multiple times so read current value and 'or' in new data
+		 * Upper 16bits are enables for lower 16bits so write the upper 16bits with same value as lower value
 		 */
 		uint32_t val = (array->reg.val & 0xFFFF) | ((array->reg.val & 0xFFFF) << 16);
+
 		mmio_write_32(array->reg.addr, (val | mmio_read_32(array->reg.addr)));
 
 		/*
@@ -1831,12 +1832,12 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 			cmp = ~cmp;
 #if !DEBUG_FPGA
 		while ((mmio_read_32(array->mon.addr) & mask) != (cmp & mask))
-					;
+			;
 #endif /* DEBUG_FPGA */
 	}
 }
 
-#if 0 //TODO: KTG: 
+#if 0 //TODO: KTG:
 static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 {
 	uint32_t cnt;
@@ -1894,7 +1895,7 @@ static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
 		tbl_num = ARRAY_SIZE(cpg_sel_pll6_1_on_off);
 		ptr = &cpg_sel_pll6_1_on_off[0];
 		break;
-	
+
 	case CPG_SEL_GPU1_1_ON_OFF:
 		tbl_num = ARRAY_SIZE(cpg_sel_gpu1_1_on_off);
 		ptr = &cpg_sel_gpu1_1_on_off[0];
@@ -1942,7 +1943,7 @@ static void cpg_pll_setup(void)
 		/* PLL standby mode transition confirmation */
 		do {
 			val = mmio_read_32(p_pll->mon.addr);
-		} while ( (val & (CPG_PLL_MON_PLLn_RESETB | CPG_PLL_MON_PLLn_LOCK))
+		} while ((val & (CPG_PLL_MON_PLLn_RESETB | CPG_PLL_MON_PLLn_LOCK))
 					!= (CPG_PLL_MON_PLLn_RESETB | CPG_PLL_MON_PLLn_LOCK));
 #endif /* DEBUG_FPGA */
 	}
