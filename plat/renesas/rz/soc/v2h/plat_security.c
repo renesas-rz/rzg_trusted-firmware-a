@@ -205,7 +205,7 @@ static void bl2_security_setup(void)
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
 			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
@@ -264,13 +264,14 @@ static void bl31_security_setup(void)
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
 			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
 	};
 
 	const arm_tzc_regions_info_t asram_tzc_regions[] = {
+#if TRUSTED_BOARD_BOOT
 		{
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
@@ -278,7 +279,7 @@ static void bl31_security_setup(void)
 			.sec_attr = TZC_REGION_S_NONE,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
-#if TRUSTED_BOARD_BOOT
+
 		{
 			.base = PLAT_AP_TZC_PROT_SRAM2_BASE,
 			.end  = PLAT_AP_TZC_PROT_SRAM2_END,
@@ -291,7 +292,7 @@ static void bl31_security_setup(void)
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
 			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
@@ -319,7 +320,7 @@ static void bl31_security_setup(void)
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
 			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
 		{}
