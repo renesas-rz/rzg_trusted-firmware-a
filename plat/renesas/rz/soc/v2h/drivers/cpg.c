@@ -8,7 +8,7 @@
 #include <cpg_regs.h>
 #include <lib/mmio.h>
 #include <drivers/delay_timer.h>
-#include <cpg_opt.h>
+
 
 #define	CPG_OFF							(0)
 #define	CPG_ON							(1)
@@ -1861,7 +1861,7 @@ static void cpg_reset_setup(void)
 void cpg_active_ddr(void (*disable_phy)(void))
 {
 	/* Assert DDR resets */
-	mmio_write_32(CPG_RST_11, 0xFFF80000 | (CPG_RST_DDR_OPT_VALUE << 16));
+	mmio_write_32(CPG_RST_11, 0xFFF80000);
 	mmio_write_32(CPG_RST_12, 0x001F0000);
 	while ((mmio_read_32(CPG_RSTMON_5) & 0x003FFFF0) != 0x003FFFF0)
 		;
@@ -1885,7 +1885,7 @@ void cpg_active_ddr(void (*disable_phy)(void))
 	disable_phy();
 
 	/* De-assert DDR resets */
-	mmio_write_32(CPG_RST_11, 0xFBF8FBF8 | (CPG_RST_DDR_OPT_VALUE << 16) | CPG_RST_DDR_OPT_VALUE);
+	mmio_write_32(CPG_RST_11, 0xFBF8FBF8);
 	mmio_write_32(CPG_RST_12, 0x00170017);
 	while ((mmio_read_32(CPG_RSTMON_5) & 0x002FF7F0) != 0x00000000)
 		;
@@ -1896,7 +1896,7 @@ void cpg_active_ddr(void (*disable_phy)(void))
 void cpg_reset_ddr_mc(void)
 {
 	/* Assert DDR resets */
-	mmio_write_32(CPG_RST_11, 0xF3F80000 | (CPG_RST_DDR_OPT_VALUE << 16));
+	mmio_write_32(CPG_RST_11, 0xF3F80000);
 	mmio_write_32(CPG_RST_12, 0x00070000);
 	while ((mmio_read_32(CPG_RSTMON_5) & 0x000FE7F0) != 0x000FE7F0)
 		;
@@ -1904,7 +1904,7 @@ void cpg_reset_ddr_mc(void)
 	udelay(1);
 
 	/* De-assert DDR resets */
-	mmio_write_32(CPG_RST_11, 0xF3F8F3F8 | (CPG_RST_DDR_OPT_VALUE << 16) | CPG_RST_DDR_OPT_VALUE);
+	mmio_write_32(CPG_RST_11, 0xF3F8F3F8);
 	mmio_write_32(CPG_RST_12, 0x00070007);
 	while ((mmio_read_32(CPG_RSTMON_5) & 0x000FE7F0) != 0x00000000)
 		;
@@ -1935,7 +1935,6 @@ void cpg_setup(void)
 {
 	cpg_div_sel_static_setup();
 	cpg_pll_setup();
-
 	cpg_mstop_setup();
 	cpg_clk_on_setup();
 	cpg_reset_setup();
