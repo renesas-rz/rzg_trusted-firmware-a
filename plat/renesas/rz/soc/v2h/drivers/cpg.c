@@ -42,17 +42,6 @@ typedef struct {
 	CPG_REG_SETTING mon;
 } CPG_PLL_SETTINGS;
 
-#define	CPG_PLL_CM33_INDEX					(0)
-#define	CPG_PLL_CLN_INDEX					(1)
-#define	CPG_PLL_DTY_INDEX					(2)
-#define	CPG_PLL_CA55_INDEX					(3)
-#define	CPG_PLL_VDO_INDEX					(4)
-#define	CPG_PLL_ETH_INDEX					(5)
-#define	CPG_PLL_DSI_INDEX					(6)
-#define	CPG_PLL_DDDR0_INDEX					(7)
-#define	CPG_PLL_DDDR1_INDEX					(8)
-#define	CPG_PLL_GPU_INDEX					(9)
-#define	CPG_PLL_DRP_INDEX					(10)
 
 static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
@@ -1687,124 +1676,6 @@ static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
 	{ (uintptr_t)CPG_CDDIV3,				0x00000000 },
 	{ (uintptr_t)CPG_CDDIV4,				0x00000000 },
 };
-#if 0
-#define CPG_SEL_PLL1_ON_OFF					(0)
-#define CPG_SEL_PLL2_1_ON_OFF				(1)
-#define CPG_SEL_PLL2_2_ON_OFF				(2)
-#define CPG_SEL_PLL3_1_ON_OFF				(3)
-#define CPG_SEL_PLL3_2_ON_OFF				(4)
-#define CPG_SEL_PLL3_3_ON_OFF				(5)
-#define CPG_SEL_PLL5_1_ON_OFF				(6)
-#define CPG_SEL_PLL5_3_ON_OFF				(7)
-#define CPG_SEL_PLL5_4_ON_OFF				(8)
-#define CPG_SEL_PLL6_1_ON_OFF				(9)
-#define CPG_SEL_GPU1_1_ON_OFF				(10)
-#define CPG_SEL_GPU1_2_ON_OFF				(11)
-#define CPG_SEL_GPU2_ON_OFF					(12)
-
-static CPG_REG_SETTING cpg_sel_pll1_on_off[] = {
-	{(uintptr_t)CPG_CLKON_CA55, 0x00010001 }
-};
-
-static CPG_REG_SETTING cpg_sel_pll2_1_on_off[] = {
-	{(uintptr_t)CPG_CLKON_ADC, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_TSU, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_SDHI, 0x00770077 }
-};
-
-static CPG_REG_SETTING cpg_sel_pll2_2_on_off[] = {
-	{(uintptr_t)CPG_CLKON_SDHI, 0x00770077 },
-#if !RZG2UL
-	{(uintptr_t)CPG_CLKON_MIPI_DSI, 0x00200020 },
-#endif
-};
-
-static CPG_REG_SETTING cpg_sel_pll3_1_on_off[] = {
-	{(uintptr_t)CPG_CLKON_AXI_ACPU_BUS, 0x000F000F },
-	{(uintptr_t)CPG_CLKON_AXI_COM_BUS, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_AXI_DEFAULT_SLV, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_AXI_MCPU_BUS, 0x01930193 },
-	{(uintptr_t)CPG_CLKON_AXI_TZCDDR, 0x001F001F },
-	{(uintptr_t)CPG_CLKON_AXI_VIDEO_BUS, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_CA55, 0x001E001E },
-	{(uintptr_t)CPG_CLKON_CM33, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_CRU, 0x000C000C },
-	{(uintptr_t)CPG_CLKON_CST, 0x07FD07FD },
-	{(uintptr_t)CPG_CLKON_DAMC_REG, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_DDR, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_ETH, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_GIC600, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_GPU, 0x00070007 },
-	{(uintptr_t)CPG_CLKON_H264, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_IA55, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_IM33, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_ISU, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_JAUTH, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_LCDC, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_MIPI_DSI, 0x000C000C },
-	{(uintptr_t)CPG_CLKON_OTP, 0x00020002 },
-	{(uintptr_t)CPG_CLKON_PERI_COM, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_PERI_CPU, 0x000D000D },
-	{(uintptr_t)CPG_CLKON_PERI_DDR, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_PERI_VIDEO, 0x00070007 },
-	{(uintptr_t)CPG_CLKON_REG0_BUS, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_REG1_BUS, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_ROM, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_SDHI, 0x00880088 },
-	{(uintptr_t)CPG_CLKON_SRAM_ACPU, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_SRAM_MCPU, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_SYSC, 0x00020002 },
-	{(uintptr_t)CPG_CLKON_TSIPG, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_USB, 0x000F000F }
-};
-
-static CPG_REG_SETTING cpg_sel_pll3_2_on_off[] = {
-	{(uintptr_t)CPG_CLKON_CRU, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_MIPI_DSI, 0x00020002 },
-	{(uintptr_t)CPG_CLKON_GPU, 0x00010001 },
-==
-	{(uintptr_t)CPG_CLKON_SPI_MULTI, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_AXI_MCPU_BUS, 0x02080208 },
-};
-
-static CPG_REG_SETTING cpg_sel_pll3_3_on_off[] = {
-	{(uintptr_t)CPG_CLKON_SPI_MULTI, 0x00030003 },
-	{(uintptr_t)CPG_CLKON_AXI_MCPU_BUS, 0x02080208 },
-};
-
-static CPG_REG_SETTING cpg_sel_pll5_1_on_off[] = {
-	{(uintptr_t)CPG_CLKON_MIPI_DSI, 0x00010001 },
-	{(uintptr_t)CPG_CLKON_CRU, 0x00100010 },
-	{(uintptr_t)CPG_CLKON_MIPI_DSI, 0x00100010 },
-	{(uintptr_t)CPG_CLKON_LCDC, 0x00020002 }
-};
-
-static CPG_REG_SETTING cpg_sel_pll5_3_on_off[] = {
-	{(uintptr_t)CPG_CLKON_MIPI_DSI, 0x00100010 },
-	{(uintptr_t)CPG_CLKON_LCDC, 0x00020002 }
-};
-
-static CPG_REG_SETTING cpg_sel_pll5_4_on_off[] = {
-	{(uintptr_t)CPG_CLKON_MIPI_DSI, 0x00100010 },
-	{(uintptr_t)CPG_CLKON_LCDC, 0x00020002 }
-};
-
-static CPG_REG_SETTING cpg_sel_pll6_1_on_off[] = {
-	{(uintptr_t)CPG_CLKON_GPU, 0x00010001 }
-};
-
-static CPG_REG_SETTING cpg_sel_gpu1_1_on_off[] = {
-	{(uintptr_t)CPG_CLKON_GPU, 0x00010001 }
-};
-
-static CPG_REG_SETTING cpg_sel_gpu1_2_on_off[] = {
-	{(uintptr_t)CPG_CLKON_GPU, 0x00010001 }
-};
-
-static CPG_REG_SETTING cpg_sel_gpu2_on_off[] = {
-	{(uintptr_t)CPG_CLKON_GPU, 0x00010001 }
-};
-#endif
 
 static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 {
@@ -1837,94 +1708,6 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 	}
 }
 
-#if 0 //TODO: KTG:
-static void cpg_selector_on_off(uint32_t sel, uint8_t flag)
-{
-	uint32_t cnt;
-	uint32_t tbl_num;
-	CPG_REG_SETTING *ptr;
-
-	switch (sel) {
-
-	case CPG_SEL_PLL1_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll1_on_off);
-		ptr = &cpg_sel_pll1_on_off[0];
-		break;
-
-	case CPG_SEL_PLL2_1_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll2_1_on_off);
-		ptr = &cpg_sel_pll2_1_on_off[0];
-		break;
-
-	case CPG_SEL_PLL2_2_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll2_2_on_off);
-		ptr = &cpg_sel_pll2_2_on_off[0];
-		break;
-
-	case CPG_SEL_PLL3_1_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll3_1_on_off);
-		ptr = &cpg_sel_pll3_1_on_off[0];
-		break;
-
-	case CPG_SEL_PLL3_2_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll3_2_on_off);
-		ptr = &cpg_sel_pll3_2_on_off[0];
-		break;
-
-	case CPG_SEL_PLL3_3_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll3_3_on_off);
-		ptr = &cpg_sel_pll3_3_on_off[0];
-		break;
-
-	case CPG_SEL_PLL5_1_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll5_1_on_off);
-		ptr = &cpg_sel_pll5_1_on_off[0];
-		break;
-
-	case CPG_SEL_PLL5_3_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll5_3_on_off);
-		ptr = &cpg_sel_pll5_3_on_off[0];
-		break;
-
-	case CPG_SEL_PLL5_4_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll5_4_on_off);
-		ptr = &cpg_sel_pll5_4_on_off[0];
-		break;
-
-	case CPG_SEL_PLL6_1_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_pll6_1_on_off);
-		ptr = &cpg_sel_pll6_1_on_off[0];
-		break;
-
-	case CPG_SEL_GPU1_1_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_gpu1_1_on_off);
-		ptr = &cpg_sel_gpu1_1_on_off[0];
-		break;
-
-	case CPG_SEL_GPU1_2_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_gpu1_2_on_off);
-		ptr = &cpg_sel_gpu1_2_on_off[0];
-		break;
-
-	case CPG_SEL_GPU2_ON_OFF:
-		tbl_num = ARRAY_SIZE(cpg_sel_gpu2_on_off);
-		ptr = &cpg_sel_gpu2_on_off[0];
-		break;
-
-	default:
-		break;
-	}
-
-	for (cnt = 0; cnt < tbl_num; cnt++) {
-		if (flag == CPG_ON) {
-			mmio_write_32(ptr[cnt].addr, (mmio_read_32(ptr[cnt].addr) | ptr[cnt].val));
-		} else {
-			mmio_write_32(ptr[cnt].addr, (mmio_read_32(ptr[cnt].addr) | (ptr[cnt].val & 0xFFFF0000)));
-		}
-	}
-}
-#endif
-
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
 {
@@ -1956,14 +1739,6 @@ static void cpg_div_sel_setup(CPG_REG_SETTING *tbl, uint32_t size)
 	for (cnt = 0; cnt < size; cnt++, tbl++) {
 		mmio_write_32(tbl->addr, tbl->val);
 	}
-
-#if 0
-#if !DEBUG_FPGA
-	/* Wait for completion of settings */
-	while (mmio_read_32(CPG_CLKSTATUS) != 0)
-		;
-#endif /* DEBUG_FPGA */
-#endif
 }
 
 static void cpg_div_sel_static_setup(void)
@@ -2158,9 +1933,7 @@ static void cpg_wdtrst_sel_setup(void)
 
 void cpg_setup(void)
 {
-	//cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_OFF);
 	cpg_div_sel_static_setup();
-	//cpg_selector_on_off(CPG_SEL_PLL3_3_ON_OFF, CPG_ON);
 	cpg_pll_setup();
 
 	cpg_mstop_setup();
