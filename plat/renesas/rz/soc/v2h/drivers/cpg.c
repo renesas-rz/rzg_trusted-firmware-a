@@ -2082,65 +2082,58 @@ static void cpg_reset_setup(void)
 	cpg_ctrl_clkrst(&cpg_reset_tbl[0], ARRAY_SIZE(cpg_reset_tbl));
 }
 
+
 void cpg_active_ddr(void (*disable_phy)(void))
 {
-#if 0
-	/* Assert the reset of DDRTOP */
-	mmio_write_32(CPG_RST_DDR, 0x005F0000 | (CPG_RST_DDR_OPT_VALUE << 16));
-	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000005F) != 0x0000005F)
+	/* Assert DDR resets */
+	mmio_write_32(CPG_RST_11, 0xFFF80000 | (CPG_RST_DDR_OPT_VALUE << 16));
+	mmio_write_32(CPG_RST_12, 0x001F0000);
+	while ((mmio_read_32(CPG_RSTMON_5) & 0x003FFFF0) != 0x003FFFF0)
 		;
 
 	/* Start the clocks of DDRTOP */
-	mmio_write_32(CPG_CLKON_DDR, 0x00030003);
-	while ((mmio_read_32(CPG_CLKMON_DDR) & 0x00000003) != 0x00000003)
+	mmio_write_32(CPG_CLKON_12, 0xFFC0FFC0);
+	mmio_write_32(CPG_CLKON_13, 0x00030003);
+	while ((mmio_read_32(CPG_CLKMON_6) & 0x0003FFC0) != 0x0003FFC0)
 		;
-
-	udelay(1);
-
-	/* De-assert rst_n */
-	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
 
 	udelay(1);
 
 	/* De-assert PRESETN */
-	mmio_write_32(CPG_RST_DDR, 0x00020002);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x00000002) != 0x00000000)
+	mmio_write_32(CPG_RST_11, 0x04000400);
+	mmio_write_32(CPG_RST_12, 0x00080008);
+	while ((mmio_read_32(CPG_RSTMON_5) & 0x00100800) != 0x00000000)
 		;
 
 	udelay(1);
 
 	disable_phy();
 
-	/* De-assert axiY_ARESETn, regARESETn, reset_n */
-	mmio_write_32(CPG_RST_DDR, 0x005D005D | (CPG_RST_DDR_OPT_VALUE << 16) | CPG_RST_DDR_OPT_VALUE);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000005D) != 0x00000000)
+	/* De-assert DDR resets */
+	mmio_write_32(CPG_RST_11, 0xFBF8FBF8 | (CPG_RST_DDR_OPT_VALUE << 16) | CPG_RST_DDR_OPT_VALUE);
+	mmio_write_32(CPG_RST_12, 0x00170017);
+	while ((mmio_read_32(CPG_RSTMON_5) & 0x002FF7F0) != 0x00000000)
 		;
-#endif
+
 	udelay(1);
 }
 
 void cpg_reset_ddr_mc(void)
 {
-#if 0
-	/* Assert rst_n, axiY_ARESETn, regARESETn */
-	mmio_write_32(CPG_RST_DDR, 0x005C0000 | (CPG_RST_DDR_OPT_VALUE << 16));
-	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000005C) != 0x0000005C)
+	/* Assert DDR resets */
+	mmio_write_32(CPG_RST_11, 0xF3F80000 | (CPG_RST_DDR_OPT_VALUE << 16));
+	mmio_write_32(CPG_RST_12, 0x00070000);
+	while ((mmio_read_32(CPG_RSTMON_5) & 0x000FE7F0) != 0x000FE7F0)
 		;
 
 	udelay(1);
 
-	/* De-assert rst_n */
-	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
-
-	udelay(1);
-
-	/* De-assert axiY_ARESETn, regARESETn */
-	mmio_write_32(CPG_RST_DDR, 0x005C005C | (CPG_RST_DDR_OPT_VALUE << 16) | CPG_RST_DDR_OPT_VALUE);
-	while ((mmio_read_32(CPG_RSTMON_DDR) & 0x0000005C) != 0x00000000)
+	/* De-assert DDR resets */
+	mmio_write_32(CPG_RST_11, 0xF3F8F3F8 | (CPG_RST_DDR_OPT_VALUE << 16) | CPG_RST_DDR_OPT_VALUE);
+	mmio_write_32(CPG_RST_12, 0x00070007);
+	while ((mmio_read_32(CPG_RSTMON_5) & 0x000FE7F0) != 0x00000000)
 		;
-#endif
+
 	udelay(1);
 }
 

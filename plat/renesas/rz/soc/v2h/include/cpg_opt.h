@@ -7,6 +7,6 @@
 #ifndef __CPG_OPT_H__
 #define __CPG_OPT_H__
 
-#define CPG_RST_DDR_OPT_VALUE		(0x00000020)
+#define CPG_RST_DDR_OPT_VALUE		(0x00000000)
 
 #endif	// __CPG_OPT_H__
