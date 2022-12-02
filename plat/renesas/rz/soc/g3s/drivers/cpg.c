@@ -213,34 +213,6 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 				},
 	},
 
-	{	/* DSI */
-		.stby =  {
-				.addr = (uintptr_t)CPG_PLLDSI_STBY,
-				.val  = 0x00000000,
-				},
-
-		.clk1 =  {
-				.addr = (uintptr_t)CPG_PLLDSI_CLK1,
-				.val  = 0x00003182,
-				},
-
-
-		.clk2 =  {
-				.addr = (uintptr_t)CPG_PLLDSI_CLK2,
-				.val  = 0x000C1803,
-				},
-
-		.clk3 =  {
-				.addr = (uintptr_t)CPG_PLLDSI_CLK3,
-				.val  = 0x00008003,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_PLLDSI_MON,
-				.val  = 0x00000000,
-				},
-	},
-
 	{	/* DDR0 */
 		.stby =  {
 				.addr = (uintptr_t)CPG_PLLDDR0_STBY,
@@ -688,20 +660,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_CLKMON_7,
 				.val  = 0x00000003,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* DSI */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_14,
-				.val  = 0x00001F00,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00001F00,
 				},
 
 		.type = CPG_T_CLK
@@ -1243,20 +1201,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.type = CPG_T_RST
 	},
 
-	{	/* DSI */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x00000180,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x00000300,
-				},
-
-		.type = CPG_T_RST
-	},
-
 	{	/* LCDC */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_13,
@@ -1587,9 +1531,6 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_8_MSTOP_SD2
 										| CPG_BUS_8_MSTOP_GBETH0
 										| CPG_BUS_8_MSTOP_GBETH1);
-
-	REMOVE_MSTOPS_RMW(CPG_BUS_9_MSTOP,    CPG_BUS_9_MSTOP_DSI_LINK
-										| CPG_BUS_9_MSTOP_DSI_DPHY);
 
 	REMOVE_MSTOPS_RMW(CPG_BUS_10_MSTOP,   CPG_BUS_10_MSTOP_LCDC_DU
 										| CPG_BUS_10_MSTOP_LCDC_FCPVD

@@ -39,11 +39,6 @@
 #define	CPG_PLLETH_CLK2				(CPG_BASE + 0x0A8)	/* PLLETH output clock setting register 2 */
 #define	CPG_PLLETH_CLK3				(CPG_BASE + 0x0AC)	/* PLLETH output clock setting register 3 */
 #define	CPG_PLLETH_MON				(CPG_BASE + 0x0B0)	/* PLLETH monitor register */
-#define	CPG_PLLDSI_STBY				(CPG_BASE + 0x0C0)	/* PLLDSI standby control register */
-#define	CPG_PLLDSI_CLK1				(CPG_BASE + 0x0C4)	/* PLLDSI output clock setting register 1 */
-#define	CPG_PLLDSI_CLK2				(CPG_BASE + 0x0C8)	/* PLLDSI output clock setting register 2 */
-#define	CPG_PLLDSI_CLK3				(CPG_BASE + 0x0CC)	/* PLLDSI output clock setting register 3 */
-#define	CPG_PLLDSI_MON				(CPG_BASE + 0x0D0)	/* PLLDSI monitor register */
 #define	CPG_PLLDDR0_STBY			(CPG_BASE + 0x0E0)	/* PLLDDR0 standby control register */
 #define	CPG_PLLDDR0_CLK1			(CPG_BASE + 0x0E4)	/* PLLDDR0 output clock setting register 1 */
 #define	CPG_PLLDDR0_CLK2			(CPG_BASE + 0x0E8)	/* PLLDDR0 output clock setting register 2 */
@@ -342,9 +337,6 @@
 #define CPG_BUS_8_MSTOP_SD2					(1UL << 4)
 #define CPG_BUS_8_MSTOP_GBETH0				(1UL << 5)
 #define CPG_BUS_8_MSTOP_GBETH1				(1UL << 6)
-
-#define CPG_BUS_9_MSTOP_DSI_LINK			(1UL << 14)
-#define CPG_BUS_9_MSTOP_DSI_DPHY			(1UL << 15)
 
 #define CPG_BUS_10_MSTOP_LCDC_DU			(1UL << 1)
 #define CPG_BUS_10_MSTOP_LCDC_FCPVD			(1UL << 2)
