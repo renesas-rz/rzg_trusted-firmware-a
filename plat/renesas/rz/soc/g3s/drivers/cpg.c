@@ -595,20 +595,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* LCDC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_14,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x0000E000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* Serial Sound Interface (SSI) Part 1 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_15,
@@ -1103,20 +1089,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.type = CPG_T_RST
 	},
 
-	{	/* LCDC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x00001000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x00002000,
-				},
-
-		.type = CPG_T_RST
-	},
-
 	{	/* Serial Sound Interface (SSI) */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_14,
@@ -1433,10 +1405,7 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_8_MSTOP_GBETH0
 										| CPG_BUS_8_MSTOP_GBETH1);
 
-	REMOVE_MSTOPS_RMW(CPG_BUS_10_MSTOP,   CPG_BUS_10_MSTOP_LCDC_DU
-										| CPG_BUS_10_MSTOP_LCDC_FCPVD
-										| CPG_BUS_10_MSTOP_LCDC_VSPD
-										| CPG_BUS_10_MSTOP_CAN_FD
+	REMOVE_MSTOPS_RMW(CPG_BUS_10_MSTOP,   CPG_BUS_10_MSTOP_CAN_FD
 										| CPG_BUS_10_MSTOP_CAN_I3C
 										| CPG_BUS_10_MSTOP_DDRPHY0
 										| CPG_BUS_10_MSTOP_DDRPHY1

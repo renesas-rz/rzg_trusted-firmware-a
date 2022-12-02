@@ -331,9 +331,6 @@
 #define CPG_BUS_8_MSTOP_GBETH0				(1UL << 5)
 #define CPG_BUS_8_MSTOP_GBETH1				(1UL << 6)
 
-#define CPG_BUS_10_MSTOP_LCDC_DU			(1UL << 1)
-#define CPG_BUS_10_MSTOP_LCDC_FCPVD			(1UL << 2)
-#define CPG_BUS_10_MSTOP_LCDC_VSPD			(1UL << 3)
 #define CPG_BUS_10_MSTOP_DDRPHY0			(1UL << 5)
 #define CPG_BUS_10_MSTOP_DDRPHY1			(1UL << 6)
 #define CPG_BUS_10_MSTOP_DDR_MEMC0			(1UL << 7)
