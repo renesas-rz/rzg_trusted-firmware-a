@@ -59,11 +59,6 @@
 #define	CPG_PLLGPU_CLK2				(CPG_BASE + 0x128)	/* PLLGPU output clock setting register 2 */
 #define	CPG_PLLGPU_CLK3				(CPG_BASE + 0x12C)	/* PLLGPU output clock setting register 3 */
 #define	CPG_PLLGPU_MON				(CPG_BASE + 0x130)	/* PLLGPU monitor register */
-#define	CPG_PLLDRP_STBY				(CPG_BASE + 0x140)	/* PLLDRP standby control register */
-#define	CPG_PLLDRP_CLK1				(CPG_BASE + 0x144)	/* PLLDRP output clock setting register 1 */
-#define	CPG_PLLDRP_CLK2				(CPG_BASE + 0x148)	/* PLLDRP output clock setting register 2 */
-#define	CPG_PLLDRP_CLK3				(CPG_BASE + 0x14C)	/* PLLDRP output clock setting register 3 */
-#define	CPG_PLLDRP_MON				(CPG_BASE + 0x150)	/* PLLDRP monitor register */
 #define	CCLMA0_CTL					(CPG_BASE + 0x200)	/* CLMA0 control register */
 #define	CCLMA1_CTL					(CPG_BASE + 0x204)	/* CLMA1 control register */
 #define	CCLMA2_CTL					(CPG_BASE + 0x208)	/* CLMA2 control register */
@@ -185,7 +180,7 @@
 #define	CPG_LP_CA55_CTL6			(CPG_BASE + 0xC34)	/* Cortex-A55 Clock Control Register 6 */
 #define	CPG_LP_CA55_CTL7			(CPG_BASE + 0xC38)	/* Cortex-A55 Clock Control Register 7 */
 #define	CPG_LP_PMU_CTL1				(CPG_BASE + 0xC4C)	/* Lowpower Sequence Control Register @ */
-#define	CPG_LP_SRAM_STBY_CTL1		(CPG_BASE + 0xC50)	/* DRP SRAM standby control */
+#define	CPG_LP_SRAM_STBY_CTL1		(CPG_BASE + 0xC50)	/* DRP SRAM standby control */				//TODO: G3S: Confirm if this register is supported
 #define	CPG_LP_SRAM_STBY_CTL2		(CPG_BASE + 0xC54)	/* Shared SRAM standby control 0 */
 #define	CPG_LP_SRAM_STBY_CTL3		(CPG_BASE + 0xC58)	/* Shared SRAM standby control 8 */
 #define	CPG_LP_GIC_CTL1				(CPG_BASE + 0xC5C)	/* GIC control */

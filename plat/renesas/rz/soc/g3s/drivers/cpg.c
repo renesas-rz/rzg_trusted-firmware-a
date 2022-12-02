@@ -324,34 +324,6 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 				.val  = 0x00000000,
 				},
 	},
-
-	{	/* DRP */
-		.stby =  {
-				.addr = (uintptr_t)CPG_PLLDRP_STBY,
-				.val  = 0x00010001,
-				},
-
-		.clk1 =  {
-				.addr = (uintptr_t)CPG_PLLDRP_CLK1,
-				.val  = 0x00003482,
-				},
-
-
-		.clk2 =  {
-				.addr = (uintptr_t)CPG_PLLDRP_CLK2,
-				.val  = 0x000C1A01,
-				},
-
-		.clk3 =  {
-				.addr = (uintptr_t)CPG_PLLDRP_CLK3,
-				.val  = 0x00008003,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_PLLDRP_MON,
-				.val  = 0x00000000,
-				},
-	},
 };
 
 static const CPG_SETUP_DATA early_setup_tbl[] = {
