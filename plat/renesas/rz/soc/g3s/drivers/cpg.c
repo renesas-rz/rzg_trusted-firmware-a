@@ -820,62 +820,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* SCI Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_5,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_2,
-				.val  = 0xE0000000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SCI Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_6,
-				.val  = 0x0000FFFF,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_3,
-				.val  = 0x0000FFFF,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SCI Part 3 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_7,
-				.val  = 0x0000FFFF,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_3,
-				.val  = 0xFFFF0000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SCI Part 4 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_8,
-				.val  = 0x0000FFFF,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_4,
-				.val  = 0x0000FFFF,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* SPI Part 1 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_5,
@@ -1434,48 +1378,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_RSTMON_4,
 				.val  = 0x00000040,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SCI Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_8,
-				.val  = 0x00007FFE,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_3,
-				.val  = 0xFFFC0000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SCI Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_8,
-				.val  = 0x00008000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x00000001,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SCI Part 3 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_9,
-				.val  = 0x0000003F,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x0000007E,
 				},
 
 		.type = CPG_T_RST
