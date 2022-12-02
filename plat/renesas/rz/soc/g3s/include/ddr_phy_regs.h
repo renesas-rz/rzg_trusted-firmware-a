@@ -9,7 +9,7 @@
 
 #include <rz_soc_def.h>
 
-#define DDR_PHY_BASE		RZV2H_DDR0_PHY_BASE		//TODO: KTG: Confirm
+#define DDR_PHY_BASE		RZG3S_DDR0_PHY_BASE
 
 #define	DDRPHY_R00			(0x040)
 #define	DDRPHY_R01			(0x044)

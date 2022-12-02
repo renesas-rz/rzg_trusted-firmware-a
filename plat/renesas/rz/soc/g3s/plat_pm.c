@@ -30,7 +30,7 @@ typedef struct {
 uintptr_t	gp_warm_ep;
 
 
-static int rzv2h_pwr_domain_on(u_register_t mpidr)
+static int rzg3s_pwr_domain_on(u_register_t mpidr)
 {
 	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
 		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
@@ -86,7 +86,7 @@ static int rzv2h_pwr_domain_on(u_register_t mpidr)
 	return PSCI_E_SUCCESS;
 }
 
-static void rzv2h_pwr_domain_on_finish(const psci_power_state_t *target_state)
+static void rzg3s_pwr_domain_on_finish(const psci_power_state_t *target_state)
 {
 #if !DEBUG_FPGA
 	plat_gic_pcpu_init();
@@ -94,7 +94,7 @@ static void rzv2h_pwr_domain_on_finish(const psci_power_state_t *target_state)
 #endif /*DEBUG_FPGA */
 }
 
-static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
+static void rzg3s_pwr_domain_off(const psci_power_state_t *state)
 {
 	unsigned long mpidr = read_mpidr_el1();
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
@@ -116,25 +116,25 @@ static void rzv2h_pwr_domain_off(const psci_power_state_t *state)
 	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
 }
 
-static void __dead2 rzv2h_system_off(void)
+static void __dead2 rzg3s_system_off(void)
 {
 	wfi();
-	ERROR("RZ/V2H System Off: operation not handled.\n");
+	ERROR("RZ/G3S System Off: operation not handled.\n");
 	panic();
 }
 
-const plat_psci_ops_t rzv2h_plat_psci_ops = {
-	.pwr_domain_on						= rzv2h_pwr_domain_on,
-	.pwr_domain_on_finish				= rzv2h_pwr_domain_on_finish,
-	.pwr_domain_off						= rzv2h_pwr_domain_off,
-	.system_off							= rzv2h_system_off,
+const plat_psci_ops_t rzg3s_plat_psci_ops = {
+	.pwr_domain_on						= rzg3s_pwr_domain_on,
+	.pwr_domain_on_finish				= rzg3s_pwr_domain_on_finish,
+	.pwr_domain_off						= rzg3s_pwr_domain_off,
+	.system_off							= rzg3s_system_off,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 			const plat_psci_ops_t **psci_ops)
 {
 	gp_warm_ep = sec_entrypoint;
-	*psci_ops = &rzv2h_plat_psci_ops;
+	*psci_ops = &rzg3s_plat_psci_ops;
 
 	return 0;
 }

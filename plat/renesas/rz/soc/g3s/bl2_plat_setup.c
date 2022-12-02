@@ -25,7 +25,7 @@
 #include <rz_private.h>
 
 
-static console_t rzv2h_bl2_console;
+static console_t rzg3s_bl2_console;
 
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
@@ -70,7 +70,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	cpg_early_setup();
 
 	/* initialize SYC */
-	syc_init(RZV2H_SYC_INCK_HZ);
+	syc_init(RZG3S_SYC_INCK_HZ);
 
 	/* initialize Timer */
 	generic_delay_timer_init();
@@ -83,14 +83,14 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	/* initialize console driver */
 	ret = console_rz_register(
-							RZV2H_SCIF_BASE,
-							RZV2H_UART_INCK_HZ,
-							RZV2H_UART_BARDRATE,
-							&rzv2h_bl2_console);
+							RZG3S_SCIF_BASE,
+							RZG3S_UART_INCK_HZ,
+							RZG3S_UART_BARDRATE,
+							&rzg3s_bl2_console);
 	if (!ret)
 		panic();
 
-	console_set_scope(&rzv2h_bl2_console,
+	console_set_scope(&rzg3s_bl2_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 }
 
@@ -106,25 +106,25 @@ void bl2_el3_plat_arch_setup(void)
 		{0}
 	};
 
-	const mmap_region_t rzv2h_mmap[] = {
+	const mmap_region_t rzg3s_mmap[] = {
 #if TRUSTED_BOARD_BOOT
-		MAP_REGION_FLAT(RZV2H_BOOT_ROM_BASE, RZV2H_BOOT_ROM_SIZE,
+		MAP_REGION_FLAT(RZG3S_BOOT_ROM_BASE, RZG3S_BOOT_ROM_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
 #endif
-		MAP_REGION_FLAT(RZV2H_BOOTINFO_BASE, RZV2H_BOOTINFO_SIZE,
+		MAP_REGION_FLAT(RZG3S_BOOTINFO_BASE, RZG3S_BOOTINFO_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
 		MAP_REGION_FLAT(PARAMS_BASE, PARAMS_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
-		MAP_REGION_FLAT(RZV2H_DEVICE_BASE, RZV2H_DEVICE_SIZE,
+		MAP_REGION_FLAT(RZG3S_DEVICE_BASE, RZG3S_DEVICE_SIZE,
 				MT_DEVICE | MT_RW | MT_SECURE),
-		MAP_REGION_FLAT(RZV2H_SPIROM_BASE, RZV2H_SPIROM_SIZE,
+		MAP_REGION_FLAT(RZG3S_SPIROM_BASE, RZG3S_SPIROM_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
-		MAP_REGION_FLAT(RZV2H_DDR0_BASE, RZV2H_DDR0_SIZE,
+		MAP_REGION_FLAT(RZG3S_DDR0_BASE, RZG3S_DDR0_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		{0}
 	};
 
-	setup_page_tables(bl2_regions, rzv2h_mmap);
+	setup_page_tables(bl2_regions, rzg3s_mmap);
 	enable_mmu_el3(0);
 }
 

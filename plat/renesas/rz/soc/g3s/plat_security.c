@@ -221,8 +221,8 @@ static void bl2_security_setup(void)
 		},
 
 		{
-			.base = RZV2H_XSPI_MEMORY_MAP_BASE,
-			.end  = (RZV2H_XSPI_MEMORY_MAP_BASE + RZV2H_SPIROM_SIZE - 1ULL),
+			.base = RZG3S_XSPI_MEMORY_MAP_BASE,
+			.end  = (RZG3S_XSPI_MEMORY_MAP_BASE + RZG3S_SPIROM_SIZE - 1ULL),
 			.sec_attr = TZC_REGION_S_RD,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
@@ -231,8 +231,8 @@ static void bl2_security_setup(void)
 	};
 
 	/* initialize TZC-400 */
-	plat_tzc400_setup(RZV2H_TZC400_DDR01_BASE, &ddr_tzc_regions[0]);
-	plat_tzc400_setup(RZV2H_TZC400_xSPI_BASE,  &xspi_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_DDR01_BASE, &ddr_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_xSPI_BASE,  &xspi_tzc_regions[0]);
 
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
@@ -327,9 +327,9 @@ static void bl31_security_setup(void)
 	};
 
 	/* Additional settings for TZC-400 SRAM */
-	plat_tzc400_setup(RZV2H_TZC400_M33_BASE, &msram_tzc_regions[0]);
-	plat_tzc400_setup(RZV2H_TZC400_A55_BASE, &asram_tzc_regions[0]);
-	plat_tzc400_setup(RZV2H_TZC400_R8_BASE,  &r8sram_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_M33_BASE, &msram_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_A55_BASE, &asram_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_R8_BASE,  &r8sram_tzc_regions[0]);
 }
 #endif
 

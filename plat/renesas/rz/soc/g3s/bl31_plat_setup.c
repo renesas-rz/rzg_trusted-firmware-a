@@ -17,7 +17,7 @@
 #include <rz_soc_def.h>
 
 
-static console_t rzv2h_bl31_console;
+static console_t rzg3s_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
 
 
@@ -30,14 +30,14 @@ void bl31_early_platform_setup2(u_register_t arg0,
 
 	/* initialize console driver */
 	ret = console_rz_register(
-							RZV2H_SCIF_BASE,
-							RZV2H_UART_INCK_HZ,
-							RZV2H_UART_BARDRATE,
-							&rzv2h_bl31_console);
+							RZG3S_SCIF_BASE,
+							RZG3S_UART_INCK_HZ,
+							RZG3S_UART_BARDRATE,
+							&rzg3s_bl31_console);
 	if (!ret)
 		panic();
 
-	console_set_scope(&rzv2h_bl31_console,
+	console_set_scope(&rzg3s_bl31_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
 
 	/* copy bl2_to_bl31_params_mem_t*/
@@ -56,17 +56,17 @@ void bl31_plat_arch_setup(void)
 		{0}
 	};
 
-	const mmap_region_t rzv2h_mmap[] = {
-		MAP_REGION_FLAT(RZV2H_SRAM_BASE, RZV2H_SRAM_SIZE,
+	const mmap_region_t rzg3s_mmap[] = {
+		MAP_REGION_FLAT(RZG3S_SRAM_BASE, RZG3S_SRAM_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
-		MAP_REGION_FLAT(RZV2H_DEVICE_BASE, RZV2H_DEVICE_SIZE,
+		MAP_REGION_FLAT(RZG3S_DEVICE_BASE, RZG3S_DEVICE_SIZE,
 				MT_DEVICE | MT_RW | MT_SECURE),
-		MAP_REGION_FLAT(RZV2H_DDR0_BASE, RZV2H_DDR0_SIZE,
+		MAP_REGION_FLAT(RZG3S_DDR0_BASE, RZG3S_DDR0_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		{0}
 	};
 
-	setup_page_tables(bl31_regions, rzv2h_mmap);
+	setup_page_tables(bl31_regions, rzg3s_mmap);
 	enable_mmu_el3(0);
 }
 

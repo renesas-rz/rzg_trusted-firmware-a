@@ -9,7 +9,7 @@
 
 #include <rz_soc_def.h>
 
-#define DDR_MC_BASE			RZV2H_DDR0_MEMC_BASE
+#define DDR_MC_BASE			RZG3S_DDR0_MEMC_BASE
 #define MC_INIT_NUM			(507)
 
 #define	DENALI_CTL_00		(0x0000)

@@ -5,22 +5,22 @@
 #
 
 #Set the platform and SOC specific header files 1st
-PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/v2h/include
+PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/g3s/include
 
-include plat/renesas/rz/common/v2h_common.mk
+include plat/renesas/rz/common/g3s_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
-PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/v2h/plat_security.c
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/plat_security.c
 
-BL2_SOURCES				+=	plat/renesas/rz/soc/v2h/bl2_plat_setup.c		\
-							plat/renesas/rz/soc/v2h/drivers/cpg.c			\
-							plat/renesas/rz/soc/v2h/drivers/pfc.c
+BL2_SOURCES				+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c		\
+							plat/renesas/rz/soc/g3s/drivers/cpg.c			\
+							plat/renesas/rz/soc/g3s/drivers/pfc.c
 
-BL31_SOURCES			+=	plat/renesas/rz/soc/v2h/bl31_plat_setup.c		\
-							plat/renesas/rz/soc/v2h/plat_pm.c
+BL31_SOURCES			+=	plat/renesas/rz/soc/g3s/bl31_plat_setup.c		\
+							plat/renesas/rz/soc/g3s/plat_pm.c
 
-XSPI_SOURCE				:=	plat/renesas/rz/soc/v2h/drivers/xspi.c
+XSPI_SOURCE				:=	plat/renesas/rz/soc/g3s/drivers/xspi.c
 
-SPI_MULTI_SOURCE 		:=	plat/renesas/rz/soc/v2h/drivers/spi_multi/spi_multi.c
+SPI_MULTI_SOURCE 		:=	plat/renesas/rz/soc/g3s/drivers/spi_multi/spi_multi.c
 
-DDR_SOURCES				+=	plat/renesas/rz/soc/v2h/drivers/ddr/ddr_v2h.c
+DDR_SOURCES				+=	plat/renesas/rz/soc/g3s/drivers/ddr/ddr_g3s.c
