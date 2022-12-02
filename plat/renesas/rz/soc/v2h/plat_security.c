@@ -283,7 +283,7 @@ static void bl31_security_setup(void)
 		{
 			.base = PLAT_AP_TZC_PROT_SRAM2_BASE,
 			.end  = PLAT_AP_TZC_PROT_SRAM2_END,
-			.sec_attr = TZC_REGION_S_RDWR, 
+			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 #else
@@ -308,10 +308,10 @@ static void bl31_security_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 
-		{ 
-			.base = PLAT_AP_TZC_PROT_SRAM3_BASE,				//TODO: KTG: SRAM sections used by CR8 need to be established
+		{
+			.base = PLAT_AP_TZC_PROT_SRAM3_BASE,
 			.end  = PLAT_AP_TZC_PROT_SRAM3_END,
-			.sec_attr = TZC_REGION_S_RDWR, 
+			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 #else

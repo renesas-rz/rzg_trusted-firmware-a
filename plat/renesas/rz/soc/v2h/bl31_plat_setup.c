@@ -20,6 +20,7 @@
 static console_t rzv2h_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
 
+
 void bl31_early_platform_setup2(u_register_t arg0,
 								u_register_t arg1,
 								u_register_t arg2,
