@@ -175,8 +175,6 @@
 #define	CPG_LP_CTL2					(CPG_BASE + 0xC04)	/* Lowpower Sequence Control Register 2 */
 #define	CPG_LP_GPU_CTL				(CPG_BASE + 0xC08)	/* GPU Lowpower Sequence Control Register */
 #define	CPG_CM33_CTL				(CPG_BASE + 0xC0C)	/* CM33 Control register */
-#define	CPG_CR8_CORESTATUS			(CPG_BASE + 0xC10)	/* CR8 core status register */
-#define	CPG_CR8_CONFIG1				(CPG_BASE + 0xC14)	/* CR8 core configuration register1 */
 #define	CPG_LP_CM33CTL0				(CPG_BASE + 0xC18)	/* Lowpower Sequence Cortex-M33 Control Register 0 */
 #define	CPG_LP_CM33CTL1				(CPG_BASE + 0xC1C)	/* Lowpower Sequence Cortex-M33 Control Register 1 */
 #define	CPG_LP_CA55_CTL1			(CPG_BASE + 0xC20)	/* Cortex-A55 Clock Control Register 1 */
@@ -186,9 +184,6 @@
 #define	CPG_LP_CA55_CTL5			(CPG_BASE + 0xC30)	/* Cortex-A55 Clock Control Register 5 */
 #define	CPG_LP_CA55_CTL6			(CPG_BASE + 0xC34)	/* Cortex-A55 Clock Control Register 6 */
 #define	CPG_LP_CA55_CTL7			(CPG_BASE + 0xC38)	/* Cortex-A55 Clock Control Register 7 */
-#define	CPG_LP_CR8_CTL1				(CPG_BASE + 0xC3C)	/* CR8SS control register 1 */
-#define	CPG_LP_CR8_CTL3				(CPG_BASE + 0xC44)	/* CR8SS control register 3 */
-#define	CPG_LP_CR8_CTL4				(CPG_BASE + 0xC48)	/* CR8SS control register 4 */
 #define	CPG_LP_PMU_CTL1				(CPG_BASE + 0xC4C)	/* Lowpower Sequence Control Register @ */
 #define	CPG_LP_SRAM_STBY_CTL1		(CPG_BASE + 0xC50)	/* DRP SRAM standby control */
 #define	CPG_LP_SRAM_STBY_CTL2		(CPG_BASE + 0xC54)	/* Shared SRAM standby control 0 */
@@ -290,7 +285,6 @@
 #define CPG_BUS_2_MSTOP_TZC400_DDR0_1		(1UL << 7)
 #define CPG_BUS_2_MSTOP_TZC400_DDR1_0		(1UL << 8)
 #define CPG_BUS_2_MSTOP_TZC400_DDR1_1		(1UL << 9)
-#define CPG_BUS_2_MSTOP_TZC400_R8			(1UL << 10)
 #define CPG_BUS_2_MSTOP_TZC400_A55			(1UL << 11)
 #define CPG_BUS_2_MSTOP_TZC400_PCIe			(1UL << 12)
 #define CPG_BUS_2_MSTOP_ACPU_OSTM0			(1UL << 13)

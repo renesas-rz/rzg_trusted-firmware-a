@@ -413,48 +413,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* CR8 Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_0,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_0,
-				.val  = 0x0000E000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* CR8 Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_1,
-				.val  = 0x00000003,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_0,
-				.val  = 0x00030000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* CR8 Part 3 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_2,
-				.val  = 0x00000420,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_1,
-				.val  = 0x00000420,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* MHU */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_3,
@@ -1070,34 +1028,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_RSTMON_2,
 				.val  = 0x00000002,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* CR8 Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_2,
-				.val  = 0x00000FFF,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_0,
-				.val  = 0xFFF00000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* CR8 Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_2,
-				.val  = 0x00000001,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_1,
-				.val  = 0x00000001,
 				},
 
 		.type = CPG_T_RST
@@ -1763,7 +1693,6 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_2_MSTOP_TZC400_DDR0_1
 										| CPG_BUS_2_MSTOP_TZC400_DDR1_0
 										| CPG_BUS_2_MSTOP_TZC400_DDR1_1
-										| CPG_BUS_2_MSTOP_TZC400_R8
 										| CPG_BUS_2_MSTOP_TZC400_A55
 										| CPG_BUS_2_MSTOP_TZC400_PCIe
 										| CPG_BUS_2_MSTOP_ACPU_OSTM0

@@ -298,38 +298,9 @@ static void bl31_security_setup(void)
 		{}
 	};
 
-	const arm_tzc_regions_info_t r8sram_tzc_regions[] = {
-#if TRUSTED_BOARD_BOOT
-		{
-			/* Default Region 0: Lock down */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_NONE,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
-		},
-
-		{
-			.base = PLAT_AP_TZC_PROT_SRAM3_BASE,
-			.end  = PLAT_AP_TZC_PROT_SRAM3_END,
-			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
-		},
-#else
-		{
-			/* Default Region 0: Complete access */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
-		},
-#endif /* TRUSTED_BOARD_BOOT */
-		{}
-	};
-
 	/* Additional settings for TZC-400 SRAM */
 	plat_tzc400_setup(RZG3S_TZC400_M33_BASE, &msram_tzc_regions[0]);
 	plat_tzc400_setup(RZG3S_TZC400_A55_BASE, &asram_tzc_regions[0]);
-	plat_tzc400_setup(RZG3S_TZC400_R8_BASE,  &r8sram_tzc_regions[0]);
 }
 #endif
 
