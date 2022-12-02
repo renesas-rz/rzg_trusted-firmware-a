@@ -609,34 +609,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* Image Scaling Unit Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_14,
-				.val  = 0x000000C0,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x000000C0,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* Image Scaling Unit Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_20,
-				.val  = 0x00000001,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_10,
-				.val  = 0x00000001,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* Camera Data Receive Unit (CRU) Part 1*/
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_13,
@@ -1140,20 +1112,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_RSTMON_6,
 				.val  = 0x0001C000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* Image Scaling Unit */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x00000060,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x000000C0,
 				},
 
 		.type = CPG_T_RST
