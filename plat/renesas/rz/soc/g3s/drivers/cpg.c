@@ -792,34 +792,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* USB3 Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_10,
-				.val  = 0x00008000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_5,
-				.val  = 0x00008000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* USB3 Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_11,
-				.val  = 0x00000007,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_5,
-				.val  = 0x00070000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* I2C (IIC) */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_9,
@@ -1425,20 +1397,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.type = CPG_T_RST
 	},
 
-	{	/* USB3 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_10,
-				.val  = 0x00000C00,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x18000000,
-				},
-
-		.type = CPG_T_RST
-	},
-
 	{	/* I2C (IIC) Part 1 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_9,
@@ -1742,10 +1700,6 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_7_MSTOP_USB2_FUNCTION
 										| CPG_BUS_7_MSTOP_USB2_PHY0
 										| CPG_BUS_7_MSTOP_USB2_PHY1
-										| CPG_BUS_7_MSTOP_USB3_HOST0
-										| CPG_BUS_7_MSTOP_USB3_HOST1
-										| CPG_BUS_7_MSTOP_USB3_PHY0
-										| CPG_BUS_7_MSTOP_USB3_PHY1
 										| CPG_BUS_7_MSTOP_DDR_0_P3_TZC400
 										| CPG_BUS_7_MSTOP_DDR_0_P4_TZC400
 										| CPG_BUS_7_MSTOP_DDR_1_P0_TZC400

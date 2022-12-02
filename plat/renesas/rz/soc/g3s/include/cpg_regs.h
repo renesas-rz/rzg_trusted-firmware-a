@@ -341,10 +341,6 @@
 #define CPG_BUS_7_MSTOP_USB2_FUNCTION		(1UL << 9)
 #define CPG_BUS_7_MSTOP_USB2_PHY0			(1UL << 10)
 #define CPG_BUS_7_MSTOP_USB2_PHY1			(1UL << 11)
-#define CPG_BUS_7_MSTOP_USB3_HOST0			(1UL << 12)
-#define CPG_BUS_7_MSTOP_USB3_HOST1			(1UL << 13)
-#define CPG_BUS_7_MSTOP_USB3_PHY0			(1UL << 14)
-#define CPG_BUS_7_MSTOP_USB3_PHY1			(1UL << 15)
 
 #define CPG_BUS_8_MSTOP_PCIe_PHY			(1UL << 0)
 #define CPG_BUS_8_MSTOP_SD0					(1UL << 2)
