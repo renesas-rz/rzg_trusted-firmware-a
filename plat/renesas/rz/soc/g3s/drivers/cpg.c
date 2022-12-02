@@ -268,34 +268,6 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 				.val  = 0x00000000,
 				},
 	},
-
-	{	/* GPU */
-		.stby =  {
-				.addr = (uintptr_t)CPG_PLLGPU_STBY,
-				.val  = 0x00000004,
-				},
-
-		.clk1 =  {
-				.addr = (uintptr_t)CPG_PLLGPU_CLK1,
-				.val  = 0x00003482,
-				},
-
-
-		.clk2 =  {
-				.addr = (uintptr_t)CPG_PLLGPU_CLK2,
-				.val  = 0x000C1A01,
-				},
-
-		.clk3 =  {
-				.addr = (uintptr_t)CPG_PLLGPU_CLK3,
-				.val  = 0x00008003,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_PLLGPU_MON,
-				.val  = 0x00000000,
-				},
-	},
 };
 
 static const CPG_SETUP_DATA early_setup_tbl[] = {
@@ -590,20 +562,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_CLKMON_5,
 				.val  = 0x00007FF8,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* GPU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x00000007,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00070000,
 				},
 
 		.type = CPG_T_CLK
@@ -1103,20 +1061,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.type = CPG_T_RST
 	},
 
-	{	/* GPU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x0001C000,
-				},
-
-		.type = CPG_T_RST
-	},
-
 	{	/* Camera Data Receive Unit (CRU) Part 1*/
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_12,
@@ -1436,7 +1380,6 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_3_MSTOP_ACPU_SRAM
 										| CPG_BUS_3_MSTOP_ACPU_DMAC0
 										| CPG_BUS_3_MSTOP_ACPU_DMAC1
-										| CPG_BUS_3_MSTOP_GPU
 										| CPG_BUS_3_MSTOP_GIC_GIC
 										| CPG_BUS_3_MSTOP_ADC
 										| CPG_BUS_3_MSTOP_RTC

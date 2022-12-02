@@ -49,11 +49,6 @@
 #define	CPG_PLLDDR1_CLK2			(CPG_BASE + 0x108)	/* PLLDDR1output clock setting register 2 */
 #define	CPG_PLLDDR1_CLK3			(CPG_BASE + 0x10C)	/* PLLDDR1output clock setting register 3 */
 #define	CPG_PLLDDR1_MON				(CPG_BASE + 0x110)	/* PLLDDR1monitor register */
-#define	CPG_PLLGPU_STBY				(CPG_BASE + 0x120)	/* PLLGPU standby control register */
-#define	CPG_PLLGPU_CLK1				(CPG_BASE + 0x124)	/* PLLGPU output clock setting register 1 */
-#define	CPG_PLLGPU_CLK2				(CPG_BASE + 0x128)	/* PLLGPU output clock setting register 2 */
-#define	CPG_PLLGPU_CLK3				(CPG_BASE + 0x12C)	/* PLLGPU output clock setting register 3 */
-#define	CPG_PLLGPU_MON				(CPG_BASE + 0x130)	/* PLLGPU monitor register */
 #define	CCLMA0_CTL					(CPG_BASE + 0x200)	/* CLMA0 control register */
 #define	CCLMA1_CTL					(CPG_BASE + 0x204)	/* CLMA1 control register */
 #define	CCLMA2_CTL					(CPG_BASE + 0x208)	/* CLMA2 control register */
@@ -163,7 +158,6 @@
 #define	CPG_ERROR_RST8				(CPG_BASE + 0xB58)	/* Error reset register */
 #define	CPG_LP_CTL1					(CPG_BASE + 0xC00)	/* Lowpower Sequence Control Register 1 */
 #define	CPG_LP_CTL2					(CPG_BASE + 0xC04)	/* Lowpower Sequence Control Register 2 */
-#define	CPG_LP_GPU_CTL				(CPG_BASE + 0xC08)	/* GPU Lowpower Sequence Control Register */
 #define	CPG_CM33_CTL				(CPG_BASE + 0xC0C)	/* CM33 Control register */
 #define	CPG_LP_CM33CTL0				(CPG_BASE + 0xC18)	/* Lowpower Sequence Cortex-M33 Control Register 0 */
 #define	CPG_LP_CM33CTL1				(CPG_BASE + 0xC1C)	/* Lowpower Sequence Cortex-M33 Control Register 1 */
@@ -284,7 +278,6 @@
 #define CPG_BUS_3_MSTOP_ACPU_SRAM			(1UL << 1)
 #define CPG_BUS_3_MSTOP_ACPU_DMAC0			(1UL << 2)
 #define CPG_BUS_3_MSTOP_ACPU_DMAC1			(1UL << 3)
-#define CPG_BUS_3_MSTOP_GPU					(1UL << 4)
 #define CPG_BUS_3_MSTOP_GIC_GIC				(1UL << 5)
 #define CPG_BUS_3_MSTOP_ADC					(1UL << 9)
 #define CPG_BUS_3_MSTOP_RTC					(1UL << 11)
