@@ -19,6 +19,10 @@
 #include <common/bl_common.h>
 
 
+#define LO_REG							(0U)
+#define HI_REG							(1U)
+
+
 typedef struct {
 	uintptr_t reg;
 	uint32_t  preq_mask;
@@ -32,18 +36,12 @@ uintptr_t	gp_warm_ep;
 
 static int rzg3s_pwr_domain_on(u_register_t mpidr)
 {
-	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
-		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
-		{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
-		{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
-		{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
+	const uint32_t rval[2] = {
+		SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0,
 	};
 
-	const CPG_CORE_PWR pch[PLATFORM_CORE_COUNT] = {
-		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ0, CPG_LP_CA55_CTL2_COREACCEPT0, CPG_LP_CA55_CTL2_CORESTATE0_ON_MASK },
-		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ1, CPG_LP_CA55_CTL2_COREACCEPT1, CPG_LP_CA55_CTL2_CORESTATE1_ON_MASK },
-		{ CPG_LP_CA55_CTL3, CPG_LP_CA55_CTL3_COREPREQ2, CPG_LP_CA55_CTL3_COREACCEPT2, CPG_LP_CA55_CTL3_CORESTATE2_ON_MASK },
-		{ CPG_LP_CA55_CTL3, CPG_LP_CA55_CTL3_COREPREQ3, CPG_LP_CA55_CTL3_COREACCEPT3, CPG_LP_CA55_CTL3_CORESTATE3_ON_MASK }
+	const CPG_CORE_PWR pch = {
+		CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ0, CPG_LP_CA55_CTL2_COREACCEPT0, CPG_LP_CA55_CTL2_CORESTATE0_ON_MASK,
 	};
 
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
@@ -53,34 +51,34 @@ static int rzg3s_pwr_domain_on(u_register_t mpidr)
 
 	/* Check if in standby */
 	if ((mmio_read_32(CPG_LP_CTL1) & 0x1) == 0x1) {
-		mmio_write_32(pch[coreid].reg, pch[coreid].preq_mask);
-		while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != pch[coreid].paccept_mask)
+		mmio_write_32(pch.reg, pch.preq_mask);
+		while ((mmio_read_32(pch.reg) & pch.paccept_mask) != pch.paccept_mask)
 			;
-		mmio_write_32(pch[coreid].reg, 0x00000000);
-		while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != 0x0)
+		mmio_write_32(pch.reg, 0x00000000);
+		while ((mmio_read_32(pch.reg) & pch.paccept_mask) != 0x0)
 			;
 	}
 
 	/*  Start the core */
-	mmio_write_32(rval[coreid][0], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
-	mmio_write_32(rval[coreid][1], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
+	mmio_write_32(rval[LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
+	mmio_write_32(rval[HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
 
 	/* Assert PORESET */
-	mmio_write_32(CPG_RST_0, (0x00010000 << coreid));
-	while ((mmio_read_32(CPG_RSTMON_0) & (0x1 << coreid)) == 0x0)
+	mmio_write_32(CPG_RST_0, (0x00010000));
+	while ((mmio_read_32(CPG_RSTMON_0) & (0x1)) == 0x0)
 		;
 
 	/* Deassert PORESET and RERESET */
-	mmio_write_32(CPG_RST_0, (0x00110011 << coreid));
-	while ((mmio_read_32(CPG_RSTMON_0) & (0x1 << coreid)) != 0x0)
+	mmio_write_32(CPG_RST_0, (0x00110011));
+	while ((mmio_read_32(CPG_RSTMON_0) & (0x1)) != 0x0)
 		;
 
-	mmio_write_32(pch[coreid].reg, (pch[coreid].pstate_on_mask | pch[coreid].preq_mask));
-	while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != pch[coreid].paccept_mask)
+	mmio_write_32(pch.reg, (pch.pstate_on_mask | pch.preq_mask));
+	while ((mmio_read_32(pch.reg) & pch.paccept_mask) != pch.paccept_mask)
 		;
 
-	mmio_write_32(pch[coreid].reg, pch[coreid].pstate_on_mask);
-	while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != 0x0)
+	mmio_write_32(pch.reg, pch.pstate_on_mask);
+	while ((mmio_read_32(pch.reg) & pch.paccept_mask) != 0x0)
 		;
 
 	return PSCI_E_SUCCESS;
@@ -99,14 +97,17 @@ static void rzg3s_pwr_domain_off(const psci_power_state_t *state)
 	unsigned long mpidr = read_mpidr_el1();
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
+	if (coreid >= PLATFORM_CORE_COUNT)
+		return;
+
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
 
 	/* Request transition to Cortex-A55 CoreX Sleep Mode */
-	mmio_write_32(CPG_LP_CTL1, (CPG_LP_CTL1_CA55SLEEP_REQ << coreid));
+	mmio_write_32(CPG_LP_CTL1, CPG_LP_CTL1_CA55SLEEP_REQ);
 
 	/* Confirm that the processing on the Cortex-M33 side is completed */
-	while ((mmio_read_32(CPG_LP_CTL1) & (CPG_LP_CTL1_CA55SLEEP_ACK << coreid)) != (CPG_LP_CTL1_CA55SLEEP_ACK << coreid))
+	while ((mmio_read_32(CPG_LP_CTL1) & CPG_LP_CTL1_CA55SLEEP_ACK) != CPG_LP_CTL1_CA55SLEEP_ACK)
 		;
 
 	/* Issue Barrier instruction */
