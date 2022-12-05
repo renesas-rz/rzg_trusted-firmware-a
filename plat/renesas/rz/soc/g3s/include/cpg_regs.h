@@ -9,354 +9,650 @@
 
 #include <rz_soc_def.h>				/* Get the CPG base address */
 
-#define	CPG_PLLCM33_STBY			(CPG_BASE + 0x000)	/* PLLCM33 standby control register */
-#define	CPG_PLLCM33_CLK1			(CPG_BASE + 0x004)	/* PLLCM33 output clock setting register 1 */
-#define	CPG_PLLCM33_CLK2			(CPG_BASE + 0x008)	/* PLLCM33 output clock setting register 2 */
-#define	CPG_PLLCM33_CLK3			(CPG_BASE + 0x00C)	/* PLLCM33 output clock setting register 3 */
-#define	CPG_PLLCM33_MON				(CPG_BASE + 0x010)	/* PLLCM33 monitor register */
-#define	CPG_PLLCLN_STBY				(CPG_BASE + 0x020)	/* PLLCLN standby control register */
-#define	CPG_PLLCLN_CLK1				(CPG_BASE + 0x024)	/* PLLCLN output clock setting register 1 */
-#define	CPG_PLLCLN_CLK2				(CPG_BASE + 0x028)	/* PLLCLN output clock setting register 2 */
-#define	CPG_PLLCLN_CLK3				(CPG_BASE + 0x02C)	/* PLLCLN output clock setting register 3 */
-#define	CPG_PLLCLN_MON				(CPG_BASE + 0x030)	/* PLLCLN monitor register */
-#define	CPG_PLLDTY_STBY				(CPG_BASE + 0x040)	/* PLLDTY standby control register */
-#define	CPG_PLLDTY_CLK1				(CPG_BASE + 0x044)	/* PLLDTY output clock setting register 1 */
-#define	CPG_PLLDTY_CLK2				(CPG_BASE + 0x048)	/* PLLDTY output clock setting register 2 */
-#define	CPG_PLLDTY_CLK3				(CPG_BASE + 0x04C)	/* PLLDTY output clock setting register 3 */
-#define	CPG_PLLDTY_MON				(CPG_BASE + 0x050)	/* PLLDTY monitor register */
-#define	CPG_PLLCA55_STBY			(CPG_BASE + 0x060)	/* PLLCA55 standby control register */
-#define	CPG_PLLCA55_CLK1			(CPG_BASE + 0x064)	/* PLLCA55 output clock setting register 1 */
-#define	CPG_PLLCA55_CLK2			(CPG_BASE + 0x068)	/* PLLCA55 output clock setting register 2 */
-#define	CPG_PLLCA55_CLK3			(CPG_BASE + 0x06C)	/* PLLCA55 output clock setting register 3 */
-#define	CPG_PLLCA55_MON				(CPG_BASE + 0x070)	/* PLLCA55 monitor register */
-#define	CPG_PLLVDO_STBY				(CPG_BASE + 0x080)	/* PLLVDO standby control register */
-#define	CPG_PLLVDO_CLK1				(CPG_BASE + 0x084)	/* PLLVDO output clock setting register 1 */
-#define	CPG_PLLVDO_CLK2				(CPG_BASE + 0x088)	/* PLLVDO output clock setting register 2 */
-#define	CPG_PLLVDO_CLK3				(CPG_BASE + 0x08C)	/* PLLVDO output clock setting register 3 */
-#define	CPG_PLLVDO_MON				(CPG_BASE + 0x090)	/* PLLVDO monitor register */
-#define	CPG_PLLETH_STBY				(CPG_BASE + 0x0A0)	/* PLLETH standby control register */
-#define	CPG_PLLETH_CLK1				(CPG_BASE + 0x0A4)	/* PLLETH output clock setting register 1 */
-#define	CPG_PLLETH_CLK2				(CPG_BASE + 0x0A8)	/* PLLETH output clock setting register 2 */
-#define	CPG_PLLETH_CLK3				(CPG_BASE + 0x0AC)	/* PLLETH output clock setting register 3 */
-#define	CPG_PLLETH_MON				(CPG_BASE + 0x0B0)	/* PLLETH monitor register */
-#define	CPG_PLLDDR0_STBY			(CPG_BASE + 0x0E0)	/* PLLDDR0 standby control register */
-#define	CPG_PLLDDR0_CLK1			(CPG_BASE + 0x0E4)	/* PLLDDR0 output clock setting register 1 */
-#define	CPG_PLLDDR0_CLK2			(CPG_BASE + 0x0E8)	/* PLLDDR0 output clock setting register 2 */
-#define	CPG_PLLDDR0_CLK3			(CPG_BASE + 0x0EC)	/* PLLDDR0 output clock setting register 3 */
-#define	CPG_PLLDDR0_MON				(CPG_BASE + 0x0F0)	/* PLLDDR0 monitor register*/
-#define	CPG_PLLDDR1_STBY			(CPG_BASE + 0x100)	/* PLLDDR1standby control register*/
-#define	CPG_PLLDDR1_CLK1			(CPG_BASE + 0x104)	/* PLLDDR1output clock setting register 1 */
-#define	CPG_PLLDDR1_CLK2			(CPG_BASE + 0x108)	/* PLLDDR1output clock setting register 2 */
-#define	CPG_PLLDDR1_CLK3			(CPG_BASE + 0x10C)	/* PLLDDR1output clock setting register 3 */
-#define	CPG_PLLDDR1_MON				(CPG_BASE + 0x110)	/* PLLDDR1monitor register */
-#define	CCLMA0_CTL					(CPG_BASE + 0x200)	/* CLMA0 control register */
-#define	CCLMA1_CTL					(CPG_BASE + 0x204)	/* CLMA1 control register */
-#define	CCLMA2_CTL					(CPG_BASE + 0x208)	/* CLMA2 control register */
-#define	CCLMA3_CTL					(CPG_BASE + 0x20C)	/* CLMA3 control register */
-#define	CCLMA4_CTL					(CPG_BASE + 0x210)	/* CLMA4 control register */
-#define	CCLMA5_CTL					(CPG_BASE + 0x214)	/* CLMA5 control register */
-#define	CCLMA6_CTL					(CPG_BASE + 0x218)	/* CLMA6 control register */
-#define	CCLMA7_CTL					(CPG_BASE + 0x21C)	/* CLMA7 control register */
-#define	CCLMA8_CTL					(CPG_BASE + 0x220)	/* CLMA8 control register */
-#define	CCLMA9_CTL					(CPG_BASE + 0x224)	/* CLMA9 control register */
-#define	CCLMA10_CTL					(CPG_BASE + 0x228)	/* CLMA10 control register */
-#define	CCLMA11_CTL					(CPG_BASE + 0x22C)	/* CLMA11 control register */
-#define	CCLMA12_CTL					(CPG_BASE + 0x230)	/* CLMA12 control register */
-#define	CCLMA13_CTL					(CPG_BASE + 0x234)	/* CLMA13 control register */
-#define	CCLMA14_CTL					(CPG_BASE + 0x238)	/* CLMA14 control register */
-#define	CCLMA_MON					(CPG_BASE + 0x280)	/* CLMA monitor register */
-#define	CPG_SSEL0					(CPG_BASE + 0x300)	/* Static Mux control */
-#define	CPG_SSEL1					(CPG_BASE + 0x304)	/* Static Mux control */
-#define	CPG_SSEL2					(CPG_BASE + 0x308)	/* Static Mux control */
-#define	CPG_CDDIV0					(CPG_BASE + 0x400)	/* Dynamic Gear control(Counter type) */
-#define	CPG_CDDIV1					(CPG_BASE + 0x404)	/* Dynamic Gear control(Counter type) */
-#define	CPG_CDDIV2					(CPG_BASE + 0x408)	/* Dynamic Gear control(Counter type) */
-#define	CPG_CDDIV3					(CPG_BASE + 0x40c)	/* Dynamic Gear control(Counter type) */
-#define	CPG_CDDIV4					(CPG_BASE + 0x410)	/* Dynamic Gear control(Counter type) */
-#define	CPG_CSDIV0					(CPG_BASE + 0x500)	/* Static Gear control(Sparse type) */
-#define	CPG_CSDIV1					(CPG_BASE + 0x504)	/* Static Gear control(Sparse type) */
+#define CPG_PLL1_STBY				(CPG_BASE + 0x0000)	/* PLL1 standby control register */
+#define CPG_PLL1_CLK1				(CPG_BASE + 0x0004)	/* PLL1 output clock setting register 1 */
+#define CPG_PLL1_CLK2				(CPG_BASE + 0x0008)	/* PLL1 output clock setting register 2 */
+#define CPG_PLL1_MON				(CPG_BASE + 0x000C)	/* PLL1 monitor register */
 
-#define	CPG_CLKON_0					(CPG_BASE + 0x600)	/* CGC control */
-#define	CPG_CLKON_1					(CPG_BASE + 0x604)	/* CGC control */
-#define	CPG_CLKON_2					(CPG_BASE + 0x608)	/* CGC control */
-#define	CPG_CLKON_3					(CPG_BASE + 0x60c)	/* CGC control */
-#define	CPG_CLKON_4					(CPG_BASE + 0x610)	/* CGC control */
-#define	CPG_CLKON_5					(CPG_BASE + 0x614)	/* CGC control */
-#define	CPG_CLKON_6					(CPG_BASE + 0x618)	/* CGC control */
-#define	CPG_CLKON_7					(CPG_BASE + 0x61c)	/* CGC control */
-#define	CPG_CLKON_8					(CPG_BASE + 0x620)	/* CGC control */
-#define	CPG_CLKON_9					(CPG_BASE + 0x624)	/* CGC control */
-#define	CPG_CLKON_10				(CPG_BASE + 0x628)	/* CGC control */
-#define	CPG_CLKON_11				(CPG_BASE + 0x62c)	/* CGC control */
-#define	CPG_CLKON_12				(CPG_BASE + 0x630)	/* CGC control */
-#define	CPG_CLKON_13				(CPG_BASE + 0x634)	/* CGC control */
-#define	CPG_CLKON_14				(CPG_BASE + 0x638)	/* CGC control */
-#define	CPG_CLKON_15				(CPG_BASE + 0x63c)	/* CGC control */
-#define	CPG_CLKON_16				(CPG_BASE + 0x640)	/* CGC control */
-#define	CPG_CLKON_17				(CPG_BASE + 0x644)	/* CGC control */
-#define	CPG_CLKON_18				(CPG_BASE + 0x648)	/* CGC control */
-#define	CPG_CLKON_19				(CPG_BASE + 0x64c)	/* CGC control */
-#define	CPG_CLKON_20				(CPG_BASE + 0x650)	/* CGC control */
-#define	CPG_CLKON_21				(CPG_BASE + 0x654)	/* CGC control */
-#define	CPG_CLKON_22				(CPG_BASE + 0x658)	/* CGC control */
-#define	CPG_CLKON_23				(CPG_BASE + 0x65C)	/* CGC control */
-#define	CPG_CLKON_24				(CPG_BASE + 0x660)	/* CGC control */
 
-#define	CPG_CLKSTATUS0				(CPG_BASE + 0x700)	/* Dynamic gear/mux status monitor */
-#define	CPG_CLKMON_0				(CPG_BASE + 0x800)	/* CGC monitor */
-#define	CPG_CLKMON_1				(CPG_BASE + 0x804)	/* CGC monitor */
-#define	CPG_CLKMON_2				(CPG_BASE + 0x808)	/* CGC monitor */
-#define	CPG_CLKMON_3				(CPG_BASE + 0x80c)	/* CGC monitor */
-#define	CPG_CLKMON_4				(CPG_BASE + 0x810)	/* CGC monitor */
-#define	CPG_CLKMON_5				(CPG_BASE + 0x814)	/* CGC monitor */
-#define	CPG_CLKMON_6				(CPG_BASE + 0x818)	/* CGC monitor */
-#define	CPG_CLKMON_7				(CPG_BASE + 0x81c)	/* CGC monitor */
-#define	CPG_CLKMON_8				(CPG_BASE + 0x820)	/* CGC monitor */
-#define	CPG_CLKMON_9				(CPG_BASE + 0x824)	/* CGC monitor */
-#define	CPG_CLKMON_10				(CPG_BASE + 0x828)	/* CGC monitor */
-#define	CPG_RST_0					(CPG_BASE + 0x900)	/* RESET ON/OFF control */
-#define	CPG_RST_1					(CPG_BASE + 0x904)	/* RESET ON/OFF control */
-#define	CPG_RST_2					(CPG_BASE + 0x908)	/* RESET ON/OFF control */
-#define	CPG_RST_3					(CPG_BASE + 0x90C)	/* RESET ON/OFF control */
-#define	CPG_RST_4					(CPG_BASE + 0x910)	/* RESET ON/OFF control */
-#define	CPG_RST_5					(CPG_BASE + 0x914)	/* RESET ON/OFF control */
-#define	CPG_RST_6					(CPG_BASE + 0x918)	/* RESET ON/OFF control */
-#define	CPG_RST_7					(CPG_BASE + 0x91C)	/* RESET ON/OFF control */
-#define	CPG_RST_8					(CPG_BASE + 0x920)	/* RESET ON/OFF control */
-#define	CPG_RST_9					(CPG_BASE + 0x924)	/* RESET ON/OFF control */
-#define	CPG_RST_10					(CPG_BASE + 0x928)	/* RESET ON/OFF control */
-#define	CPG_RST_11					(CPG_BASE + 0x92C)	/* RESET ON/OFF control */
-#define	CPG_RST_12					(CPG_BASE + 0x930)	/* RESET ON/OFF control */
-#define	CPG_RST_13					(CPG_BASE + 0x934)	/* RESET ON/OFF control */
-#define	CPG_RST_14					(CPG_BASE + 0x938)	/* RESET ON/OFF control */
-#define	CPG_RST_15					(CPG_BASE + 0x93C)	/* RESET ON/OFF control */
-#define	CPG_RST_16					(CPG_BASE + 0x940)	/* RESET ON/OFF control */
-#define	CPG_RST_17					(CPG_BASE + 0x944)	/* RESET ON/OFF control */
-#define	CPG_RSTMON_0				(CPG_BASE + 0xA00)	/* RESET monitor */
-#define	CPG_RSTMON_1				(CPG_BASE + 0xA04)	/* RESET monitor */
-#define	CPG_RSTMON_2				(CPG_BASE + 0xA08)	/* RESET monitor */
-#define	CPG_RSTMON_3				(CPG_BASE + 0xA0C)	/* RESET monitor */
-#define	CPG_RSTMON_4				(CPG_BASE + 0xA10)	/* RESET monitor */
-#define	CPG_RSTMON_5				(CPG_BASE + 0xA14)	/* RESET monitor */
-#define	CPG_RSTMON_6				(CPG_BASE + 0xA18)	/* RESET monitor */
-#define	CPG_RSTMON_7				(CPG_BASE + 0xA1C)	/* RESET monitor */
-#define	CPG_RSTMON_8				(CPG_BASE + 0xA20)	/* RESET monitor */
-#define	CPG_ERRORRST_SEL1			(CPG_BASE + 0xB00)	/* Error reset selection register */
-#define	CPG_ERRORRST_SEL2			(CPG_BASE + 0xB04)	/* Error reset selection register */
-#define	CPG_ERRORRST_SEL3			(CPG_BASE + 0xB08)	/* Error reset selection register */
-#define	CPG_ERRORRST_SEL4			(CPG_BASE + 0xB0C)	/* Error reset selection register */
-#define	CPG_ERRORRST_SEL5			(CPG_BASE + 0xB10)	/* Error reset selection register */
-#define	CPG_ERRORRST_SEL6			(CPG_BASE + 0xB14)	/* Error reset selection register */
-#define	CPG_ERRORRST_SEL7			(CPG_BASE + 0xB18)	/* Error reset selection register */
-#define	CPG_ERRORRST_SEL8			(CPG_BASE + 0xB1C)	/* Error reset selection register */
-#define	CPG_ERROR_RST2				(CPG_BASE + 0xB40)	/* Error reset register */
-#define	CPG_ERROR_RST3				(CPG_BASE + 0xB44)	/* Error reset register */
-#define	CPG_ERROR_RST4				(CPG_BASE + 0xB48)	/* Error reset register */
-#define	CPG_ERROR_RST5				(CPG_BASE + 0xB4C)	/* Error reset register */
-#define	CPG_ERROR_RST6				(CPG_BASE + 0xB50)	/* Error reset register */
-#define	CPG_ERROR_RST7				(CPG_BASE + 0xB54)	/* Error reset register */
-#define	CPG_ERROR_RST8				(CPG_BASE + 0xB58)	/* Error reset register */
-#define	CPG_LP_CTL1					(CPG_BASE + 0xC00)	/* Lowpower Sequence Control Register 1 */
-#define	CPG_LP_CTL2					(CPG_BASE + 0xC04)	/* Lowpower Sequence Control Register 2 */
-#define	CPG_CM33_CTL				(CPG_BASE + 0xC0C)	/* CM33 Control register */
-#define	CPG_LP_CM33CTL0				(CPG_BASE + 0xC18)	/* Lowpower Sequence Cortex-M33 Control Register 0 */
-#define	CPG_LP_CM33CTL1				(CPG_BASE + 0xC1C)	/* Lowpower Sequence Cortex-M33 Control Register 1 */
-#define	CPG_LP_CA55_CTL1			(CPG_BASE + 0xC20)	/* Cortex-A55 Clock Control Register 1 */
-#define	CPG_LP_CA55_CTL2			(CPG_BASE + 0xC24)	/* Cortex-A55 Clock Control Register 2 */
-#define	CPG_LP_CA55_CTL3			(CPG_BASE + 0xC28)	/* Cortex-A55 Clock Control Register 3 */
-#define	CPG_LP_CA55_CTL4			(CPG_BASE + 0xC2C)	/* Cortex-A55 Clock Control Register 4 */
-#define	CPG_LP_CA55_CTL5			(CPG_BASE + 0xC30)	/* Cortex-A55 Clock Control Register 5 */
-#define	CPG_LP_CA55_CTL6			(CPG_BASE + 0xC34)	/* Cortex-A55 Clock Control Register 6 */
-#define	CPG_LP_CA55_CTL7			(CPG_BASE + 0xC38)	/* Cortex-A55 Clock Control Register 7 */
-#define	CPG_LP_PMU_CTL1				(CPG_BASE + 0xC4C)	/* Lowpower Sequence Control Register @ */
-#define	CPG_LP_SRAM_STBY_CTL1		(CPG_BASE + 0xC50)	/* DRP SRAM standby control */				//TODO: G3S: Confirm if this register is supported
-#define	CPG_LP_SRAM_STBY_CTL2		(CPG_BASE + 0xC54)	/* Shared SRAM standby control 0 */
-#define	CPG_LP_SRAM_STBY_CTL3		(CPG_BASE + 0xC58)	/* Shared SRAM standby control 8 */
-#define	CPG_LP_GIC_CTL1				(CPG_BASE + 0xC5C)	/* GIC control */
-#define	CPG_LP_DDR_CTL1				(CPG_BASE + 0xC60)	/* DDR retention control */
-#define	CPG_LP_OTP_CTL1				(CPG_BASE + 0xC64)	/* OTP control register 1 */
-#define	CPG_LP_CM33CTL_INI			(CPG_BASE + 0xC68)	/* State machine initialization control */
-#define	CPG_LP_CST_CTL1				(CPG_BASE + 0xC6C)	/* CST control register 1 */
-#define	CPG_LP_CST_CTL2				(CPG_BASE + 0xC70)	/* CST control register 2 */
-#define	CPG_LP_CST_CTL3				(CPG_BASE + 0xC74)	/* CST control register 3 */
-#define	CPG_LP_PWC_CTL1				(CPG_BASE + 0xC78)	/* PWC control register 1 */
-#define	CPG_LP_PWC_CTL2				(CPG_BASE + 0xC7C)	/* PWC control register 2 */
-#define	CPG_OSTMTCKE				(CPG_BASE + 0xC80)	/* OSTM enable control */
-#define	CPG_DBGRST					(CPG_BASE + 0xC84)	/* Reset control register when CA55 is debugged */
-#define	OTP_HANDSHAKE_MON			(CPG_BASE + 0xC88)	/* OTP handshake monitor register */
-#define	CPG_OTHERS_INI				(CPG_BASE + 0xC8C)	/* Others area reset control */
-#define	CPG_CM33_STATE_MON			(CPG_BASE + 0xC90)	/* CM33 status monitor */
-#define	CPG_BUS_1_MSTOP				(CPG_BASE + 0xD00)	/* MSTOP register 1 */
-#define	CPG_BUS_2_MSTOP				(CPG_BASE + 0xD04)	/* MSTOP register 2 */
-#define	CPG_BUS_3_MSTOP				(CPG_BASE + 0xD08)	/* MSTOP register 3 */
-#define	CPG_BUS_4_MSTOP				(CPG_BASE + 0xD0C)	/* MSTOP register 4 */
-#define	CPG_BUS_5_MSTOP				(CPG_BASE + 0xD10)	/* MSTOP register 5 */
-#define	CPG_BUS_6_MSTOP				(CPG_BASE + 0xD14)	/* MSTOP register 6 */
-#define	CPG_BUS_7_MSTOP				(CPG_BASE + 0xD18)	/* MSTOP register 7 */
-#define	CPG_BUS_8_MSTOP				(CPG_BASE + 0xD1C)	/* MSTOP register 8 */
-#define	CPG_BUS_9_MSTOP				(CPG_BASE + 0xD20)	/* MSTOP register 9 */
-#define	CPG_BUS_10_MSTOP			(CPG_BASE + 0xD24)	/* MSTOP register 10*/
-#define	CPG_BUS_11_MSTOP			(CPG_BASE + 0xD28)	/* MSTOP register 11 */
-#define	CPG_BUS_12_MSTOP			(CPG_BASE + 0xD2C)	/* MSTOP register 12 */
-#define	CPG_RSV1					(CPG_BASE + 0xE00)	/* Booking register 1 */
-#define	CPG_RSV2					(CPG_BASE + 0xE04)	/* Booking register 2 */
-#define	CPG_RSV3					(CPG_BASE + 0xE08)	/* Booking register 3 */
-#define	CPG_RSV4					(CPG_BASE + 0xE0C)	/* Booking register 4 */
-#define	CPG_RSV5					(CPG_BASE + 0xE10)	/* Booking register 5 */
-#define	CPG_RSV6					(CPG_BASE + 0xE14)	/* Booking register 6 */
+#define CPG_PLL2_STBY				(CPG_BASE + 0x0010)	/* PLL2 standby control register */
+#define CPG_PLL2_CLK1				(CPG_BASE + 0x0014)	/* PLL2 output clock setting register 1 */
+#define CPG_PLL2_CLK2				(CPG_BASE + 0x0018)	/* PLL2 output clock setting register 2 */
+#define CPG_PLL2_MON				(CPG_BASE + 0x001C)	/* PLL2 monitor register */
 
-#define CPG_LP_CTL1_STBY					(0x00000001UL)
-#define CPG_LP_CTL1_STBY_MSK				(0x00000001UL)
-#define CPG_LP_CTL1_CA55SLEEP_REQ			(0x00000100UL)
-#define CPG_LP_CTL1_CA55SLEEP_REQ_MSK		(0x00000F00UL)
-#define CPG_LP_CTL1_STBY_CA55ST				(0x00010000UL)
-#define CPG_LP_CTL1_STBY_CA55ST_MSK			(0x00010000UL)
-#define CPG_LP_CTL1_CA55SLEEP_ACK			(0x01000000UL)
-#define CPG_LP_CTL1_CA55SLEEP_ACK_MSK		(0x0F000000UL)
+#define CPG_PLL3_STBY				(CPG_BASE + 0x0020)	/* PLL3 standby control register */
+#define CPG_PLL3_CLK1				(CPG_BASE + 0x0024)	/* PLL3 output clock setting register 1 */
+#define CPG_PLL3_CLK2				(CPG_BASE + 0x0028)	/* PLL3 output clock setting register 2 */
+#define CPG_PLL3_MON				(CPG_BASE + 0x002C)	/* PLL3 monitor register */
 
-#define CPG_PLL_STBY_RESETB					(1UL << 0)
-#define CPG_PLL_STBY_SSC_EN					(1UL << 2)
-#define CPG_PLL_STBY_SSC_MODE				(1UL << 4)
-#define CPG_PLL_STBY_RESETB_WEN				(1UL << 16)
-#define CPG_PLL_STBY_SSC_EN_WEN				(1UL << 18)
-#define CPG_PLL_STBY_SSC_MODE_WEN			(1UL << 20)
+#define CPG_PLL4_STBY				(CPG_BASE + 0x0030)	/* PLL4 standby control register */
+#define CPG_PLL4_CLK1				(CPG_BASE + 0x0034)	/* PLL4 output clock setting register 1 */
+#define CPG_PLL4_CLK2				(CPG_BASE + 0x0038)	/* PLL4 output clock setting register 2 */
+#define CPG_PLL4_MON				(CPG_BASE + 0x003C)	/* PLL4 monitor register */
 
-#define CPG_PLL_CLK1_DIV_P					(1UL << 0)
-#define CPG_PLL_CLK1_DIV_M					(1UL << 6)
-#define CPG_PLL_CLK1_DIV_K					(1UL << 16)
+#define CPG_PLL6_STBY				(CPG_BASE + 0x0050)	/* PLL6 standby control register */
+#define CPG_PLL6_CLK1				(CPG_BASE + 0x0054)	/* PLL6 output clock setting register 1 */
+#define CPG_PLL6_CLK2				(CPG_BASE + 0x0058)	/* PLL6 output clock setting register 2 */
+#define CPG_PLL6_MON				(CPG_BASE + 0x005C)	/* PLL6 monitor register */
 
-#define CPG_PLL_CLK2_DIV_S					(1UL << 0)
-#define CPG_PLL_CLK2_MRR					(1UL << 8)
-#define CPG_PLL_CLK2_MFR					(1UL << 16)
+#define CPG_PLL1_SETTING			(CPG_BASE + 0x0100)	/* PLL1_SEL_SETTING */
+#define CPG_OTPPLL0_MON				(CPG_BASE + 0x0104)	/* OTP_OTPPLL0 monitor register */
+#define CPG_OTPPLL1_MON				(CPG_BASE + 0x0108)	/* OTP_OTPPLL1 monitor register */
+#define CPG_OTPPLL2_MON				(CPG_BASE + 0x010C)	/* OTP_OTPPLL2 monitor register */
 
-#define CPG_PLL_CLK3_ICP					(1UL << 0)
-#define CPG_PLL_CLK3_BYPASS					(1UL << 3)
-#define CPG_PLL_CLK3_AFC_ENB				(1UL << 4)
-#define CPG_PLL_CLK3_EXTAFC					(1UL << 5)
-#define CPG_PLL_CLK3_FEED_EN				(1UL << 10)
-#define CPG_PLL_CLK3_FSEL					(1UL << 11)
-#define CPG_PLL_CLK3_AFCINIT_SEL			(1UL << 12)
-#define CPG_PLL_CLK3_PBIAS_CTRL_EN			(1UL << 13)
-#define CPG_PLL_CLK3_PBIAS_CTRL				(1UL << 14)
-#define CPG_PLL_CLK3_AFC_SEL				(1UL << 15)
-#define CPG_PLL_CLK3_ICP0_WEN				(1UL << 16)
-#define CPG_PLL_CLK3_ICP1_WEN				(1UL << 17)
-#define CPG_PLL_CLK3_ICP2_WEN				(1UL << 18)
-#define CPG_PLL_CLK3_BYPASS_WEN				(1UL << 19)
-#define CPG_PLL_CLK3_AFC_ENB_WEN			(1UL << 20)
-#define CPG_PLL_CLK3_EXTAFC0_WEN			(1UL << 21)
-#define CPG_PLL_CLK3_EXTAFC1_WEN			(1UL << 22)
-#define CPG_PLL_CLK3_EXTAFC2_WEN			(1UL << 23)
-#define CPG_PLL_CLK3_EXTAFC3_WEN			(1UL << 24)
-#define CPG_PLL_CLK3_EXTAFC4_WEN			(1UL << 25)
-#define CPG_PLL_CLK3_FEED_EN_WEN			(1UL << 26)
-#define CPG_PLL_CLK3_FSEL_WEN				(1UL << 27)
-#define CPG_PLL_CLK3_AFCINIT_SEL_WEN		(1UL << 28)
-#define CPG_PLL_CLK3_PBIAS_CTRL_EN_WEN		(1UL << 29)
-#define CPG_PLL_CLK3_PBIAS_CTR_WEN			(1UL << 30)
-#define CPG_PLL_CLK3_AFC_SEL_WEN			(1UL << 31)
+#define CPG_PL1_DDIV				(CPG_BASE + 0x0200)	/* Division ratio setting register */
+#define CPG_PL2_DDIV				(CPG_BASE + 0x0204)	/* Division ratio setting register */
+#define CPG_PL3_DDIV				(CPG_BASE + 0x0208)	/* Division ratio setting register */
+#define CPG_PL6_DDIV				(CPG_BASE + 0x0214)	/* Division ratio setting register */
 
-#define CPG_PLL_MON_PLLn_RESETB				(1UL << 0)
-#define CPG_PLL_MON_PLLn_LOCK				(1UL << 4)
+#define CPG_SDHI_DDIV				(CPG_BASE + 0x0218)	/* Division ratio setting register */
+#define CPG_OCTA_DDIV				(CPG_BASE + 0x021C) /* Division ratio setting register */
+#define CPG_SPI_DDIV				(CPG_BASE + 0x0220) /* Division ratio setting register */
+#define CPG_PLL_DSEL				(CPG_BASE + 0x0240)	/* Source clock setting register */
+#define CPG_SDHI_DSEL				(CPG_BASE + 0x0244)	/* Source clock setting register */
+#define CPG_CLKDIVSTATUS			(CPG_BASE + 0x0280)	/* CLK status register */
+#define CPG_CLKSELSTATUS			(CPG_BASE + 0x0284)	/* CLK status register */
 
-#define CPG_BUS_1_MSTOP_TMZ400_ACPU_SRAM	(1UL << 12)
-#define CPG_BUS_1_MSTOP_TZC400_PCIe1		(1UL << 13)
-#define CPG_BUS_1_MSTOP_TZC400_PCIe0		(1UL << 15)
+#define CPG_OCTA_SSEL				(CPG_BASE + 0x0400)	/* Source clock setting register */
+#define CPG_SPI_SSEL				(CPG_BASE + 0x0404)	/* Source clock setting register */
 
-#define CPG_BUS_2_MSTOP_A_DMAC				(1UL << 5)
-#define CPG_BUS_2_MSTOP_TZC400_DDR0_0		(1UL << 6)
-#define CPG_BUS_2_MSTOP_TZC400_DDR0_1		(1UL << 7)
-#define CPG_BUS_2_MSTOP_TZC400_DDR1_0		(1UL << 8)
-#define CPG_BUS_2_MSTOP_TZC400_DDR1_1		(1UL << 9)
-#define CPG_BUS_2_MSTOP_TZC400_A55			(1UL << 11)
-#define CPG_BUS_2_MSTOP_TZC400_PCIe			(1UL << 12)
-#define CPG_BUS_2_MSTOP_ACPU_OSTM0			(1UL << 13)
-#define CPG_BUS_2_MSTOP_ACPU_OSTM1			(1UL << 14)
-#define CPG_BUS_2_MSTOP_TSU1				(1UL << 15)
+#define CPG_CLKON_CA55				(CPG_BASE + 0x0500)	/* Clock ON / OFF register CA55 */
+#define CPG_CLKON_CM33				(CPG_BASE + 0x0504)	/* Clock ON / OFF register CM33 */
+#define CPG_CLKON_SRAM_ACPU			(CPG_BASE + 0x0508)	/* Clock ON / OFF register SRAM_ACPU */
+#define CPG_CLKON_SRAM_MCPU			(CPG_BASE + 0x050C)	/* Clock ON / OFF register SRAM_MCPU */
+#define CPG_CLKON_ROM				(CPG_BASE + 0x0510)	/* Clock ON / OFF register ROM */
+#define CPG_CLKON_GIC600			(CPG_BASE + 0x0514)	/* Clock ON / OFF register GIC600 */
+#define CPG_CLKON_IA55				(CPG_BASE + 0x0518)	/* Clock ON / OFF register IA55 */
+#define CPG_CLKON_IM33				(CPG_BASE + 0x051C)	/* Clock ON / OFF register IM33 */
+#define CPG_CLKON_MHU				(CPG_BASE + 0x0520)	/* Clock ON / OFF register MHU */
+#define CPG_CLKON_CST				(CPG_BASE + 0x0524)	/* Clock ON / OFF register CST */
+#define CPG_CLKON_SYC				(CPG_BASE + 0x0528)	/* Clock ON / OFF register SYC */
+#define CPG_CLKON_DAMC_REG			(CPG_BASE + 0x052C)	/* Clock ON / OFF register DAMC_REG */
+#define CPG_CLKON_SYSC				(CPG_BASE + 0x0530)	/* Clock ON / OFF register SYSC */
+#define CPG_CLKON_OSTM				(CPG_BASE + 0x0534)	/* Clock ON / OFF register OSTM */
+#define CPG_CLKON_MTU				(CPG_BASE + 0x0538)	/* Clock ON / OFF register MTU */
+#define CPG_CLKON_POE3				(CPG_BASE + 0x053C)	/* Clock ON / OFF register POE3 */
+#define CPG_CLKON_GPT				(CPG_BASE + 0x0540)	/* Clock ON / OFF register GPT */
+#define CPG_CLKON_POEG				(CPG_BASE + 0x0544)	/* Clock ON / OFF register POEG */
+#define CPG_CLKON_WDT				(CPG_BASE + 0x0548)	/* Clock ON / OFF register WDT */
+#define CPG_CLKON_DDR				(CPG_BASE + 0x054C)	/* Clock ON / OFF register DDR */
+#define CPG_CLKON_SPI				(CPG_BASE + 0x0550)	/* Clock ON / OFF register SPI */
+#define CPG_CLKON_SDHI				(CPG_BASE + 0x0554)	/* Clock ON / OFF register SDHI */
 
-#define CPG_BUS_3_MSTOP_SYC					(1UL << 0)
-#define CPG_BUS_3_MSTOP_ACPU_SRAM			(1UL << 1)
-#define CPG_BUS_3_MSTOP_ACPU_DMAC0			(1UL << 2)
-#define CPG_BUS_3_MSTOP_ACPU_DMAC1			(1UL << 3)
-#define CPG_BUS_3_MSTOP_GIC_GIC				(1UL << 5)
-#define CPG_BUS_3_MSTOP_ADC					(1UL << 9)
-#define CPG_BUS_3_MSTOP_RTC					(1UL << 11)
-#define CPG_BUS_3_MSTOP_SCIF				(1UL << 14)
+#define CPG_CLKON_SSI				(CPG_BASE + 0x0570)	/* Clock ON / OFF register SSI */
+#define CPG_CLKON_SRC				(CPG_BASE + 0x0574)	/* Clock ON / OFF register SRC */
+#define CPG_CLKON_USB				(CPG_BASE + 0x0578)	/* Clock ON / OFF register USB */
+#define CPG_CLKON_ETH				(CPG_BASE + 0x057C)	/* Clock ON / OFF register ETH */
+#define CPG_CLKON_I2C				(CPG_BASE + 0x0580)	/* Clock ON / OFF register I2C */
+#define CPG_CLKON_SCIF				(CPG_BASE + 0x0584)	/* Clock ON / OFF register SCIF */
+#define CPG_CLKON_SCI				(CPG_BASE + 0x0588)	/* Clock ON / OFF register SCI */
+#define CPG_CLKON_IRDA				(CPG_BASE + 0x058C)	/* Clock ON / OFF register IRDA */
+#define CPG_CLKON_RSPI				(CPG_BASE + 0x0590)	/* Clock ON / OFF register RSPI */
+#define CPG_CLKON_CANFD				(CPG_BASE + 0x0594)	/* Clock ON / OFF register CANFD */
+#define CPG_CLKON_GPIO				(CPG_BASE + 0x0598)	/* Clock ON / OFF register GPIO */
+#define CPG_CLKON_RSIPG				(CPG_BASE + 0x059C)	/* Clock ON / OFF register RSIPG */
+#define CPG_CLKON_JAUTH				(CPG_BASE + 0x05A0)	/* Clock ON / OFF register JAUTH */
+#define CPG_CLKON_OTP				(CPG_BASE + 0x05A4)	/* Clock ON / OFF register OTP */
+#define CPG_CLKON_ADC				(CPG_BASE + 0x05A8)	/* Clock ON / OFF register ADC */
+#define CPG_CLKON_TSU				(CPG_BASE + 0x05AC)	/* Clock ON / OFF register TSU */
 
-#define CPG_BUS_4_MSTOP_XSPI_TZC400			(1UL << 5)
-#define CPG_BUS_4_MSTOP_GPI0				(1UL << 7)
-#define CPG_BUS_4_MSTOP_CGP					(1UL << 8)
-#define CPG_BUS_4_MSTOP_SYSC				(1UL << 9)
-#define CPG_BUS_4_MSTOP_TZC400_M33			(1UL << 12)
-#define CPG_BUS_4_MSTOP_TZC400_XSPI			(1UL << 13)
-#define CPG_BUS_4_MSTOP_MHU					(1UL << 14)
+#define CPG_CLKON_AXI_ACPU_BUS		(CPG_BASE + 0x05B4)	/* Clock ON / OFF register AXI_ACPU_BUS */
+#define CPG_CLKON_AXI_MCPU_BUS		(CPG_BASE + 0x05B8)	/* Clock ON / OFF register AXI_MCPU_BUS */
+#define CPG_CLKON_AXI_COM_BUS		(CPG_BASE + 0x05BC)	/* Clock ON / OFF register AXI_COM_BUS */
 
-#define CPG_BUS_5_MSTOP_TSU0				(1UL << 2)
-#define CPG_BUS_5_MSTOP_MCPU_SRAM0			(1UL << 3)
-#define CPG_BUS_5_MSTOP_MCPU_SRAM1			(1UL << 4)
-#define CPG_BUS_5_MSTOP_XSPI				(1UL << 5)
-#define CPG_BUS_5_MSTOP_MCPU_DMAC			(1UL << 9)
-#define CPG_BUS_5_MSTOP_MCPU_OSTM0			(1UL << 10)
-#define CPG_BUS_5_MSTOP_MCPU_OSTM1			(1UL << 11)
+#define CPG_CLKON_PERI_COM			(CPG_BASE + 0x05C4)	/* Clock ON / OFF register PERI_COM */
+#define CPG_CLKON_REG1_BUS			(CPG_BASE + 0x05C8)	/* Clock ON / OFF register REG1_BUS */
+#define CPG_CLKON_REG0_BUS			(CPG_BASE + 0x05CC)	/* Clock ON / OFF register REG0_BUS */
+#define CPG_CLKON_PERI_CPU			(CPG_BASE + 0x05D0)	/* Clock ON / OFF register PERI_CPU */
 
-#define CPG_BUS_6_MSTOP_POEG_A_GPT0			(1UL << 3)
-#define CPG_BUS_6_MSTOP_POEG_B_GPT0			(1UL << 4)
-#define CPG_BUS_6_MSTOP_POEG_C_GPT0			(1UL << 5)
-#define CPG_BUS_6_MSTOP_POEG_D_GPT0			(1UL << 6)
-#define CPG_BUS_6_MSTOP_POEG_A_GPT1			(1UL << 7)
-#define CPG_BUS_6_MSTOP_POEG_B_GPT1			(1UL << 8)
-#define CPG_BUS_6_MSTOP_POEG_C_GPT1			(1UL << 9)
-#define CPG_BUS_6_MSTOP_POEG_D_GPT1			(1UL << 10)
-#define CPG_BUS_6_MSTOP_DDR_0_P0_TZC400		(1UL << 13)
-#define CPG_BUS_6_MSTOP_DDR_0_P1_TZC400		(1UL << 14)
-#define CPG_BUS_6_MSTOP_DDR_0_P2_TZC400		(1UL << 15)
+#define CPG_CLKON_PERI_DDR			(CPG_BASE + 0x05D8)	/* Clock ON / OFF register PERI_DDR */
+#define CPG_CLKON_AXI_TZCDDR		(CPG_BASE + 0x05DC)	/* Clock ON / OFF register AXI_TZCDDR */
+#define CPG_CLKON_MTGPGS			(CPG_BASE + 0x05E0)	/* Clock ON / OFF register MTGPGS */
 
-#define CPG_BUS_7_MSTOP_DDR_0_P3_TZC400		(1UL << 0)
-#define CPG_BUS_7_MSTOP_DDR_0_P4_TZC400		(1UL << 1)
-#define CPG_BUS_7_MSTOP_DDR_1_P0_TZC400		(1UL << 2)
-#define CPG_BUS_7_MSTOP_DDR_1_P1_TZC400		(1UL << 3)
-#define CPG_BUS_7_MSTOP_DDR_1_P2_TZC400		(1UL << 4)
-#define CPG_BUS_7_MSTOP_DDR_1_P3_TZC400		(1UL << 5)
-#define CPG_BUS_7_MSTOP_DDR_1_P4_TZC400		(1UL << 6)
-#define CPG_BUS_7_MSTOP_USB2_HOST0			(1UL << 7)
-#define CPG_BUS_7_MSTOP_USB2_HOST1			(1UL << 8)
-#define CPG_BUS_7_MSTOP_USB2_FUNCTION		(1UL << 9)
-#define CPG_BUS_7_MSTOP_USB2_PHY0			(1UL << 10)
-#define CPG_BUS_7_MSTOP_USB2_PHY1			(1UL << 11)
+#define CPG_CLKON_OCTA				(CPG_BASE + 0x05F4)	/* Clock ON / OFF register AXI_DEFAULT_SLV */
+#define CPG_CLKON_OTFDE_DDR			(CPG_BASE + 0x05F8)	/* Clock ON / OFF register OTFDE DDR */
+#define CPG_CLKON_OTFDE_SPI			(CPG_BASE + 0x0600)	/* Clock ON / OFF register OTFDE SPI */
+#define CPG_CLKON_PDM				(CPG_BASE + 0x0604)	/* Clock ON / OFF register PDM */
+#define CPG_CLKON_PCI				(CPG_BASE + 0x0608)	/* Clock ON / OFF register PCI */
+#define CPG_CLKON_SPDIF				(CPG_BASE + 0x060C)	/* Clock ON / OFF register SPDIF */
+#define CPG_CLKON_I3C				(CPG_BASE + 0x0610)	/* Clock ON / OFF register I3C */
+#define CPG_CLKON_VBAT				(CPG_BASE + 0x0614)	/* Clock ON / OFF register VBAT */
 
-#define CPG_BUS_8_MSTOP_PCIe_PHY			(1UL << 0)
-#define CPG_BUS_8_MSTOP_SD0					(1UL << 2)
-#define CPG_BUS_8_MSTOP_SD1					(1UL << 3)
-#define CPG_BUS_8_MSTOP_SD2					(1UL << 4)
-#define CPG_BUS_8_MSTOP_GBETH0				(1UL << 5)
-#define CPG_BUS_8_MSTOP_GBETH1				(1UL << 6)
+#define CPG_CLKMON_CA55				(CPG_BASE + 0x0680)	/* Clock monitor register CA55 */
+#define CPG_CLKMON_CM33				(CPG_BASE + 0x0684)	/* Clock monitor register CM33 */
+#define CPG_CLKMON_SRAM_ACPU		(CPG_BASE + 0x0688)	/* Clock monitor register SRAM_ACPU */
+#define CPG_CLKMON_SRAM_MCPU		(CPG_BASE + 0x068C)	/* Clock monitor register SRAM_MCPU */
+#define CPG_CLKMON_ROM				(CPG_BASE + 0x0690)	/* Clock monitor register ROM */
+#define CPG_CLKMON_GIC600			(CPG_BASE + 0x0694)	/* Clock monitor register GIC600 */
+#define CPG_CLKMON_IA55				(CPG_BASE + 0x0698)	/* Clock monitor register IA55 */
+#define CPG_CLKMON_IM33				(CPG_BASE + 0x069C)	/* Clock monitor register IM33 */
+#define CPG_CLKMON_MHU				(CPG_BASE + 0x06A0)	/* Clock monitor register MHU */
+#define CPG_CLKMON_CST				(CPG_BASE + 0x06A4)	/* Clock monitor register CST */
+#define CPG_CLKMON_SYC				(CPG_BASE + 0x06A8)	/* Clock monitor register SYC */
+#define CPG_CLKMON_DAMC_REG			(CPG_BASE + 0x06AC)	/* Clock monitor register DAMC_REG */
+#define CPG_CLKMON_SYSC				(CPG_BASE + 0x06B0)	/* Clock monitor register SYSC */
+#define CPG_CLKMON_OSTM				(CPG_BASE + 0x06B4)	/* Clock monitor register OSTM */
+#define CPG_CLKMON_MTU				(CPG_BASE + 0x06B8)	/* Clock monitor register MTU */
+#define CPG_CLKMON_POE3				(CPG_BASE + 0x06BC)	/* Clock monitor register POE3 */
+#define CPG_CLKMON_GPT				(CPG_BASE + 0x06C0)	/* Clock monitor register GPT */
+#define CPG_CLKMON_POEG				(CPG_BASE + 0x06C4)	/* Clock monitor register POEG */
+#define CPG_CLKMON_WDT				(CPG_BASE + 0x06C8)	/* Clock monitor register WDT */
+#define CPG_CLKMON_DDR				(CPG_BASE + 0x06CC)	/* Clock monitor register DDR */
+#define CPG_CLKMON_SPI				(CPG_BASE + 0x06D0)	/* Clock monitor register SPI */
+#define CPG_CLKMON_SDHI				(CPG_BASE + 0x06D4)	/* Clock monitor register SDHI */
 
-#define CPG_BUS_10_MSTOP_DDRPHY0			(1UL << 5)
-#define CPG_BUS_10_MSTOP_DDRPHY1			(1UL << 6)
-#define CPG_BUS_10_MSTOP_DDR_MEMC0			(1UL << 7)
-#define CPG_BUS_10_MSTOP_DDR_MEMC1			(1UL << 8)
+#define CPG_CLKMON_SSI				(CPG_BASE + 0x06F0)	/* Clock monitor register SSI */
+#define CPG_CLKMON_SRC				(CPG_BASE + 0x06F4)	/* Clock monitor register SRC */
+#define CPG_CLKMON_USB				(CPG_BASE + 0x06F8)	/* Clock monitor register USB */
+#define CPG_CLKMON_ETH				(CPG_BASE + 0x06FC)	/* Clock monitor register ETH */
+#define CPG_CLKMON_I2C				(CPG_BASE + 0x0700)	/* Clock monitor register I2C */
+#define CPG_CLKMON_SCIF				(CPG_BASE + 0x0704)	/* Clock monitor register SCIF */
+#define CPG_CLKMON_SCI				(CPG_BASE + 0x0708)	/* Clock monitor register SCI */
+#define CPG_CLKMON_IRDA				(CPG_BASE + 0x070C)	/* Clock monitor register IRDA */
+#define CPG_CLKMON_RSPI				(CPG_BASE + 0x0710)	/* Clock monitor register RSPI */
+#define CPG_CLKMON_CANFD			(CPG_BASE + 0x0714)	/* Clock monitor register CANFD */
+#define CPG_CLKMON_GPIO				(CPG_BASE + 0x0718)	/* Clock monitor register GPIO */
+#define CPG_CLKMON_RSIPG			(CPG_BASE + 0x071C)	/* Clock monitor register RSIPG */
+#define CPG_CLKMON_JAUTH			(CPG_BASE + 0x0720)	/* Clock monitor register JAUTH */
+#define CPG_CLKMON_OTP				(CPG_BASE + 0x0724)	/* Clock monitor register OTP */
+#define CPG_CLKMON_ADC				(CPG_BASE + 0x0728)	/* Clock monitor register ADC */
+#define CPG_CLKMON_TSU				(CPG_BASE + 0x072C)	/* Clock monitor register TSU */
 
-#define CPG_BUS_10_MSTOP_CAN_FD				(1UL << 14)
-#define CPG_BUS_10_MSTOP_CAN_I3C			(1UL << 15)
+#define CPG_CLKMON_AXI_ACPU_BUS		(CPG_BASE + 0x0734)	/* Clock monitor register AXI_ACPU_BUS */
+#define CPG_CLKMON_AXI_MCPU_BUS		(CPG_BASE + 0x0738)	/* Clock monitor register AXI_MCPU_BUS */
+#define CPG_CLKMON_AXI_COM_BUS		(CPG_BASE + 0x073C)	/* Clock monitor register AXI_COM_BUS */
 
-#define CPG_LP_CA55_CTL2_COREPREQ0			(1UL << 0)
-#define CPG_LP_CA55_CTL2_COREPREQ1			(1UL << 16)
-#define CPG_LP_CA55_CTL3_COREPREQ2			(1UL << 0)
-#define CPG_LP_CA55_CTL3_COREPREQ3			(1UL << 16)
+#define CPG_CLKMON_PERI_COM			(CPG_BASE + 0x0744)	/* Clock monitor register PERI_COM */
+#define CPG_CLKMON_REG1_BUS			(CPG_BASE + 0x0748)	/* Clock monitor register REG1_BUS */
+#define CPG_CLKMON_REG0_BUS			(CPG_BASE + 0x074C)	/* Clock monitor register REG0_BUS */
+#define CPG_CLKMON_PERI_CPU			(CPG_BASE + 0x0750)	/* Clock monitor register PERI_CPU */
 
-#define CPG_LP_CA55_CTL2_CORESTATE0			(1UL << 1)
-#define CPG_LP_CA55_CTL2_CORESTATE1			(1UL << 17)
-#define CPG_LP_CA55_CTL3_CORESTATE2			(1UL << 1)
-#define CPG_LP_CA55_CTL3_CORESTATE3			(1UL << 17)
+#define CPG_CLKMON_PERI_DDR			(CPG_BASE + 0x0758)	/* Clock monitor register PERI_DDR */
+#define CPG_CLKMON_AXI_TZCDDR		(CPG_BASE + 0x075C)	/* Clock monitor register AXI_TZCDDR */
+#define CPG_CLKMON_MTGPGS			(CPG_BASE + 0x0760)	/* Clock monitor register MTGPGS */
 
-#define CPG_LP_CA55_CTL2_CORESTATE0_ON_MASK	(1UL << 4)
-#define CPG_LP_CA55_CTL2_CORESTATE1_ON_MASK	(1UL << 20)
-#define CPG_LP_CA55_CTL3_CORESTATE2_ON_MASK	(1UL << 4)
-#define CPG_LP_CA55_CTL3_CORESTATE3_ON_MASK	(1UL << 20)
+#define CPG_CLKMON_OCTA				(CPG_BASE + 0x0774)	/* Clock monitor register OCTA */
+#define CPG_CLKMON_OTFDE_DDR		(CPG_BASE + 0x0778)	/* Clock monitor register OTFDE DDR */
+#define CPG_CLKMON_OTFDE_SPI		(CPG_BASE + 0x0780)	/* Clock monitor register OTFDE SPI */
+#define CPG_CLKMON_PDM				(CPG_BASE + 0x0784)	/* Clock monitor register PDM */
+#define CPG_CLKMON_PCI				(CPG_BASE + 0x0788)	/* Clock monitor register PCI */
+#define CPG_CLKMON_SPDIF			(CPG_BASE + 0x078C)	/* Clock monitor register SPDIF */
+#define CPG_CLKMON_I3C				(CPG_BASE + 0x0790)	/* Clock monitor register I3C */
+#define CPG_CLKMON_VBAT				(CPG_BASE + 0x0794)	/* Clock monitor register VBAT */
 
-#define CPG_LP_CA55_CTL2_COREACCEPT0		(1UL << 8)
-#define CPG_LP_CA55_CTL2_COREACCEPT1		(1UL << 24)
-#define CPG_LP_CA55_CTL3_COREACCEPT2		(1UL << 8)
-#define CPG_LP_CA55_CTL3_COREACCEPT3		(1UL << 24)
+#define CPG_RST_CA55				(CPG_BASE + 0x0800)	/* Reset ON / OFF register CA55 */
+#define CPG_RST_CM33				(CPG_BASE + 0x0804)	/* Reset ON / OFF register CM33 */
+#define CPG_RST_SRAM_ACPU			(CPG_BASE + 0x0808)	/* Reset ON / OFF register SRAM_ACPU */
+#define CPG_RST_SRAM_MCPU			(CPG_BASE + 0x080C)	/* Reset ON / OFF register SRAM_MCPU */
+#define CPG_RST_ROM					(CPG_BASE + 0x0810)	/* Reset ON / OFF register ROM */
+#define CPG_RST_GIC600				(CPG_BASE + 0x0814)	/* Reset ON / OFF register GIC600 */
+#define CPG_RST_IA55				(CPG_BASE + 0x0818)	/* Reset ON / OFF register IA55 */
+#define CPG_RST_IM33				(CPG_BASE + 0x081C)	/* Reset ON / OFF register IM33 */
+#define CPG_RST_MHU					(CPG_BASE + 0x0820)	/* Reset ON / OFF register MHU */
+
+#define CPG_RST_SYC					(CPG_BASE + 0x0828)	/* Reset ON / OFF register SYC */
+#define CPG_RST_DMAC				(CPG_BASE + 0x082C)	/* Reset ON / OFF register DMAC */
+#define CPG_RST_SYSC				(CPG_BASE + 0x0830)	/* Reset ON / OFF register SYSC */
+#define CPG_RST_OSTM				(CPG_BASE + 0x0834)	/* Reset ON / OFF register OSTM */
+#define CPG_RST_MTU					(CPG_BASE + 0x0838)	/* Reset ON / OFF register MTU */
+#define CPG_RST_POE3				(CPG_BASE + 0x083C)	/* Reset ON / OFF register POE3 */
+#define CPG_RST_GPT					(CPG_BASE + 0x0840)	/* Reset ON / OFF register GPT */
+#define CPG_RST_POEG				(CPG_BASE + 0x0844)	/* Reset ON / OFF register POEG */
+#define CPG_RST_WDT					(CPG_BASE + 0x0848)	/* Reset ON / OFF register WDT */
+#define CPG_RST_DDR					(CPG_BASE + 0x084C)	/* Reset ON / OFF register DDR */
+#define CPG_RST_SPI					(CPG_BASE + 0x0850)	/* Reset ON / OFF register SPI */
+#define CPG_RST_SDHI				(CPG_BASE + 0x0854)	/* Reset ON / OFF register SDHI */
+
+#define CPG_RST_SSIF				(CPG_BASE + 0x0870)	/* Reset ON / OFF register SSIF */
+#define CPG_RST_SRC					(CPG_BASE + 0x0874)	/* Reset ON / OFF register SRC */
+#define CPG_RST_USB					(CPG_BASE + 0x0878)	/* Reset ON / OFF register USB */
+#define CPG_RST_ETH					(CPG_BASE + 0x087C)	/* Reset ON / OFF register ETH */
+#define CPG_RST_I2C					(CPG_BASE + 0x0880)	/* Reset ON / OFF register I2C */
+#define CPG_RST_SCIF				(CPG_BASE + 0x0884)	/* Reset ON / OFF register SCIF */
+#define CPG_RST_SCI					(CPG_BASE + 0x0888)	/* Reset ON / OFF register SCI */
+#define CPG_RST_IRDA				(CPG_BASE + 0x088C)	/* Reset ON / OFF register IRDA */
+#define CPG_RST_RSPI				(CPG_BASE + 0x0890)	/* Reset ON / OFF register RSPI */
+#define CPG_RST_CANFD				(CPG_BASE + 0x0894)	/* Reset ON / OFF register CANFD */
+#define CPG_RST_GPIO				(CPG_BASE + 0x0898)	/* Reset ON / OFF register GPIO */
+#define CPG_RST_RSIPG				(CPG_BASE + 0x089C)	/* Reset ON / OFF register RSIPG */
+#define CPG_RST_JAUTH				(CPG_BASE + 0x08A0)	/* Reset ON / OFF register JAUTH */
+#define CPG_RST_OTP					(CPG_BASE + 0x08A4)	/* Reset ON / OFF register OTP */
+#define CPG_RST_ADC					(CPG_BASE + 0x08A8)	/* Reset ON / OFF register ADC */
+#define CPG_RST_TSU					(CPG_BASE + 0x08AC)	/* Reset ON / OFF register TSU */
+
+#define CPG_RST_AXI_ACPU_BUS		(CPG_BASE + 0x08B4)	/* Reset ON / OFF register AXI_ACPU_BUS */
+#define CPG_RST_AXI_MCPU_BUS		(CPG_BASE + 0x08B8)	/* Reset ON / OFF register AXI_MCPU_BUS */
+#define CPG_RST_AXI_COM_BUS			(CPG_BASE + 0x08BC)	/* Reset ON / OFF register AXI_COM_BUS */
+
+#define CPG_RST_PERI_COM			(CPG_BASE + 0x08C4)	/* Reset ON / OFF register PERI_COM */
+#define CPG_RST_REG1_BUS			(CPG_BASE + 0x08C8)	/* Reset ON / OFF register REG1_BUS */
+#define CPG_RST_REG0_BUS			(CPG_BASE + 0x08CC)	/* Reset ON / OFF register REG0_BUS */
+#define CPG_RST_PERI_CPU			(CPG_BASE + 0x08D0)	/* Reset ON / OFF register PERI_CPU */
+
+#define CPG_RST_PERI_DDR			(CPG_BASE + 0x08D8)	/* Reset ON / OFF register PERI_DDR */
+#define CPG_RST_AXI_TZCDDR			(CPG_BASE + 0x08DC)	/* Reset ON / OFF register AXI_TZCDDR */
+#define CPG_RST_MTGPGS				(CPG_BASE + 0x08E0)	/* Reset ON / OFF register MTGPGS */
+
+#define CPG_RST_OCTA				(CPG_BASE + 0x08F4)	/* Reset ON / OFF register OCTA */
+#define CPG_RST_OTFDE_DDR			(CPG_BASE + 0x08F8)	/* Reset ON / OFF register OTFDE DDR */
+#define CPG_RST_OTFDE_SPI			(CPG_BASE + 0x0900)	/* Reset ON / OFF register OTFDE SPI */
+#define CPG_RST_PDM					(CPG_BASE + 0x0904)	/* Reset ON / OFF register PDM */
+#define CPG_RST_PCI					(CPG_BASE + 0x0908)	/* Reset ON / OFF register PCI */
+#define CPG_RST_SPDIF				(CPG_BASE + 0x090C)	/* Reset ON / OFF Register SPDIF */
+#define CPG_RST_I3C					(CPG_BASE + 0x0910)	/* Reset ON / OFF register I3C */
+#define CPG_RST_VBAT				(CPG_BASE + 0x0914)	/* Reset ON / OFF register VBAT */
+
+#define CPG_RSTMON_CA55				(CPG_BASE + 0x0980)	/* Reset monitor register CA55 */
+#define CPG_RSTMON_CM33				(CPG_BASE + 0x0984)	/* Reset monitor register CM33 */
+#define CPG_RSTMON_SRAM_ACPU		(CPG_BASE + 0x0988)	/* Reset monitor register SRAM_ACPU */
+#define CPG_RSTMON_SRAM_MCPU		(CPG_BASE + 0x098C)	/* Reset monitor register SRAM_MCPU */
+#define CPG_RSTMON_ROM				(CPG_BASE + 0x0990)	/* Reset monitor register ROM */
+#define CPG_RSTMON_GIC600			(CPG_BASE + 0x0994)	/* Reset monitor register GIC600 */
+#define CPG_RSTMON_IA55				(CPG_BASE + 0x0998)	/* Reset monitor register IA55 */
+#define CPG_RSTMON_IM33				(CPG_BASE + 0x099C)	/* Reset monitor register IM33 */
+#define CPG_RSTMON_MHU				(CPG_BASE + 0x09A0)	/* Reset monitor register MHU */
+
+#define CPG_RSTMON_SYC				(CPG_BASE + 0x09A8)	/* Reset monitor register SYC */
+#define CPG_RSTMON_DMAC				(CPG_BASE + 0x09AC)	/* Reset monitor register DMAC */
+#define CPG_RSTMON_SYSC				(CPG_BASE + 0x09B0)	/* Reset monitor register SYSC */
+#define CPG_RSTMON_OSTM				(CPG_BASE + 0x09B4)	/* Reset monitor register OSTM */
+#define CPG_RSTMON_MTU				(CPG_BASE + 0x09B8)	/* Reset monitor register MTU */
+#define CPG_RSTMON_POE3				(CPG_BASE + 0x09BC)	/* Reset monitor register POE3 */
+#define CPG_RSTMON_GPT				(CPG_BASE + 0x09C0)	/* Reset monitor register GPT */
+#define CPG_RSTMON_POEG				(CPG_BASE + 0x09C4)	/* Reset monitor register POEG */
+#define CPG_RSTMON_WDT				(CPG_BASE + 0x09C8)	/* Reset monitor register WDT */
+#define CPG_RSTMON_DDR				(CPG_BASE + 0x09CC)	/* Reset monitor register DDR */
+#define CPG_RSTMON_SPI				(CPG_BASE + 0x09D0)	/* Reset monitor register SPI */
+#define CPG_RSTMON_SDHI				(CPG_BASE + 0x09D4)	/* Reset monitor register SDHI */
+
+#define CPG_RSTMON_SSIF				(CPG_BASE + 0x09F0)	/* Reset monitor register SSIF */
+#define CPG_RSTMON_SRC				(CPG_BASE + 0x09F4)	/* Reset monitor register SRC */
+#define CPG_RSTMON_USB				(CPG_BASE + 0x09F8)	/* Reset monitor register USB */
+#define CPG_RSTMON_ETH				(CPG_BASE + 0x09FC)	/* Reset monitor register ETH */
+#define CPG_RSTMON_I2C				(CPG_BASE + 0x0A00)	/* Reset monitor register I2C */
+#define CPG_RSTMON_SCIF				(CPG_BASE + 0x0A04)	/* Reset monitor register SCIF */
+#define CPG_RSTMON_SCI				(CPG_BASE + 0x0A08)	/* Reset monitor register SCI */
+#define CPG_RSTMON_IRDA				(CPG_BASE + 0x0A0C)	/* Reset monitor register IRDA */
+#define CPG_RSTMON_RSPI				(CPG_BASE + 0x0A10)	/* Reset monitor register RSPI */
+#define CPG_RSTMON_CANFD			(CPG_BASE + 0x0A14)	/* Reset monitor register CANFD */
+#define CPG_RSTMON_GPIO				(CPG_BASE + 0x0A18)	/* Reset monitor register GPIO */
+#define CPG_RSTMON_TSIPG			(CPG_BASE + 0x0A1C)	/* Reset monitor register TSIPG */
+#define CPG_RSTMON_JAUTH			(CPG_BASE + 0x0A20)	/* Reset monitor register JAUTH */
+#define CPG_RSTMON_OTP				(CPG_BASE + 0x0A24)	/* Reset monitor register OTP */
+#define CPG_RSTMON_ADC				(CPG_BASE + 0x0A28)	/* Reset monitor register ADC */
+#define CPG_RSTMON_TSU				(CPG_BASE + 0x0A2C)	/* Reset monitor register TSU */
+
+#define CPG_RSTMON_AXI_ACPU_BUS		(CPG_BASE + 0x0A34)	/* Reset monitor register AXI_ACPU_BUS */
+#define CPG_RSTMON_AXI_MCPU_BUS		(CPG_BASE + 0x0A38)	/* Reset monitor register AXI_MCPU_BUS */
+#define CPG_RSTMON_AXI_COM_BUS		(CPG_BASE + 0x0A3C)	/* Reset monitor register AXI_COM_BUS */
+
+#define CPG_RSTMON_PERI_COM			(CPG_BASE + 0x0A44)	/* Reset monitor register PERI_COM */
+#define CPG_RSTMON_REG1_BUS			(CPG_BASE + 0x0A48)	/* Reset monitor register REG1_BUS */
+#define CPG_RSTMON_REG0_BUS			(CPG_BASE + 0x0A4C)	/* Reset monitor register REG0_BUS */
+#define CPG_RSTMON_PERI_CPU			(CPG_BASE + 0x0A50)	/* Reset monitor register PERI_CPU */
+
+#define CPG_RSTMON_PERI_DDR			(CPG_BASE + 0x0A58)	/* Reset monitor register PERI_DDR */
+#define CPG_RSTMON_AXI_TZCDDR		(CPG_BASE + 0x0A5C)	/* Reset monitor register AXI_TZCDDR */
+#define CPG_RSTMON_MTGPGS			(CPG_BASE + 0x0A60)	/* Reset monitor register MTGPGS */
+
+#define CPG_RSTMON_OCTA				(CPG_BASE + 0x0A74)	/* Reset monitor register OCTA */
+#define CPG_RSTMON_OTFDE_DDR		(CPG_BASE + 0x0A78)	/* Reset monitor register OTFDE DDR */
+#define CPG_RSTMON_OTFDE_SPI		(CPG_BASE + 0x0A80)	/* Reset monitor register OTFDE SPI */
+#define CPG_RSTMON_PDM				(CPG_BASE + 0x0A84)	/* Reset monitor register PDM */
+#define CPG_RSTMON_PCI				(CPG_BASE + 0x0A88)	/* Reset monitor register PCI */
+#define CPG_RSTMON_SPDIF			(CPG_BASE + 0x0A8C)	/* Reset monitor register SPDIF */
+#define CPG_RSTMON_I3C				(CPG_BASE + 0x0A90)	/* Reset monitor register I3C */
+#define CPG_RSTMON_VBAT				(CPG_BASE + 0x0A94)	/* Reset monitor register VBAT */
+
+#define CPG_EN_OSTM					(CPG_BASE + 0x0B00)	/* Enable ON / OFF register_OSTM */
+#define CPG_WDTOVF_RST				(CPG_BASE + 0x0B10)	/* WDT overflow system reset register */
+#define CPG_WDTRST_SEL				(CPG_BASE + 0x0B14)	/* WDT reset selector register */
+#define CPG_DBGRST					(CPG_BASE + 0x0B20)	/* Reset ON / OFF register DBGRST */
+#define CPG_CLUSTER_PCHMON			(CPG_BASE + 0x0B30)	/* CA55 Cluster Power Status Monitor Register */
+#define CPG_CLUSTER_PCHCTL			(CPG_BASE + 0x0B34)	/* CA55 Cluster Power Status Control Register */
+#define CPG_CORE0_PCHMON			(CPG_BASE + 0x0B38)	/* CA55 Core0 Power Status Monitor Register */
+#define CPG_CORE0_PCHCTL			(CPG_BASE + 0x0B3C)	/* CA55 Core0 Power Status Control Register */
+
+#define CPG_BUS_ACPU_MSTOP			(CPG_BASE + 0x0B60)	/* MSTOP registerBUS_ACPU */
+#define CPG_BUS_MCPU1_MSTOP			(CPG_BASE + 0x0B64)	/* MSTOP registerBUS_MCPU1 */
+#define CPG_BUS_MCPU2_MSTOP			(CPG_BASE + 0x0B68)	/* MSTOP registerBUS_MCPU2 */
+#define CPG_BUS_PERI_COM_MSTOP		(CPG_BASE + 0x0B6C)	/* MSTOP registerBUS_PERI_COM */
+#define CPG_BUS_PERI_CPU_MSTOP		(CPG_BASE + 0x0B70)	/* MSTOP registerBUS_PERI_CPU */
+#define CPG_BUS_PERI_DDR_MSTOP		(CPG_BASE + 0x0B74)	/* MSTOP registerBUS_PERI_DDR */
+
+#define CPG_BUS_REG0_MSTOP			(CPG_BASE + 0x0B7C)	/* MSTOP registerBUS_REG0 */
+#define CPG_BUS_REG1_MSTOP			(CPG_BASE + 0x0B80)	/* MSTOP registerBUS_REG1 */
+#define CPG_BUS_TZCDDR_MSTOP		(CPG_BASE + 0x0B84)	/* MSTOP registerBUS_TZCDDR */
+#define CPG_MHU_MSTOP				(CPG_BASE + 0x0B88)	/* MSTOP registerMHU */
+
+#define CPG_BUS_MCPU3_MSTOP			(CPG_BASE + 0x0B90)	
+#define CPG_BUS_PERI_CPU2_MSTOP		(CPG_BASE + 0x0B94)	
+
+#define CPG_PWRDN_IP1				(CPG_BASE + 0x0BB0)	
+#define CPG_PWRDN_IP2				(CPG_BASE + 0x0BB4)	
+#define CPG_PWRDN_MSTOP				(CPG_BASE + 0x0BC0)	
+#define CPG_PWRDN_CLKON				(CPG_BASE + 0x0BC4)	
+#define CPG_PWRDN_RST				(CPG_BASE + 0x0BC8)	
+#define CPG_RST_BISR				(CPG_BASE + 0x0BD0)	
+#define CPG_BISR_DOM_EN				(CPG_BASE + 0x0BD4)	
+#define CPG_BISR_REPAIR_END			(CPG_BASE + 0x0BD8)	
+
+#define CPG_OTHERFUNC2_REG			(CPG_BASE + 0x0BEC)	/* Other function registers2 */
+
+
+//TODO: G3S: The below has been taken directly from RZ/G2L and has not been checked
+#define PLL1_STBY_RESETB							(1 << 0)
+#define PLL1_STBY_SSC_EN							(1 << 2)
+#define PLL1_STBY_SSC_MODE0							(1 << 4)
+#define PLL1_STBY_SSC_MODE1							(1 << 5)
+#define PLL1_STBY_RESETB_WEN						(1 << 16)
+#define PLL1_STBY_SSC_EN_WEN						(1 << 18)
+#define PLL1_STBY_SSC_MODE_WEN						(1 << 20)
+#define PLL1_CLK1_DIV_P_24M							(1 << 0)
+#define PLL1_CLK1_DIV_P_12M							(2 << 0)
+#define PLL1_CLK1_DIV_P_8M							(3 << 0)
+#define PLL1_CLK1_DIV_P_6M							(4 << 0)
+#define PLL1_CLK2_DIV_S_RATIO1						(0 << 0)
+#define PLL1_CLK2_DIV_S_RATIO2						(1 << 0)
+#define PLL1_CLK2_DIV_S_RATIO4						(2 << 0)
+#define PLL1_CLK2_DIV_S_RATIO8						(3 << 0)
+#define PLL1_CLK2_DIV_S_RATIO16						(4 << 0)
+#define PLL1_CLK2_DIV_S_RATIO32						(5 << 0)
+#define PLL1_CLK2_DIV_S_RATIO64						(6 << 0)
+#define PLL1_MON_PLL1_RESETB						(1 << 0)
+#define PLL1_MON_PLL1_LOCK							(1 << 4)
+#define PLL4_STBY_RESETB							(1 << 0)
+#define PLL4_STBY_SSC_EN							(1 << 2)
+#define PLL4_STBY_SSC_MODE0							(1 << 4)
+#define PLL4_STBY_SSC_MODE1							(1 << 5)
+#define PLL4_STBY_RESETB_WEN						(1 << 16)
+#define PLL4_STBY_SSC_EN_WEN						(1 << 18)
+#define PLL4_STBY_SSC_MODE_WEN						(1 << 20)
+#define PLL4_CLK1_DIV_P_24M							(1 << 0)
+#define PLL4_CLK1_DIV_P_12M							(2 << 0)
+#define PLL4_CLK1_DIV_P_8M							(3 << 0)
+#define PLL4_CLK1_DIV_P_6M							(4 << 0)
+#define PLL4_CLK2_DIV_S_RATIO1						(0 << 0)
+#define PLL4_CLK2_DIV_S_RATIO2						(1 << 0)
+#define PLL4_CLK2_DIV_S_RATIO4						(2 << 0)
+#define PLL4_CLK2_DIV_S_RATIO8						(3 << 0)
+#define PLL4_CLK2_DIV_S_RATIO16						(4 << 0)
+#define PLL4_CLK2_DIV_S_RATIO32						(5 << 0)
+#define PLL4_CLK2_DIV_S_RATIO64						(6 << 0)
+#define PLL4_MON_PLL4_RESETB						(1 << 0)
+#define PLL4_MON_PLL4_LOCK							(1 << 4)
+#define PLL6_STBY_RESETB							(1 << 0)
+#define PLL6_STBY_SSC_EN							(1 << 2)
+#define PLL6_STBY_SSC_MODE0							(1 << 4)
+#define PLL6_STBY_SSC_MODE1							(1 << 5)
+#define PLL6_STBY_RESETB_WEN						(1 << 16)
+#define PLL6_STBY_SSC_EN_WEN						(1 << 18)
+#define PLL6_STBY_SSC_MODE_WEN						(1 << 20)
+#define PLL6_CLK1_DIV_P_24M							(1 << 0)
+#define PLL6_CLK1_DIV_P_12M							(2 << 0)
+#define PLL6_CLK1_DIV_P_8M							(3 << 0)
+#define PLL6_CLK1_DIV_P_6M							(4 << 0)
+#define PLL6_CLK2_DIV_S_RATIO1						(0 << 0)
+#define PLL6_CLK2_DIV_S_RATIO2						(1 << 0)
+#define PLL6_CLK2_DIV_S_RATIO4						(2 << 0)
+#define PLL6_CLK2_DIV_S_RATIO8						(3 << 0)
+#define PLL6_CLK2_DIV_S_RATIO16						(4 << 0)
+#define PLL6_CLK2_DIV_S_RATIO32						(5 << 0)
+#define PLL6_CLK2_DIV_S_RATIO64						(6 << 0)
+#define PLL6_MON_PLL6_RESETB						(1 << 0)
+#define PLL6_MON_PLL6_LOCK							(1 << 4)
+#define PLL1_SETTING_SEL_PLL1						(1 << 0)
+#define PLL1_SETTING_SEL_PLL1_WEN					(1 << 16)
+#define PLL_CLK_DIV_M_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 6))))
+#define PLL_CLK_DIV_K_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 16))))
+#define PLL_CLK_MRR_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 8))))
+#define PLL_CLK_MFR_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 16))))
+
+#define PLL2_STBY_RESETB							(1 << 0)
+#define PLL2_STBY_SSC_EN							(1 << 2)
+#define PLL2_STBY_DOWNSPREAD						(1 << 4)
+#define PLL2_STBY_RESETB_WEN						(1 << 16)
+#define PLL2_STBY_SSC_EN_WEN						(1 << 18)
+#define PLL2_STBY_DOWNSPREAD_WEN					(1 << 20)
+#define PLL2_CLK1_POSTDIV1_WEN						(1 << 16)
+#define PLL2_CLK1_POSTDIV2_WEN						(1 << 20)
+#define PLL2_CLK1_REFDIV_WEN						(1 << 24)
+#define PLL2_CLK2_DACPD								(1 << 0)
+#define PLL2_CLK2_DSMPD								(1 << 2)
+#define PLL2_CLK2_FOUT4PHASEPD						(1 << 4)
+#define PLL2_CLK2_FOUTPOSTDIVPD						(1 << 6)
+#define PLL2_CLK2_FOUTVCOPD							(1 << 8)
+#define PLL2_CLK2_DACPD_WEN							(1 << 16)
+#define PLL2_CLK2_DSMPD_WEN							(1 << 18)
+#define PLL2_CLK2_FOUT4PHASEPD_WEN					(1 << 20)
+#define PLL2_CLK2_FOUTPOSTDIVPD_WEN					(1 << 22)
+#define PLL2_CLK2_FOUTVCOPD_WEN						(1 << 24)
+#define PLL2_CLK6_SEL_EXTWAVE						(1 << 0)
+#define PLL2_CLK6_SEL_EXTWAVE_WEN					(1 << 16)
+#define PLL2_MON_PLL2_RESETB						(1 << 0)
+#define PLL2_MON_PLL2_LOCK							(1 << 4)
+#define PLL3_STBY_RESETB							(1 << 0)
+#define PLL3_STBY_SSC_EN							(1 << 2)
+#define PLL3_STBY_DOWNSPREAD						(1 << 4)
+#define PLL3_STBY_RESETB_WEN						(1 << 16)
+#define PLL3_STBY_SSC_EN_WEN						(1 << 18)
+#define PLL3_STBY_DOWNSPREAD_WEN					(1 << 20)
+#define PLL3_CLK1_POSTDIV1_WEN						(1 << 16)
+#define PLL3_CLK1_POSTDIV2_WEN						(1 << 20)
+#define PLL3_CLK1_REFDIV_WEN						(1 << 24)
+#define PLL3_CLK2_DACPD								(1 << 0)
+#define PLL3_CLK2_DSMPD								(1 << 2)
+#define PLL3_CLK2_FOUT4PHASEPD						(1 << 4)
+#define PLL3_CLK2_FOUTPOSTDIVPD						(1 << 6)
+#define PLL3_CLK2_FOUTVCOPD							(1 << 8)
+#define PLL3_CLK2_DACPD_WEN							(1 << 16)
+#define PLL3_CLK2_DSMPD_WEN							(1 << 18)
+#define PLL3_CLK2_FOUT4PHASEPD_WEN					(1 << 20)
+#define PLL3_CLK2_FOUTPOSTDIVPD_WEN					(1 << 22)
+#define PLL3_CLK2_FOUTVCOPD_WEN						(1 << 24)
+#define PLL3_CLK6_SEL_EXTWAVE						(1 << 0)
+#define PLL3_CLK6_SEL_EXTWAVE_WEN					(1 << 16)
+#define PLL3_MON_PLL3_RESETB						(1 << 0)
+#define PLL3_MON_PLL3_LOCK							(1 << 4)
+#define PLL5_STBY_RESETB							(1 << 0)
+#define PLL5_STBY_SSC_EN							(1 << 2)
+#define PLL5_STBY_DOWNSPREAD						(1 << 4)
+#define PLL5_STBY_RESETB_WEN						(1 << 16)
+#define PLL5_STBY_SSC_EN_WEN						(1 << 18)
+#define PLL5_STBY_DOWNSPREAD_WEN					(1 << 20)
+#define PLL5_CLK1_POSTDIV1_WEN						(1 << 16)
+#define PLL5_CLK1_POSTDIV2_WEN						(1 << 20)
+#define PLL5_CLK1_REFDIV_WEN						(1 << 24)
+#define PLL5_CLK2_DACPD								(1 << 0)
+#define PLL5_CLK2_DSMPD								(1 << 2)
+#define PLL5_CLK2_FOUT4PHASEPD						(1 << 4)
+#define PLL5_CLK2_FOUTPOSTDIVPD						(1 << 6)
+#define PLL5_CLK2_FOUTVCOPD							(1 << 8)
+#define PLL5_CLK2_DACPD_WEN							(1 << 16)
+#define PLL5_CLK2_DSMPD_WEN							(1 << 18)
+#define PLL5_CLK2_FOUT4PHASEPD_WEN					(1 << 20)
+#define PLL5_CLK2_FOUTPOSTDIVPD_WEN					(1 << 22)
+#define PLL5_CLK2_FOUTVCOPD_WEN						(1 << 24)
+#define PLL5_CLK6_SEL_EXTWAVE						(1 << 0)
+#define PLL5_CLK6_SEL_EXTWAVE_WEN					(1 << 16)
+#define PLL5_MON_PLL5_RESETB						(1 << 0)
+#define PLL5_MON_PLL5_LOCK							(1 << 4)
+
+#define PLL_CLK_POSTDIV1_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 0))))
+#define PLL_CLK_POSTDIV2_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 4))))
+#define PLL_CLK_REFDIV_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 8))))
+#define PLL_CLK_DIVVAL_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 0))))
+#define PLL_CLK_FRACIN_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 8))))
+#define PLL_CLK_EXT_MAXADDR_SET(a, b)	(mmio_write_32(a, ((mmio_read_32(a)) | (b << 0))))
+#define PLL_CLK_INITIN_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 16))))
+#define PLL_CLK_SPREAD_SET(a, b)		(mmio_write_32(a, ((mmio_read_32(a)) | (b << 0))))
+
+#define PL1_DDIV_DIVPL1_SET_1_1						(0 << 0)
+#define PL1_DDIV_DIVPL1_SET_1_2						(1 << 0)
+#define PL1_DDIV_DIVPL1_SET_1_4						(2 << 0)
+#define PL1_DDIV_DIVPL1_SET_1_8						(3 << 0)
+#define PL1_DDIV_DIVPL1_SET_WEN						(1 << 16)
+#define PL2_DDIV_DIVPL2A_SET_1_1					(0 << 0)
+#define PL2_DDIV_DIVPL2A_SET_1_2					(1 << 0)
+#define PL2_DDIV_DIVPL2A_SET_1_4					(2 << 0)
+#define PL2_DDIV_DIVPL2A_SET_1_8					(3 << 0)
+#define PL2_DDIV_DIVPL2A_SET_1_32					(4 << 0)
+#define PL2_DDIV_DIVPL2B_SET_1_1					(0 << 4)
+#define PL2_DDIV_DIVPL2B_SET_1_2					(1 << 4)
+#define PL2_DDIV_DIVPL2B_SET_1_4					(2 << 4)
+#define PL2_DDIV_DIVPL2B_SET_1_8					(3 << 4)
+#define PL2_DDIV_DIVPL2B_SET_1_32					(4 << 4)
+#define PL2_DDIV_DIVPL2C_SET_1_1					(0 << 4)
+#define PL2_DDIV_DIVPL2C_SET_1_2					(1 << 4)
+#define PL2_DDIV_DIVPL2C_SET_1_4					(2 << 4)
+#define PL2_DDIV_DIVPL2C_SET_1_8					(3 << 4)
+#define PL2_DDIV_DIVPL2C_SET_1_32					(4 << 4)
+
+#define PL2_DDIV_DIVPL2A_WEN						(1 << 16)
+#define PL2_DDIV_DIVPL2B_WEN						(1 << 20)
+#define PL2_DDIV_DIVPL2C_WEN						(1 << 24)
+
+#define PL4_DSEL_SEL_PLL4_SET						(1 << 0)
+#define PL4_DSEL_SEL_PLL4_WEN						(1 << 16)
+
+#define CLKDIVSTATUS_DIVPL1_STS						(1 << 0)
+#define CLKDIVSTATUS_DIVPL2A_STS					(1 << 4)
+#define CLKDIVSTATUS_DIVPL2B_STS					(1 << 5)
+#define CLKDIVSTATUS_DIVPL2C_STS					(1 << 6)
+
+#define CLKDIVSTATUS_DIVPL3A_STS					(1 << 8)
+#define CLKDIVSTATUS_DIVPL3B_STS					(1 << 9)
+#define CLKDIVSTATUS_DIVPL3C_STS					(1 << 10)
+#define CLKDIVSTATUS_DIVPL3CLK200FIX_STS			(1 << 11)
+
+#define CLKDIVSTATUS_SELSDHI0_STS					(1 << 28)
+#define CLKDIVSTATUS_SELSDHI1_STS					(1 << 29)
+#define CLKDIVSTATUS_SELPLL4_STS					(1 << 31)
+
+#define PL1_CA55_SSEL_SEL_PLL1_SET					(1 << 0)
+#define PL1_CA55_SSEL_SEL_PLL1_WEN					(1 << 16)
+#define PL2_SSEL_SEL_PLL2_1_SET						(1 << 0)
+#define PL2_SSEL_SEL_PLL2_2_SET						(1 << 4)
+#define PL2_SSEL_SEL_PLL2_1_WEN						(1 << 16)
+#define PL2_SSEL_SEL_PLL2_2_WEN						(1 << 20)
+#define PL3_SSEL_SEL_PLL3_1_SET						(1 << 0)
+#define PL3_SSEL_SEL_PLL3_2_SET						(1 << 4)
+#define PL3_SSEL_SEL_PLL3_3_SET						(1 << 8)
+#define PL3_SSEL_SEL_PLL3_1_WEN						(1 << 16)
+#define PL3_SSEL_SEL_PLL3_2_WEN						(1 << 20)
+#define PL3_SSEL_SEL_PLL3_3_WEN						(1 << 24)
+#define PL5_SSEL_SEL_PLL5_1_SET						(1 << 0)
+#define PL5_SSEL_SEL_PLL5_2_SET						(1 << 4)
+#define PL5_SSEL_SEL_PLL5_1_WEN						(1 << 16)
+#define PL5_SSEL_SEL_PLL5_2_WEN						(1 << 20)
+#define PL6_SSEL_SEL_PLL6_1_SET						(1 << 0)
+
+#define PL6_SSEL_SEL_PLL6_1_WEN						(1 << 16)
+
+#define PL6_ETH_SSEL_SEL_PLL6_2_SET					(1 << 0)
+#define PL6_ETH_SSEL_SEL_ETH_SET					(1 << 4)
+#define PL6_ETH_SSEL_SEL_PLL6_2_WEN					(1 << 16)
+#define PL6_ETH_SSEL_SEL_ETH_WEN					(1 << 20)
+
+#define CLKON_CLK0_ON								(1 << 0)
+#define CLKON_CLK0_ON_WEN							(1 << 16)
+#define CLKMON_UNIT0_CLK_MON						(1 << 0)
+#define RST_UNIT0_RSTB								(1 << 0)
+#define RST_UNIT0_RST_WEN							(1 << 16)
+#define RSTMON_UNIT0_RST_MON						(1 << 0)
+#define EN_OSTM_EN0_ON								(1 << 0)
+#define EN_OSTM_EN1_ON								(1 << 1)
+#define EN_OSTM_EN2_ON								(1 << 2)
+#define EN_OSTM_EN0_WEN								(1 << 16)
+#define EN_OSTM_EN1_WEN								(1 << 17)
+#define EN_OSTM_EN2_WEN								(1 << 18)
+#define WDTOVF_RST_WDTOVF0							(1 << 0)
+#define WDTOVF_RST_WDTOVF1							(1 << 1)
+#define WDTOVF_RST_WDTOVF2							(1 << 2)
+#define WDTOVF_RST_WDTOVF3							(1 << 3)
+#define WDTOVF_RST_WDTOVF0_WEN						(1 << 16)
+#define WDTOVF_RST_WDTOVF1_WEN						(1 << 17)
+#define WDTOVF_RST_WDTOVF2_WEN						(1 << 18)
+#define WDTOVF_RST_WDTOVF3_WEN						(1 << 19)
+#define WDTRST_SEL_WDTRSTSEL0						(1 << 0)
+#define WDTRST_SEL_WDTRSTSEL1						(1 << 1)
+#define WDTRST_SEL_WDTRSTSEL2						(1 << 2)
+#define WDTRST_SEL_WDTRSTSEL3						(1 << 3)
+#define WDTRST_SEL_WDTRSTSEL4						(1 << 4)
+#define WDTRST_SEL_WDTRSTSEL5						(1 << 5)
+#define WDTRST_SEL_WDTRSTSEL6						(1 << 6)
+#define WDTRST_SEL_WDTRSTSEL7						(1 << 7)
+#define WDTRST_SEL_WDTRSTSEL8						(1 << 8)
+#define WDTRST_SEL_WDTRSTSEL9						(1 << 9)
+#define WDTRST_SEL_WDTRSTSEL10						(1 << 10)
+#define WDTRST_SEL_WDTRSTSEL0_WEN					(1 << 16)
+#define WDTRST_SEL_WDTRSTSEL1_WEN					(1 << 17)
+#define WDTRST_SEL_WDTRSTSEL2_WEN					(1 << 18)
+#define WDTRST_SEL_WDTRSTSEL3_WEN					(1 << 19)
+#define WDTRST_SEL_WDTRSTSEL4_WEN					(1 << 20)
+#define WDTRST_SEL_WDTRSTSEL5_WEN					(1 << 21)
+#define WDTRST_SEL_WDTRSTSEL6_WEN					(1 << 22)
+#define WDTRST_SEL_WDTRSTSEL7_WEN					(1 << 23)
+#define WDTRST_SEL_WDTRSTSEL8_WEN					(1 << 24)
+#define WDTRST_SEL_WDTRSTSEL9_WEN					(1 << 25)
+#define WDTRST_SEL_WDTRSTSEL10_WEN					(1 << 26)
+#define DBGRST_UNIT0_RSTB							(1 << 0)
+#define DBGRST_UNIT0_RST_WEN						(1 << 16)
+#define CLUSTER_PCHMON_PACCEPT_MON					(1 << 0)
+#define CLUSTER_PCHMON_PDENY_MON					(1 << 1)
+#define CLUSTER_PCHCTL_PREQ_SET						(1 << 0)
+#define CLUSTER_PCHCTL_PSTATE0_SET_ON				(0x48 << 16)
+#define CLUSTER_PCHCTL_PSTATE0_SET_OFF				(0x00 << 16)
+#define CORE0_PCHMON_PACCEPT0_MON					(1 << 0)
+#define CORE0_PCHMON_PDENY0_MON						(1 << 1)
+#define CORE0_PCHCTL_PREQ0_SET						(1 << 0)
+#define CORE0_PCHCTL_PSTATE0_SET_ON					(0x08 << 16)
+#define CORE0_PCHCTL_PSTATE0_SET_OFF_EMULATED		(0x01 << 16)
+#define CORE0_PCHCTL_PSTATE0_SET_OFF				(0x00 << 16)
+#define CORE1_PCHMON_PACCEPT1_MON					(1 << 0)
+#define CORE1_PCHMON_PDENY1_MON						(1 << 1)
+#define CORE1_PCHCTL_PREQ1_SET						(1 << 0)
+#define CORE1_PCHCTL_PSTATE1_SET_ON					(0x08 << 16)
+#define CORE1_PCHCTL_PSTATE1_SET_OFF_EMULATED		(0x01 << 16)
+#define CORE1_PCHCTL_PSTATE1_SET_OFF				(0x00 << 16)
+#define BUS_MSTOP_MSTOPMODE_SET						(1 << 0)
+#define BUS_MSTOP_MSTOPMODE_SET_WEN					(1 << 16)
+#define OTHERFUNC1_REG_RES0_SET						(1 << 0)
+#define OTHERFUNC1_REG_RES0_ON_WEN					(1 << 16)
+#define OTHERFUNC2_REG_RES0_SET						(1 << 0)
+#define OTHERFUNC2_REG_RES0_ON_WEN					(1 << 16)
+
+#define BIT0_ON										(1 << 0)
+#define BIT1_ON										(1 << 1)
+#define BIT2_ON										(1 << 2)
+#define BIT3_ON										(1 << 3)
+#define BIT4_ON										(1 << 4)
+#define BIT5_ON										(1 << 5)
+#define BIT6_ON										(1 << 6)
+#define BIT7_ON										(1 << 7)
+#define BIT8_ON										(1 << 8)
+#define BIT9_ON										(1 << 9)
+#define BIT10_ON									(1 << 10)
+#define BIT11_ON									(1 << 11)
+#define BIT12_ON									(1 << 12)
+#define BIT13_ON									(1 << 13)
+#define BIT14_ON									(1 << 14)
+#define BIT15_ON									(1 << 15)
+#define BIT16_ON									(1 << 16)
+#define BIT17_ON									(1 << 17)
+#define BIT18_ON									(1 << 18)
+#define BIT19_ON									(1 << 19)
+#define BIT20_ON									(1 << 20)
+#define BIT21_ON									(1 << 21)
+#define BIT22_ON									(1 << 22)
+#define BIT23_ON									(1 << 23)
+#define BIT24_ON									(1 << 24)
+#define BIT25_ON									(1 << 25)
+#define BIT26_ON									(1 << 26)
+#define BIT27_ON									(1 << 27)
+#define BIT28_ON									(1 << 28)
+#define BIT29_ON									(1 << 29)
+#define BIT30_ON									(1 << 30)
+#define BIT31_ON									(1 << 31)
 
 #endif	/* __CPG_REGS_H__ */
