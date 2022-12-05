@@ -30,7 +30,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 
 	/* initialize console driver */
 	ret = console_rz_register(
-							RZG3S_SCIF_BASE,
+							RZG3S_SCIF_0_BASE,
 							RZG3S_UART_INCK_HZ,
 							RZG3S_UART_BARDRATE,
 							&rzg3s_bl31_console);

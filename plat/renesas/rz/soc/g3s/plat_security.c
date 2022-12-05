@@ -231,8 +231,8 @@ static void bl2_security_setup(void)
 	};
 
 	/* initialize TZC-400 */
-	plat_tzc400_setup(RZG3S_TZC400_DDR01_BASE, &ddr_tzc_regions[0]);
-	plat_tzc400_setup(RZG3S_TZC400_xSPI_BASE,  &xspi_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_DDR0_BASE, &ddr_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_xSPI_BASE, &xspi_tzc_regions[0]);
 
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
@@ -299,8 +299,8 @@ static void bl31_security_setup(void)
 	};
 
 	/* Additional settings for TZC-400 SRAM */
-	plat_tzc400_setup(RZG3S_TZC400_M33_BASE, &msram_tzc_regions[0]);
-	plat_tzc400_setup(RZG3S_TZC400_A55_BASE, &asram_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_MSRAM_0_BASE, &msram_tzc_regions[0]);	// TODO: G3S: Confirm which other RAM sections should be configured in TrustZone
+	plat_tzc400_setup(RZG3S_TZC400_ASRAM_0_BASE, &asram_tzc_regions[0]);
 }
 #endif
 
