@@ -88,11 +88,11 @@
 #define RZG3S_SPIROM_FIP_BASE		(RZG3S_XSPI_MEMORY_MAP_BASE + RZG3S_BL2_SIZE_MAX)
 #define RZG3S_SPIROM_FIP_SIZE		(RZG3S_PCIe_BASE - RZG3S_SPIROM_FIP_BASE)
 
-#define RZG3S_EMMC_FIP_BASE			(PARAMS_BASE + PARAMS_SIZE)				//TODO: KTG: Confirm
-#define RZG3S_EMMC_FIP_SIZE			(0x00078000UL)							//TODO: KTG: Confirm
+#define RZG3S_EMMC_FIP_BASE			(PARAMS_BASE + PARAMS_SIZE)				//TODO: G3S: Confirm
+#define RZG3S_EMMC_FIP_SIZE			(0x00078000UL)							//TODO: G3S: Confirm
 
-#define RZG3S_SYC_INCK_HZ			(24000000UL)							//TODO: KTG: Update
-#define RZG3S_UART_INCK_HZ			(100000000UL)							//TODO: KTG: Update	
+#define RZG3S_SYC_INCK_HZ			(24000000UL)							//TODO: G3S: Update
+#define RZG3S_UART_INCK_HZ			(100000000UL)							//TODO: G3S: Update	
 #define RZG3S_UART_BARDRATE			(115200UL)
 
 /* Boot Info base address for BL2 */
@@ -102,8 +102,8 @@
 /* Definitions used in common code */
 
 /* Base address where parameters to BL31 are stored */
-#define PARAMS_BASE					(0x08104000 + RZG3S_BL2_SIZE_MAX)		//TODO: KTG: Confirm
-#define PARAMS_SIZE					(0x1000UL)								//TODO: KTG: Confirm
+#define PARAMS_BASE					(0x000A4000 + RZG3S_BL2_SIZE_MAX)		//TODO: G3S: Confirm
+#define PARAMS_SIZE					(0x1000UL)								//TODO: G3S: Confirm
 
 #define RZ_SOC_BOOTINFO_BASE		RZG3S_BOOTINFO_BASE
 
