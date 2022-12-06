@@ -119,8 +119,8 @@
 #define RZ_SOC_EMMC_FIP_SIZE		RZG3S_EMMC_FIP_SIZE
 
 #define RZ_SOC_SYSC_BASE_DEVID		SYS_LSI_DEVID
-#define RZ_SOC_OTP_BASE_DEVID		(RZG3S_OTP_BASE + 0x1174)		/* OTPPRODUCT */
-#define RZ_SOC_OTP_BASE_CHIPID		(RZG3S_OTP_BASE + 0x114C)		/* OTPCPID0 */
+#define RZ_SOC_OTP_BASE_DEVID		(RZG3S_OTP_BASE + 0x1178)		/* OTPPRODUCT */	//TODO: G3S: Check OTP register used. Document not available at time of writing
+#define RZ_SOC_OTP_BASE_CHIPID		(RZG3S_OTP_BASE + 0x1140)		/* OTPCPID0 */		//TODO: G3S: Check OTP register used. Document not available at time of writing
 
 #define SYS_BASE					RZG3S_SYSC_BASE
 #define PFC_BASE					RZG3S_GPIO_BASE
