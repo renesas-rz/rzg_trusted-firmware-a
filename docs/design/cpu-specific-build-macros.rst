@@ -619,10 +619,6 @@ For Cortex-A710, the following errata build flags are defined :
    Cortex-A710 CPU. This needs to be enabled for revisions r0p0, r1p0 and r2p0
    of the CPU and is fixed in r2p1.
 
-- ``ERRATA_A710_2291219``: This applies errata 2291219 workaround to
-   Cortex-A710 CPU. This needs to be enabled for revisions r0p0, r1p0 and r2p0
-   of the CPU and is fixed in r2p1.
-
 -  ``ERRATA_A710_2008768``: This applies errata 2008768 workaround to
    Cortex-A710 CPU. This needs to be enabled for revisions r0p0, r1p0 and r2p0
    of the CPU and is fixed in r2p1.
@@ -836,16 +832,6 @@ For Cortex-X4, the following errata build flags are defined :
 
 - ``ERRATA_X4_2763018``: This applies errata 2763018 workaround to Cortex-X4
   CPU. This needs to be enabled for revisions r0p0 and r0p1. It is fixed in r0p2.
-
-For Cortex-X3, the following errata build flags are defined :
-
-- ``ERRATA_X3_2313909``: This applies errata 2313909 workaround to
-  Cortex-X3 CPU. This needs to be enabled only for revisions r0p0 and r1p0
-  of the CPU, it is fixed in r1p1.
-
-- ``ERRATA_X3_2615812``: This applies errata 2615812 workaround to Cortex-X3
-  CPU. This needs to be enabled only for revisions r0p0, r1p0 and r1p1 of the
-  CPU, it is still open.
 
 For Cortex-A510, the following errata build flags are defined :
 
