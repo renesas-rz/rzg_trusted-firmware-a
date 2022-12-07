@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,89 +7,238 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <pfc_regs.h>
-#include <sys_regs.h>
 #include <lib/mmio.h>
 
-#define PFC_TBL_LEN						(2)
-
-
-/* SDHI 0 */
-static PFC_REGS pfc_sd_reg_tbl[PFC_TBL_LEN] = {
-	/* SD0_CLK (P9.0), SD0_CMD (P9.1), SD0_RSTN (P9.2) */
+static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
+#if RZG2UL
+	/* P0(sd0) & P0(sd1)	*/
 	{
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH09, 0x0000000000030303 },		/* IOLH */
-		{ PFC_ON,  (uintptr_t)PFC_PUPD09, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR09,   0x0000000000010101 },		/* SR */
-		{ PFC_ON,  (uintptr_t)PFC_IEN09,  0x0000000000000100 }		/* IEN */
+		{ PFC_ON,  (uintptr_t)PFC_PMC10,  0x0F },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC10,  0x00001111 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH10, 0x0000000001010101 },		/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_PUPD10, 0x0000000000000000 },		/* PUPD */
+		{ PFC_OFF, (uintptr_t)PFC_SR10,   0x0000000001010101 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	},
+#else
+	/* P18(sd0) */
+	{
+		{ PFC_ON,  (uintptr_t)PFC_PMC22,  0x03 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC22,  0x00000011 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH22, 0x0000000000000101 },		/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_PUPD22, 0x0000000000000000 },		/* PUPD */
+		{ PFC_OFF, (uintptr_t)PFC_SR22,   0x0000000000000101 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
+	},
+	/* P19(sd1) */
+	{
+		{ PFC_ON,  (uintptr_t)PFC_PMC23,  0x03 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC23,  0x00000011 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH23, 0x0000000000000101 },		/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_PUPD23, 0x0000000000000000 },		/* PUPD */
+		{ PFC_OFF, (uintptr_t)PFC_SR23,   0x0000000000000101 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
+	},
+#endif
+#if RZG2UL
+#if (DEVICE_TYPE == 1)
+	/* P6(scif0) */
+	{
+		{ PFC_ON,  (uintptr_t)PFC_PMC16,  0x18 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC16,  0x00066000 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH16, 0x0000000101000000 },		/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_PUPD16, 0x0000000000000000 },		/* PUPD */
+		{ PFC_OFF, (uintptr_t)PFC_SR16,   0x0000000101000000 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
+	},
+#else
+	/* P13(scif0) */
+	{
+		{ PFC_ON,  (uintptr_t)PFC_PMC1D,  0x03 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC1D,  0x00000011 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH1D, 0x0000000000000101 },		/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_PUPD1D, 0x0000000000000000 },		/* PUPD */
+		{ PFC_OFF, (uintptr_t)PFC_SR1D,   0x0000000000000101 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
+	},
+#endif
+#else
+	/* P38(scif0) */
+	{
+		{ PFC_ON,  (uintptr_t)PFC_PMC36,  0x03 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC36,  0x00000011 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH36, 0x0000000000000101 },		/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_PUPD36, 0x0000000000000000 },		/* PUPD */
+		{ PFC_OFF, (uintptr_t)PFC_SR36,   0x0000000000000101 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
+	},
+	/* P39(scif0) */
+	{
+		{ PFC_ON,  (uintptr_t)PFC_PMC37,  0x07 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC37,  0x00000111 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH37, 0x0000000000010101 },		/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_PUPD37, 0x0000000000000000 },		/* PUPD */
+		{ PFC_OFF, (uintptr_t)PFC_SR37,   0x0000000000010101 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
+	}
+#endif
+};
 
-	/* SD0_DATA  (PA.0 - PA.7*/
+static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
+	/* QSPI0 */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH0A, 0x0303030303030303 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH0A, 0x0000020202020202 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD0A, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR0A,   0x0101010101010101 },		/* SR */
-		{ PFC_ON,  (uintptr_t)PFC_IEN0A,  0x0101010101010101 }		/* IEN */
-	},
-};
-
-static PFC_REGS  pfc_qspi_reg_tbl[PFC_TBL_LEN] = {
-	/* QSPI0 CLK (P7.0), CS0 (P7.2) */
-	{
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
-		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0000000000030003 },		/* IOLH */
-		{ PFC_ON,  (uintptr_t)PFC_PUPD07, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR07,   0x0000000000010001 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_SR0A,   0x0000010101010101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	},
-
-	/* QSPI0 IO0-IO3 (P8.0 - P8.3) */
+	/* QSPI1 */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000003030303 },		/* IOLH */
-		{ PFC_ON,  (uintptr_t)PFC_PUPD08, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR08,   0x0000000001010101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH0B, 0x0000020202020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD0B, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR0B,   0x0000010101010101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	},
-};
-
-/* SCIF */
-static PFC_REGS pfc_scif_reg_tbl[PFC_TBL_LEN] = {
-	/* SCIF_RXD (P6.0), SCIF_TXD (P6.1) */
+	/* QSPIn */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH06, 0x0000000000000003 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH0C, 0x0000000000020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD0C, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR0C,   0x0000000000010000 },		/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
+	}
+};
+
+static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
+	/* SD0_CLK */
+	{
+#if RZG2UL
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
+#else
+		{ PFC_ON,  (uintptr_t)PFC_PMC22,  0x0003 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC22,  0x00000003 },				/* PFC */
+#endif
+		{ PFC_ON,  (uintptr_t)PFC_IOLH06, 0x0000000000020202 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD06, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR06,   0x0000000000000003 },		/* SR */
-		{ PFC_ON,  (uintptr_t)NULL,       0x0000000000000000 }		/* IEN */
+		{ PFC_ON,  (uintptr_t)PFC_SR06,   0x0000000000010101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_IEN06,  0x0000000000000100 }		/* IEN */
 	},
-
-	/* Padding to make same length as other pin tables */
+	/* SD0_DATA */
 	{
-		{0}
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH07, 0x0202020202020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD07, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR07,   0x0101010101010101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_IEN07,  0x0101010101010101 }		/* IEN */
 	},
+	/* SD1_CLK */
+	{
+#if RZG2UL
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
+#else
+		{ PFC_ON,  (uintptr_t)PFC_PMC23,  0x0003 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC23,  0x00000003 },				/* PFC */
+#endif
+		{ PFC_ON,  (uintptr_t)PFC_IOLH08, 0x0000000000000202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD08, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR08,   0x0000000000000101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_IEN08,  0x0000000000000100 }		/* IEN */
+	},
+	/* SD1_DATA */
+	{
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH09, 0x0000000002020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PUPD09, 0x0000000000000000 },		/* PUPD */
+		{ PFC_ON,  (uintptr_t)PFC_SR09,   0x0000000001010101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_IEN09,  0x0000000001010101 }		/* IEN */
+	}
 };
 
-static const PFC_REGS *pfc_boot_mode_tbls[SYS_LSI_MODE_COUNT] = {
-	pfc_sd_reg_tbl,
-	pfc_sd_reg_tbl,
-	pfc_sd_reg_tbl,
-	pfc_qspi_reg_tbl,
-	pfc_qspi_reg_tbl,
-	pfc_scif_reg_tbl
-};
+static void pfc_mux_setup(void)
+{
+	int      cnt;
+
+	/* multiplexer terminal switching */
+	mmio_write_32(PFC_PWPR, 0x0);
+	mmio_write_32(PFC_PWPR, PWPR_PFCWE);
+
+	for (cnt = 0; cnt < PFC_MUX_TBL_NUM; cnt++) {
+		/* PMC */
+		if (pfc_mux_reg_tbl[cnt].pmc.flg == PFC_ON) {
+			mmio_write_8(pfc_mux_reg_tbl[cnt].pmc.reg, pfc_mux_reg_tbl[cnt].pmc.val);
+		}
+		/* PFC */
+		if (pfc_mux_reg_tbl[cnt].pfc.flg == PFC_ON) {
+			mmio_write_32(pfc_mux_reg_tbl[cnt].pfc.reg, pfc_mux_reg_tbl[cnt].pfc.val);
+		}
+		/* IOLH */
+		if (pfc_mux_reg_tbl[cnt].iolh.flg == PFC_ON) {
+			mmio_write_64(pfc_mux_reg_tbl[cnt].iolh.reg, pfc_mux_reg_tbl[cnt].iolh.val);
+		}
+		/* PUPD */
+		if (pfc_mux_reg_tbl[cnt].pupd.flg == PFC_ON) {
+			mmio_write_64(pfc_mux_reg_tbl[cnt].pupd.reg, pfc_mux_reg_tbl[cnt].pupd.val);
+		}
+		/* SR */
+		if (pfc_mux_reg_tbl[cnt].sr.flg == PFC_ON) {
+			mmio_write_64(pfc_mux_reg_tbl[cnt].sr.reg, pfc_mux_reg_tbl[cnt].sr.val);
+		}
+	}
+
+	mmio_write_32(PFC_PWPR, 0x0);
+	mmio_write_32(PFC_PWPR, PWPR_B0Wl);
+}
+
+static void pfc_qspi_setup(void)
+{
+	int      cnt;
+
+	for (cnt = 0; cnt < PFC_QSPI_TBL_NUM; cnt++) {
+		/* IOLH */
+		if (pfc_qspi_reg_tbl[cnt].iolh.flg == PFC_ON) {
+			mmio_write_64(pfc_qspi_reg_tbl[cnt].iolh.reg, pfc_qspi_reg_tbl[cnt].iolh.val);
+		}
+		/* PUPD */
+		if (pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
+			mmio_write_64(pfc_qspi_reg_tbl[cnt].pupd.reg, pfc_qspi_reg_tbl[cnt].pupd.val);
+		}
+		/* SR */
+		if (pfc_qspi_reg_tbl[cnt].sr.flg == PFC_ON) {
+			mmio_write_64(pfc_qspi_reg_tbl[cnt].sr.reg, pfc_qspi_reg_tbl[cnt].sr.val);
+		}
+	}
+}
 
 static void pfc_sd_setup(void)
 {
-	int cnt;
+	int      cnt;
 
-	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+	/* Since SDx is 3.3V, the initial value will be set. */
+	mmio_write_32(PFC_SD_ch0, 1);
+	mmio_write_32(PFC_SD_ch1, 0);
+
+	for (cnt = 0; cnt < PFC_SD_TBL_NUM; cnt++) {
+		/* PMC */
+		if (pfc_sd_reg_tbl[cnt].pmc.flg == PFC_ON) {
+			mmio_write_8(pfc_sd_reg_tbl[cnt].pmc.reg, pfc_sd_reg_tbl[cnt].pmc.val);
+		}
+		/* PFC */
+		if (pfc_sd_reg_tbl[cnt].pfc.flg == PFC_ON) {
+			mmio_write_32(pfc_sd_reg_tbl[cnt].pfc.reg, pfc_sd_reg_tbl[cnt].pfc.val);
+		}
+		/* IOLH */
+		if (pfc_sd_reg_tbl[cnt].iolh.flg == PFC_ON) {
+			mmio_write_64(pfc_sd_reg_tbl[cnt].iolh.reg, pfc_sd_reg_tbl[cnt].iolh.val);
+		}
 		/* PUPD */
 		if (pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_sd_reg_tbl[cnt].pupd.reg, pfc_sd_reg_tbl[cnt].pupd.val);
@@ -105,69 +254,9 @@ static void pfc_sd_setup(void)
 	}
 }
 
-static void pfc_qspi_setup(void)
-{
-	int cnt;
-
-	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
-		/* PUPD */
-		if (pfc_qspi_reg_tbl[cnt].pupd.flg == PFC_ON) {
-			mmio_write_64(pfc_qspi_reg_tbl[cnt].pupd.reg, pfc_qspi_reg_tbl[cnt].pupd.val);
-		}
-		/* SR */
-		if (pfc_qspi_reg_tbl[cnt].sr.flg == PFC_ON) {
-			mmio_write_64(pfc_qspi_reg_tbl[cnt].sr.reg, pfc_qspi_reg_tbl[cnt].sr.val);
-		}
-	}
-}
-
-static void pfc_scif_setup(void)
-{
-	int cnt;
-
-	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
-		/* PUPD */
-		if (pfc_scif_reg_tbl[cnt].pupd.flg == PFC_ON) {
-			mmio_write_64(pfc_scif_reg_tbl[cnt].pupd.reg, pfc_scif_reg_tbl[cnt].pupd.val);
-		}
-		/* SR */
-		if (pfc_scif_reg_tbl[cnt].sr.flg == PFC_ON) {
-			mmio_write_64(pfc_scif_reg_tbl[cnt].sr.reg, pfc_scif_reg_tbl[cnt].sr.val);
-		}
-	}
-}
-
-static void pfc_drive_setup(void)
-{
-	static const uint64_t pfc_iolh_drive_tbl[4] = {0x0000000000000000, 0x0101010101010101, 0x0202020202020202, 0x0303030303030303};
-	/* Get the boot mode */
-	uint16_t boot_mode = *((uint16_t *)RZ_SOC_BOOTINFO_BASE);
-
-	if (boot_mode < SYS_LSI_MODE_COUNT) {
-		const PFC_REGS *p_pins_tbl = pfc_boot_mode_tbls[boot_mode];
-		uint32_t sys_lsi_otppoc = mmio_read_32(SYS_LSI_OTPPOC);
-		uint64_t pfc_iolh_drive = 0;
-		int cnt;
-
-		if (0 != (sys_lsi_otppoc & (SYS_LSI_OTPPOC_EN_x_DS_MASK << (SYS_LSI_OTPPOC_EN_x_DS_BASE + (SYS_LSI_OTPPOC_EN_x_DS_WIDTH * boot_mode))))) {
-			uint32_t index = sys_lsi_otppoc & ((SYS_LSI_OTPPOC_x_E_MASK << (SYS_LSI_OTPPOC_x_E_WIDTH * boot_mode)) >> (SYS_LSI_OTPPOC_x_E_WIDTH * boot_mode));
-
-			pfc_iolh_drive = pfc_iolh_drive_tbl[index];
-		}
-
-		for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
-			if (p_pins_tbl[cnt].iolh.flg == PFC_ON) {
-				/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
-				mmio_write_64(p_pins_tbl[cnt].iolh.reg, (pfc_iolh_drive & p_pins_tbl[cnt].iolh.val));
-			}
-		}
-	}
-}
-
 void pfc_setup(void)
 {
-	pfc_sd_setup();
+	pfc_mux_setup();
 	pfc_qspi_setup();
-	pfc_scif_setup();
-	pfc_drive_setup();
+	pfc_sd_setup();
 }
