@@ -12,25 +12,27 @@
 //Todo: check if registers exist
 //Todo: check all values of registers
 //Todo: check Slew Rate registers exist and their values.
+//Todo: Check PFC on or off
 
 static PFC_REGS pfc_mux_reg_tbl[PFC_MUX_TBL_NUM] = {
-	/* P0(sd0) CP, WP & (sd1) CP, WP */
+	/* P0(sd0) - CP, WP &
+	 *   (sd1) - CP, WP */
 	{
-		{ PFC_ON,  (uintptr_t)PFC_PMC20,  0x03 },					/* PMC */
-		{ PFC_ON,  (uintptr_t)PFC_PFC20,  0x00000011 },				/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH20, 0x0000000000000101 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_PMC20,  0x0F },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC20,  0x00001111 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH20, 0x0000000001010101 },		/* IOLH */
 		{ PFC_OFF, (uintptr_t)PFC_PUPD20, 0x0000000000000000 },		/* PUPD */
-		{ PFC_OFF, (uintptr_t)PFC_SR20,   0x0000000000000101 },		/* SR */
+		{ PFC_OFF, (uintptr_t)PFC_SR20,   0x0000000001010101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	},
-	/* P13(scif0) Tx, Rx, Sck, Rts, Cts*/
+	/* P13(scif0) - Tx, Rx, Sck, Rts, Cts*/
 	//Todo: there is a duplication in the pin assignment for SCIF0 Rx and Tx. Check which pins are correct.
 	{
-		{ PFC_ON,  (uintptr_t)PFC_PMC36,  0x03 },					/* PMC */
-		{ PFC_ON,  (uintptr_t)PFC_PFC36,  0x00000011 },				/* PFC */
-		{ PFC_OFF, (uintptr_t)PFC_IOLH36, 0x0000000000000101 },		/* IOLH */
-		{ PFC_OFF, (uintptr_t)PFC_PUPD36, 0x0000000000000000 },		/* PUPD */
-		{ PFC_OFF, (uintptr_t)PFC_SR36,   0x0000000000000101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_PMC25,  0x1F },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC25,  0x00011111 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)PFC_IOLH25, 0x0000000101010101 },		/* IOLH */
+		{ PFC_OFF, (uintptr_t)PFC_PUPD25, 0x0000000000000000 },		/* PUPD */
+		{ PFC_OFF, (uintptr_t)PFC_SR25,   0x0000000101010101 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	}
 };
@@ -60,12 +62,12 @@ static PFC_REGS  pfc_qspi_reg_tbl[PFC_QSPI_TBL_NUM] = {
 static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	/* SD0_CMD*/
 	{
-		{ PFC_ON,  (uintptr_t)PFC_PMC10,  0x0003 },					/* PMC */
-		{ PFC_ON,  (uintptr_t)PFC_PFC10,  0x00000003 },				/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH10, 0x0000000000020202 },		/* IOLH */
-		{ PFC_ON,  (uintptr_t)PFC_PUPD10, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR10,   0x0000000000010101 },		/* SR */
-		{ PFC_ON,  (uintptr_t)PFC_IEN10,  0x0000000000000100 }		/* IEN */
+		{ PFC_OFF,	(uintptr_t)PFC_PMC10,  0x02 },					/* PMC */
+		{ PFC_OFF,	(uintptr_t)PFC_PFC10,  0x00000002 },			/* PFC */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH10, 0x0000000000000200 },	/* IOLH */
+		{ PFC_ON,  	(uintptr_t)PFC_PUPD10, 0x0000000000000000 },	/* PUPD */
+		{ PFC_ON,	(uintptr_t)PFC_SR10,   0x0000000000000100 },	/* SR */
+		{ PFC_ON,	(uintptr_t)PFC_IEN10,  0x0000000000000100 }		/* IEN */
 	},
 	/* SD0 DATA7 - DATA0 */
 	{
@@ -78,21 +80,21 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	},
 	/* SD1_CMD */
 	{
-		{ PFC_ON,  (uintptr_t)PFC_PMC12,  0x0003 },					/* PMC */
-		{ PFC_ON,  (uintptr_t)PFC_PFC12,  0x00000003 },				/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH12, 0x0000000000000202 },		/* IOLH */
+		{ PFC_OFF,  (uintptr_t)PFC_PMC12,  0x02 },					/* PMC */
+		{ PFC_OFF,  (uintptr_t)PFC_PFC12,  0x00000002 },				/* PFC */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH12, 0x0000000000000200 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD12, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR12,   0x0000000000000101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_SR12,   0x0000000000000100 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN12,  0x0000000000000100 }		/* IEN */
 	},
 	/* SD1 DATA7 - DATA0 */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH13, 0x0000000002020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH13, 0x0202020202020202 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD13, 0x0000000000000000 },		/* PUPD */
-		{ PFC_ON,  (uintptr_t)PFC_SR13,   0x0000000001010101 },		/* SR */
-		{ PFC_ON,  (uintptr_t)PFC_IEN13,  0x0000000001010101 }		/* IEN */
+		{ PFC_ON,  (uintptr_t)PFC_SR13,   0x0101010101010101 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_IEN13,  0x0101010101010101 }		/* IEN */
 	}
 };
 

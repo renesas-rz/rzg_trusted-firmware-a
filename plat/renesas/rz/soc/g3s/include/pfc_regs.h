@@ -238,6 +238,7 @@
 #define PFC_IOLH21						(PFC_BASE + 0x1108)	/* IOLH switch register */
 #define PFC_IOLH22						(PFC_BASE + 0x1120)	/* IOLH switch register */
 #define PFC_IOLH23						(PFC_BASE + 0x1128)	/* IOLH switch register */
+#define PFC_IOLH25						(PFC_BASE + 0x1128)	/* IOLH switch register */
 #define PFC_IOLH36						(PFC_BASE + 0x11B0)	/* IOLH switch register */
 #define PFC_IOLH37						(PFC_BASE + 0x11B8)	/* IOLH switch register */
 #define PFC_IOLH38						(PFC_BASE + 0x11C0)	/* IOLH switch register */
@@ -275,6 +276,7 @@
 #define PFC_SR21						(PFC_BASE + 0x1508)	/* Slew-Rate switch register */
 #define PFC_SR22						(PFC_BASE + 0x1510)	/* Slew-Rate switch register */
 #define PFC_SR23						(PFC_BASE + 0x1518)	/* Slew-Rate switch register */
+#define PFC_SR25						(PFC_BASE + 0x1528)	/* Slew-Rate switch register */
 #define PFC_SR36						(PFC_BASE + 0x15B0)	/* Slew-Rate switch register */
 #define PFC_SR37						(PFC_BASE + 0x15B8)	/* Slew-Rate switch register */
 
@@ -313,8 +315,11 @@
 #define PFC_PUPD21						(PFC_BASE + 0x1D08)	/* PU/PD switch register */
 #define PFC_PUPD22						(PFC_BASE + 0x1D10)	/* PU/PD switch register */
 #define PFC_PUPD23						(PFC_BASE + 0x1D18)	/* PU/PD switch register */
+#define PFC_PUPD25						(PFC_BASE + 0x1D28)	/* PU/PD switch register */
+
 #define PFC_PUPD36						(PFC_BASE + 0x1DB0)	/* PU/PD switch register */
 #define PFC_PUPD37						(PFC_BASE + 0x1DB8)	/* PU/PD switch register */
+
 #define PFC_SD_ch0						(PFC_BASE + 0x3000)	/* SD ch0 IO voltage control register */
 #define PFC_SD_ch1						(PFC_BASE + 0x3004)	/* SD ch1 IO voltage control register */
 #define PFC_QSPI						(PFC_BASE + 0x3008)	/* QSPI IO voltage control register */
