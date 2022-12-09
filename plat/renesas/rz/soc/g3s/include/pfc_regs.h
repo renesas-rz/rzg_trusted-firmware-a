@@ -320,12 +320,15 @@
 #define PFC_PUPD36						(PFC_BASE + 0x1DB0)	/* PU/PD switch register */
 #define PFC_PUPD37						(PFC_BASE + 0x1DB8)	/* PU/PD switch register */
 
-#define PFC_SD_ch0						(PFC_BASE + 0x3000)	/* SD ch0 IO voltage control register */
-#define PFC_SD_ch1						(PFC_BASE + 0x3004)	/* SD ch1 IO voltage control register */
-#define PFC_QSPI						(PFC_BASE + 0x3008)	/* QSPI IO voltage control register */
-#define PFC_ETH_ch0						(PFC_BASE + 0x300C)	/* ETH ch0 voltage control register */
-#define PFC_ETH_ch1						(PFC_BASE + 0x3010)	/* ETH ch1 voltage control register */
-#define PFC_PWPR						(PFC_BASE + 0x3014)	/* Write protect */
+#define PFC_PWPR						(PFC_BASE + 0x3000)	/* Write protect */
+#define PFC_SD_ch0						(PFC_BASE + 0x3004)	/* SD ch0 IO voltage control register */
+#define PFC_SD_ch1						(PFC_BASE + 0x3008)	/* SD ch1 IO voltage control register */
+#define PFC_XSPI						(PFC_BASE + 0x300C)	/* XSPI IO voltage control register */
+#define PFC_ETH_ch0						(PFC_BASE + 0x3010)	/* ETH ch0 voltage control register */
+#define PFC_ETH_ch1						(PFC_BASE + 0x3014)	/* ETH ch1 voltage control register */
+
+
+
 #define PFC_FILONOFF01					(PFC_BASE + 0x2008)	/* Digital noise filter (FILONOFF) register */
 #define PFC_FILONOFF10					(PFC_BASE + 0x2080)	/* Digital noise filter (FILONOFF) register */
 #define PFC_FILONOFF11					(PFC_BASE + 0x2088)	/* Digital noise filter (FILONOFF) register */
@@ -725,8 +728,8 @@
 #define	PFC_OFF				(0)
 #define PFC_ON				(1)
 
-#define PFC_MUX_TBL_NUM		(4)
-#define PFC_QSPI_TBL_NUM	(3)
+#define PFC_MUX_TBL_NUM		(2)
+#define PFC_QSPI_TBL_NUM	(2)
 #define PFC_SD_TBL_NUM		(4)
 
 typedef struct {
