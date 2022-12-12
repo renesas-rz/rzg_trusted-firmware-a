@@ -7,8 +7,6 @@
 #ifndef __PFC_REGS_H__
 #define __PFC_REGS_H__
 
-#define	PFC_BASE					(0x11030000)			/* PFC base address */
-
 #define PFC_P10							(PFC_BASE + 0x0010)	/* Port register */
 #define PFC_P11							(PFC_BASE + 0x0011)	/* Port register */
 #define PFC_P12							(PFC_BASE + 0x0012)	/* Port register */
@@ -731,7 +729,7 @@
 #define PFC_MUX_SD_TBL_NUM		(1)
 #define PFC_MUX_SCIF_TBL_NUM	(1)
 #define PFC_XSPI_TBL_NUM		(2)
-#define PFC_SD_TBL_NUM			(4)
+#define PFC_SD_TBL_NUM			(2)
 
 typedef struct {
 	int			flg;

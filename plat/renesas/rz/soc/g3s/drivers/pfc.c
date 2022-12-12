@@ -15,26 +15,26 @@
 //TODO: Check IOLH drive level. V2H values used.
 
 static PFC_REGS pfc_mux_sd_reg_tbl[PFC_MUX_SD_TBL_NUM] = {
-	/* P0(sd0) CP, WP - (sd1) CP, WP */
+	/* P0(sd0) CP, WP*/
 	{
 		{ PFC_ON,	(uintptr_t)PFC_PMC20,	0x0F },					/* PMC */
-		{ PFC_ON,	(uintptr_t)PFC_PFC20,	0x00001111 },			/* PFC */
-		{ PFC_OFF,	(uintptr_t)PFC_IOLH20,	0x0000000003030303 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_PFC20,	0x00000011 },			/* PFC */
+		{ PFC_OFF,	(uintptr_t)PFC_IOLH20,	0x0000000000000303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)PFC_PUPD20,	0x0000000000000000 },	/* PUPD */
-		{ PFC_OFF, 	(uintptr_t)PFC_SR20,	0x0000000001010101 },	/* SR */
+		{ PFC_OFF,	(uintptr_t)PFC_SR20,	0x0000000000000101 },	/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	}
 };
 
 static PFC_REGS pfc_mux_scif_reg_tbl[PFC_MUX_SD_TBL_NUM] = {
-	/* P13(scif0) - Tx, Rx, Sck, Rts, Cts*/
+	/* P6(scif0) - Tx, Rx*/
 	//Todo: there is a duplication in the pin assignment for SCIF0 Rx and Tx. Check which pins are correct.
 	{
-		{ PFC_ON,	(uintptr_t)PFC_PMC25,	0x1F },					/* PMC */
-		{ PFC_ON,	(uintptr_t)PFC_PFC25,	0x00011111 },			/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH25,	0x0000000303030303 },	/* IOLH */
-		{ PFC_ON,	(uintptr_t)PFC_PUPD25,	0x0000000000000000 },	/* PUPD */
-		{ PFC_ON,	(uintptr_t)PFC_SR25,	0x0000000101010101 },	/* SR */
+		{ PFC_ON,	(uintptr_t)PFC_PMC22,	0x18 },					/* PMC */
+		{ PFC_ON,	(uintptr_t)PFC_PFC22,	0x00011000 },			/* PFC */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH22,	0x0000000303000000 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_PUPD22,	0x0000000000000000 },	/* PUPD */
+		{ PFC_ON,	(uintptr_t)PFC_SR22,	0x0000000101000000 },	/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	}
 };
@@ -78,28 +78,10 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 		{ PFC_ON,  (uintptr_t)PFC_PUPD11,	0x0000000000000000 },	/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR11,		0x0101010101010101 },	/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN11,	0x0101010101010101 }	/* IEN */
-	},
-	/* SD1 CMD, CLK */
-	{
-		{ PFC_OFF,	(uintptr_t)NULL, 		0 },					/* PMC */
-		{ PFC_OFF,	(uintptr_t)NULL, 		0 },					/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH12,	0x0000000000000303 },	/* IOLH */
-		{ PFC_ON,	(uintptr_t)PFC_PUPD12,	0x0000000000000000 },	/* PUPD */
-		{ PFC_ON,	(uintptr_t)PFC_SR12,	0x0000000000000101 },	/* SR */
-		{ PFC_ON,	(uintptr_t)PFC_IEN12,	0x0000000000000100 }	/* IEN */
-	},
-	/* SD1 DATA3 - DATA0 */
-	{
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH13,	0x0000000003030303 },	/* IOLH */
-		{ PFC_ON,	(uintptr_t)PFC_PUPD13,	0x0000000000000000 },	/* PUPD */
-		{ PFC_ON,	(uintptr_t)PFC_SR13,	0x0000000001010101 },	/* SR */
-		{ PFC_ON,	(uintptr_t)PFC_IEN13,	0x0000000001010101 }	/* IEN */
 	}
 };
 
-static void pfc_write_registers(uint8_t tbl_size, PFC_REGS* pfc_reg_tbl)
+static void pfc_write_registers(uint8_t tbl_size, PFC_REGS *pfc_reg_tbl)
 {
 	int cnt;
 
@@ -169,19 +151,20 @@ static void pfc_sd_setup(void)
 static const PFC_REGS *pfc_boot_mode_tbls[SYS_LSI_MODE_COUNT] = {
 	pfc_sd_reg_tbl,
 	pfc_sd_reg_tbl,
+	pfc_xspi_reg_tbl,
+	pfc_mux_scif_reg_tbl,
 	pfc_sd_reg_tbl,
-	pfc_xspi_reg_tbl,
-	pfc_xspi_reg_tbl,
-	pfc_mux_scif_reg_tbl
+	pfc_xspi_reg_tbl
 };
 
+//different order here.
 static const uint8_t pfc_boot_mode_tbl_len[SYS_LSI_MODE_COUNT] = {
 	PFC_SD_TBL_NUM,
 	PFC_SD_TBL_NUM,
+	PFC_XSPI_TBL_NUM,
+	PFC_MUX_SCIF_TBL_NUM,
 	PFC_SD_TBL_NUM,
-	PFC_XSPI_TBL_NUM,
-	PFC_XSPI_TBL_NUM,
-	PFC_MUX_SCIF_TBL_NUM
+	PFC_XSPI_TBL_NUM
 };
 
 static void pfc_drive_setup(void)
