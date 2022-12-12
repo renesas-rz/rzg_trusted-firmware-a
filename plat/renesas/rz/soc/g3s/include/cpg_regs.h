@@ -325,17 +325,17 @@
 #define CPG_BUS_TZCDDR_MSTOP		(CPG_BASE + 0x0B84)	/* MSTOP registerBUS_TZCDDR */
 #define CPG_MHU_MSTOP				(CPG_BASE + 0x0B88)	/* MSTOP registerMHU */
 
-#define CPG_BUS_MCPU3_MSTOP			(CPG_BASE + 0x0B90)	
-#define CPG_BUS_PERI_CPU2_MSTOP		(CPG_BASE + 0x0B94)	
+#define CPG_BUS_MCPU3_MSTOP			(CPG_BASE + 0x0B90)
+#define CPG_BUS_PERI_CPU2_MSTOP		(CPG_BASE + 0x0B94)
 
-#define CPG_PWRDN_IP1				(CPG_BASE + 0x0BB0)	
-#define CPG_PWRDN_IP2				(CPG_BASE + 0x0BB4)	
-#define CPG_PWRDN_MSTOP				(CPG_BASE + 0x0BC0)	
-#define CPG_PWRDN_CLKON				(CPG_BASE + 0x0BC4)	
-#define CPG_PWRDN_RST				(CPG_BASE + 0x0BC8)	
-#define CPG_RST_BISR				(CPG_BASE + 0x0BD0)	
-#define CPG_BISR_DOM_EN				(CPG_BASE + 0x0BD4)	
-#define CPG_BISR_REPAIR_END			(CPG_BASE + 0x0BD8)	
+#define CPG_PWRDN_IP1				(CPG_BASE + 0x0BB0)
+#define CPG_PWRDN_IP2				(CPG_BASE + 0x0BB4)
+#define CPG_PWRDN_MSTOP				(CPG_BASE + 0x0BC0)
+#define CPG_PWRDN_CLKON				(CPG_BASE + 0x0BC4)
+#define CPG_PWRDN_RST				(CPG_BASE + 0x0BC8)
+#define CPG_RST_BISR				(CPG_BASE + 0x0BD0)
+#define CPG_BISR_DOM_EN				(CPG_BASE + 0x0BD4)
+#define CPG_BISR_REPAIR_END			(CPG_BASE + 0x0BD8)
 
 #define CPG_OTHERFUNC2_REG			(CPG_BASE + 0x0BEC)	/* Other function registers2 */
 

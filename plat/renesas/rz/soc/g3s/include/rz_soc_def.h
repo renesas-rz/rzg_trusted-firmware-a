@@ -68,7 +68,7 @@
 #define RZG3S_SPIROM_BASE			RZG3S_XSPI_MEMORY_MAP_BASE
 
 #define RZG3S_GICD_BASE				(RZG3S_GIC_600_BASE)				//TODO: G3S: Confirm
-#define RZG3S_GICR_BASE				(RZG3S_GIC_600_BASE + 0x00040000)	//TODO: G3S: GICR and GICD definition required by 'plat_gic.c but memory map only mentions GIC register reason */
+#define RZG3S_GICR_BASE				(RZG3S_GIC_600_BASE + 0x00040000)	//TODO: G3S: GICR and GICD definition required by 'plat_gic.c but memory map only mentions GIC register reason
 
 #define RZG3S_SRAM_BASE				(RZG3S_MSRAM_0_BASE)
 
@@ -92,7 +92,7 @@
 #define RZG3S_EMMC_FIP_SIZE			(0x00078000UL)							//TODO: G3S: Confirm
 
 #define RZG3S_SYC_INCK_HZ			(24000000UL)							//TODO: G3S: Update
-#define RZG3S_UART_INCK_HZ			(100000000UL)							//TODO: G3S: Update	
+#define RZG3S_UART_INCK_HZ			(100000000UL)							//TODO: G3S: Update
 #define RZG3S_UART_BARDRATE			(115200UL)
 
 /* Boot Info base address for BL2 */

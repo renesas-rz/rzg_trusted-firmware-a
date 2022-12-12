@@ -424,10 +424,9 @@ static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
 };
 
 static CPG_REG_SETTING cpg_sel_pll3_3_on_off[] = {
-	{(uintptr_t)CPG_CLKON_SPI, 			0x00030003 },
+	{(uintptr_t)CPG_CLKON_SPI,			0x00030003 },
 	{(uintptr_t)CPG_CLKON_AXI_MCPU_BUS,	0x02080208 },
 };
-
 
 
 static void cpg_mstop_setup(void)
