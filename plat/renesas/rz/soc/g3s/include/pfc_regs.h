@@ -7,6 +7,8 @@
 #ifndef __PFC_REGS_H__
 #define __PFC_REGS_H__
 
+#include <rz_soc_def.h>					/* Get the PFC base address */
+
 #define PFC_P10							(PFC_BASE + 0x0010)	/* Port register */
 #define PFC_P11							(PFC_BASE + 0x0011)	/* Port register */
 #define PFC_P12							(PFC_BASE + 0x0012)	/* Port register */
