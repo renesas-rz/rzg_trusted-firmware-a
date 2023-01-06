@@ -118,12 +118,14 @@ static int rz_validate_power_state(unsigned int power_state, psci_power_state_t 
 	return PSCI_E_SUCCESS;
 }
 
+#if PLAT_SYSTEM_SUSPEND
 static void rz_get_sys_suspend_power_state(psci_power_state_t *req_state)
 {
 	int i;
 	for (i = MPIDR_AFFLVL0; i <= PLAT_MAX_PWR_LVL; i++)
 		req_state->pwr_domain_state[i] = PLAT_MAX_OFF_STATE;
 }
+#endif /* PLAT_SYSTEM_SUSPEND */
 
 static void __dead2 rz_system_off(void)
 {
