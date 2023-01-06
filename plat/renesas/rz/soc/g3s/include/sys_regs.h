@@ -37,6 +37,8 @@
 #define	SYS_SLVACCCTL20						(SYS_BASE + 0x00000150)
 #define	SYS_SLVACCCTL21						(SYS_BASE + 0x00000154)
 #define	SYS_SLVACCCTL22						(SYS_BASE + 0x00000158)
+#define	SYS_SLVACCCTL23						(SYS_BASE + 0x0000015C)
+#define	SYS_SLVACCCTL24						(SYS_BASE + 0x00000160)
 
 #define	SYS_RAM0_ECC						(SYS_BASE + 0x00000200)
 #define	SYS_RAM0_EN							(SYS_BASE + 0x00000204)
@@ -129,12 +131,8 @@
 
 #define	SYS_SRC_CFG							(SYS_BASE + 0x00000540)
 
-#define	SYS_CA55_CFG_AArch0					(SYS_BASE + 0x00000800)
-#define	SYS_CA55_CFG_Endian0				(SYS_BASE + 0x00000808)
-#define	SYS_CA55_CFG_Thumb0					(SYS_BASE + 0x00000810)
 #define	SYS_CA55_CFG_RVAL0					(SYS_BASE + 0x00000818)
 #define	SYS_CA55_CFG_RVAH0					(SYS_BASE + 0x0000081C)
-#define	SYS_CA55_CFG_VA0					(SYS_BASE + 0x00000828)
 
 #define	SYS_CM33_STAT						(SYS_BASE + 0x00000840)
 #define	SYS_CM33_CFG0						(SYS_BASE + 0x00000844)
@@ -829,14 +827,14 @@
 #define LP_CA55CK_CTL3_GICCLKQDENY			(1 << 26)
 #define LP_CA55CK_CTL3_PDBGCLKQDENY			(1 << 27)
 
-#define SYS_LSI_MODE_ESD					(0)
-#define SYS_LSI_MODE_EMMC18					(1)
-#define SYS_LSI_MODE_EMMC33					(2)
-#define SYS_LSI_MODE_SFLASH18				(3)
-#define SYS_LSI_MODE_SFLASH33				(4)
-#define SYS_LSI_MODE_SCIF					(5)
+#define SYS_LSI_MODE_ESD					(0x0)
+#define SYS_LSI_MODE_EMMC					(0x1)
+#define SYS_LSI_MODE_SFLASH 				(0x2)
+#define SYS_LSI_MODE_SCIF					(0x3)
+#define SYS_LSI_MODE_VOL_1_8			    (0x0)
+#define SYS_LSI_MODE_VOL_3_3		    	(0x4)
 #define SYS_LSI_MODE_MASK					(0x7)
-#define SYS_LSI_MODE_COUNT					(0x6)
+#define SYS_LSI_MODE_SHIFT					(0x4)
 
 #define SYS_LSI_OTPPOC_x_E_MASK				(0x3)
 #define SYS_LSI_OTPPOC_x_E_WIDTH			(2)

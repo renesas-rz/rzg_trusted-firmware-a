@@ -731,7 +731,7 @@
 #define PFC_MUX_SD_TBL_NUM		(1)
 #define PFC_MUX_SCIF_TBL_NUM	(1)
 #define PFC_XSPI_TBL_NUM		(2)
-#define PFC_SD_TBL_NUM			(2)
+#define PFC_SD_TBL_NUM			(4)
 
 typedef struct {
 	int			flg;

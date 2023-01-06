@@ -49,7 +49,7 @@ static int rzv2h_pwr_domain_on(u_register_t mpidr)
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
 	if (coreid >= PLATFORM_CORE_COUNT)
-		return PSCI_E_INVALID_PARAMS;
+		return PSCI_E_INTERN_FAIL;
 
 	/* Check if in standby */
 	if ((mmio_read_32(CPG_LP_CTL1) & 0x1) == 0x1) {

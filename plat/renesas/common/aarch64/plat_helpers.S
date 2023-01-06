@@ -46,9 +46,9 @@
 	 * -----------------------------------------------------
 	 */
 func platform_get_core_pos
-	and     x1, x0, #MPIDR_CPU_MASK
-	and     x0, x0, #MPIDR_CLUSTER_MASK
-	add     x0, x1, x0, LSR #6
+	and	x1, x0, #MPIDR_CPU_MASK
+	and	x0, x0, #MPIDR_CLUSTER_MASK
+	add	x0, x1, x0, LSR #6
 	ret
 endfunc platform_get_core_pos
 
@@ -57,7 +57,7 @@ endfunc platform_get_core_pos
 	 * -----------------------------------------------------
 	 */
 func plat_my_core_pos
-	mrs     x0, mpidr_el1
+	mrs	x0, mpidr_el1
 	b	platform_get_core_pos
 endfunc plat_my_core_pos
 
@@ -85,8 +85,8 @@ func plat_get_my_entrypoint
 	mov	x0, #0
 	ret	x9
 #else
-       ldr 	x1, =BOOT_KIND_BASE
-       ldr	x21, [x1]
+	ldr x1, =BOOT_KIND_BASE
+	ldr	x21, [x1]
 
 	/* Check the reset info */
 	and	x1, x21, #0x000c
@@ -150,7 +150,7 @@ func plat_secondary_reset
 
 	mov_imm	x0, PARAMS_BASE
 	mov_imm	x2, BL31_BASE
-       ldr x3, =BOOT_KIND_BASE
+	  ldr x3, =BOOT_KIND_BASE
 	mov x1, #0x1
 	str x1, [x3]
 	br	x2	/* jump to BL31 */
@@ -166,12 +166,12 @@ endfunc plat_secondary_reset
 	 */
 func bl2_enter_bl31
 	mov	x20, x0
-        /*
-         * MMU needs to be disabled because both BL2 and BL31 execute
-         * in EL3, and therefore share the same address space.
-         * BL31 will initialize the address space according to its
-         * own requirement.
-         */
+	   /*
+		* MMU needs to be disabled because both BL2 and BL31 execute
+		* in EL3, and therefore share the same address space.
+		* BL31 will initialize the address space according to its
+		* own requirement.
+		*/
 #if RCAR_BL2_DCACHE == 1
 	/* Disable mmu and data cache */
 	bl	disable_mmu_el3
@@ -350,7 +350,7 @@ RCARH3:
 CHK_A5x:
 	mrs	x0, midr_el1
 	ubfx	x1, x0, MIDR_PN_SHIFT, #12
-	cmp     w1, #((CORTEX_A57_MIDR >> MIDR_PN_SHIFT) & MIDR_PN_MASK)
+	cmp	w1, #((CORTEX_A57_MIDR >> MIDR_PN_SHIFT) & MIDR_PN_MASK)
 	b.eq	A57
 	ret
 A57:

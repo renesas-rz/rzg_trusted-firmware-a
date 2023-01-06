@@ -46,8 +46,8 @@ EMMC_ERROR_CODE emmc_read_sector(uint32_t *buff_address_virtual,
 EMMC_ERROR_CODE emmc_write_sector(uint32_t *buff_address_virtual,
 				  uint32_t sector_number, uint32_t count,
 				  uint32_t feature_flags);
-EMMC_ERROR_CODE emmc_erase_sector(uint32_t *start_address,
-				  uint32_t *end_address);
+EMMC_ERROR_CODE emmc_erase_sector(uint32_t start_address,
+				  uint32_t end_address);
 uint32_t emmc_bit_field(uint8_t *data, uint32_t top, uint32_t bottom);
 
 /** @brief interrupt service

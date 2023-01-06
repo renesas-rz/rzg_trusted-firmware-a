@@ -11,15 +11,39 @@
 #include <lib/xlat_tables/xlat_tables_compat.h>
 #include <plat/common/common_def.h>
 
+#include <pwrc.h>
 #include <scifa.h>
-#include <plat_tzc_def.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 
+IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_START__, BL31_PMUSRAM_START);
+IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_END__, BL31_PMUSRAM_END);
+IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_BASE__, BL31_PMUSRAM_BASE);
 
 static console_t rzg3s_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
 
+void plat_copy_code_to_system_ram(void)
+{
+	uint32_t attr;
+	const uintptr_t pmu_code_load = BL31_PMUSRAM_BASE;
+	const uintptr_t pmu_code_image = BL31_PMUSRAM_START;
+	size_t pmu_code_size = BL31_PMUSRAM_END - BL31_PMUSRAM_START;
+
+	attr = MT_MEMORY | MT_RW | MT_SECURE | MT_EXECUTE_NEVER;
+	xlat_change_mem_attributes(pmu_code_image, pmu_code_size, attr);
+
+	memcpy((void *)pmu_code_image, (void *)pmu_code_load, pmu_code_size);
+	flush_dcache_range(pmu_code_image, pmu_code_size);
+
+	attr = MT_MEMORY | MT_RO | MT_SECURE | MT_EXECUTE;
+	xlat_change_mem_attributes(pmu_code_image, pmu_code_size, attr);
+
+	/* Invalidate instruction cache */
+	plat_invalidate_icache();
+	dsb();
+	isb();
+}
 
 void bl31_early_platform_setup2(u_register_t arg0,
 								u_register_t arg1,
@@ -67,19 +91,19 @@ void bl31_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl31_regions, rzg3s_mmap);
+#if !DEBUG_FPGA
 	enable_mmu_el3(0);
+#endif
+    plat_copy_code_to_system_ram();
 }
 
 void bl31_platform_setup(void)
 {
-	/* Setup TZC-400 */
-	plat_security_setup();
-
 #if !DEBUG_FPGA
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
-#endif /* DEBUG_FPGA */
+#endif
 }
 
 entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)

@@ -11,5 +11,8 @@ void cpg_early_setup(void);
 void cpg_setup(void);
 void cpg_active_ddr(void (*disable_phy)(void));
 void cpg_reset_ddr_mc(void);
+void cpg_subcore_setup(void);
+void cpg_suspend_setup(void);
+void cpg_resume_setup(void);
 
 #endif /* __CPG_H__ */

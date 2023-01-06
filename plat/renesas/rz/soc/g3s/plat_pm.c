@@ -12,114 +12,145 @@
 #include <lib/bakery_lock.h>
 #include <plat/common/platform.h>
 
-#include <cpg_regs.h>
+#include <pwrc.h>
 #include <sys_regs.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 #include <common/bl_common.h>
 
+#define SYSTEM_PWR_STATE(s)		((s)->pwr_domain_state[PLAT_MAX_PWR_LVL])
+#define CLUSTER_PWR_STATE(s)	((s)->pwr_domain_state[MPIDR_AFFLVL1])
+#define CORE_PWR_STATE(s)		((s)->pwr_domain_state[MPIDR_AFFLVL0])
 
-uintptr_t	gp_warm_ep;
-
-static int rzg3s_pwr_domain_on(u_register_t mpidr)
+static void rz_program_trusted_mailbox(uintptr_t address)
 {
-	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
+	uintptr_t *mailbox = (uintptr_t *) PLAT_TRUSTED_MAILBOX_BASE;
 
-	if (coreid >= PLATFORM_CORE_COUNT)
-		return PSCI_E_INVALID_PARAMS;
+	*mailbox = address;
+}
 
-	/*  Apply an external reset */
-	if ((mmio_read_32(SYS_LP_CTL2) & 0x1) == 0x1) {
-		mmio_write_32(CPG_CORE0_PCHCTL, 0x00000001);
-		while ((mmio_read_32(CPG_CORE0_PCHMON) & 0x1) != 0x1)
-			;
-		mmio_write_32(CPG_CORE0_PCHCTL, 0x00000000);
-		while ((mmio_read_32(CPG_CORE0_PCHMON) & 0x1) != 0x0)
-			;
+static void rz_cpu_standby(plat_local_state_t cpu_state)
+{
+	/** Application CPU Sleep Mode **/
+
+	u_register_t scr_el3 = read_scr_el3();
+
+	mmio_write_32(SYS_LP_CTL2, 0x00000001);
+
+	write_scr_el3(scr_el3 | SCR_IRQ_BIT | SCR_FIQ_BIT);
+	dsb();
+	wfi();
+	write_scr_el3(scr_el3);
+
+	mmio_write_32(SYS_LP_CTL2, 0x00000000);
+}
+
+static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
+{
+	if (CORE_PWR_STATE(target_state) != PLAT_MAX_OFF_STATE)
+		return;
+
+#if !DEBUG_FPGA
+#if defined(PLAT_SYSTEM_SUSPEND_vbat)
+	plat_gic_save();
+#endif /* PLAT_SYSTEM_SUSPEND_vbat */
+	/* Prevent interrupts from spuriously waking up this cpu */
+	plat_gic_cpuif_disable();
+#endif
+	/* Enable the transition request interrupt to the Cortex-A55 Sleep Mode */
+	mmio_write_32(SYS_LP_CTL6, 0x00000100);
+}
+
+static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
+{
+#if !DEBUG_FPGA
+#if defined(PLAT_SYSTEM_SUSPEND_vbat)
+	plat_gic_driver_init();
+	plat_gic_init();
+	plat_gic_resume();
+#endif /* PLAT_SYSTEM_SUSPEND_vbat */
+	plat_gic_cpuif_enable();
+#endif
+
+	plat_copy_code_to_system_ram();
+}
+
+static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
+{
+	if (ns_entrypoint >= NS_DRAM_BASE)
+		return PSCI_E_SUCCESS;
+
+	return PSCI_E_INVALID_ADDRESS;
+}
+
+static void __dead2 rz_pwr_domain_pwr_down_wfi(const psci_power_state_t *target_state)
+{
+#if PLAT_SYSTEM_SUSPEND
+	if (SYSTEM_PWR_STATE(target_state) == PLAT_MAX_OFF_STATE)
+		pwrc_suspend_to_ram();
+#endif /* PLAT_SYSTEM_SUSPEND */
+
+	wfi();
+	ERROR("RZ/G3S Power Down: operation not handled.\n");
+	panic();
+}
+
+static int rz_validate_power_state(unsigned int power_state, psci_power_state_t *req_state)
+{
+	int pstate = psci_get_pstate_type(power_state);
+	int pwrlvl = psci_get_pstate_pwrlvl(power_state);
+	int i;
+
+	if (pstate == PSTATE_TYPE_STANDBY) {
+		if (pwrlvl != MPIDR_AFFLVL0)
+			return PSCI_E_INVALID_PARAMS;
+		
+		req_state->pwr_domain_state[MPIDR_AFFLVL0] = PLAT_MAX_RET_STATE;
+	}
+	else {
+		for (i = MPIDR_AFFLVL0; i <= pwrlvl; i++)
+			req_state->pwr_domain_state[i] = PLAT_MAX_OFF_STATE;
 	}
 
-	/*  Start the core */
-	mmio_write_32(SYS_CA55_CFG_RVAL0, (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
-	mmio_write_32(SYS_CA55_CFG_RVAH0, (uint32_t)((gp_warm_ep >> 32) & 0xFF));
-
-	/* Assert PORESET */
-	mmio_write_32(CPG_RST_CA55, 0x00010000);
-	while ((mmio_read_32(CPG_RSTMON_CA55) & 0x1) == 0x0)
-		;
-
-	/* Deassert PORESET */
-	mmio_write_32(CPG_RST_CA55, 0x00050005);
-	while ((mmio_read_32(CPG_RSTMON_CA55) & 0x1) != 0x0)
-		;
-
-	mmio_write_32(CPG_CORE0_PCHCTL, 0x00080001);
-	while ((mmio_read_32(CPG_CORE0_PCHMON) & 0x1) != 0x1)
-		;
-	mmio_write_32(CPG_CORE0_PCHCTL, 0x00080000);
-	while ((mmio_read_32(CPG_CORE0_PCHMON) & 0x1) != 0x0)
-		;
+	if (psci_get_pstate_id(power_state))
+		return PSCI_E_INVALID_PARAMS;
 
 	return PSCI_E_SUCCESS;
 }
 
-static void rzg3s_pwr_domain_on_finish(const psci_power_state_t *target_state)
+static void rz_get_sys_suspend_power_state(psci_power_state_t *req_state)
 {
-#if !DEBUG_FPGA
-	plat_gic_pcpu_init();
-	plat_gic_cpuif_enable();
-#endif /*DEBUG_FPGA */
+	int i;
+	for (i = MPIDR_AFFLVL0; i <= PLAT_MAX_PWR_LVL; i++)
+		req_state->pwr_domain_state[i] = PLAT_MAX_OFF_STATE;
 }
 
-static void rzg3s_pwr_domain_off(const psci_power_state_t *state)
-{
-	unsigned long mpidr = read_mpidr_el1();
-	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
-
-	if (coreid >= PLATFORM_CORE_COUNT)
-		return;
-
-	/* Prevent interrupts from spuriously waking up this cpu */
-	plat_gic_cpuif_disable();
-
-	/*  Enable the transition request interrupt to the Cortex-A55 Sleep Mode */
-	mmio_write_32(SYS_LP_CTL6, 0x00000100);
-
-	/* Transition request to Cortex-A55 CoreX Sleep Mode */
-	mmio_write_32(SYS_LP_CTL1, 0x00000100);
-
-	/* Confirm that the processing on the Cortex-M33 side is completed */
-	while ((mmio_read_32(SYS_LP_CTL5) & 0x00000100) != 0x00000100)
-		;
-	/* Enter the Cortex-A55 Sleep Mode */
-	/* Start the Cortex-A55 Sleep Mode */
-	mmio_write_32(SYS_LP_CTL2, 0x00000001);
-
-	/* Issue Barrier instruction */
-	isb();
-	dsb();
-
-	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
-}
-
-static void __dead2 rzg3s_system_off(void)
+static void __dead2 rz_system_off(void)
 {
 	wfi();
 	ERROR("RZ/G3S System Off: operation not handled.\n");
 	panic();
 }
 
-const plat_psci_ops_t rzg3s_plat_psci_ops = {
-	.pwr_domain_on						= rzg3s_pwr_domain_on,
-	.pwr_domain_on_finish				= rzg3s_pwr_domain_on_finish,
-	.pwr_domain_off						= rzg3s_pwr_domain_off,
-	.system_off							= rzg3s_system_off,
+const plat_psci_ops_t rz_plat_psci_ops = {
+	.cpu_standby						= rz_cpu_standby,
+	.pwr_domain_on						= NULL,
+	.pwr_domain_on_finish				= NULL,
+	.pwr_domain_off						= NULL,
+	.pwr_domain_suspend				 	= rz_pwr_domain_suspend,
+	.pwr_domain_suspend_finish		 	= rz_pwr_domain_suspend_finish,
+	.pwr_domain_pwr_down_wfi			= rz_pwr_domain_pwr_down_wfi,
+	.validate_ns_entrypoint				= rz_validate_ns_entrypoint,
+	.validate_power_state               = rz_validate_power_state,
+#if PLAT_SYSTEM_SUSPEND
+	.get_sys_suspend_power_state		= rz_get_sys_suspend_power_state,
+#endif /* PLAT_SYSTEM_SUSPEND */
+	.system_off							= rz_system_off,
 };
 
-int plat_setup_psci_ops(uintptr_t sec_entrypoint,
-			const plat_psci_ops_t **psci_ops)
+int plat_setup_psci_ops(uintptr_t sec_entrypoint, const plat_psci_ops_t **psci_ops)
 {
-	gp_warm_ep = sec_entrypoint;
-	*psci_ops = &rzg3s_plat_psci_ops;
-
+	rz_program_trusted_mailbox(sec_entrypoint);
+	*psci_ops = &rz_plat_psci_ops;
 	return 0;
 }

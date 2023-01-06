@@ -67,7 +67,7 @@
 #define CPG_CLKON_MHU				(CPG_BASE + 0x0520)	/* Clock ON / OFF register MHU */
 #define CPG_CLKON_CST				(CPG_BASE + 0x0524)	/* Clock ON / OFF register CST */
 #define CPG_CLKON_SYC				(CPG_BASE + 0x0528)	/* Clock ON / OFF register SYC */
-#define CPG_CLKON_DAMC_REG			(CPG_BASE + 0x052C)	/* Clock ON / OFF register DAMC_REG */
+#define CPG_CLKON_DMAC_REG			(CPG_BASE + 0x052C)	/* Clock ON / OFF register DMAC_REG */
 #define CPG_CLKON_SYSC				(CPG_BASE + 0x0530)	/* Clock ON / OFF register SYSC */
 #define CPG_CLKON_OSTM				(CPG_BASE + 0x0534)	/* Clock ON / OFF register OSTM */
 #define CPG_CLKON_MTU				(CPG_BASE + 0x0538)	/* Clock ON / OFF register MTU */
@@ -129,7 +129,7 @@
 #define CPG_CLKMON_MHU				(CPG_BASE + 0x06A0)	/* Clock monitor register MHU */
 #define CPG_CLKMON_CST				(CPG_BASE + 0x06A4)	/* Clock monitor register CST */
 #define CPG_CLKMON_SYC				(CPG_BASE + 0x06A8)	/* Clock monitor register SYC */
-#define CPG_CLKMON_DAMC_REG			(CPG_BASE + 0x06AC)	/* Clock monitor register DAMC_REG */
+#define CPG_CLKMON_DMAC_REG			(CPG_BASE + 0x06AC)	/* Clock monitor register DMAC_REG */
 #define CPG_CLKMON_SYSC				(CPG_BASE + 0x06B0)	/* Clock monitor register SYSC */
 #define CPG_CLKMON_OSTM				(CPG_BASE + 0x06B4)	/* Clock monitor register OSTM */
 #define CPG_CLKMON_MTU				(CPG_BASE + 0x06B8)	/* Clock monitor register MTU */

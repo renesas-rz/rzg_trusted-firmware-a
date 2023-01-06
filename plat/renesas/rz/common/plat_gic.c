@@ -14,7 +14,10 @@
 #include <rz_soc_def.h>
 #include <rz_private.h>
 
-uintptr_t plat_rdistif_base_addrs[PLATFORM_CORE_COUNT];
+static uintptr_t plat_rdistif_base_addrs[PLATFORM_CORE_COUNT];
+
+static gicv3_redist_ctx_t rdist_ctx;
+static gicv3_dist_ctx_t dist_ctx;
 
 static unsigned int plat_mpidr_to_core_pos(u_register_t mpidr)
 {
@@ -55,4 +58,19 @@ void plat_gic_cpuif_disable(void)
 void plat_gic_pcpu_init(void)
 {
 	gicv3_rdistif_init(plat_my_core_pos());
+}
+
+void plat_gic_save(void)
+{
+	gicv3_rdistif_save(plat_my_core_pos(), &rdist_ctx);
+
+	gicv3_distif_save(&dist_ctx);
+}
+
+
+void plat_gic_resume(void)
+{
+	gicv3_distif_init_restore(&dist_ctx);
+
+	gicv3_rdistif_init_restore(plat_my_core_pos(), &rdist_ctx);
 }

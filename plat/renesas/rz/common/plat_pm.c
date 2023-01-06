@@ -33,7 +33,7 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
 	if (coreid > 1)
-		return PSCI_E_INVALID_PARAMS;
+		return PSCI_E_INTERN_FAIL;
 
 	/*  Apply an external reset */
 	if ((mmio_read_32(SYS_LP_CTL2) & 0x1) == 0x1) {

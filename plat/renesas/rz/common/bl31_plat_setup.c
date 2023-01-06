@@ -70,9 +70,6 @@ void bl31_plat_arch_setup(void)
 
 void bl31_platform_setup(void)
 {
-	/* Setup TZC-400 */
-	plat_security_setup();
-
 #if !DEBUG_FPGA
 	/* initialize GIC-600 */
 	plat_gic_driver_init();

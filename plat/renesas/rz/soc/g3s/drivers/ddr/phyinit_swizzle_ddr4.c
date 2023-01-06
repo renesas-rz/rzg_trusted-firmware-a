@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include <stdint.h>
+#include <stddef.h>
+#include <lib/utils_def.h>
+
+/////////////////////////////////////////////////////////////////////////////////
+// 32_phyinit_swizzle_ddr4
+
+const uint32_t ddrphy_ini_swizzle[][2] =
+{
+	{0x020131, 0x0001},
+	{0x020138, 0x000A},
+	{0x020137, 0x0006},
+	{0x020139, 0x0002},
+	{0x020132, 0x0017},
+	{0x020133, 0x000E},
+	{0x020134, 0x0000},
+	{0x020135, 0x0005},
+	{0x020136, 0x0013},
+	{0x020120, 0x0004},
+	{0x020121, 0x0008},
+	{0x020122, 0x000D},
+	{0x020123, 0x0016},
+	{0x020124, 0x0007},
+	{0x020125, 0x001A},
+	{0x020126, 0x0018},
+	{0x020127, 0x0019},
+	{0x020128, 0x0009},
+	{0x020129, 0x0003},
+	{0x02012a, 0x000B},
+	{0x02012b, 0x000C},
+	{0x02012c, 0x0014},
+	{0x02012d, 0x0012},
+	{0x02012e, 0x0000},
+	{0x02012f, 0x0000},
+};
+
+const uint32_t ddrphy_ini_swizzle_size = ARRAY_SIZE(ddrphy_ini_swizzle);

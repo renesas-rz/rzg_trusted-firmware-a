@@ -12,79 +12,100 @@
 #endif
 
 #include <arch.h>
+#include <rz_soc_def.h>
 
 /*******************************************************************************
  * Platform binary types for linking
  ******************************************************************************/
-#define PLATFORM_LINKER_FORMAT          "elf64-littleaarch64"
-#define PLATFORM_LINKER_ARCH            aarch64
+#define PLATFORM_LINKER_FORMAT		"elf64-littleaarch64"
+#define PLATFORM_LINKER_ARCH		  aarch64
 
 /*******************************************************************************
  * Generic platform constants
  ******************************************************************************/
-#define PLATFORM_STACK_SIZE		U(0x1000)
+#define PLATFORM_STACK_SIZE			U(0x1000)
 
-#define PLATFORM_SYSTEM_COUNT	U(1)
-#define PLATFORM_CLUSTER_COUNT	U(1)
-#define PLATFORM_CORE_COUNT		U(1)
+#define PLATFORM_SYSTEM_COUNT		U(1)
+#define PLATFORM_CLUSTER_COUNT		U(1)
+#define PLATFORM_CORE_COUNT			U(1)
 
-#define PLAT_MAX_PWR_LVL		MPIDR_AFFLVL2
-#define PLAT_NUM_PWR_DOMAINS	(PLATFORM_CORE_COUNT + \
-								 PLATFORM_CLUSTER_COUNT + \
-								 PLATFORM_SYSTEM_COUNT)
+#define PLAT_MAX_PWR_LVL			MPIDR_AFFLVL2
+#define PLAT_NUM_PWR_DOMAINS		(PLATFORM_CORE_COUNT + \
+									PLATFORM_CLUSTER_COUNT + \
+									PLATFORM_SYSTEM_COUNT)
 
-#define PLAT_MAX_RET_STATE		U(1)
-#define PLAT_MAX_OFF_STATE		U(2)
-#define PLAT_MAX_PWR_LVL_STATES	U(2)
+#define PLAT_MAX_RET_STATE			U(1)
+#define PLAT_MAX_OFF_STATE			U(2)
+#define PLAT_MAX_PWR_LVL_STATES		U(2)
 
-#define MAX_IO_DEVICES			U(2)
-#define MAX_IO_HANDLES			U(2)
-#define MAX_IO_BLOCK_DEVICES	U(1)
+#define MAX_IO_DEVICES				U(2)
+#define MAX_IO_HANDLES				U(2)
+#define MAX_IO_BLOCK_DEVICES		U(1)
 
 /*******************************************************************************
  * BL2 specific defines.
  ******************************************************************************/
-#if !TRUSTED_BOARD_BOOT
-#define BL2_BASE				(0x000A3000)
+#if !DEBUG_FPGA
+#define BL2_BASE					(0x000A3000)
+#define BL2_LIMIT					(0x00110000)
 #else
-#define BL2_BASE				(0x000A4000)
+#define BL2_BASE					(0x000A3000)
+#define BL2_LIMIT					(0x000C3000)
 #endif
-#define BL2_LIMIT				(0x000C4000)
-
 
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
-#define BL31_BASE				(0x44000000)
-#define BL31_LIMIT				(0x44040000)
+#if !DEBUG_FPGA
+#define BL31_BASE					(0x44000000)
+#define BL31_LIMIT					(0x44040000)
+#else
+#define BL31_BASE					(0x000E0000)
+#define BL31_LIMIT					(0x00100000)
+#endif
+
+#define BL31_SRAM_BASE				(0x00110000)
+#define BL31_SRAM_SIZE				(0x00008000)
+#define BL31_SRAM_LIMIT				(BL31_SRAM_BASE + BL31_SRAM_SIZE)
+
+#define PLAT_TRUSTED_MAILBOX_BASE   (BL31_LIMIT)
 
 /*******************************************************************************
  * BL32 specific defines.
  ******************************************************************************/
 #ifndef SPD_none
-#define BL32_BASE				(0x44100000)
-#define BL32_LIMIT				(BL32_BASE + 0x100000)
+#define BL32_BASE					(0x44100000)
+#define BL32_LIMIT					(BL32_BASE + 0x00100000)
 #endif
 
 /*******************************************************************************
  * BL33
  ******************************************************************************/
-#define BL33_BASE				(0x50000000)
-#define BL33_LIMIT				(BL33_BASE + 0x08000000)
+#define BL33_BASE					(0x50000000)
+#define BL33_LIMIT					(BL33_BASE + 0x08000000)
+
+/*******************************************************************************
+ * BL22 (Sub Core IPL)
+ ******************************************************************************/
+#if PLAT_SUBCORE_BOOT
+#define BL22_BASE					(0x23000)
+#define BL22_LIMIT					(BL22_BASE + 0x00040000)
+#endif /* PLAT_SUBCORE_BOOT */
 
 /*******************************************************************************
  * Platform specific page table and MMU setup constants
  ******************************************************************************/
 #if IMAGE_BL2
-#define MAX_XLAT_TABLES			U(6)
-#define MAX_MMAP_REGIONS		U(9)
-#elif IMAGE_BL31
-#define MAX_XLAT_TABLES			U(6)
-#define MAX_MMAP_REGIONS		U(9)
+#define MAX_XLAT_TABLES				U(6)
+#define MAX_MMAP_REGIONS			U(9)
+#endif
+#if IMAGE_BL31
+#define MAX_XLAT_TABLES				U(6)
+#define MAX_MMAP_REGIONS			U(9)
 #endif
 
 #define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 36)
-#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 36)		/* Max Physical Address is 0xF_FFFF_FFFF */
+#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 36)	/* Max Physical Address is 0xF_FFFF_FFFF */
 
 /*******************************************************************************
  * Declarations and constants to access the mailboxes safely. Each mailbox is
@@ -95,7 +116,7 @@
  * get written while being protected by different locks causing corruption of
  * a valid mailbox address.
  ******************************************************************************/
-#define CACHE_WRITEBACK_SHIFT   U(6)
-#define CACHE_WRITEBACK_GRANULE (U(1) << CACHE_WRITEBACK_SHIFT)
+#define CACHE_WRITEBACK_SHIFT   	U(6)
+#define CACHE_WRITEBACK_GRANULE 	(U(1) << CACHE_WRITEBACK_SHIFT)
 
 #endif /* PLATFORM_DEF_H */

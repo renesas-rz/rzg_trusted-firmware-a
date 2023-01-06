@@ -4,9 +4,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
-DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/param_mc_C-010_D4-01-1.c \
-				plat/renesas/rz/common/drivers/ddr/param_swizzle_T1c.c
+DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr.c
 
-DDR_PLL4	:=1600
-$(eval $(call add_define,DDR_PLL4))
+ifneq (${LPDDR4}, 1)
+DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/phyinit_param_ddr4.c		\
+				plat/renesas/rz/soc/${PLAT}/drivers/ddr/phyinit_swizzle_ddr4.c		\
+				plat/renesas/rz/soc/${PLAT}/drivers/ddr/setup_mc_ddr4.c
+else
+DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/phyinit_param_lpddr4.c		\
+				plat/renesas/rz/soc/${PLAT}/drivers/ddr/phyinit_swizzle_lpddr4.c	\
+				plat/renesas/rz/soc/${PLAT}/drivers/ddr/setup_mc_lpddr4.c
+endif
 
