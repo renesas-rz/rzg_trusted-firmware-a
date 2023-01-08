@@ -1,0 +1,11 @@
+stages:
+  - deploy
+
+deploy:rzg_trusted-firmware-a:
+  stage: deploy
+  before_script:
+  script:
+    - cd /mnt/build03/autobuilder/rzg3s-ci
+    - bash g3s-ci_atf.sh
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "v2.7/rzg3s"'
