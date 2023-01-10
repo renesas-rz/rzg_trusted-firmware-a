@@ -50,8 +50,7 @@ PLAT_INCLUDES			+=	-Iplat/renesas/rz/common/include						\
 RZ_TIMER_SOURCES		:=	drivers/delay_timer/generic_delay_timer.c				\
 							drivers/delay_timer/delay_timer.c
 
-BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S							\
-							drivers/arm/tzc/tzc400.c
+BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S
 
 include lib/xlat_tables_v2/xlat_tables.mk
 PLAT_BL_COMMON_SOURCES	:=	${XLAT_TABLES_LIB_SRCS}									\

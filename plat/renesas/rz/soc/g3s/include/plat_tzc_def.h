@@ -7,7 +7,11 @@
 #ifndef PLAT_TZC_DEF_H
 #define PLAT_TZC_DEF_H
 
+#include <rz_soc_def.h>
+
 /* Platform specific TrsutZone setup constants */
+
+#define PLAT_TZC400_DDR_FILTER_NUM		U(0x3)
 
 #define PLAT_TZC_REGION_ACCESS_ID_MASK	U(0x3)
 

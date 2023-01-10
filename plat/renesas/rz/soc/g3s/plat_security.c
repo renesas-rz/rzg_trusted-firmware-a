@@ -8,9 +8,8 @@
 #include <lib/mmio.h>
 #include <common/debug.h>
 
-#include "rz_soc_def.h"
-#include "sys_regs.h"
-#include "plat_tzc_def.h"
+#include <sys_regs.h>
+#include <plat_tzc_def.h>
 
 typedef struct arm_tzc_regions_info {
 	unsigned long long base;
@@ -74,11 +73,14 @@ void plat_access_control_setup(void)
 
 static uint8_t tzc400_get_num_filters(uintptr_t tzc_base)
 {
-	uint32_t tzc400_build;
-
-	tzc400_build = mmio_read_32(tzc_base + BUILD_CONFIG_OFF);
-
-	return (uint8_t)((tzc400_build >> BUILD_CONFIG_NF_SHIFT) & BUILD_CONFIG_NF_MASK) + 1U;
+	if (RZG3S_TZC400_DDR_BASE != tzc_base) {
+    	uint32_t tzc400_build;
+		tzc400_build = mmio_read_32(tzc_base + BUILD_CONFIG_OFF);
+		return (uint8_t)((tzc400_build >> BUILD_CONFIG_NF_SHIFT) & BUILD_CONFIG_NF_MASK) + 1U;
+	}
+	else {
+		return (uint8_t)PLAT_TZC400_DDR_FILTER_NUM;
+	}
 }
 
 static void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_regions)
@@ -124,10 +126,10 @@ static void plat_tzc_msram_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
-        {}
+		{}
 	};
 
 	const arm_tzc_regions_info_t msram1_tzc_regions[] = {
@@ -135,10 +137,10 @@ static void plat_tzc_msram_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
-        {}
+		{}
 	};
 
 	plat_tzc400_setup(RZG3S_TZC400_MSRAM_0_BASE, &msram0_tzc_regions[0]);
@@ -154,7 +156,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 
@@ -174,9 +176,9 @@ static void plat_tzc_ddr_setup(void)
 #else
 		{
 			/* Default Region 0: Complete access */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_RDWR,
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
+			.sec_attr = TZC_REGION_S_NONE,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
@@ -194,14 +196,14 @@ static void plat_tzc_spi_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 		{
 			.base = RZG3S_XSPI_MEMORY_MAP_BASE,
 			.end  = (RZG3S_XSPI_MEMORY_MAP_BASE + RZG3S_SPIROM_SIZE - 1ULL),
-			.sec_attr = TZC_REGION_S_RD,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 		{}
 	};
@@ -212,9 +214,9 @@ static void plat_tzc_spi_setup(void)
 static void bl2_security_setup(void)
 {
 	/* initialize TZC-400 */
-	plat_tzc_ddr_setup();
-	plat_tzc_spi_setup();
 	plat_tzc_msram_setup();
+	plat_tzc_spi_setup();
+	plat_tzc_ddr_setup();
 
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
