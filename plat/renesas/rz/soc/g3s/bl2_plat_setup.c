@@ -149,9 +149,7 @@ void bl2_el3_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl2_regions, rzg3s_mmap);
-#if !DEBUG_FPGA
 	enable_mmu_el3(0);
-#endif
 }
 
 void bl2_platform_setup(void)

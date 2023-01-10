@@ -91,9 +91,8 @@ void bl31_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl31_regions, rzg3s_mmap);
-#if !DEBUG_FPGA
 	enable_mmu_el3(0);
-#endif
+
     plat_copy_code_to_system_ram();
 }
 
