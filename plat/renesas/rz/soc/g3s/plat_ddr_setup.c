@@ -126,6 +126,8 @@ void plat_ddr_setup(void)
 #else
 void plat_ddr_setup(void)
 {
+#if !DEBUG_FPGA
 	ddr_setup();
+#endif
 }
 #endif /* PLAT_DDR_RETENTION */

@@ -3,6 +3,10 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
+LPDDR4		:= 1
+DDR_PLL4	:= 1866
+
+$(eval $(call add_define,DDR_PLL4))
 
 DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr.c
 
@@ -15,4 +19,3 @@ DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/phyinit_param_lpddr4.c		
 				plat/renesas/rz/soc/${PLAT}/drivers/ddr/phyinit_swizzle_lpddr4.c	\
 				plat/renesas/rz/soc/${PLAT}/drivers/ddr/setup_mc_lpddr4.c
 endif
-

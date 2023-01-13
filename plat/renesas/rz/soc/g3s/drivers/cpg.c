@@ -24,7 +24,6 @@ typedef struct {
 	uint32_t  val;
 } CPG_REG_SETTING;
 
-
 static const CPG_REG_SETTING cpg_early_div_tbl[] = {
 	{ (uintptr_t)CPG_PL1_DDIV,				0x00010000 },	// 2'b00 : 1/1
 };
@@ -42,6 +41,16 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 		0x00010001,
 		CPG_T_RST
 	}
+};
+
+static const CPG_REG_SETTING cpg_pll4_tbl[] = {
+#if (DDR_PLL4 == 1866)
+	{ CPG_PLL4_CLK1, 0x0498E000 },
+	{ CPG_PLL4_CLK2, 0x00000002 },
+#else
+#error "Unknown Board Type."
+#endif
+	{ CPG_PLL4_STBY, 0x00010001 }
 };
 
 static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
@@ -65,7 +74,7 @@ static const CPG_REG_SETTING cpg_static_select_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
-	{ (uintptr_t)CPG_PLL_DSEL,				0x04550415 },	// 1'b1 : PLL6, 1'b1 : PLL4, 1'b1 : PLL3, 1'b1 : PLL2, 1'b1 : PLL1
+	{ (uintptr_t)CPG_PLL_DSEL,				0x04550455 },	// 1'b1 : PLL6, 1'b1 : PLL4, 1'b1 : PLL3, 1'b1 : PLL2, 1'b1 : PLL1
 	{ (uintptr_t)CPG_SDHI_DSEL,				0x01110333 },	// 2'b11 : CLK266FIX_C, 2'b11 : CLK266FIX_C, 2'b11 : CLK266FIX_C
 };
 
@@ -108,7 +117,7 @@ static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
 	{		/* SDHI */
 		(uintptr_t)CPG_CLKON_SDHI,
 		(uintptr_t)CPG_CLKMON_SDHI,
-		0x00770077,
+		0x007F007F,
 		CPG_T_CLK
 	},
 	{		/* USB */
@@ -121,6 +130,12 @@ static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
 		(uintptr_t)CPG_CLKON_ETH,
 		(uintptr_t)CPG_CLKMON_ETH,
 		0x03030000,
+		CPG_T_CLK
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_CLKON_DDR,
+		(uintptr_t)CPG_CLKMON_DDR,
+		0x000F0000,
 		CPG_T_CLK
 	},
 	{		/* AXI_COM_BUS */
@@ -190,6 +205,12 @@ static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
 		(uintptr_t)CPG_RST_ETH,
 		(uintptr_t)CPG_RSTMON_ETH,
 		0x00030000,
+		CPG_T_RST
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x01CF0000,
 		CPG_T_RST
 	},
 	{		/* AXI_COM_BUS */
@@ -552,6 +573,42 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 	},
 };
 
+static const CPG_SETUP_DATA cpg_ddr_clock_tbl[] = {
+	{		/* DDR */
+		(uintptr_t)CPG_CLKON_DDR,
+		(uintptr_t)CPG_CLKMON_DDR,
+		0x000F000F,
+		CPG_T_CLK
+	},
+};
+
+static const CPG_SETUP_DATA cpg_ddr_reset_tbl[] = {
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x01000100,
+		CPG_T_RST
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x004C004C,
+		CPG_T_RST
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x00830082,
+		CPG_T_RST
+	},
+};
+
 static const CPG_SETUP_DATA cpg_cm33_clk_rst_tbl[] = {
 	{		/* CM33 */
 		(uintptr_t)CPG_CLKON_CM33,
@@ -653,6 +710,25 @@ static void cpg_clkrst_start(const CPG_SETUP_DATA *tbl, const uint32_t size)
 	}
 }
 
+/* It is assumed that the PLL has stopped by the time this function is executed. */
+static void cpg_pll_setup(void)
+{
+	int cnt;
+	uint32_t val = 0;
+
+	do {
+		val = mmio_read_32(CPG_PLL4_MON);
+	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) != 0);
+
+	for (cnt = 0 ; cnt < ARRAY_SIZE(cpg_pll4_tbl); cnt++) {
+		mmio_write_32(cpg_pll4_tbl[cnt].reg, cpg_pll4_tbl[cnt].val);
+	}
+
+	do {
+		val = mmio_read_32(CPG_PLL4_MON);
+	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
+}
+
 static void cpg_div_sel_static_setup(void)
 {
 	cpg_clkrst_stop(cpg_static_clock_tbl, ARRAY_SIZE(cpg_static_clock_tbl));
@@ -705,6 +781,7 @@ void cpg_early_setup(void)
 
 void cpg_setup(void)
 {
+	cpg_pll_setup();
 	cpg_div_sel_static_setup();
 	cpg_clock_on_setup();
 	cpg_div_sel_dynamic_setup();
@@ -729,4 +806,26 @@ void cpg_resume_setup(void)
 	cpg_clkrst_start(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
 	cpg_clkrst_start(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
 	cpg_module_start(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
+}
+
+void cpg_active_ddr1(void)
+{
+	cpg_clkrst_start(&cpg_ddr_reset_tbl[0], 1);
+	udelay(1);
+
+	cpg_clkrst_start(cpg_ddr_clock_tbl, ARRAY_SIZE(cpg_ddr_clock_tbl));
+
+	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
+
+	cpg_clkrst_start(&cpg_ddr_reset_tbl[1], 1);
+	udelay(1);
+
+	cpg_clkrst_start(&cpg_ddr_reset_tbl[2], 1);
+	udelay(1);
+}
+
+void cpg_active_ddr2(void)
+{
+	cpg_clkrst_start(&cpg_ddr_reset_tbl[3], 1);
+	udelay(1);
 }

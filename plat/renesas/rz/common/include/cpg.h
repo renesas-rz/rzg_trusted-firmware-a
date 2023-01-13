@@ -14,5 +14,7 @@ void cpg_reset_ddr_mc(void);
 void cpg_subcore_setup(void);
 void cpg_suspend_setup(void);
 void cpg_resume_setup(void);
+void cpg_active_ddr1(void);
+void cpg_active_ddr2(void);
 
 #endif /* __CPG_H__ */
