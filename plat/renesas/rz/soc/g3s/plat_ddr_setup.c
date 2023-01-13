@@ -25,7 +25,7 @@
 
 
 #if PLAT_SYSTEM_SUSPEND
-uint32_t ddr_params[RZG3S_DDR_CONFIG_SIZE / sizeof(uint32_t)];
+uint32_t ddr_params[RZG3S_DDR_CONFIG_MAX / sizeof(uint32_t)];
 
 static image_info_t ddr_params_info = {
 	.h.type = (uint8_t)PARAM_IMAGE_BINARY,

@@ -77,7 +77,7 @@ static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 
 static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
 {
-	if (ns_entrypoint >= NS_DRAM_BASE)
+	if (ns_entrypoint >= RZG3S_NS_DRAM_BASE)
 		return PSCI_E_SUCCESS;
 
 	return PSCI_E_INVALID_ADDRESS;

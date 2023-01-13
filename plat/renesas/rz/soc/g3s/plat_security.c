@@ -200,8 +200,8 @@ static void plat_tzc_spi_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 		{
-			.base = RZG3S_XSPI_MEMORY_MAP_BASE,
-			.end  = (RZG3S_XSPI_MEMORY_MAP_BASE + RZG3S_SPIROM_SIZE - 1ULL),
+			.base = RZG3S_SPIROM_BASE,
+			.end  = (RZG3S_SPIROM_BASE + RZG3S_SPIROM_SIZE - 1ULL),
 			.sec_attr = TZC_REGION_S_NONE,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
