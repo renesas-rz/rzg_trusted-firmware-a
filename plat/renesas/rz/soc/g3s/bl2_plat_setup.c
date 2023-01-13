@@ -39,12 +39,13 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
 
-	if ((BL22_IMAGE_ID == image_id) && (!sys_is_subcore_booted())) {
-		bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+	if (BL22_IMAGE_ID == image_id) {
+		if (sys_is_subcore_booted())
+			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
 	}
-
-	if (RZ_WARM_BOOT == bl2_plat_get_boot_mode()) {   
-		bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+	else {
+		if (RZ_WARM_BOOT == bl2_plat_get_boot_mode())
+			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
 	}
 
 	return 0;
@@ -79,11 +80,13 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		break;
 	}
 
+	flush_dcache_range((uintptr_t)PARAMS_BASE, sizeof(bl2_to_bl31_params_mem_t));
+
 	return 0;
 }
 
 void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
-								u_register_t arg3, u_register_t arg4)
+								  u_register_t arg3, u_register_t arg4)
 {
 	int ret;
 
@@ -105,7 +108,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 		/* initialize console driver */
 		ret = console_rz_register(
-								RZG3S_SCIF_0_BASE,
+                                RZG3S_SCIF_0_BASE,
 								RZG3S_UART_INCK_HZ,
 								RZG3S_UART_BARDRATE,
 								&rzg3s_bl2_console);
@@ -137,6 +140,8 @@ void bl2_el3_plat_arch_setup(void)
 		MAP_REGION_FLAT(RZG3S_BOOT_ROM_BASE, RZG3S_BOOT_ROM_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
 #endif
+		MAP_REGION_FLAT(RZG3S_SRAM_BASE, RZG3S_SRAM_SIZE,
+				MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(PARAMS_BASE, PARAMS_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(RZG3S_DEVICE_BASE, RZG3S_DEVICE_SIZE,
@@ -166,8 +171,8 @@ void bl2_el3_plat_prepare_exit(void)
 {
 	if (!sys_is_subcore_booted()) {
 		bl_mem_params_node_t * bl22_mem_params = get_bl_mem_params_node(BL22_IMAGE_ID);
-		assert(NULL != bl22_mem_params);
-
-		sys_boot_subcore((bl22_mem_params->ep_info).pc);
+		if (NULL != bl22_mem_params) {
+			sys_boot_subcore((bl22_mem_params->ep_info).pc);
+		}
 	}
 }

@@ -28,12 +28,12 @@ static uintptr_t boot_io_drv_id;
 
 static const io_block_spec_t spirom_block_spec = {
 	.offset = RZ_SOC_SPIROM_FIP_BASE,
-	.length = RZ_SOC_SPIROM_FIP_SIZE,
+	.length = RZG3S_FIP_SIZE_MAX,
 };
 
 static const io_drv_spec_t emmc_block_spec = {
 	.offset = RZ_SOC_EMMC_FIP_BASE,
-	.length = RZ_SOC_EMMC_FIP_SIZE,
+	.length = RZG3S_FIP_SIZE_MAX,
 };
 
 static const io_uuid_spec_t bl31_file_spec = {
@@ -47,12 +47,6 @@ static const io_uuid_spec_t bl32_file_spec = {
 static const io_uuid_spec_t bl33_file_spec = {
 	.uuid = UUID_NON_TRUSTED_FIRMWARE_BL33,
 };
-
-#if PLAT_SUBCORE_BOOT
-static const io_uuid_spec_t bl22_file_spec = {
-	.uuid = UUID_TRUSTED_FIRMWARE_BL22,
-};
-#endif /* PLAT_SUBCORE_BOOT */
 
 #if TRUSTED_BOARD_BOOT
 static const io_uuid_spec_t soc_fw_key_cert_file_spec = {
@@ -78,16 +72,6 @@ static const io_uuid_spec_t nt_fw_key_cert_file_spec = {
 static const io_uuid_spec_t nt_fw_content_cert_file_spec = {
 	.uuid = UUID_NON_TRUSTED_FW_CONTENT_CERT,
 };
-
-#if PLAT_SUBCORE_BOOT
-static const io_uuid_spec_t score_fw_key_cert_file_spec = {
-	.uuid = UUID_SUBCORE_KEY_CERT,
-};
-
-static const io_uuid_spec_t score_fw_content_cert_file_spec = {
-	.uuid = UUID_SUBCORE_CONTENT_CERT,
-};
-#endif /* PLAT_SUBCORE_BOOT */
 #endif
 
 #if PLAT_SYSTEM_SUSPEND
@@ -101,6 +85,22 @@ static const io_drv_spec_t emmc_s2r_prm_spec = {
 	.length = RZ_SOC_EMMC_DDR_CFG_SIZE,
 };
 #endif /* PLAT_SYSTEM_SUSPEND */
+
+#if PLAT_SUBCORE_BOOT
+static const io_uuid_spec_t bl22_file_spec = {
+	.uuid = UUID_TRUSTED_FIRMWARE_BL22,
+};
+
+#if TRUSTED_BOARD_BOOT
+static const io_uuid_spec_t score_fw_key_cert_file_spec = {
+	.uuid = UUID_SUBCORE_KEY_CERT,
+};
+
+static const io_uuid_spec_t score_fw_content_cert_file_spec = {
+	.uuid = UUID_SUBCORE_CONTENT_CERT,
+};
+#endif /* TRUSTED_BOARD_BOOT */
+#endif /* PLAT_SUBCORE_BOOT */
 
 static int32_t open_emmcdrv(const uintptr_t spec);
 static int32_t open_memmap(const uintptr_t spec);
@@ -166,12 +166,6 @@ static struct plat_io_policy policies[] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl33_file_spec,
 				&open_fipdrv},
-#if PLAT_SUBCORE_BOOT
-    [BL22_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl22_file_spec,
-				&open_fipdrv},
-#endif /* PLAT_SUBCORE_BOOT */
 #if TRUSTED_BOARD_BOOT
 	[SOC_FW_KEY_CERT_ID] = {
 				&fip_dev_handle,
@@ -197,7 +191,16 @@ static struct plat_io_policy policies[] = {
 				&fip_dev_handle,
 				(uintptr_t) &nt_fw_content_cert_file_spec,
 				&open_fipdrv},
+#endif /* TRUSTED_BOARD_BOOT */
+#if PLAT_SYSTEM_SUSPEND
+    [DDR_CONFIG_ID] = {0, 0, 0},
+#endif /* PLAT_SYSTEM_SUSPEND */
 #if PLAT_SUBCORE_BOOT
+    [BL22_IMAGE_ID] = {
+				&fip_dev_handle,
+				(uintptr_t) &bl22_file_spec,
+				&open_fipdrv},
+#if TRUSTED_BOARD_BOOT
 	[SUBCORE_KEY_CERT_ID] = {
 				&fip_dev_handle,
 				(uintptr_t) &score_fw_key_cert_file_spec,
@@ -206,11 +209,8 @@ static struct plat_io_policy policies[] = {
 				&fip_dev_handle,
 				(uintptr_t) &score_fw_content_cert_file_spec,
 				&open_fipdrv},
+#endif /* TRUSTED_BOARD_BOOT */
 #endif /* PLAT_SUBCORE_BOOT */
-#endif
-#if PLAT_SYSTEM_SUSPEND
-    [DDR_CONFIG_ID] = {0, 0, 0},
-#endif /* PLAT_SYSTEM_SUSPEND */
 	{0, 0, 0}
 };
 

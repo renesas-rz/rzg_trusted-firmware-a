@@ -41,7 +41,7 @@ endif
 bptool: bptool_make
 distclean realclean clean: bptool_clean
 
-BPTOOLPATH		?=	tools/renesas/rz_bptool
+BPTOOLPATH		?=	tools/renesas/rz_boot_param
 BPTOOL			?=	${BPTOOLPATH}/bptool${BIN_EXT}
 
 bptool_make:

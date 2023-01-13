@@ -65,7 +65,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
 
 	/* copy bl2_to_bl31_params_mem_t*/
-	memcpy(&from_bl2, (void *)arg0, sizeof(from_bl2));
+	memcpy(&from_bl2, (void *)PARAMS_BASE, sizeof(from_bl2));
 }
 
 void bl31_plat_arch_setup(void)
