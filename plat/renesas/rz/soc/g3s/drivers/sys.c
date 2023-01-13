@@ -36,10 +36,12 @@ int16_t sys_get_boot_mode(void)
 		case (SYS_LSI_MODE_VOL_3_3 | SYS_LSI_MODE_SFLASH):
 			boot_mode = SYS_BOOT_MODE_SPI_3_3;
 			break;
+#if DEBUG
 		case (SYS_LSI_MODE_VOL_1_8 | SYS_LSI_MODE_SCIF):
 		case (SYS_LSI_MODE_VOL_3_3 | SYS_LSI_MODE_SCIF):
-			boot_mode = SYS_BOOT_MODE_SCIF;
+			boot_mode = SYS_BOOT_MODE_EMMC_3_3;
 			break;
+#endif
 		default:
 			panic();
 	}
@@ -47,7 +49,7 @@ int16_t sys_get_boot_mode(void)
 	return boot_mode;
 }
 
-void sys_boot_subcore(uintptr_t vector)
+void sys_m33_core_boot_op(uintptr_t vector)
 {
 	if (0 != (mmio_read_32(CPG_PLL6_STBY) & PLL6_STBY_SSC_EN))
 	{
@@ -65,7 +67,7 @@ void sys_boot_subcore(uintptr_t vector)
 	cpg_subcore_setup();
 }
 
-bool sys_is_subcore_booted(void)
+bool sys_is_m33_core_booted(void)
 {
 	bool is_booted = false;
 	// TODO
@@ -74,5 +76,5 @@ bool sys_is_subcore_booted(void)
 
 bool sys_is_peri_suspended(void)
 {
-	return sys_is_subcore_booted();
+	return sys_is_m33_core_booted();
 }

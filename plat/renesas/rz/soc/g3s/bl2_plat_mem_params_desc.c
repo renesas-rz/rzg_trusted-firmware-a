@@ -70,7 +70,7 @@ static bl_mem_params_node_t bl2_mem_params_descs[] = {
 
 		.next_handoff_image_id = INVALID_IMAGE_ID,
 	},
-#if PLAT_SUBCORE_BOOT
+#if PLAT_M33_BOOT_SUPPORT
 	{
 		.image_id = BL22_IMAGE_ID,
 
@@ -88,7 +88,7 @@ static bl_mem_params_node_t bl2_mem_params_descs[] = {
 
 		.next_handoff_image_id = INVALID_IMAGE_ID,
 	}
-#endif /* PLAT_SUBCORE_BOOT */
+#endif /* PLAT_M33_BOOT_SUPPORT */
 };
 
 REGISTER_BL_IMAGE_DESCS(bl2_mem_params_descs)

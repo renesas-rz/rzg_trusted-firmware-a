@@ -21,9 +21,9 @@ typedef enum {
 
 int16_t sys_get_boot_mode(void);
 
-bool sys_is_subcore_booted(void);
+bool sys_is_m33_core_booted(void);
 bool sys_is_peri_suspended(void);
 
-void sys_boot_subcore(uintptr_t vector);
+void sys_m33_core_boot_op(uintptr_t vector);
 
 #endif	/* __SYS_H__ */

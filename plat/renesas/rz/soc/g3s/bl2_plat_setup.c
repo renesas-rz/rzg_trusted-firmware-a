@@ -40,8 +40,10 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
 
 	if (BL22_IMAGE_ID == image_id) {
-		if (sys_is_subcore_booted())
+#if PLAT_M33_BOOT_SUPPORT
+		if (sys_is_m33_core_booted())
 			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+#endif
 	}
 	else {
 		if (RZ_WARM_BOOT == bl2_plat_get_boot_mode())
@@ -169,10 +171,12 @@ void bl2_platform_setup(void)
 
 void bl2_el3_plat_prepare_exit(void)
 {
-	if (!sys_is_subcore_booted()) {
+#if PLAT_M33_BOOT_SUPPORT
+	if (!sys_is_m33_core_booted()) {
 		bl_mem_params_node_t * bl22_mem_params = get_bl_mem_params_node(BL22_IMAGE_ID);
 		if (NULL != bl22_mem_params) {
-			sys_boot_subcore((bl22_mem_params->ep_info).pc);
+			sys_m33_core_boot_op((bl22_mem_params->ep_info).pc);
 		}
 	}
+#endif
 }

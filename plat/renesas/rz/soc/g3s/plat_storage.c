@@ -75,32 +75,45 @@ static const io_uuid_spec_t nt_fw_content_cert_file_spec = {
 #endif
 
 #if PLAT_SYSTEM_SUSPEND
-static const io_block_spec_t spirom_s2r_prm_spec = {
+static const io_block_spec_t spirom_ddr_cfg_spec = {
 	.offset = RZ_SOC_SPIROM_DDR_CFG_BASE,
 	.length = RZ_SOC_SPIROM_DDR_CFG_SIZE,
 };
 
-static const io_drv_spec_t emmc_s2r_prm_spec = {
+static const io_drv_spec_t emmc_ddr_cfg_spec = {
 	.offset = RZ_SOC_EMMC_DDR_CFG_BASE,
 	.length = RZ_SOC_EMMC_DDR_CFG_SIZE,
 };
 #endif /* PLAT_SYSTEM_SUSPEND */
 
-#if PLAT_SUBCORE_BOOT
-static const io_uuid_spec_t bl22_file_spec = {
-	.uuid = UUID_TRUSTED_FIRMWARE_BL22,
+#if PLAT_M33_BOOT_SUPPORT
+static const io_block_spec_t spirom_bl22_image_spec = {
+	.offset = RZG3S_SPIROM_M33_FW_BASE,
+	.length = RZG3S_M33_FW_SIZE,
 };
-
+static const io_block_spec_t emmc_bl22_image_spec = {
+	.offset = RZG3S_EMMC_M33_FW_BASE,
+	.length = RZG3S_M33_FW_SIZE,
+};
 #if TRUSTED_BOARD_BOOT
-static const io_uuid_spec_t score_fw_key_cert_file_spec = {
-	.uuid = UUID_SUBCORE_KEY_CERT,
+static const io_block_spec_t spirom_bl22_content_cert_file_spec = {
+	.offset = spirom_bl22_image_spec.offset - RZG3S_M33_CERT_SIZE,
+	.length = RZG3S_M33_CERT_SIZE,
 };
-
-static const io_uuid_spec_t score_fw_content_cert_file_spec = {
-	.uuid = UUID_SUBCORE_CONTENT_CERT,
+static const io_block_spec_t spirom_bl22_key_cert_file_spec = {
+	.offset = spirom_bl22_key_cert_file_spec.offset - RZG3S_M33_CERT_SIZE,
+	.length = RZG3S_M33_CERT_SIZE,
+};
+static const io_block_spec_t emmc_bl22_content_cert_file_spec = {
+	.offset = emmc_bl22_image_spec.offset - RZG3S_M33_CERT_SIZE,
+	.length = RZG3S_M33_CERT_SIZE,
+};
+static const io_block_spec_t emmc_bl22_key_cert_file_spec = {
+	.offset = emmc_bl22_key_cert_file_spec.offset - RZG3S_M33_CERT_SIZE,
+	.length = RZG3S_M33_CERT_SIZE,
 };
 #endif /* TRUSTED_BOARD_BOOT */
-#endif /* PLAT_SUBCORE_BOOT */
+#endif /* PLAT_M33_BOOT_SUPPORT */
 
 static int32_t open_emmcdrv(const uintptr_t spec);
 static int32_t open_memmap(const uintptr_t spec);
@@ -112,48 +125,19 @@ struct plat_io_policy {
 	int32_t (*check)(const uintptr_t spec);
 };
 
-static const struct plat_io_policy fip_policies[] = {
-	[SYS_BOOT_MODE_EMMC_1_8] = {
-				&emmcdrv_dev_handle,
-				(uintptr_t) &emmc_block_spec,
-				&open_emmcdrv},
-	[SYS_BOOT_MODE_EMMC_3_3] = {
-				&emmcdrv_dev_handle,
-				(uintptr_t) &emmc_block_spec,
-				&open_emmcdrv},
-	[SYS_BOOT_MODE_SPI_1_8] = {
-				&memdrv_dev_handle,
-				(uintptr_t) &spirom_block_spec,
-				&open_memmap},
-	[SYS_BOOT_MODE_SPI_3_3] = {
-				&memdrv_dev_handle,
-				(uintptr_t) &spirom_block_spec,
-				&open_memmap},
+static const struct plat_io_policy fip_emmc_policy = {
+	&emmcdrv_dev_handle,
+	(uintptr_t) &emmc_block_spec,
+	&open_emmcdrv
+};
+static const struct plat_io_policy fip_spirom_policy = {
+	&memdrv_dev_handle,
+	(uintptr_t) &spirom_block_spec,
+	&open_memmap
 };
 
-#if PLAT_SYSTEM_SUSPEND
-static const struct plat_io_policy ddr_cfg_policies[] = {
-	[SYS_BOOT_MODE_EMMC_1_8] = {
-				&emmcdrv_dev_handle,
-				(uintptr_t) &emmc_s2r_prm_spec,
-				&open_emmcdrv},
-	[SYS_BOOT_MODE_EMMC_3_3] = {
-				&emmcdrv_dev_handle,
-				(uintptr_t) &emmc_s2r_prm_spec,
-				&open_emmcdrv},
-	[SYS_BOOT_MODE_SPI_1_8] = {
-				&memdrv_dev_handle,
-				(uintptr_t) &spirom_s2r_prm_spec,
-				&open_memmap},
-	[SYS_BOOT_MODE_SPI_3_3] = {
-				&memdrv_dev_handle,
-				(uintptr_t) &spirom_s2r_prm_spec,
-				&open_memmap},
-};
-#endif /* PLAT_SYSTEM_SUSPEND */
-
-static struct plat_io_policy policies[] = {
-    [FIP_IMAGE_ID]  = {0, 0, 0},
+static struct plat_io_policy fip_policies[] = {
+	[FIP_IMAGE_ID]  = {0, 0, 0},
 	[BL31_IMAGE_ID] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl31_file_spec,
@@ -192,25 +176,66 @@ static struct plat_io_policy policies[] = {
 				(uintptr_t) &nt_fw_content_cert_file_spec,
 				&open_fipdrv},
 #endif /* TRUSTED_BOARD_BOOT */
+	{0, 0, 0}
+};
+
+static const struct plat_io_policy blk_spirom_policies[] = {
 #if PLAT_SYSTEM_SUSPEND
-    [DDR_CONFIG_ID] = {0, 0, 0},
-#endif /* PLAT_SYSTEM_SUSPEND */
-#if PLAT_SUBCORE_BOOT
-    [BL22_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl22_file_spec,
-				&open_fipdrv},
+	{
+		&memdrv_dev_handle,
+		(uintptr_t) &spirom_ddr_cfg_spec,
+		&open_memmap
+	},
+#endif
+#if PLAT_M33_BOOT_SUPPORT
+	{
+		&memdrv_dev_handle,
+		(uintptr_t) &spirom_bl22_image_spec,
+		&open_memmap
+	},
 #if TRUSTED_BOARD_BOOT
-	[SUBCORE_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &score_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[SUBCORE_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &score_fw_content_cert_file_spec,
-				&open_fipdrv},
-#endif /* TRUSTED_BOARD_BOOT */
-#endif /* PLAT_SUBCORE_BOOT */
+	{
+		&memdrv_dev_handle,
+		(uintptr_t) &spirom_bl22_key_cert_file_spec,
+		&open_memmap
+	},
+	{
+		&memdrv_dev_handle,
+		(uintptr_t) &spirom_bl22_content_cert_file_spec,
+		&open_memmap
+	},
+#endif
+#endif
+	{0, 0, 0}
+};
+
+static const struct plat_io_policy blk_emmc_policies[] = {
+#if PLAT_SYSTEM_SUSPEND
+	{
+		&emmcdrv_dev_handle,
+		(uintptr_t) &emmc_ddr_cfg_spec,
+		&open_emmcdrv
+	},
+#endif
+#if PLAT_M33_BOOT_SUPPORT
+	{
+		&emmcdrv_dev_handle,
+		(uintptr_t) &emmc_bl22_image_spec,
+		&open_emmcdrv
+	},
+#if TRUSTED_BOARD_BOOT
+	{
+		&emmcdrv_dev_handle,
+		(uintptr_t) &emmc_bl22_key_cert_file_spec,
+		&open_emmcdrv
+	},
+	{
+		&emmcdrv_dev_handle,
+		(uintptr_t) &emmc_bl22_content_cert_file_spec,
+		&open_emmcdrv
+	},
+#endif
+#endif
 	{0, 0, 0}
 };
 
@@ -266,6 +291,8 @@ void rz_io_setup(void)
 		xspi_setup();
 		register_io_dev_memmap(&memmap);
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
+
+		fip_policies[FIP_IMAGE_ID] = fip_spirom_policy;
 	} else if (boot_mode == SYS_BOOT_MODE_EMMC_1_8 ||
 			   boot_mode == SYS_BOOT_MODE_EMMC_3_3) {
 		if (emmc_init() != EMMC_SUCCESS) {
@@ -280,14 +307,37 @@ void rz_io_setup(void)
 
 		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
+
+		fip_policies[FIP_IMAGE_ID] = fip_emmc_policy;
 	} else {
 		panic();
 	}
-	policies[FIP_IMAGE_ID] = fip_policies[boot_mode];
-    
-#if PLAT_SYSTEM_SUSPEND
-    policies[DDR_CONFIG_ID] = ddr_cfg_policies[boot_mode];
-#endif /* PLAT_SYSTEM_SUSPEND */
+}
+
+static void plat_get_io_policy(unsigned int image_id, const struct plat_io_policy ** policy)
+{
+	uint16_t boot_mode;
+
+	if (image_id < ARRAY_SIZE(fip_policies)){
+		*policy = &fip_policies[image_id];
+		return;
+	}
+	
+	boot_mode = sys_get_boot_mode();
+
+	if (boot_mode == SYS_BOOT_MODE_SPI_1_8 || 
+		boot_mode == SYS_BOOT_MODE_SPI_3_3) {
+		*policy = &blk_spirom_policies[image_id - DDR_CONFIG_ID];
+		return;
+	}
+
+	if (boot_mode == SYS_BOOT_MODE_EMMC_1_8 || 
+		boot_mode == SYS_BOOT_MODE_EMMC_3_3) {
+		*policy = &blk_emmc_policies[image_id - DDR_CONFIG_ID];
+		return;
+	}
+	
+	panic();
 }
 
 int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
@@ -296,7 +346,7 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 	const struct plat_io_policy *policy;
 	int result;
 
-	policy = &policies[image_id];
+	plat_get_io_policy(image_id, &policy);
 
 	result = policy->check(policy->image_spec);
 	if (result != 0)

@@ -12,7 +12,7 @@ WARMBOOT_ENABLE_DCACHE_EARLY	:= 1
 GICV3_SUPPORT_GIC600			:= 1
 HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
-PLAT_SUBCORE_BOOT				:= 0
+PLAT_M33_BOOT_SUPPORT			:= 0
 PLAT_SYSTEM_SUSPEND				:= 0
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
@@ -20,18 +20,17 @@ DEBUG_FPGA						:= 0
 
 ifneq (${PLAT_SYSTEM_SUSPEND},0)
 override PLAT_SYSTEM_SUSPEND_${PLAT_SYSTEM_SUSPEND} := 1
-override PLAT_SUBCORE_BOOT		:= 1
+override PLAT_M33_BOOT_SUPPORT	:= 1
 override PLAT_SYSTEM_SUSPEND	:= 1
 endif
 
 $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,PLAT_TBBR_IMG_DEF))
-$(eval $(call add_define,PLAT_DEF_FIP_UUID))
 $(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND_${PLAT_SYSTEM_SUSPEND}))
-$(eval $(call add_define,PLAT_SUBCORE_BOOT))
+$(eval $(call add_define,PLAT_M33_BOOT_SUPPORT))
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1

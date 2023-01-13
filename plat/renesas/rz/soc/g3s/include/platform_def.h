@@ -87,10 +87,10 @@
 /*******************************************************************************
  * BL22 (Sub Core IPL)
  ******************************************************************************/
-#if PLAT_SUBCORE_BOOT
+#if PLAT_M33_BOOT_SUPPORT
 #define BL22_BASE					(0x23000)
 #define BL22_LIMIT					(BL22_BASE + 0x00040000)
-#endif /* PLAT_SUBCORE_BOOT */
+#endif /* PLAT_M33_BOOT_SUPPORT */
 
 /*******************************************************************************
  * Platform specific page table and MMU setup constants
