@@ -595,13 +595,3 @@ int ethosn_smc_setup(void)
 
 	return 0;
 }
-
-int ethosn_smc_setup(void)
-{
-	if (ETHOSN_NUM_DEVICES == 0U) {
-		ERROR("ETHOSN: No NPU found\n");
-		return ETHOSN_FAILURE;
-	}
-
-	return 0;
-}
