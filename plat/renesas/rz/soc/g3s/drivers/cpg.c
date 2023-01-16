@@ -783,25 +783,6 @@ void cpg_setup(void)
 	cpg_pwrdown_ip_setup();
 }
 
-void cpg_m33_core_setup(void)
-{
-	cpg_clkrst_start(cpg_cm33_clk_rst_tbl, ARRAY_SIZE(cpg_cm33_clk_rst_tbl));
-}
-
-void cpg_suspend_setup(void)
-{
-	cpg_module_stop(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl)); 
-	cpg_clkrst_stop(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
-	cpg_clkrst_stop(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
-}
-
-void cpg_resume_setup(void)
-{
-	cpg_clkrst_start(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
-	cpg_clkrst_start(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
-	cpg_module_start(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
-}
-
 void cpg_active_ddr1(void)
 {
 	cpg_clkrst_start(cpg_ddr_clock_tbl, ARRAY_SIZE(cpg_ddr_clock_tbl));
@@ -819,4 +800,23 @@ void cpg_active_ddr2(void)
 {
 	cpg_clkrst_start(&cpg_ddr_reset_tbl[2], 1);
 	udelay(1);
+}
+
+void cpg_suspend_setup(void)
+{
+	cpg_module_stop(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl)); 
+	cpg_clkrst_stop(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
+	cpg_clkrst_stop(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
+}
+
+void cpg_resume_setup(void)
+{
+	cpg_clkrst_start(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
+	cpg_clkrst_start(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
+	cpg_module_start(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
+}
+
+void cpg_m33_setup(void)
+{
+	cpg_clkrst_start(cpg_cm33_clk_rst_tbl, ARRAY_SIZE(cpg_cm33_clk_rst_tbl));
 }
