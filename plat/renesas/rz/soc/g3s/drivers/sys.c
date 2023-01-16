@@ -64,7 +64,7 @@ void sys_m33_core_boot_op(uintptr_t vector)
 
 	mmio_write_32(SYS_CM33_CFG2, vector);
 
-	cpg_subcore_setup();
+	cpg_m33_core_setup();
 }
 
 bool sys_is_m33_core_booted(void)
