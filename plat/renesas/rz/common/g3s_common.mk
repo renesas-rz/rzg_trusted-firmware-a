@@ -67,19 +67,11 @@ BL2_SOURCES				+=	common/desc_image_load.c								\
 							drivers/io/io_memmap.c									\
 							drivers/io/io_fip.c										\
 							plat/renesas/rz/common/drivers/io/io_emmcdrv.c			\
-							plat/renesas/rz/common/drivers/emmc/emmc_interrupt.c	\
-							plat/renesas/rz/common/drivers/emmc/emmc_utility.c		\
-							plat/renesas/rz/common/drivers/emmc/emmc_mount.c		\
-							plat/renesas/rz/common/drivers/emmc/emmc_init.c			\
-							plat/renesas/rz/common/drivers/emmc/emmc_read.c			\
-							plat/renesas/rz/common/drivers/emmc/emmc_cmd.c			\
-							plat/renesas/rz/common/drivers/emmc/emmc_erase.c		\
-							plat/renesas/rz/common/drivers/emmc/emmc_write.c		\
-							plat/renesas/rz/common/drivers/xspi.c					\
 							plat/renesas/rz/common/plat_image_load.c				\
 							${RZ_TIMER_SOURCES}										\
 							${DDR_SOURCES}											\
-							${XSPI_SOURCE}
+							${EMMC_SOURCES}											\
+							${XSPI_SOURCES}
 
 # Include GICv3 driver files
 include drivers/arm/gic/v3/gicv3.mk

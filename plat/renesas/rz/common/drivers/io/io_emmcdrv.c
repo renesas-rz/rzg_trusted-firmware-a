@@ -209,7 +209,7 @@ static int32_t emmcdrv_block_len(io_entity_t *entity, size_t *length)
 {
 	*length = ((file_state_t *) entity->info)->size;
 
-	NOTICE("%s: len: 0x%08lx\n", __func__, *length);
+	INFO("%s: len: 0x%08lx\n", __func__, *length);
 
 	return IO_SUCCESS;
 }
