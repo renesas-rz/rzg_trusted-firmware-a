@@ -96,9 +96,6 @@ const	uint32_t	ddrphy_train1d_data_d[][2] =
 const	uint32_t	ddrphy_train1d_data_f[][2] =
 {
 //	{0x0006E000, 0x00000000},
-#ifndef DDR_DEBUG
-	{0x00064009, 0x000000ff},
-#endif
 	{0x0006E000, 0x00000001},
 };
 
