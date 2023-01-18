@@ -10,19 +10,29 @@ PLAT_INCLUDES		:=	-Iplat/renesas/rz/soc/g3s/include
 include plat/renesas/rz/common/g3s_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
-BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/pwrc.c				\
-						plat/renesas/rz/soc/g3s/drivers/cpg.c				\
+BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/pwrc.c					\
+						plat/renesas/rz/soc/g3s/drivers/cpg.c					\
 						plat/renesas/rz/soc/g3s/drivers/tzc/tzc400.c
 
-BL2_SOURCES			+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c			\
-						plat/renesas/rz/soc/g3s/plat_storage.c				\
-						plat/renesas/rz/soc/g3s/plat_security.c				\
-						plat/renesas/rz/soc/g3s/bl2_plat_mem_params_desc.c	\
-						plat/renesas/rz/soc/g3s/drivers/sys.c				\
+BL2_SOURCES			+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c				\
+						plat/renesas/rz/soc/g3s/plat_storage.c					\
+						plat/renesas/rz/soc/g3s/plat_security.c					\
+						plat/renesas/rz/soc/g3s/bl2_plat_mem_params_desc.c		\
+						plat/renesas/rz/soc/g3s/drivers/sys.c					\
 						plat/renesas/rz/soc/g3s/drivers/pfc.c
 
-BL31_SOURCES		+=	plat/renesas/rz/soc/g3s/bl31_plat_setup.c			\
+BL31_SOURCES		+=	plat/renesas/rz/soc/g3s/bl31_plat_setup.c				\
 						plat/renesas/rz/soc/g3s/plat_pm.c
+
+EMMC_SOURCES		+=	plat/renesas/rz/soc/g3s/drivers/emmc/emmc_interrupt.c	\
+						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_utility.c		\
+						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_mount.c		\
+						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_init.c		\
+						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_read.c		\
+						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_cmd.c			\
+						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_write.c
+
+XSPI_SOURCES		+=	plat/renesas/rz/common/drivers/xspi.c
 
 DDR_SOURCES			+=	plat/renesas/rz/soc/g3s/plat_ddr_setup.c
 

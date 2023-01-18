@@ -167,25 +167,25 @@ static void pfc_sd_setup(void)
 static const PFC_REGS *pfc_boot_mode_tbls[SYS_BOOT_MODE_MAX] = {
 	pfc_sd_reg_tbl,
 	pfc_sd_reg_tbl,
-	pfc_xspi_reg_tbl,
-	pfc_mux_scif_reg_tbl,
 	pfc_sd_reg_tbl,
-	pfc_xspi_reg_tbl
+	pfc_xspi_reg_tbl,
+	pfc_xspi_reg_tbl,
+	pfc_mux_scif_reg_tbl
 };
 
 //different order here.
 static const uint8_t pfc_boot_mode_tbl_len[SYS_BOOT_MODE_MAX] = {
 	PFC_SD_TBL_NUM,
 	PFC_SD_TBL_NUM,
-	PFC_XSPI_TBL_NUM,
-	PFC_MUX_SCIF_TBL_NUM,
 	PFC_SD_TBL_NUM,
-	PFC_XSPI_TBL_NUM
+	PFC_XSPI_TBL_NUM,
+	PFC_XSPI_TBL_NUM,
+	PFC_MUX_SCIF_TBL_NUM
 };
 
 static void pfc_drive_setup(void)
 {
-	static const uint64_t pfc_iolh_drive_tbl[4] = {0x0000000000000000, 0x0101010101010101, 0x0202020202020202, 0x0303030303030303};
+	static const uint64_t pfc_iolh_drive_tbl[4] = {0x0303030303030303, 0x0202020202020202, 0x0101010101010101, 0x0000000000000000};
 
 	/* Get the boot mode */
 	int16_t boot_mode = sys_get_boot_mode();
@@ -194,15 +194,10 @@ static void pfc_drive_setup(void)
 		const PFC_REGS *p_pins_tbl = pfc_boot_mode_tbls[boot_mode];
 		uint8_t tbl_len = pfc_boot_mode_tbl_len[boot_mode];
 
-		uint32_t sys_lsi_otppoc = mmio_read_32(SYS_LSI_OTPPOC);
-		uint64_t pfc_iolh_drive = 0;
 		int cnt;
-
-		if (0 != (sys_lsi_otppoc & (SYS_LSI_OTPPOC_EN_x_DS_MASK << (SYS_LSI_OTPPOC_EN_x_DS_BASE + (SYS_LSI_OTPPOC_EN_x_DS_WIDTH * boot_mode))))) {
-			uint32_t index = sys_lsi_otppoc & ((SYS_LSI_OTPPOC_x_E_MASK << (SYS_LSI_OTPPOC_x_E_WIDTH * boot_mode)) >> (SYS_LSI_OTPPOC_x_E_WIDTH * boot_mode));
-
-			pfc_iolh_drive = pfc_iolh_drive_tbl[index];
-		}
+		uint32_t sys_lsi_otppoc = mmio_read_32(SYS_LSI_OTPPOC);
+		uint32_t index = (sys_lsi_otppoc >> (SYS_LSI_OTPPOC_x_E_WIDTH * boot_mode)) & SYS_LSI_OTPPOC_x_E_MASK;
+		uint64_t pfc_iolh_drive = pfc_iolh_drive_tbl[index];
 
 		for (cnt = 0; cnt < tbl_len; cnt++) {
 			if (p_pins_tbl[cnt].iolh.flg == PFC_ON) {

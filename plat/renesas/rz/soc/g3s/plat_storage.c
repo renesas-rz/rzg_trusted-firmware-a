@@ -87,30 +87,43 @@ static const io_drv_spec_t emmc_ddr_cfg_spec = {
 #endif /* PLAT_SYSTEM_SUSPEND */
 
 #if PLAT_M33_BOOT_SUPPORT
+#if TRUSTED_BOARD_BOOT
+static const io_block_spec_t spirom_bl22_key_cert_file_spec = {
+	.offset = RZG3S_SPIROM_M33_FW_BASE,
+	.length = RZG3S_TBB_CERT_SIZE,
+};
+static const io_block_spec_t spirom_bl22_content_cert_file_spec = {
+	.offset = spirom_bl22_key_cert_file_spec.offset + RZG3S_TBB_CERT_SIZE,
+	.length = RZG3S_TBB_CERT_SIZE,
+};
+static const io_block_spec_t spirom_bl22_image_spec = {
+	.offset = spirom_bl22_content_cert_file_spec.offset + RZG3S_TBB_CERT_SIZE,
+	.length = RZG3S_M33_FW_SIZE,
+};
+#else /* TRUSTED_BOARD_BOOT */
 static const io_block_spec_t spirom_bl22_image_spec = {
 	.offset = RZG3S_SPIROM_M33_FW_BASE,
 	.length = RZG3S_M33_FW_SIZE,
 };
+#endif /* TRUSTED_BOARD_BOOT */
+
+#if TRUSTED_BOARD_BOOT
+static const io_block_spec_t emmc_bl22_key_cert_file_spec = {
+	.offset = RZG3S_EMMC_M33_FW_BASE,
+	.length = RZG3S_TBB_CERT_SIZE,
+};
+static const io_block_spec_t emmc_bl22_content_cert_file_spec = {
+	.offset = emmc_bl22_key_cert_file_spec.offset + RZG3S_TBB_CERT_SIZE,
+	.length = RZG3S_TBB_CERT_SIZE,
+};
+static const io_block_spec_t emmc_bl22_image_spec = {
+	.offset = emmc_bl22_content_cert_file_spec.offset + RZG3S_TBB_CERT_SIZE,
+	.length = RZG3S_M33_FW_SIZE,
+};
+#else /* TRUSTED_BOARD_BOOT */
 static const io_block_spec_t emmc_bl22_image_spec = {
 	.offset = RZG3S_EMMC_M33_FW_BASE,
 	.length = RZG3S_M33_FW_SIZE,
-};
-#if TRUSTED_BOARD_BOOT
-static const io_block_spec_t spirom_bl22_content_cert_file_spec = {
-	.offset = spirom_bl22_image_spec.offset - RZG3S_M33_CERT_SIZE,
-	.length = RZG3S_M33_CERT_SIZE,
-};
-static const io_block_spec_t spirom_bl22_key_cert_file_spec = {
-	.offset = spirom_bl22_key_cert_file_spec.offset - RZG3S_M33_CERT_SIZE,
-	.length = RZG3S_M33_CERT_SIZE,
-};
-static const io_block_spec_t emmc_bl22_content_cert_file_spec = {
-	.offset = emmc_bl22_image_spec.offset - RZG3S_M33_CERT_SIZE,
-	.length = RZG3S_M33_CERT_SIZE,
-};
-static const io_block_spec_t emmc_bl22_key_cert_file_spec = {
-	.offset = emmc_bl22_key_cert_file_spec.offset - RZG3S_M33_CERT_SIZE,
-	.length = RZG3S_M33_CERT_SIZE,
 };
 #endif /* TRUSTED_BOARD_BOOT */
 #endif /* PLAT_M33_BOOT_SUPPORT */

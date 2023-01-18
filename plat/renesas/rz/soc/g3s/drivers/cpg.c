@@ -25,7 +25,7 @@ typedef struct {
 } CPG_REG_SETTING;
 
 static const CPG_REG_SETTING cpg_early_div_tbl[] = {
-	{ (uintptr_t)CPG_PL1_DDIV,				0x00010000 },	// 2'b00 : 1/1
+	{ (uintptr_t)CPG_PL1_DDIV,				0x00010000 },	// 2'b00:1/1
 };
 
 static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
@@ -69,22 +69,22 @@ static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_static_select_tbl[] = {
-	{ (uintptr_t)CPG_OCTA_SSEL,				0x00010002 },	// 2'b10 : CLK266FIX_CD
-	{ (uintptr_t)CPG_SPI_SSEL,				0x00010002 },	// 2'b10 : CLK266FIX_CD
+	{ (uintptr_t)CPG_OCTA_SSEL,				0x00010002 },	// 2'b10:CLK266FIX_CD
+	{ (uintptr_t)CPG_SPI_SSEL,				0x00010002 },	// 2'b10:CLK266FIX_CD
 };
 
 static const CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
-	{ (uintptr_t)CPG_PLL_DSEL,				0x04550455 },	// 1'b1 : PLL6, 1'b1 : PLL4, 1'b1 : PLL3, 1'b1 : PLL2, 1'b1 : PLL1
-	{ (uintptr_t)CPG_SDHI_DSEL,				0x01110333 },	// 2'b11 : CLK266FIX_C, 2'b11 : CLK266FIX_C, 2'b11 : CLK266FIX_C
+	{ (uintptr_t)CPG_PLL_DSEL,				0x04550455 },	// 1'b1:PLL6, 1'b1:PLL4, 1'b1:PLL3, 1'b1:PLL2, 1'b1:PLL1
+	{ (uintptr_t)CPG_SDHI_DSEL,				0x01110333 },	// 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C
 };
 
 static const CPG_REG_SETTING cpg_dynamic_division_tbl[] = {
-	{ (uintptr_t)CPG_PL2_DDIV,				0x00110000 },	// 3'b000 : 1/1(100MHz), 3'b000 : 1/1(200MHz)
-	{ (uintptr_t)CPG_PL3_DDIV,				0x01110000 },	// 3'b000 : 1/1(200MHz), 3'b000 : 1/1(100MHz), 3'b000 : 1/1(200MHz)
-	{ (uintptr_t)CPG_PL6_DDIV,				0x00110000 },	// 3'b000 : 1/1(250MHz), 3'b000 : 1/1(250MHz)
-	{ (uintptr_t)CPG_SDHI_DDIV,				0x01110111 },	// 1'b1 : 1/2, 1'b1 : 1/2, 1'b1 : 1/2
-	{ (uintptr_t)CPG_OCTA_DDIV,				0x00010003 },	// 3'b011 : 1/8
-	{ (uintptr_t)CPG_SPI_DDIV,				0x00010003 },	// 3'b011 : 1/8
+	{ (uintptr_t)CPG_PL2_DDIV,				0x00110000 },	// 3'b000:1/1(100MHz), 3'b000:1/1(200MHz)
+	{ (uintptr_t)CPG_PL3_DDIV,				0x01110000 },	// 3'b000:1/1(200MHz), 3'b000:1/1(100MHz), 3'b000:1/1(200MHz)
+	{ (uintptr_t)CPG_PL6_DDIV,				0x00110000 },	// 3'b000:1/1(250MHz), 3'b000:1/1(250MHz)
+	{ (uintptr_t)CPG_SDHI_DDIV,				0x01110111 },	// 1'b1:1/2, 1'b1:1/2, 1'b1:1/2
+	{ (uintptr_t)CPG_OCTA_DDIV,				0x00010003 },	// 3'b011:1/8
+	{ (uintptr_t)CPG_SPI_DDIV,				0x00010003 },	// 3'b011:1/8
 };
 
 static const CPG_REG_SETTING cpg_pwrdown_ip_tbl[] = {
@@ -117,7 +117,7 @@ static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
 	{		/* SDHI */
 		(uintptr_t)CPG_CLKON_SDHI,
 		(uintptr_t)CPG_CLKMON_SDHI,
-		0x007F007F,
+		0x00FF00FF,
 		CPG_T_CLK
 	},
 	{		/* USB */
@@ -783,25 +783,6 @@ void cpg_setup(void)
 	cpg_pwrdown_ip_setup();
 }
 
-void cpg_m33_core_setup(void)
-{
-	cpg_clkrst_start(cpg_cm33_clk_rst_tbl, ARRAY_SIZE(cpg_cm33_clk_rst_tbl));
-}
-
-void cpg_suspend_setup(void)
-{
-	cpg_module_stop(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl)); 
-	cpg_clkrst_stop(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
-	cpg_clkrst_stop(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
-}
-
-void cpg_resume_setup(void)
-{
-	cpg_clkrst_start(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
-	cpg_clkrst_start(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
-	cpg_module_start(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
-}
-
 void cpg_active_ddr1(void)
 {
 	cpg_clkrst_start(cpg_ddr_clock_tbl, ARRAY_SIZE(cpg_ddr_clock_tbl));
@@ -819,4 +800,23 @@ void cpg_active_ddr2(void)
 {
 	cpg_clkrst_start(&cpg_ddr_reset_tbl[2], 1);
 	udelay(1);
+}
+
+void cpg_suspend_setup(void)
+{
+	cpg_module_stop(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl)); 
+	cpg_clkrst_stop(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
+	cpg_clkrst_stop(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
+}
+
+void cpg_resume_setup(void)
+{
+	cpg_clkrst_start(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
+	cpg_clkrst_start(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
+	cpg_module_start(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
+}
+
+void cpg_m33_setup(void)
+{
+	cpg_clkrst_start(cpg_cm33_clk_rst_tbl, ARRAY_SIZE(cpg_cm33_clk_rst_tbl));
 }
