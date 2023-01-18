@@ -679,7 +679,7 @@ const	uint32_t	ddrmc_ini_dat[][2] =
 	{677,	0x00000000},
 	{678,	0x01010000},
 	{679,	0x01000001},
-	{680,	0x00020201},
+	{680,	0x00010101},	// 0x00020201 -> 0x00010101
 	{681,	0x00000000},
 	{682,	0x00000fff},
 	{683,	0xffff01ff},
@@ -704,3 +704,4 @@ const	uint32_t	ddrmc_ini_dat[][2] =
 };
 
 const uint32_t ddrmc_ini_dat_size = ARRAY_SIZE(ddrmc_ini_dat);
+
