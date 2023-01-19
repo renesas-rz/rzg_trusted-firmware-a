@@ -10,7 +10,8 @@
 
 void decode_streaming_message_dec (uint32_t codede_message_hex, uint16_t *args_list)
 {
-  switch (codede_message_hex) {
+#ifdef DDR_DEBUG
+	switch (codede_message_hex) {
 	case(0x00000001) :
 		INFO("PMU1:prbsGenCtl:%x\n",args_list[0]);
 		break;
@@ -780,10 +781,10 @@ void decode_streaming_message_dec (uint32_t codede_message_hex, uint16_t *args_l
 		INFO("PMU3: rxToDly  [%d][%d] = %d\n",args_list[0],args_list[1],args_list[2]);
 		break;
 	case(0x01000003) :
-		INFO("PMU3: rxDly	[%d][%d] = %d\n",args_list[0],args_list[1],args_list[2]);
+		INFO("PMU3: rxDly    [%d][%d] = %d\n",args_list[0],args_list[1],args_list[2]);
 		break;
 	case(0x01010003) :
-		INFO("PMU3: txDly	[%d][%d] = %d\n",args_list[0],args_list[1],args_list[2]);
+		INFO("PMU3: txDly    [%d][%d] = %d\n",args_list[0],args_list[1],args_list[2]);
 		break;
 	case(0x01020003) :
 		INFO("PMU3: allFine CDD_RR_%d_%d = %d\n",args_list[0],args_list[1],args_list[2]);
@@ -1250,5 +1251,6 @@ void decode_streaming_message_dec (uint32_t codede_message_hex, uint16_t *args_l
 	default:
 		INFO("PMU Streaming Msg: Debug message not recognized !!  code: %x", codede_message_hex);
 		panic();
-  }
+	}
+#endif
 }
