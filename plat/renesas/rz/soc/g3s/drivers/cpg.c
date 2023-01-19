@@ -327,7 +327,7 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 	{		/* I2C */
 		(uintptr_t)CPG_CLKON_I2C,
 		(uintptr_t)CPG_CLKMON_I2C,
-		0x000F0001,
+		0x000F0003,
 		CPG_T_CLK
 	},
 	{		/* SCIF */
@@ -488,7 +488,7 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 	{		/* I2C */
 		(uintptr_t)CPG_RST_I2C,
 		(uintptr_t)CPG_RSTMON_I2C,
-		0x000F0001,
+		0x000F0003,
 		CPG_T_RST
 	},
 	{		/* SCIF */

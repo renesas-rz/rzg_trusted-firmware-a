@@ -10,8 +10,9 @@ PLAT_INCLUDES		:=	-Iplat/renesas/rz/soc/g3s/include
 include plat/renesas/rz/common/g3s_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
-BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/pwrc.c					\
-						plat/renesas/rz/soc/g3s/drivers/cpg.c					\
+BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c					\
+						plat/renesas/rz/soc/g3s/drivers/pwrc.c					\
+						plat/renesas/rz/soc/g3s/drivers/riic.c					\
 						plat/renesas/rz/soc/g3s/drivers/tzc/tzc400.c
 
 BL2_SOURCES			+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c				\

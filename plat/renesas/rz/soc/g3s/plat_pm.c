@@ -73,6 +73,7 @@ static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 #endif
 
 	plat_copy_code_to_system_ram();
+    pwrc_setup();
 }
 
 static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)

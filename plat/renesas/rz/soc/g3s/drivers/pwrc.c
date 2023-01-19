@@ -31,7 +31,7 @@ bool pwrc_is_ddr_retention_mode(void)
 	return false;
 }
 
-void pwrc_suspend_to_ram(void)
+void __dead2 pwrc_suspend_to_ram(void)
 {
 	/* disable MMU */
 	disable_mmu_el3();

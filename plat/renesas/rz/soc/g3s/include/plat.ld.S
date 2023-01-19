@@ -24,7 +24,7 @@ SECTIONS
 	.sram : ALIGN(PAGE_SIZE) {
 		__BL31_PMUSRAM_START__ = .;
 		*pwrc.o
-		*iic_dvfs.o
+		*riic.o
 		. = ALIGN(PAGE_SIZE);
 		__BL31_PMUSRAM_END__ = .;
 	} >SRAM AT>DRAM

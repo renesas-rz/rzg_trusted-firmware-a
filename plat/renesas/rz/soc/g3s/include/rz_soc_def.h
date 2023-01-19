@@ -23,6 +23,8 @@
 #define RZG3S_SCIF_4_BASE				(0x1004C800UL)
 #define RZG3S_XSPI_BASE					(0x10060000UL)
 #define RZG3S_OCTA_BASE					(0x10080000UL)
+#define RZG3S_I2C_0_BASE				(0x10090000UL)
+#define RZG3S_I2C_1_BASE				(0x10090400UL)
 #define RZG3S_MHU_BASE					(0x10400000UL)
 #define RZG3S_SYC_BASE					(0x11000000UL)
 #define RZG3S_CPG_BASE					(0x11010000UL)
@@ -115,7 +117,9 @@
 #define RZ_SOC_SYSC_BASE_DEVID			SYS_LSI_DEVID
 #define RZ_SOC_OTP_BASE_DEVID			(RZG3S_OTP_BASE + 0x1178)		/* OTPPRODUCT */	//TODO: G3S: Check OTP register used. Document not available at time of writing
 #define RZ_SOC_OTP_BASE_CHIPID			(RZG3S_OTP_BASE + 0x1140)		/* OTPCPID0 */		//TODO: G3S: Check OTP register used. Document not available at time of writing
-	
+
+#define RZ_SOC_I2C_BASE					RZG3S_I2C_1_BASE
+
 #define SYS_BASE						RZG3S_SYSC_BASE
 #define PFC_BASE						RZG3S_GPIO_BASE
 #define CPG_BASE						RZG3S_CPG_BASE

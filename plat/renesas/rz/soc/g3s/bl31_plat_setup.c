@@ -12,19 +12,23 @@
 #include <plat/common/common_def.h>
 
 #include <pwrc.h>
+#include <riic.h>
 #include <scifa.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 
+#ifdef PLAT_EXTRA_LD_SCRIPT
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_START__, BL31_PMUSRAM_START);
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_END__, BL31_PMUSRAM_END);
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_BASE__, BL31_PMUSRAM_BASE);
+#endif
 
 static console_t rzg3s_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
 
 void plat_copy_code_to_system_ram(void)
 {
+#ifdef PLAT_EXTRA_LD_SCRIPT
 	uint32_t attr;
 	const uintptr_t pmu_code_load = BL31_PMUSRAM_BASE;
 	const uintptr_t pmu_code_image = BL31_PMUSRAM_START;
@@ -43,6 +47,7 @@ void plat_copy_code_to_system_ram(void)
 	plat_invalidate_icache();
 	dsb();
 	isb();
+#endif
 }
 
 void bl31_early_platform_setup2(u_register_t arg0,
@@ -92,8 +97,6 @@ void bl31_plat_arch_setup(void)
 
 	setup_page_tables(bl31_regions, rzg3s_mmap);
 	enable_mmu_el3(0);
-
-    plat_copy_code_to_system_ram();
 }
 
 void bl31_platform_setup(void)
@@ -103,6 +106,9 @@ void bl31_platform_setup(void)
 	plat_gic_driver_init();
 	plat_gic_init();
 #endif
+
+	plat_copy_code_to_system_ram();
+	pwrc_setup();
 }
 
 entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
