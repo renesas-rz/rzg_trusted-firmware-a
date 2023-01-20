@@ -306,16 +306,6 @@ void rz_io_setup(void)
 		fip_policies[FIP_IMAGE_ID] = fip_spirom_policy;
 	} else if (boot_mode == SYS_BOOT_MODE_EMMC_1_8 ||
 			   boot_mode == SYS_BOOT_MODE_EMMC_3_3) {
-		if (emmc_init() != EMMC_SUCCESS) {
-			NOTICE("BL2: Failed to eMMC driver initialize.\n");
-			panic();
-		}
-		emmc_memcard_power(EMMC_POWER_ON);
-		if (emmc_mount() != EMMC_SUCCESS) {
-			NOTICE("BL2: Failed to eMMC mount operation.\n");
-			panic();
-		}
-
 		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
 

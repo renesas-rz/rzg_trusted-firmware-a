@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2015-2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -274,6 +274,16 @@ static int32_t emmcdrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
 				io_dev_info_t **dev_info)
 {
 	*dev_info = (io_dev_info_t *) &emmcdrv_dev_info;
+
+	if (emmc_init() != EMMC_SUCCESS) {
+		ERROR("Failed to eMMC driver initialize.\n");
+		panic();
+	}
+	emmc_memcard_power(EMMC_POWER_ON);
+	if (emmc_mount() != EMMC_SUCCESS) {
+		ERROR("Failed to eMMC mount operation.\n");
+		panic();
+	}
 
 	return IO_SUCCESS;
 }
