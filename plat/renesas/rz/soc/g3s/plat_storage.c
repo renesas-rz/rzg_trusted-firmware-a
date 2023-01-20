@@ -9,19 +9,18 @@
 #include <drivers/io/io_driver.h>
 #include <drivers/io/io_storage.h>
 #include <drivers/io/io_fip.h>
-#include <drivers/io/io_memmap.h>
 #include <io_common.h>
 #include <io_emmcdrv.h>
+#include <io_xspidrv.h>
 #include <lib/mmio.h>
 #include <tools_share/firmware_image_package.h>
 
 #include <rz_soc_def.h>
 #include <sys.h>
-#include <xspi.h>
 #include <emmc_def.h>
 
-static uintptr_t memdrv_dev_handle;
 static uintptr_t fip_dev_handle;
+static uintptr_t xspidrv_dev_handle;
 static uintptr_t emmcdrv_dev_handle;
 
 static uintptr_t boot_io_drv_id;
@@ -129,7 +128,7 @@ static const io_block_spec_t emmc_bl22_image_spec = {
 #endif /* PLAT_M33_BOOT_SUPPORT */
 
 static int32_t open_emmcdrv(const uintptr_t spec);
-static int32_t open_memmap(const uintptr_t spec);
+static int32_t open_xspidrv(const uintptr_t spec);
 static int32_t open_fipdrv(const uintptr_t spec);
 
 struct plat_io_policy {
@@ -144,9 +143,9 @@ static const struct plat_io_policy fip_emmc_policy = {
 	&open_emmcdrv
 };
 static const struct plat_io_policy fip_spirom_policy = {
-	&memdrv_dev_handle,
+	&xspidrv_dev_handle,
 	(uintptr_t) &spirom_block_spec,
-	&open_memmap
+	&open_xspidrv
 };
 
 static struct plat_io_policy fip_policies[] = {
@@ -195,27 +194,27 @@ static struct plat_io_policy fip_policies[] = {
 static const struct plat_io_policy blk_spirom_policies[] = {
 #if PLAT_SYSTEM_SUSPEND
 	{
-		&memdrv_dev_handle,
+		&xspidrv_dev_handle,
 		(uintptr_t) &spirom_ddr_cfg_spec,
-		&open_memmap
+		&open_xspidrv
 	},
 #endif
 #if PLAT_M33_BOOT_SUPPORT
 	{
-		&memdrv_dev_handle,
+		&xspidrv_dev_handle,
 		(uintptr_t) &spirom_bl22_image_spec,
-		&open_memmap
+		&open_xspidrv
 	},
 #if TRUSTED_BOARD_BOOT
 	{
-		&memdrv_dev_handle,
+		&xspidrv_dev_handle,
 		(uintptr_t) &spirom_bl22_key_cert_file_spec,
-		&open_memmap
+		&open_xspidrv
 	},
 	{
-		&memdrv_dev_handle,
+		&xspidrv_dev_handle,
 		(uintptr_t) &spirom_bl22_content_cert_file_spec,
-		&open_memmap
+		&open_xspidrv
 	},
 #endif
 #endif
@@ -263,16 +262,16 @@ static int32_t open_fipdrv(const uintptr_t spec)
 	return result;
 }
 
-static int32_t open_memmap(const uintptr_t spec)
+static int32_t open_xspidrv(const uintptr_t spec)
 {
 	uintptr_t handle;
 	int32_t result;
 
-	result = io_dev_init(memdrv_dev_handle, 0);
+	result = io_dev_init(xspidrv_dev_handle, 0);
 	if (result != 0)
 		return result;
 
-	result = io_open(memdrv_dev_handle, spec, &handle);
+	result = io_open(xspidrv_dev_handle, spec, &handle);
 	if (result == 0)
 		io_close(handle);
 
@@ -286,7 +285,7 @@ static int32_t open_emmcdrv(const uintptr_t spec)
 
 void rz_io_setup(void)
 {
-	const io_dev_connector_t *memmap;
+	const io_dev_connector_t *xspi;
 	const io_dev_connector_t *emmc;
 	const io_dev_connector_t *rzsoc;
 	uint16_t boot_mode;
@@ -301,9 +300,8 @@ void rz_io_setup(void)
 
 	if (boot_mode == SYS_BOOT_MODE_SPI_1_8 ||
 		boot_mode == SYS_BOOT_MODE_SPI_3_3) {
-		xspi_setup();
-		register_io_dev_memmap(&memmap);
-		io_dev_open(memmap, 0, &memdrv_dev_handle);
+		register_io_dev_xspidrv(&xspi);
+		io_dev_open(xspi, 0, &xspidrv_dev_handle);
 
 		fip_policies[FIP_IMAGE_ID] = fip_spirom_policy;
 	} else if (boot_mode == SYS_BOOT_MODE_EMMC_1_8 ||
@@ -323,6 +321,7 @@ void rz_io_setup(void)
 
 		fip_policies[FIP_IMAGE_ID] = fip_emmc_policy;
 	} else {
+		ERROR("Unsupported IO device %d.\n", boot_mode);
 		panic();
 	}
 }

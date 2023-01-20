@@ -64,8 +64,8 @@ endif
 
 BL2_SOURCES				+=	common/desc_image_load.c								\
 							drivers/io/io_storage.c									\
-							drivers/io/io_memmap.c									\
 							drivers/io/io_fip.c										\
+							plat/renesas/rz/common/drivers/io/io_xspidrv.c			\
 							plat/renesas/rz/common/drivers/io/io_emmcdrv.c			\
 							plat/renesas/rz/common/plat_image_load.c				\
 							${RZ_TIMER_SOURCES}										\
