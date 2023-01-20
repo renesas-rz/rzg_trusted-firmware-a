@@ -21,22 +21,18 @@
 #include <ddr.h>
 #include <pwrc.h>
 #include <xspi.h>
-#include <rz_private.h>
-
 
 #if PLAT_SYSTEM_SUSPEND
-uint32_t ddr_params[RZG3S_DDR_CONFIG_MAX / sizeof(uint32_t)];
-
-static image_info_t ddr_params_info = {
+static image_info_t ddr_config_info = {
 	.h.type = (uint8_t)PARAM_IMAGE_BINARY,
 	.h.version = (uint8_t)VERSION_2,
 	.h.size = (uint16_t)sizeof(image_info_t),
 	.h.attr = 0,
-	.image_max_size = sizeof(ddr_params),
-	.image_base = (uintptr_t)&ddr_params
+	.image_max_size = sizeof(csr_table),
+	.image_base = (uintptr_t)&csr_table
 };
 
-static int save_ddr_params(unsigned int image_id, image_info_t *image_data)
+static int save_ddr_config(unsigned int image_id, image_info_t *image_data)
 {
 	uintptr_t dev_handle;
 	uintptr_t image_handle;
@@ -65,7 +61,7 @@ static int save_ddr_params(unsigned int image_id, image_info_t *image_data)
 		return io_result;
 	}
 
-	INFO("Saving image id=%u\n", image_id);
+	INFO("Saving DDR retantion info.\n");
 
 	io_result = io_size(image_handle, &image_size);
 	if ((io_result != 0) || (image_size == 0U)) {
@@ -90,7 +86,7 @@ static int save_ddr_params(unsigned int image_id, image_info_t *image_data)
 		goto exit;
 	}
 
-	INFO("Image id=%u saved\n", image_id);
+	INFO("DDR Retantion Info saved.\n");
 
 exit:
 	(void)io_close(image_handle);
@@ -107,19 +103,19 @@ void plat_ddr_setup(void)
 #if !DEBUG_FPGA
 		ddr_setup();
 #endif
-		if (0 != save_ddr_params(DDR_CONFIG_ID, &ddr_params_info)) {
-			ERROR("PLAT: Failed to save DDR retention parameters.\n");
+		if (0 != save_ddr_config(DDR_CONFIG_ID, &ddr_config_info)) {
+			ERROR("Failed to save DDR retention info.\n");
 			panic();
 		}
 	}
 	else
 	{
-		if (0 != load_auth_image(DDR_CONFIG_ID, &ddr_params_info)) {
-			ERROR("PLAT: Failed to load DDR retention parameters.\n");
+		if (0 != load_auth_image(DDR_CONFIG_ID, &ddr_config_info)) {
+			ERROR("Failed to load DDR retention info.\n");
 			panic();
 		}
 #if !DEBUG_FPGA
-		// TODO: ddr_resume();
+		ddr_retention_exit();
 #endif
 	}
 }

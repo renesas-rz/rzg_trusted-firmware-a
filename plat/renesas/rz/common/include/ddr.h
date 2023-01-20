@@ -17,7 +17,7 @@
 extern uint16_t csr_table[SCR_SIZE];
 
 void ddr_setup(void);
-void retention_entry(void);
-void retention_exit(void);
+void ddr_retention_entry(void);
+void ddr_retention_exit(void);
 
 #endif	/* __DDR_H__ */
