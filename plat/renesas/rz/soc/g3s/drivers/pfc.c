@@ -143,6 +143,9 @@ static void pfc_scif_setup(void)
 
 static void pfc_xspi_setup(void)
 {
+	/* Set OEN of XSPI Multi/OctaRAM IO block. */
+	mmio_write_32(PFC_XSPI_OEN, XSPI_OEN_SORST_N);
+
 	pfc_write_registers(PFC_XSPI_TBL_NUM, pfc_xspi_reg_tbl);
 }
 
@@ -185,8 +188,6 @@ static const uint8_t pfc_boot_mode_tbl_len[SYS_BOOT_MODE_MAX] = {
 
 static void pfc_drive_setup(void)
 {
-	static const uint64_t pfc_iolh_drive_tbl[4] = {0x0303030303030303, 0x0202020202020202, 0x0101010101010101, 0x0000000000000000};
-
 	/* Get the boot mode */
 	int16_t boot_mode = sys_get_boot_mode();
 
@@ -195,14 +196,11 @@ static void pfc_drive_setup(void)
 		uint8_t tbl_len = pfc_boot_mode_tbl_len[boot_mode];
 
 		int cnt;
-		uint32_t sys_lsi_otppoc = mmio_read_32(SYS_LSI_OTPPOC);
-		uint32_t index = (sys_lsi_otppoc >> (SYS_LSI_OTPPOC_x_E_WIDTH * boot_mode)) & SYS_LSI_OTPPOC_x_E_MASK;
-		uint64_t pfc_iolh_drive = pfc_iolh_drive_tbl[index];
 
 		for (cnt = 0; cnt < tbl_len; cnt++) {
 			if (p_pins_tbl[cnt].iolh.flg == PFC_ON) {
 				/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
-				mmio_write_64(p_pins_tbl[cnt].iolh.reg, (pfc_iolh_drive & p_pins_tbl[cnt].iolh.val));
+				mmio_write_64(p_pins_tbl[cnt].iolh.reg, p_pins_tbl[cnt].iolh.val);
 			}
 		}
 	}

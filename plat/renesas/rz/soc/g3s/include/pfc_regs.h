@@ -480,6 +480,7 @@
 #define PFC_FILCLKSEL3F					(PFC_BASE + 0x29F8)	/* Digital noise filter (FILCLKSEL) register */
 #define PFC_FILCLKSEL40					(PFC_BASE + 0x2A00)	/* Digital noise filter (FILCLKSEL) register */
 #define PFC_ETH_MII						(PFC_BASE + 0x3018)	/* Register for setting the mode of ETH MII / RGMII */
+#define PFC_XSPI_OEN					(PFC_BASE + 0x3020)	/* Register for setting the OEN of XSPI Multi/OCTA */
 
 /* Combined terminal setting */
 /* Definition for port register */
@@ -723,6 +724,8 @@
 /* Register for setting the mode of ETH MII / RGMII */
 #define ETH_MII_0_MII		(1 << 0)
 #define ETH_MII_1_MII		(1 << 1)
+#define XSPI_OEN_SORST_N	(1 << 0)
+
 
 #define	PFC_SET_TBL_NUM		(11)
 #define	PFC_OFF				(0)
