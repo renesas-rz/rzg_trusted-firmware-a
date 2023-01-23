@@ -196,6 +196,24 @@ static void plat_tzc_spi_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+		},
+		{
+			.base = RZG3S_SPIROM_BASE,
+			.end  = (RZG3S_SPIROM_BASE + RZG3S_SPIROM_SIZE - 1ULL),
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
+		},
+		{
+			.base = RZG3S_XSPI_BASE,
+			.end  = (RZG3S_XSPI_BASE + 0x1FFFFULL),
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
+		},
+		{
+			.base = RZG3S_OCTA_BASE,
+			.end  = (RZG3S_OCTA_BASE + 0x0FFFFULL),
 			.sec_attr = TZC_REGION_S_NONE,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
