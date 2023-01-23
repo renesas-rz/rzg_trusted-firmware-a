@@ -26,9 +26,9 @@ bool pwrc_board_is_resume(void)
 		panic();
 
 		if (0 == (0x01 & ctrl_reg))
-			is_retention = true;
-		else
 			is_retention = false;
+		else
+			is_retention = true;
 
 		first_call = false;
 	}
