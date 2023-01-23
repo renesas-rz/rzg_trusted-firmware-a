@@ -76,13 +76,14 @@ BL2_SOURCES				+=	common/desc_image_load.c								\
 # Include GICv3 driver files
 include drivers/arm/gic/v3/gicv3.mk
 
-BL31_SOURCES			:=	plat/common/plat_gicv3.c								\
+BL31_SOURCES			+=	plat/common/plat_gicv3.c								\
 							plat/common/plat_psci_common.c							\
 							plat/renesas/rz/common/plat_topology.c					\
 							plat/renesas/rz/common/plat_gic.c						\
 							plat/renesas/rz/common/rz_plat_sip_handler.c			\
 							plat/renesas/rz/common/rz_sip_svc.c						\
 							${GICV3_SOURCES}
+
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <stdint.h>
+#include <stddef.h>
 #include <assert.h>
-#include <string.h>
 
 #include <arch.h>
 #include <arch_helpers.h>
@@ -15,20 +16,22 @@
 #include <plat/common/platform.h>
 
 #include <cpg.h>
+#include <ddr.h>
 #include <pwrc.h>
 #include <sys_regs.h>
 #include <rz_private.h>
+#include <pwrc_board.h>
+
+extern void pwrc_func_call_with_pmustack(uintptr_t jump, void *arg);
 
 static void __dead2 pwrc_go_suspend_to_ram(void)
 {
-	// TODO
+// TODO	ddr_retention_entry();
+
+	pwrc_board_sleep_on();
+
 	while (1)
 		wfi();
-}
-
-bool pwrc_is_ddr_retention_mode(void)
-{
-	return false;
 }
 
 void __dead2 pwrc_suspend_to_ram(void)
@@ -36,9 +39,13 @@ void __dead2 pwrc_suspend_to_ram(void)
 	/* disable MMU */
 	disable_mmu_el3();
 
+#if PLAT_SYSTEM_SUSPEND_awo
 	cpg_suspend_setup();
+#endif
 
-	pwrc_go_suspend_to_ram();
+	pwrc_func_call_with_pmustack((uintptr_t)pwrc_go_suspend_to_ram, NULL);
+
+	panic();
 }
 
 void pwrc_setup(void)
@@ -50,4 +57,6 @@ void pwrc_setup(void)
 
 	mmio_write_32(SYS_CA55_CFG_RVAH0, rvah0);
 	mmio_write_32(SYS_CA55_CFG_RVAL0, rval0);
+
+	pwrc_board_setup();
 }
