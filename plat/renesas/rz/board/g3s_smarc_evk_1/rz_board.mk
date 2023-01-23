@@ -8,7 +8,8 @@ DDR_PLL4	:= 1866
 
 $(eval $(call add_define,DDR_PLL4))
 
-DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr.c
+DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr.c						\
+				plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr_retention_entry.c
 
 ifneq (${LPDDR4}, 1)
 DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/phyinit_param_ddr4.c		\
