@@ -37,7 +37,8 @@ EMMC_SOURCES		+=	plat/renesas/rz/soc/g3s/drivers/emmc/emmc_interrupt.c	\
 
 XSPI_SOURCES		+=	plat/renesas/rz/common/drivers/xspi.c
 
-DDR_SOURCES			+=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr.c
+DDR_SOURCES			+=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr.c			\
+						plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr_retention_entry.c
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 	# Include the selected chain of trust sources.

@@ -133,13 +133,13 @@ static void update_mc(void);
 // static int8_t dwc_ddrphy_CDD_abs(uint8_t val);
 static void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(void);
 static uint32_t get_mail(uint8_t mode_32bits);
-static void DDRTOP_mc_apb_rmw (uint32_t addr, uint32_t data, uint32_t mask);
-static void DDRTOP_mc_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
-static void DDRTOP_mc_param_wr(uint32_t addr, uint32_t offset, uint32_t width, uint32_t data);
+// static void DDRTOP_mc_apb_rmw (uint32_t addr, uint32_t data, uint32_t mask);
+// void DDRTOP_mc_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
+void DDRTOP_mc_param_wr(uint32_t addr, uint32_t offset, uint32_t width, uint32_t data);
 static uint32_t DDRTOP_mc_param_rd(uint32_t addr, uint32_t offset, uint32_t width);
-static void DDRTOP_mc_param_poll(uint32_t addr, uint32_t offset, uint32_t width, uint32_t data);
+void DDRTOP_mc_param_poll(uint32_t addr, uint32_t offset, uint32_t width, uint32_t data);
 // static void dwc_ddrphy_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask);
-static void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
+// void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
 static void decode_major_message (uint32_t mail);
 static void decode_streaming_message (void);
 void decode_streaming_message_dec (uint32_t codede_message_hex, uint16_t *args_list);
@@ -213,38 +213,8 @@ void ddr_setup(void)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-// 12_retention_entry
-void ddr_retention_entry(void)
-{
-	// step 1	Stop DRAM access.	
-	// 			After this step, it is prohibited DRAM access until completing the retention exit sequence.	
-	// step 2	Disable PhyMaster. PPTTrainSetup_p0.PhyMstrTrainInterval=0
-	dwc_ddrphy_apb_wr(0x020010, 0);
-	// step 3	Wait for MC to ready. while(controller_busy!=0)
-	DDRTOP_mc_param_poll(CONTROLLER_BUSY_ADDR, CONTROLLER_BUSY_OFFSET, CONTROLLER_BUSY_WIDTH, 0);
-	// step 4	Disable SREQ_REQ. SREQ_REQ_en=0b000
-	DDRTOP_mc_param_wr(MCAR_SRCTL0, 0, 3, 0);
-	// step 5	//Enter SR LONG MC GATE
-	DDRTOP_mc_param_wr(LP_CMD_ADDR, LP_CMD_OFFSET, LP_CMD_WIDTH, 0b1010001);			// lp_cmd=0b10_100_01
-	DDRTOP_mc_param_poll(LP_STATE_ADDR, LP_STATE_OFFSET, LP_STATE_WIDTH, 0b1001010);	// while(lp_state!=0b1001010)
-	// step 6	DFI frequency change to LP3
-	DDRTOP_mc_param_wr(DFIBUS_FREQ_F0_ADDR, DFIBUS_FREQ_F0_OFFSET, DFIBUS_FREQ_F0_WIDTH, 0x1f);
-	// step 7	dfi_init_start=1
-	DDRTOP_mc_param_wr(MCAR_SRCTL0, 16, 1, 1);
-	// step 8	while(DWC_DDRPHYA_APBONLY0_DfiInitCompleteShadow!=0)
-	dwc_ddrphy_apb_poll(0x06E0fa, (0 << 0), (1 << 0));
-	// step 9	dfi_init_start=0
-	DDRTOP_mc_param_wr(MCAR_SRCTL0, 16, 1, 0);
-	// step 10	while(DWC_DDRPHYA_APBONLY0_DfiInitCompleteShadow!=1)
-	dwc_ddrphy_apb_poll(0x06E0fa, (1 << 0), (1 << 0));
-	// step 11	PwrOkIn=0
-	// step 12	Wait 18 DfiClk.
-	// step 13	Shutdown VDD, and/or VAA.
-}
-
-/////////////////////////////////////////////////////////////////////////////////
 // 13_retention_exit
-void ddr_retention_exit(void)
+void retention_exit(void)
 {
 	// step 1	Bring up VDD, and VAA. VAA are limited to a maximum supply ramp rate of 5 mV/us.
 	// step 2	Assert all resets.
@@ -727,38 +697,6 @@ static uint32_t get_mail(uint8_t mode_32bits)
 	return mail;
 }
 
-
-//DDRTOP_mc
-static void DDRTOP_mc_apb_rmw (uint32_t addr, uint32_t data, uint32_t mask)
-{
-	uint32_t tmp_data;
-	tmp_data = DDRTOP_mc_apb_rd(addr);
-	data = (data & mask) | (tmp_data & (~mask));
-	DDRTOP_mc_apb_wr(addr, data);
-}
-
-static void DDRTOP_mc_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
-{
-	uint32_t tmp_data;
-	tmp_data = DDRTOP_mc_apb_rd(addr);
-	tmp_data &= mask;
-	while (tmp_data != data) {
-		// DDRTOP_proc_wait_PCLK(10);
-		udelay(1);
-		tmp_data = DDRTOP_mc_apb_rd(addr);
-		tmp_data &= mask;
-	}
-}
-
-static void DDRTOP_mc_param_wr(uint32_t addr, uint32_t offset, uint32_t width, uint32_t data)
-{
-	uint32_t tmp_data;
-	uint32_t tmp_mask;
-	tmp_data = data << offset;
-	tmp_mask = ((1 << width) - 1) << offset;
-	DDRTOP_mc_apb_rmw(addr, tmp_data, tmp_mask);
-}
-
 static uint32_t DDRTOP_mc_param_rd(uint32_t addr, uint32_t offset, uint32_t width)
 {
 	uint32_t tmp_data;
@@ -768,43 +706,6 @@ static uint32_t DDRTOP_mc_param_rd(uint32_t addr, uint32_t offset, uint32_t widt
 	return (tmp_data & tmp_mask) >> offset;
 }
 
-// task automatic DDRTOP_mc_param_poll(
-// 		inpu	[31:0]	addr
-// 	,	input	int		offset
-// 	,	input	int		width
-// 	,	input	[31:0]	data
-static void DDRTOP_mc_param_poll(uint32_t addr, uint32_t offset, uint32_t width, uint32_t data)
-{
-	uint32_t tmp_data;
-	uint32_t tmp_mask;
-	tmp_data = data << offset;
-	tmp_mask = ((1 << width) - 1) << offset;
-	DDRTOP_mc_apb_poll(addr, tmp_data, tmp_mask);
-}
-
-//ddrphy_top_wrap
-#if 0
-static void dwc_ddrphy_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask)
-{
-	uint32_t tmp_data;
-	tmp_data = DDRTOP_mc_apb_rd(addr);
-	data = (data & mask) | (tmp_data & (~mask));
-	DDRTOP_mc_apb_wr(addr, data);
-}
-#endif
-
-static void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
-{
-	uint32_t tmp_data;
-	tmp_data = DDRTOP_mc_apb_rd(addr);
-	tmp_data &= mask;
-	while (tmp_data != data) {
-		// DDRTOP_proc_wait_PCLK(10);
-		udelay(1);
-		tmp_data = DDRTOP_mc_apb_rd(addr);
-		tmp_data &= mask;
-	}
-}
 static void decode_major_message (uint32_t mail)
 {
 #ifdef DDR_DEBUG
