@@ -87,7 +87,7 @@
  * BL22 (Cortex-M33)
  ******************************************************************************/
 #if PLAT_M33_BOOT_SUPPORT
-#define BL22_BASE					U(0x00020000)
+#define BL22_BASE					U(0x00023000)
 #define BL22_LIMIT					U(0x00060000)
 #endif /* PLAT_M33_BOOT_SUPPORT */
 

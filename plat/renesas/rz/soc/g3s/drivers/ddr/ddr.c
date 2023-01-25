@@ -214,7 +214,7 @@ void ddr_setup(void)
 
 /////////////////////////////////////////////////////////////////////////////////
 // 13_retention_exit
-void retention_exit(void)
+void ddr_retention_exit(void)
 {
 	// step 1	Bring up VDD, and VAA. VAA are limited to a maximum supply ramp rate of 5 mV/us.
 	// step 2	Assert all resets.
