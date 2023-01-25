@@ -46,50 +46,49 @@
  * BL2 specific defines.
  ******************************************************************************/
 #if !DEBUG_FPGA
-#define BL2_BASE					(0x000A3000)
-#define BL2_LIMIT					(0x00110000)
+#define BL2_BASE					U(0x000A3000)
+#define BL2_LIMIT					U(0x00110000)
 #else
-#define BL2_BASE					(0x000A3000)
-#define BL2_LIMIT					(0x000C3000)
+#define BL2_BASE					U(0x000A3000)
+#define BL2_LIMIT					U(0x000C3000)
 #endif
 
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
 #if !DEBUG_FPGA
-#define BL31_BASE					(0x44000000)
-#define BL31_LIMIT					(0x44040000)
+#define BL31_BASE					U(0x44000000)
+#define BL31_LIMIT					U(0x44040000)
 #else
-#define BL31_BASE					(0x000E0000)
-#define BL31_LIMIT					(0x00100000)
+#define BL31_BASE					U(0x000E0000)
+#define BL31_LIMIT					U(0x00100000)
 #endif
 
-#define BL31_SRAM_BASE				(0x00110000)
-#define BL31_SRAM_SIZE				(0x00008000)
-#define BL31_SRAM_LIMIT				(BL31_SRAM_BASE + BL31_SRAM_SIZE)
+#define BL31_SRAM_BASE				U(0x00118000)
+#define BL31_SRAM_LIMIT				U(0x00120000)
 
-#define PLAT_TRUSTED_MAILBOX_BASE   (BL31_LIMIT)
+#define PLAT_TRUSTED_MAILBOX_BASE   BL31_LIMIT
 
 /*******************************************************************************
  * BL32 specific defines.
  ******************************************************************************/
 #ifndef SPD_none
-#define BL32_BASE					(0x44100000)
-#define BL32_LIMIT					(BL32_BASE + 0x00100000)
+#define BL32_BASE					U(0x44100000)
+#define BL32_LIMIT					U(0x44200000)
 #endif
 
 /*******************************************************************************
  * BL33
  ******************************************************************************/
-#define BL33_BASE					(0x50000000)
-#define BL33_LIMIT					(BL33_BASE + 0x08000000)
+#define BL33_BASE					U(0x50000000)
+#define BL33_LIMIT					U(0x58000000)
 
 /*******************************************************************************
  * BL22 (Cortex-M33)
  ******************************************************************************/
 #if PLAT_M33_BOOT_SUPPORT
-#define BL22_BASE					(0x23000)
-#define BL22_LIMIT					(BL22_BASE + 0x00040000)
+#define BL22_BASE					U(0x00020000)
+#define BL22_LIMIT					U(0x00060000)
 #endif /* PLAT_M33_BOOT_SUPPORT */
 
 /*******************************************************************************
