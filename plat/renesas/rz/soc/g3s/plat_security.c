@@ -127,7 +127,7 @@ static void plat_tzc_msram_setup(void)
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
 			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 		{}
 	};
@@ -138,7 +138,7 @@ static void plat_tzc_msram_setup(void)
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
 			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 		{}
 	};

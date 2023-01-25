@@ -20,8 +20,11 @@ DEBUG_FPGA						:= 0
 
 ifneq (${PLAT_SYSTEM_SUSPEND},0)
 override PLAT_SYSTEM_SUSPEND_${PLAT_SYSTEM_SUSPEND} := 1
-override PLAT_M33_BOOT_SUPPORT	:= 1
 override PLAT_SYSTEM_SUSPEND	:= 1
+endif
+
+ifneq (${PLAT_SYSTEM_SUSPEND_awo},0)
+override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 
 $(eval $(call add_define,DEBUG_FPGA))
