@@ -19,7 +19,7 @@
 #include "io_emmcdrv.h"
 #include "io_private.h"
 
-static uint8_t sector_buf[EMMC_SECTOR_SIZE];
+static uint8_t sector_buf[EMMC_SECTOR_SIZE] __attribute__ ((aligned (8)));
 
 static int32_t emmcdrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
 				io_dev_info_t **dev_info);

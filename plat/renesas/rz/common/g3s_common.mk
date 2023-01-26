@@ -20,8 +20,11 @@ DEBUG_FPGA						:= 0
 
 ifneq (${PLAT_SYSTEM_SUSPEND},0)
 override PLAT_SYSTEM_SUSPEND_${PLAT_SYSTEM_SUSPEND} := 1
-override PLAT_M33_BOOT_SUPPORT	:= 1
 override PLAT_SYSTEM_SUSPEND	:= 1
+endif
+
+ifneq (${PLAT_SYSTEM_SUSPEND_awo},0)
+override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 
 $(eval $(call add_define,DEBUG_FPGA))
@@ -76,13 +79,14 @@ BL2_SOURCES				+=	common/desc_image_load.c								\
 # Include GICv3 driver files
 include drivers/arm/gic/v3/gicv3.mk
 
-BL31_SOURCES			:=	plat/common/plat_gicv3.c								\
+BL31_SOURCES			+=	plat/common/plat_gicv3.c								\
 							plat/common/plat_psci_common.c							\
 							plat/renesas/rz/common/plat_topology.c					\
 							plat/renesas/rz/common/plat_gic.c						\
 							plat/renesas/rz/common/rz_plat_sip_handler.c			\
 							plat/renesas/rz/common/rz_sip_svc.c						\
 							${GICV3_SOURCES}
+
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 

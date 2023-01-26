@@ -70,7 +70,13 @@ void sys_m33_core_boot_op(uintptr_t vector)
 bool sys_is_m33_core_booted(void)
 {
 	bool is_booted = false;
-	// TODO
+
+	uint32_t clkmon = mmio_read_32(CPG_CLKMON_CM33) & 0x00000001;
+	uint32_t rstmon = mmio_read_32(CPG_RSTMON_CM33) & 0x00000007;
+
+	if ((0x00000001 == clkmon) && (0x00000000 == rstmon))
+		is_booted = true;
+
 	return is_booted;
 }
 

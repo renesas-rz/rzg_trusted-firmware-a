@@ -20,16 +20,18 @@
 #include <sys.h>
 #include <scifa.h>
 #include <pwrc.h>
+#include <pwrc_board.h>
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
 #include <rz_private.h>
+#include <drivers/delay_timer.h>
 
 
 static console_t rzg3s_bl2_console;
 
 static uint32_t bl2_plat_get_boot_mode(void)
 {
-	if (pwrc_is_ddr_retention_mode())
+	if (pwrc_board_is_resume())
 		return RZ_WARM_BOOT;
 	else
 		return RZ_COLD_BOOT;
@@ -110,7 +112,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 		/* initialize console driver */
 		ret = console_rz_register(
-                                RZG3S_SCIF_0_BASE,
+								RZG3S_SCIF_0_BASE,
 								RZG3S_UART_INCK_HZ,
 								RZG3S_UART_BARDRATE,
 								&rzg3s_bl2_console);
@@ -121,8 +123,10 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 				CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 	}
 	else {
+		/* resume Clock and Reset */
 		cpg_resume_setup();
 	}
+	pwrc_setup();
 }
 
 void bl2_el3_plat_arch_setup(void)
@@ -149,7 +153,7 @@ void bl2_el3_plat_arch_setup(void)
 		MAP_REGION_FLAT(RZG3S_DEVICE_BASE, RZG3S_DEVICE_SIZE,
 				MT_DEVICE | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(RZG3S_SPIROM_BASE, RZG3S_SPIROM_SIZE,
-				MT_MEMORY | MT_RW | MT_SECURE),
+				MT_MEMORY | MT_RO | MT_SECURE),
 		MAP_REGION_FLAT(RZG3S_DDR0_BASE, RZG3S_DDR0_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		{0}

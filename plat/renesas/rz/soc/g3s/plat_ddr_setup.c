@@ -19,8 +19,7 @@
 #include <lib/xlat_tables/xlat_tables_defs.h>
 #include <plat/common/platform.h>
 #include <ddr.h>
-#include <pwrc.h>
-#include <xspi.h>
+#include <pwrc_board.h>
 
 #if PLAT_SYSTEM_SUSPEND
 static image_info_t ddr_config_info = {
@@ -98,7 +97,7 @@ exit:
 
 void plat_ddr_setup(void)
 {
-	if (!pwrc_is_ddr_retention_mode())
+	if (!pwrc_board_is_resume())
 	{
 #if !DEBUG_FPGA
 		ddr_setup();
@@ -114,6 +113,9 @@ void plat_ddr_setup(void)
 			ERROR("Failed to load DDR retention info.\n");
 			panic();
 		}
+
+		pwrc_board_sleep_off();
+
 #if !DEBUG_FPGA
 		ddr_retention_exit();
 #endif
@@ -126,4 +128,4 @@ void plat_ddr_setup(void)
 	ddr_setup();
 #endif
 }
-#endif /* PLAT_DDR_RETENTION */
+#endif /* PLAT_SYSTEM_SUSPEND */

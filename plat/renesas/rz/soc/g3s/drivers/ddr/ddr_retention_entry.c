@@ -54,7 +54,7 @@ static inline uint32_t dwc_ddrphy_apb_rd(uint32_t addr)
 
 /////////////////////////////////////////////////////////////////////////////////
 // 12_retention_entry
-void	retention_entry(void)
+void	ddr_retention_entry(void)
 {
 	// step 1	Stop DRAM access.	
 	// 			After this step, it is prohibited DRAM access until completing the retention exit sequence.	

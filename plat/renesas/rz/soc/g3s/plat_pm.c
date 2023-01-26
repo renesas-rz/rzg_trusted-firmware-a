@@ -73,7 +73,7 @@ static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 #endif
 
 	plat_copy_code_to_system_ram();
-    pwrc_setup();
+	pwrc_setup();
 }
 
 static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
@@ -144,7 +144,7 @@ const plat_psci_ops_t rz_plat_psci_ops = {
 	.pwr_domain_suspend_finish		 	= rz_pwr_domain_suspend_finish,
 	.pwr_domain_pwr_down_wfi			= rz_pwr_domain_pwr_down_wfi,
 	.validate_ns_entrypoint				= rz_validate_ns_entrypoint,
-	.validate_power_state               = rz_validate_power_state,
+	.validate_power_state				= rz_validate_power_state,
 #if PLAT_SYSTEM_SUSPEND
 	.get_sys_suspend_power_state		= rz_get_sys_suspend_power_state,
 #endif /* PLAT_SYSTEM_SUSPEND */
