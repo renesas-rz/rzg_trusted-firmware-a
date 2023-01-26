@@ -571,7 +571,7 @@ void decode_streaming_message_dec (uint32_t codede_message_hex, uint16_t *args_l
 		INFO("PMU: Error: Mismatched internal revision between DCCM and ICCM images\n");
 		break;
 	case(0x00ba0001) :
-		INFO("PMU10: **** Testchip %d Specific Firmware ****\n",args_list[0]);
+		INFO("PMU10: **** Testchip %d Specific ****\n",args_list[0]);
 		break;
 	case(0x00bb0000) :
 		INFO("PMU1: LRDIMM with EncodedCS mode, one DIMM\n");

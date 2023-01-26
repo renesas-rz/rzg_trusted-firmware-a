@@ -8,9 +8,9 @@
 #include <stddef.h>
 #include <lib/utils_def.h>
 
-// Step (A) : Bring up VDD, VDDQ, and VAA 
-// Step (B) Start Clocks and Reset the PHY 
-// Step (C) Initialize PHY Configuration 
+// Step (A)
+// Step (B)
+// Step (C)
 const	uint32_t	ddrphy_ini_data_c[][2] =
 {
 	{0x06E000,	0x00000000},
@@ -81,8 +81,7 @@ const	uint32_t	ddrphy_ini_data_c[][2] =
 	{0x05802C,	0x00000000},
 	{0x06E000,	0x00000001},
 };
-// [dwc_ddrphy_phyinit_D_loadIMEM, 1D] Start of dwc_ddrphy_phyinit_D_loadIMEM (Train2D=0)
-// Step (D) Load the 1D IMEM image
+// Step (D)
 const	uint32_t	ddrphy_train1d_data_d[][2] =
 {
 	{0x00058060, 0x00000002},
@@ -90,18 +89,15 @@ const	uint32_t	ddrphy_train1d_data_d[][2] =
 //	{0x0006E000, 0x00000001},
 };
 
-// Step (E) Set the PHY input clocks to the desired frequency for pstate 0 
-// [phyinit_F_loadDMEM, 1D] Start of dwc_ddrphy_phyinit_F_loadDMEM (pstate=0, Train2D=0)
-// Step (F) Load the 1D DMEM image and write the 1D Message Block parameters for the training firmware 
+// Step (E)
+// Step (F)
 const	uint32_t	ddrphy_train1d_data_f[][2] =
 {
 //	{0x0006E000, 0x00000000},
 	{0x0006E000, 0x00000001},
 };
 
-// Step (G) Execute the Training Firmware 
-//     ResetToMicro fields to 1 (all other fields should be zero). 
-//     Then rewrite the CSR so that only the StallToMicro remains set (all other fields should be zero). 
+// Step (G)
 const	uint32_t	ddrphy_train1d_data_g1[][2] =
 {
 	{0x06E000,	0x00000001},
@@ -109,39 +105,33 @@ const	uint32_t	ddrphy_train1d_data_g1[][2] =
 	{0x06E099,	0x00000001},
 	{0x06E099,	0x00000000},
 };
-// EXEC: dwc_ddrphy_phyinit_userCustom_G_waitFwDone ();
+// EXEC: dwc_ddrphy_phyinit_userCustom_G_waitDone ();
 const	uint32_t	ddrphy_train1d_data_g2[][2] =
 {
 	{0x06E099,	0x00000001},
 };
-// [dwc_ddrphy_phyinit_G_execFW] End of dwc_ddrphy_phyinit_G_execFW ()
-// Step (H) Read the Message Block results
+// Step (H)
 const	uint32_t	ddrphy_train1d_data_h[][2] =
 {
 	{0x06E000,	0x00000000},
 	{0x06E000,	0x00000001},
 };
 // if (Train1D)
-// dwc_ddrphy_phyinit_userCustom_H_readMsgBlock (1);
-// [dwc_ddrphy_phyinit_userCustom_H_readMsgBlock] End of dwc_ddrphy_phyinit_userCustom_H_readMsgBlock ()
 const	uint32_t	ddrphy_train2d_data_d[][2] =
 {
 	{0x06E000,	0x00000001},
-// Step (E) Set the PHY input clocks to the desired frequency for pstate 0 
-// Step (D) Load the 2D IMEM image
+// Step (E)
+// Step (D)
 	{0x06E000,	0x00000000},
 //	{0x06E000,	0x00000001},
 };
-// [phyinit_F_loadDMEM, 2D] Start of dwc_ddrphy_phyinit_F_loadDMEM (pstate=0, Train2D=1)
-// Step (F) Load the 2D DMEM image and write the 2D Message Block parameters for the training firmware 
+// Step (F)
 const	uint32_t	ddrphy_train2d_data_f[][2] =
 {
 //	{0x06E000,	0x00000000},
 	{0x06E000,	0x00000001},
 };
-// Step (G) Execute the Training Firmware 
-//     ResetToMicro fields to 1 (all other fields should be zero). 
-//     Then rewrite the CSR so that only the StallToMicro remains set (all other fields should be zero). 
+// Step (G)
 const	uint32_t	ddrphy_train2d_data_g1[][2] =
 {
 	{0x06E000,	0x00000001},
@@ -149,25 +139,21 @@ const	uint32_t	ddrphy_train2d_data_g1[][2] =
 	{0x06E099,	0x00000001},
 	{0x06E099,	0x00000000},
 };
-// EXEC: dwc_ddrphy_phyinit_userCustom_G_waitFwDone ();
+// EXEC: dwc_ddrphy_phyinit_userCustom_G_waitDone ();
 const	uint32_t	ddrphy_train2d_data_g2[][2] =
 {
 	{0x06E099,	0x00000001},
 };
-// [dwc_ddrphy_phyinit_G_execFW] End of dwc_ddrphy_phyinit_G_execFW ()
-// Step (H) Read the Message Block results
+// Step (H)
 const	uint32_t	ddrphy_train2d_data_h[][2] =
 {
 	{0x06E000,	0x00000000},
 };
 // if (Train2D)
-// dwc_ddrphy_phyinit_userCustom_H_readMsgBlock (1);
-// [dwc_ddrphy_phyinit_userCustom_H_readMsgBlock] End of dwc_ddrphy_phyinit_userCustom_H_readMsgBlock ()
 const	uint32_t	ddrphy_train2d_data_i[][2] =
 {
 	{0x06E000,	0x00000001},
-// 4. If training is required at another frequency, repeat the operations starting at step (E). 
-// Step (I) Load PHY Init Engine Image 
+// Step (I)
 	{0x06E000,	0x00000000},
 	{0x069000,	0x00000010},
 	{0x069001,	0x00000400},
@@ -699,13 +685,10 @@ const	uint32_t	ddrphy_train2d_data_i[][2] =
 	{0x0318B4,	0x00000001},
 	{0x058089,	0x00000001},
 	{0x058088,	0x00000019},
-// [phyinit_I_loadPIEImage] Disabling Ucclk (PMU)
 	{0x06D080,	0x00000002},
 	{0x06E000,	0x00000001},
 };
-// dwc_ddrphy_phyinit_userCustom_customPostTrain ();
-// Step (J) Initialize the PHY to Mission Mode through DFI Initialization 
-// dwc_ddrphy_phyinit_userCustom_J_enterMissionMode ();
+// Step (J)
 
 const uint32_t ddrphy_ini_data_c_size = ARRAY_SIZE(ddrphy_ini_data_c);
 const uint32_t ddrphy_train1d_data_d_size = ARRAY_SIZE(ddrphy_train1d_data_d);

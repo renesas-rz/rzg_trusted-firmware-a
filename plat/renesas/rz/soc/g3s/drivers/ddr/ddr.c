@@ -20,10 +20,10 @@ extern const uint32_t ddrphy_ini_swizzle[][2];
 extern const uint32_t ddrphy_ini_swizzle_size;
 extern const uint32_t ddrphy_train1d_data_d[][2];
 extern const uint32_t ddrphy_train1d_data_d_size;
-extern const uint16_t ddrphy_train1d_imem_size;
-extern const uint16_t ddrphy_train1d_imem[];
-extern const uint16_t ddrphy_train1d_dmem_size;
-extern const uint16_t ddrphy_train1d_dmem[];
+extern const uint16_t ddrphy_train1d_dat0_size;
+extern const uint16_t ddrphy_train1d_dat0[];
+extern const uint16_t ddrphy_train1d_dat1_size;
+extern const uint16_t ddrphy_train1d_dat1[];
 extern const uint32_t ddrphy_train1d_data_f[][2];
 extern const uint32_t ddrphy_train1d_data_f_size;
 extern const uint32_t ddrphy_train1d_data_g1[][2];
@@ -32,10 +32,10 @@ extern const uint32_t ddrphy_train1d_data_g2[][2];
 extern const uint32_t ddrphy_train1d_data_g2_size;
 extern const uint32_t ddrphy_train1d_data_h[][2];
 extern const uint32_t ddrphy_train1d_data_h_size;
-extern const uint16_t ddrphy_train2d_imem_size;
-extern const uint16_t ddrphy_train2d_imem[];
-extern const uint16_t ddrphy_train2d_dmem_size;
-extern const uint16_t ddrphy_train2d_dmem[];
+extern const uint16_t ddrphy_train2d_dat0_size;
+extern const uint16_t ddrphy_train2d_dat0[];
+extern const uint16_t ddrphy_train2d_dat1_size;
+extern const uint16_t ddrphy_train2d_dat1[];
 extern const uint32_t ddrphy_train2d_data_d[][2];
 extern const uint32_t ddrphy_train2d_data_d_size;
 extern const uint32_t ddrphy_train2d_data_f[][2];
@@ -131,7 +131,7 @@ static void update_mc(void);
 // 51_misc
 // static int8_t dwc_ddrphy_CDD_int(uint8_t val);
 // static int8_t dwc_ddrphy_CDD_abs(uint8_t val);
-static void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(void);
+static void dwc_ddrphy_phyinit_userCustom_G_waitDone(void);
 static uint32_t get_mail(uint8_t mode_32bits);
 // static void DDRTOP_mc_apb_rmw (uint32_t addr, uint32_t data, uint32_t mask);
 // void DDRTOP_mc_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
@@ -288,10 +288,10 @@ static void phyinit_d2h_1d(void)
 		// See "30_phyinit_param_DDR4" sheet for param_phyinit_d_1d.
 		dwc_ddrphy_apb_wr(ddrphy_train1d_data_d[i][0], ddrphy_train1d_data_d[i][1]);
 	}
-	// 1d imem
-	for (i = 0; i < (uint32_t)ddrphy_train1d_imem_size; i++)
+	// 1d dat0
+	for (i = 0; i < (uint32_t)ddrphy_train1d_dat0_size; i++)
 	{
-		dwc_ddrphy_apb_wr((0x060000 + i), (uint32_t)ddrphy_train1d_imem[i]);
+		dwc_ddrphy_apb_wr((0x060000 + i), (uint32_t)ddrphy_train1d_dat0[i]);
 	}
 	for(; i < 0x4000; i++)
 	{
@@ -300,10 +300,10 @@ static void phyinit_d2h_1d(void)
 	// Set DfiClk to the desired frequency for pstate 0.
 	// See "30_phyinit_param_DDR4" sheet for param_phyinit_f_1d_0.
 	// param_phyinit_f_1d_0
-	// 1d dmem
-	for (i = 0; i < (uint32_t)ddrphy_train1d_dmem_size; i++)
+	// 1d dat1
+	for (i = 0; i < (uint32_t)ddrphy_train1d_dat1_size; i++)
 	{
-		dwc_ddrphy_apb_wr((0x064000 + i), (uint32_t)ddrphy_train1d_dmem[i]);
+		dwc_ddrphy_apb_wr((0x064000 + i), (uint32_t)ddrphy_train1d_dat1[i]);
 	}
 	for (i = 0; i < ddrphy_train1d_data_f_size; i++)
 	{
@@ -314,7 +314,7 @@ static void phyinit_d2h_1d(void)
 	{
 		dwc_ddrphy_apb_wr(ddrphy_train1d_data_g1[i][0], ddrphy_train1d_data_g1[i][1]);
 	}
-	dwc_ddrphy_phyinit_userCustom_G_waitFwDone();
+	dwc_ddrphy_phyinit_userCustom_G_waitDone();
 	for (i = 0; i < ddrphy_train1d_data_g2_size; i++)
 	{
 		dwc_ddrphy_apb_wr(ddrphy_train1d_data_g2[i][0], ddrphy_train1d_data_g2[i][1]);
@@ -337,10 +337,10 @@ static void phyinit_d2h_2d(void)
 		// See "30_phyinit_param_DDR4" sheet for param_phyinit_d_2d.
 		dwc_ddrphy_apb_wr(ddrphy_train2d_data_d[i][0], ddrphy_train2d_data_d[i][1]);
 	}
-	// 2d imem
-	for (i = 0; i < (uint32_t)ddrphy_train2d_imem_size; i++)
+	// 2d dat0
+	for (i = 0; i < (uint32_t)ddrphy_train2d_dat0_size; i++)
 	{
-		dwc_ddrphy_apb_wr((0x060000 + i), (uint32_t)ddrphy_train2d_imem[i]);
+		dwc_ddrphy_apb_wr((0x060000 + i), (uint32_t)ddrphy_train2d_dat0[i]);
 	}
 	for(; i < 0x4000; i++)
 	{
@@ -348,10 +348,10 @@ static void phyinit_d2h_2d(void)
 	}
 	// See "30_phyinit_param_DDR4" sheet for param_phyinit_f_2d_0.
 	//param_phyinit_f_2d_0
-	// 2d dmem
-	for (i = 0; i < (uint32_t)ddrphy_train2d_dmem_size; i++)
+	// 2d dat1
+	for (i = 0; i < (uint32_t)ddrphy_train2d_dat1_size; i++)
 	{
-		dwc_ddrphy_apb_wr((0x064000 + i), (uint32_t)ddrphy_train2d_dmem[i]);
+		dwc_ddrphy_apb_wr((0x064000 + i), (uint32_t)ddrphy_train2d_dat1[i]);
 	}
 	for (i = 0; i < ddrphy_train2d_data_f_size; i++)
 	{
@@ -361,7 +361,7 @@ static void phyinit_d2h_2d(void)
 	{
 		dwc_ddrphy_apb_wr(ddrphy_train2d_data_g1[i][0], ddrphy_train2d_data_g1[i][1]);
 	}
-	dwc_ddrphy_phyinit_userCustom_G_waitFwDone();
+	dwc_ddrphy_phyinit_userCustom_G_waitDone();
 	for (i = 0; i < ddrphy_train2d_data_g2_size; i++)
 	{
 		dwc_ddrphy_apb_wr(ddrphy_train2d_data_g2[i][0], ddrphy_train2d_data_g2[i][1]);
@@ -637,7 +637,7 @@ static int8_t dwc_ddrphy_CDD_abs(uint8_t val)
 #endif
 
 //---------------------------------------------------------------------------------------
-static void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(void)
+static void dwc_ddrphy_phyinit_userCustom_G_waitDone(void)
 {
 	uint32_t mail;
 
@@ -658,7 +658,7 @@ static void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(void)
 	}	while ((mail != 0xff) && (mail != 0x07));
 	INFO("\n");
 	if (mail == 0xff) {
-		ERROR("Error: Firmware training failed.\n");
+		ERROR("Error: Training failed.\n");
 		panic();
 	}
 }
@@ -732,7 +732,7 @@ static void decode_major_message (uint32_t mail)
 		INFO("PMU Major Msg: End of 2D write delay /voltage center optimization            \n");
 		break;
 	case 0x07:
-		INFO("PMU Major Msg: Firmware run has completed                                    \n");
+		INFO("PMU Major Msg: Training run has completed                                    \n");
 		break;
 	case 0x08:
 		INFO("PMU Major Msg: Enter streaming message mode                                  \n");
