@@ -20,10 +20,10 @@ bool pwrc_board_is_resume(void)
 
 	if (first_call) {
 
-		uint8_t ctrl_reg;
+		volatile uint8_t ctrl_reg = 0;
 
-	if (0 > riic_read(0x38, 0xF4, &ctrl_reg))
-		panic();
+		if (0 > riic_read(0x38, 0xF4, (uint8_t *)&ctrl_reg))
+			panic();
 
 		if (0 == (0x01 & ctrl_reg))
 			is_retention = false;

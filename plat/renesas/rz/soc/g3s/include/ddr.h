@@ -14,7 +14,7 @@
 #define	START_LIST_CTL	0x300
 #define	SCR_SIZE		0x400
 
-extern uint16_t csr_table[SCR_SIZE];
+extern uint16_t ddr_scr_table[SCR_SIZE];
 
 void ddr_setup(void);
 void ddr_retention_entry(void);

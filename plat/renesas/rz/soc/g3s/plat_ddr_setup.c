@@ -22,13 +22,15 @@
 #include <pwrc_board.h>
 
 #if PLAT_SYSTEM_SUSPEND
+uint16_t ddr_scr_table[SCR_SIZE] __attribute__ ((aligned (8)));
+
 static image_info_t ddr_config_info = {
 	.h.type = (uint8_t)PARAM_IMAGE_BINARY,
 	.h.version = (uint8_t)VERSION_2,
 	.h.size = (uint16_t)sizeof(image_info_t),
 	.h.attr = 0,
-	.image_max_size = sizeof(csr_table),
-	.image_base = (uintptr_t)&csr_table
+	.image_max_size = sizeof(ddr_scr_table),
+	.image_base = (uintptr_t)&ddr_scr_table
 };
 
 static int save_ddr_config(unsigned int image_id, image_info_t *image_data)

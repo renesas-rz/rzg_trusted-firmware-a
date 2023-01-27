@@ -29,8 +29,9 @@ SECTIONS
 	/* system ram start is in SRAM */
 	.sram : ALIGN(PAGE_SIZE) {
 		__BL31_PMUSRAM_START__ = .;
-		*pwrc*.o
-		*riic*.o
+		*/ddr*.o (.text* .rodata* .data* .bss*)
+		*/pwrc*.o (.text* .rodata* .data* .bss*)
+		*/riic*.o (.text* .rodata* .data* .bss*)
 		. = ALIGN(PAGE_SIZE);
 		__BL31_PMUSRAM_END__ = .;
 	} >SRAM AT>DRAM

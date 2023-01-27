@@ -98,8 +98,6 @@ extern const uint32_t ddrphy_train2d_data_i_size;
 #define	DRAM_CLASS_OFFSET			8
 #define	DRAM_CLASS_WIDTH			4
 
-uint16_t csr_table[SCR_SIZE];
-
 // 11_initialization
 // 12_retention_entry
 // 13_retention_exit
@@ -564,19 +562,19 @@ static void	save_rst_csr(void)
 	// Read all the retention registers, and save them to the storage other than DRAM.
 	for(i = 0; i < SCR_SIZE; i += 4)
 	{
-		csr_table[i] = 0xffff;
+		ddr_scr_table[i] = 0xffff;
 	}
 	for(i = 0; i < ARRAY_SIZE(reg_list_1d); i++)
 	{
-		csr_table[START_LIST_1D + i] = 	dwc_ddrphy_apb_rd(reg_list_1d[i]);
+		ddr_scr_table[START_LIST_1D + i] = 	dwc_ddrphy_apb_rd(reg_list_1d[i]);
 	}
 	for(i = 0; i < ARRAY_SIZE(reg_list_2d); i++)
 	{
-		csr_table[START_LIST_2D + i] = 	dwc_ddrphy_apb_rd(reg_list_2d[i]);
+		ddr_scr_table[START_LIST_2D + i] = 	dwc_ddrphy_apb_rd(reg_list_2d[i]);
 	}
 	for(i = 0; i < ARRAY_SIZE(reg_list_ctl); i++)
 	{
-		csr_table[START_LIST_CTL + i] = 	DDRTOP_mc_apb_rd(reg_list_ctl[i]);
+		ddr_scr_table[START_LIST_CTL + i] = 	DDRTOP_mc_apb_rd(reg_list_ctl[i]);
 	}
 	dwc_ddrphy_apb_wr(0x066080, 0); // Write the UcclkHclkEnables CSR to disable the appropriate clocks after all reads done.
 	dwc_ddrphy_apb_wr(0x06E000, 1); // Write the MicroContMuxSel CSR to 0x1 to isolate the internal CSRs during mission mode.
@@ -594,15 +592,15 @@ static void	restore_setcsr(void)
 	// Read the saved retention registers, and write them to registers.
 	for(i = 0; i < ARRAY_SIZE(reg_list_1d); i++)
 	{
-		dwc_ddrphy_apb_wr(reg_list_1d[i], csr_table[START_LIST_1D + i]);
+		dwc_ddrphy_apb_wr(reg_list_1d[i], ddr_scr_table[START_LIST_1D + i]);
 	}
 	for(i = 0; i < ARRAY_SIZE(reg_list_2d); i++)
 	{
-		dwc_ddrphy_apb_wr(reg_list_2d[i], csr_table[START_LIST_2D + i]);
+		dwc_ddrphy_apb_wr(reg_list_2d[i], ddr_scr_table[START_LIST_2D + i]);
 	}
 	for(i = 0; i < ARRAY_SIZE(reg_list_ctl); i++)
 	{
-		DDRTOP_mc_apb_wr(reg_list_ctl[i], csr_table[START_LIST_CTL + i]);
+		DDRTOP_mc_apb_wr(reg_list_ctl[i], ddr_scr_table[START_LIST_CTL + i]);
 	}
 	dwc_ddrphy_apb_wr(0x066080, 0);	// Write the UcclkHclkEnables CSR to disable the appropriate clocks after all reads done.
 	dwc_ddrphy_apb_wr(0x06E000, 1);	// Write the MicroContMuxSel CSR to 0x1 to isolate the internal CSRs during mission mode.
