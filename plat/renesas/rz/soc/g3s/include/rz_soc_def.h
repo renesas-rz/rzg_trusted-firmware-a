@@ -10,6 +10,7 @@
 #include <common/tbbr/tbbr_img_def.h>
 
 #define RZG3S_BOOT_ROM_BASE				UL(0x00000000)
+#define RZG3S_AUTH_API_BASE				UL(0x00014300)
 #define RZG3S_MSRAM_0_BASE				UL(0x00020000)
 #define RZG3S_MSRAM_1_BASE				UL(0x00060000)
 #define RZG3S_ASRAM_0_BASE				UL(0x000A0000)
@@ -121,6 +122,8 @@
 #define RZ_SOC_OTP_BASE_CHIPID			(RZG3S_OTP_BASE + 0x1140)		/* OTPCPID0 */		//TODO: G3S: Check OTP register used. Document not available at time of writing
 
 #define RZ_SOC_I2C_BASE					RZG3S_I2C_1_BASE
+
+#define RZ_SOC_AUTH_API_BASE			RZG3S_AUTH_API_BASE
 
 #define SYS_BASE						RZG3S_SYSC_BASE
 #define PFC_BASE						RZG3S_GPIO_BASE

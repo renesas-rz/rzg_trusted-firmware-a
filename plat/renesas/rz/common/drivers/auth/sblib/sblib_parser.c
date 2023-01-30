@@ -10,7 +10,7 @@
 #include <string.h>
 
 #include <common/debug.h>
-#include "../../../include/drivers/auth/auth_common.h"
+#include <drivers/auth_common.h>
 #include <drivers/auth/img_parser_mod.h>
 #include <lib/utils_def.h>
 

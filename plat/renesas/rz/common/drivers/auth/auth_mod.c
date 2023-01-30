@@ -12,9 +12,9 @@
 #include <platform_def.h>
 #include <common/debug.h>
 #include <common/tbbr/cot_def.h>
-#include "../../include/drivers/auth/auth_common.h"
+#include <drivers/auth_common.h>
 #include <drivers/auth/auth_mod.h>
-#include "../../include/drivers/auth/sblib/crypto_sblib.h"
+#include "sblib/crypto_sblib.h"
 #include <drivers/auth/img_parser_mod.h>
 #include <plat/common/platform.h>
 

@@ -29,6 +29,8 @@ static unsigned char tos_fw_content_cert_buf[CONTENT_CERT_LEN];
 static unsigned char nt_fw_key_cert_buf[KEY_CERT_LEN];
 static unsigned char nt_fw_content_cert_buf[CONTENT_CERT_LEN];
 
+static unsigned char m33_fw_key_cert_buf[KEY_CERT_LEN];
+static unsigned char m33_fw_content_cert_buf[CONTENT_CERT_LEN];
 
 static auth_param_type_desc_t key_cert = AUTH_PARAM_TYPE_DESC(
 		AUTH_PARAM_RAW_DATA, 0);
@@ -223,6 +225,70 @@ static const auth_img_desc_t bl33_image = {
 	}
 };
 
+#if PLAT_M33_BOOT_SUPPORT
+/*
+ * M33 FW
+ */
+static const auth_img_desc_t m33_fw_key_cert = {
+	.img_id = BL22_KEY_CERT_ID,
+	.img_type = IMG_PLAT,
+	.parent = NULL,
+	.img_auth_methods = (const auth_method_desc_t[AUTH_METHOD_NUM]) {
+		[0] = {
+			.type = AUTH_METHOD_NONE
+		},
+	},
+	.authenticated_data = (const auth_param_desc_t[COT_MAX_VERIFIED_PARAMS]) {
+		[0] = {
+			.type_desc = &key_cert,
+			.data = {
+				.ptr = (void *)m33_fw_key_cert_buf,
+				.len = (unsigned int)KEY_CERT_LEN
+			}
+		}
+	}
+};
+
+static const auth_img_desc_t m33_fw_content_cert = {
+	.img_id = BL22_CONTENT_CERT_ID,
+	.img_type = IMG_PLAT,
+	.parent = &m33_fw_key_cert,
+	.img_auth_methods = (const auth_method_desc_t[AUTH_METHOD_NUM]) {
+		[0] = {
+			.type = AUTH_METHOD_NONE
+		},
+	},
+	.authenticated_data = (const auth_param_desc_t[COT_MAX_VERIFIED_PARAMS]) {
+		[0] = {
+			.type_desc = &content_cert,
+			.data = {
+				.ptr = (void *)m33_fw_content_cert_buf,
+				.len = (unsigned int)CONTENT_CERT_LEN
+			}
+		}
+	}
+};
+
+/*
+ * BL22
+ */
+static const auth_img_desc_t bl22_image = {
+	.img_id = BL22_IMAGE_ID,
+	.img_type = IMG_RAW,
+	.parent = &m33_fw_content_cert,
+	.img_auth_methods = (const auth_method_desc_t[AUTH_METHOD_NUM]) {
+		[0] = {
+			.type = AUTH_METHOD_SBLIB,
+			.param.sblib = {
+				.data = &raw_data,
+				.key_cert = &key_cert,
+				.content_cert = &content_cert
+			}
+		}
+	}
+};
+#endif
+
 static const auth_img_desc_t * const cot_desc[] = {
 	[SOC_FW_KEY_CERT_ID]				=	&soc_fw_key_cert,
 	[SOC_FW_CONTENT_CERT_ID]			=	&soc_fw_content_cert,
@@ -233,6 +299,7 @@ static const auth_img_desc_t * const cot_desc[] = {
 	[NON_TRUSTED_FW_KEY_CERT_ID]		=	&non_trusted_fw_key_cert,
 	[NON_TRUSTED_FW_CONTENT_CERT_ID]	=	&non_trusted_fw_content_cert,
 	[BL33_IMAGE_ID]						=	&bl33_image,
+	[BL22_IMAGE_ID]						=	&bl22_image,
 };
 
 /* Register the CoT in the authentication module */

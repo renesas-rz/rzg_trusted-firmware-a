@@ -8,12 +8,10 @@
 #include <string.h>
 
 #include <common/debug.h>
+#include <platform_def.h>
 #include <drivers/auth/crypto_mod.h>
-#include "../../../include/drivers/auth/sblib/crypto_sblib.h"
-
+#include "crypto_sblib.h"
 #include "sblib_api_private.h"
-
-#define SECURE_BOOT_API_ADDR		(0x000007F00)
 
 static sb_secure_boot_api_t secure_boot_api;
 
@@ -35,6 +33,6 @@ int crypto_sblib_auth(void *data_ptr, size_t len,
 
 void crypto_sblib_init(void)
 {
-	secure_boot_api = (sb_secure_boot_api_t)SECURE_BOOT_API_ADDR;
+	secure_boot_api = (sb_secure_boot_api_t)RZ_SOC_AUTH_API_BASE;
 }
 

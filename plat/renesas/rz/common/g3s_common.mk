@@ -18,6 +18,11 @@ TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
 DEBUG_FPGA						:= 0
 
+# This option gets enabled automatically if the TRUSTED_BOARD_BOOT
+# is set via root Makefile, but Renesas support Trusted-Boot without
+# Crypto module.
+override CRYPTO_SUPPORT			:= 0
+
 ifneq (${PLAT_SYSTEM_SUSPEND},0)
 override PLAT_SYSTEM_SUSPEND_${PLAT_SYSTEM_SUSPEND} := 1
 override PLAT_SYSTEM_SUSPEND	:= 1
@@ -72,7 +77,6 @@ BL2_SOURCES				+=	common/desc_image_load.c								\
 							plat/renesas/rz/common/drivers/io/io_emmcdrv.c			\
 							plat/renesas/rz/common/plat_image_load.c				\
 							${RZ_TIMER_SOURCES}										\
-							${DDR_SOURCES}											\
 							${EMMC_SOURCES}											\
 							${XSPI_SOURCES}
 
