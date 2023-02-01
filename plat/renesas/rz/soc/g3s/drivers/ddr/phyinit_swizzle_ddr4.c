@@ -10,9 +10,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // 32_phyinit_swizzle_ddr4
-
-const uint32_t ddrphy_ini_swizzle[][2] =
-{
+const uint32_t ddrphy_ini_swizzle[][2] = {
 	{0x06E000, 0x0000},
 	{0x058131, 0x0001},
 	{0x058138, 0x000A},
@@ -39,7 +37,7 @@ const uint32_t ddrphy_ini_swizzle[][2] =
 	{0x05812d, 0x0012},
 	{0x05812e, 0x0000},
 	{0x05812f, 0x0000},
-	{0x06E000, 0x0001},
+	{0x06E000, 0x0001}
 };
 
 const uint32_t ddrphy_ini_swizzle_size = ARRAY_SIZE(ddrphy_ini_swizzle);
