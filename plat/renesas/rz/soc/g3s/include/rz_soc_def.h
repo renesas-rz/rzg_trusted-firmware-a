@@ -64,7 +64,7 @@
 #define RZG3S_SRAM_LIMIT				(RZG3S_SRAM_BASE + RZG3S_SRAM_SIZE)
 #define RZG3S_DDR0_SIZE					(RZG3S_DDR1_BASE - RZG3S_DDR0_BASE)
 
-#define RZG3S_NS_DRAM_BASE				ULL(0x50000000)
+#define RZG3S_NS_DRAM_BASE				ULL(0x48000000)
 
 /*
  * 0x64000 has been chosen as FIP base as that leaves room at start of xSPI Flash
