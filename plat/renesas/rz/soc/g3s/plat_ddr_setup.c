@@ -21,16 +21,16 @@
 #include <ddr.h>
 #include <pwrc_board.h>
 
-#if PLAT_SYSTEM_SUSPEND
-uint16_t ddr_scr_table[SCR_SIZE] __attribute__ ((aligned (8)));
+uint16_t ddr_csr_table[CSR_SIZE] __attribute__ ((aligned (8)));
 
+#if PLAT_SYSTEM_SUSPEND
 static image_info_t ddr_config_info = {
 	.h.type = (uint8_t)PARAM_IMAGE_BINARY,
 	.h.version = (uint8_t)VERSION_2,
 	.h.size = (uint16_t)sizeof(image_info_t),
 	.h.attr = 0,
-	.image_max_size = sizeof(ddr_scr_table),
-	.image_base = (uintptr_t)&ddr_scr_table
+	.image_max_size = sizeof(ddr_csr_table),
+	.image_base = (uintptr_t)&ddr_csr_table
 };
 
 static int save_ddr_config(unsigned int image_id, image_info_t *image_data)
@@ -115,8 +115,6 @@ void plat_ddr_setup(void)
 			ERROR("Failed to load DDR retention info.\n");
 			panic();
 		}
-
-		pwrc_board_sleep_off();
 
 #if !DEBUG_FPGA
 		ddr_retention_exit();

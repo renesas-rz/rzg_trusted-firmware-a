@@ -24,11 +24,11 @@ DEBUG_FPGA						:= 0
 override CRYPTO_SUPPORT			:= 0
 
 ifneq (${PLAT_SYSTEM_SUSPEND},0)
-override PLAT_SYSTEM_SUSPEND_${PLAT_SYSTEM_SUSPEND} := 1
+override PLAT_SUSPEND_MODE		:= ${PLAT_SYSTEM_SUSPEND}
 override PLAT_SYSTEM_SUSPEND	:= 1
 endif
 
-ifneq (${PLAT_SYSTEM_SUSPEND_awo},0)
+ifeq (${PLAT_SYSTEM_SUSPEND_awo},1s)
 override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 
@@ -36,9 +36,9 @@ $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,PLAT_TBBR_IMG_DEF))
 $(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
-$(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
-$(eval $(call add_define,PLAT_SYSTEM_SUSPEND_${PLAT_SYSTEM_SUSPEND}))
 $(eval $(call add_define,PLAT_M33_BOOT_SUPPORT))
+$(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
+$(eval $(call add_define,PLAT_SYSTEM_SUSPEND_${PLAT_SUSPEND_MODE}))
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1

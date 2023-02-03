@@ -8,6 +8,10 @@
 #include <stddef.h>
 #include <lib/utils_def.h>
 
+#define	D1D008	0x031f	// 0x064008
+#define	D1D009	0x0004	// 0x064009
+#define	D2D009	0x00c9	// 0x064009
+
 // 1d dat0
 const uint16_t ddrphy_train1d_dat0[] = {
 	0x0098, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, // 0x060000

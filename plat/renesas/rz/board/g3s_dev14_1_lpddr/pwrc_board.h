@@ -8,8 +8,7 @@
 #define PWRC_BOARD_H
 
 bool pwrc_board_is_resume(void);
-void pwrc_board_sleep_on(void);
-void pwrc_board_sleep_off(void);
+void pwrc_board_suspend_on(void);
 void pwrc_board_setup(void);
 
 #endif /* PWRC_BOARD_H */

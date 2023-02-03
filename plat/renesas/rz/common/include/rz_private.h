@@ -19,6 +19,8 @@ void plat_gic_init(void);
 void plat_gic_cpuif_enable(void);
 void plat_gic_cpuif_disable(void);
 void plat_gic_pcpu_init(void);
+void plat_gic_save(void);
+void plat_gic_resume(void);
 
 /* plat_security.c */
 void plat_tzc400_setup(uintptr_t tzc_base);
