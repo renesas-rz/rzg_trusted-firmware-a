@@ -36,6 +36,9 @@ static void __dead2 pwrc_go_suspend_to_ram(void)
 
 void __dead2 pwrc_suspend_to_ram(void)
 {
+	/* flash all caches */
+	dcsw_op_all(DCCISW);
+
 	/* disable MMU */
 	disable_mmu_el3();
 

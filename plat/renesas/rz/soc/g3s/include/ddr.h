@@ -9,12 +9,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define	START_LIST_1D	0x000
-#define	START_LIST_2D	0x200
-#define	START_LIST_CTL	0x300
-#define	CSR_SIZE		0x400
+#define	RET_CSR_SIZE		0x400
 
-extern uint16_t ddr_csr_table[CSR_SIZE];
+extern uint32_t ddr_csr_table[RET_CSR_SIZE];
 
 void ddr_setup(void);
 void ddr_retention_entry(void);

@@ -68,8 +68,9 @@ static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 	plat_gic_driver_init();
 	plat_gic_init();
 	// plat_gic_resume();
-#endif /* PLAT_SYSTEM_SUSPEND_vbat */
+#else
 	plat_gic_cpuif_enable();
+#endif
 #endif
 
 	plat_copy_code_to_system_ram();

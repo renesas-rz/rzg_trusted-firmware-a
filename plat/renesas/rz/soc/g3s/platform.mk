@@ -10,6 +10,10 @@ PLAT_INCLUDES		:=	-Iplat/renesas/rz/soc/g3s/include
 include plat/renesas/rz/common/g3s_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
+DDR_SOURCES			+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr.c				\
+						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_misc.c			\
+						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_retcsr_io.c
+
 BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c					\
 						plat/renesas/rz/soc/g3s/drivers/riic.c					\
 						plat/renesas/rz/soc/g3s/drivers/tzc/tzc400.c			\
@@ -37,9 +41,6 @@ EMMC_SOURCES		+=	plat/renesas/rz/soc/g3s/drivers/emmc/emmc_interrupt.c	\
 						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_write.c
 
 XSPI_SOURCES		+=	plat/renesas/rz/common/drivers/xspi.c
-
-DDR_SOURCES			+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr.c				\
-						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_retention_entry.c
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 	# Include the selected chain of trust sources.

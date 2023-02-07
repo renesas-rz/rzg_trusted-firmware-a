@@ -28,7 +28,7 @@ override PLAT_SUSPEND_MODE		:= ${PLAT_SYSTEM_SUSPEND}
 override PLAT_SYSTEM_SUSPEND	:= 1
 endif
 
-ifeq (${PLAT_SYSTEM_SUSPEND_awo},1s)
+ifeq (${PLAT_SYSTEM_SUSPEND_awo},1)
 override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 

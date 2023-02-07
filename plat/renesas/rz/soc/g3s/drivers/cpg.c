@@ -586,13 +586,19 @@ static const CPG_SETUP_DATA cpg_ddr_reset_tbl[] = {
 	{		/* DDR */
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
+		0x01CF0080,
+		CPG_T_RST
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
 		0x01000100,
 		CPG_T_RST
 	},
 	{		/* DDR */
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
-		0x004C004C,
+		0x004D004D,
 		CPG_T_RST
 	},
 	{		/* DDR */
@@ -785,20 +791,23 @@ void cpg_setup(void)
 
 void cpg_active_ddr1(void)
 {
+	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
+	cpg_clkrst_start(&cpg_ddr_reset_tbl[0], 1);
+	udelay(1);
+	
 	cpg_clkrst_start(cpg_ddr_clock_tbl, ARRAY_SIZE(cpg_ddr_clock_tbl));
 
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
-
-	cpg_clkrst_start(&cpg_ddr_reset_tbl[0], 1);
+	cpg_clkrst_start(&cpg_ddr_reset_tbl[1], 1);
 	udelay(1);
 
-	cpg_clkrst_start(&cpg_ddr_reset_tbl[1], 1);
+	cpg_clkrst_start(&cpg_ddr_reset_tbl[2], 1);
 	udelay(1);
 }
 
 void cpg_active_ddr2(void)
 {
-	cpg_clkrst_start(&cpg_ddr_reset_tbl[2], 1);
+	cpg_clkrst_start(&cpg_ddr_reset_tbl[3], 1);
 	udelay(1);
 }
 

@@ -8,8 +8,90 @@
 #include <stddef.h>
 #include <common/debug.h>
 
-void decode_streaming_message_dec (uint32_t codede_message_hex, uint16_t *args_list)
+#include "ddr_private.h"
+
+#define DDR_LOG_EN		(0)
+
+static void decode_streaming_message(void);
+
+void decode_major_message(uint32_t mail)
 {
+#if (DDR_LOG_EN && DEBUG)
+	switch (mail) {
+	case 0x00:
+		INFO("PMU Major Msg: End of initialization                                         \n");
+		break;
+	case 0x01:
+		INFO("PMU Major Msg: End of fine write leveling                                    \n");
+		break;
+	case 0x02:
+		INFO("PMU Major Msg: End of read enable training                                   \n");
+		break;
+	case 0x03:
+		INFO("PMU Major Msg: End of read delay center optimization                         \n");
+		break;
+	case 0x04:
+		INFO("PMU Major Msg: End of write delay center optimization                        \n");
+		break;
+	case 0x05:
+		INFO("PMU Major Msg: End of 2D read delay/voltage center optimization              \n");
+		break;
+	case 0x06:
+		INFO("PMU Major Msg: End of 2D write delay /voltage center optimization            \n");
+		break;
+	case 0x07:
+		INFO("PMU Major Msg: Training run has completed                                    \n");
+		break;
+	case 0x08:
+		INFO("PMU Major Msg: Enter streaming message mode                                  \n");
+		break;
+	case 0x09:
+		INFO("PMU Major Msg: End of max read latency training                              \n");
+		break;
+	case 0x0a:
+		INFO("PMU Major Msg: End of read dq deskew training                                \n");
+		break;
+	case 0x0b:
+		INFO("PMU Major Msg: End of LCDL offset calibration                                \n");
+		break;
+	case 0x0c:
+		INFO("PMU Major Msg: End of LRDIMM Specific training (DWL, MREP, MRD and MWD)      \n");
+		break;
+	case 0x0d:
+		INFO("PMU Major Msg: End of CA training                                            \n");
+		break;
+	case 0xfd:
+		INFO("PMU Major Msg: End of MPR read delay center optimization                     \n");
+		break;
+	case 0xfe:
+		INFO("PMU Major Msg: End of Write leveling coarse delay                            \n");
+		break;
+	case 0xff:
+		INFO("PMU Major Msg: FATAL ERROR.                                                  \n");
+		break;
+	default:
+		INFO("PMU Major Msg: Un-recognized message... !\n");
+	}
+#endif
+	if (0x08 == mail)
+		decode_streaming_message();
+}
+
+static void decode_streaming_message(void)
+{
+	int i;
+	uint32_t codede_message_hex;
+	uint16_t num_args;
+	uint16_t args_list[31];
+
+	codede_message_hex = get_mail(1);
+
+	num_args = codede_message_hex & 0xFFFF;
+
+	for (i = 0; i < num_args; i++)
+		args_list[i] = get_mail(1);
+
+#if (DDR_LOG_EN && DEBUG)
 	switch (codede_message_hex) {
 	case 0x00000001:
 		INFO("PMU1:prbsGenCtl:%x\n", args_list[0]);
@@ -1250,5 +1332,8 @@ void decode_streaming_message_dec (uint32_t codede_message_hex, uint16_t *args_l
 	default:
 		INFO("PMU Streaming Msg: Debug message not recognized !!  code: %x", codede_message_hex);
 		panic();
-  }
+	}
+#else
+	(void)args_list;
+#endif
 }
