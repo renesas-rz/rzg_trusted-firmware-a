@@ -101,9 +101,8 @@ void plat_ddr_setup(void)
 {
 	if (!pwrc_board_is_resume())
 	{
-#if !DEBUG_FPGA
 		ddr_setup();
-#endif
+
 		if (0 != save_ddr_config(DDR_CONFIG_ID, &ddr_config_info)) {
 			ERROR("Failed to save DDR retention info.\n");
 			panic();
@@ -116,16 +115,12 @@ void plat_ddr_setup(void)
 			panic();
 		}
 
-#if !DEBUG_FPGA
 		ddr_retention_exit();
-#endif
 	}
 }
 #else
 void plat_ddr_setup(void)
 {
-#if !DEBUG_FPGA
 	ddr_setup();
-#endif
 }
 #endif /* PLAT_SYSTEM_SUSPEND */

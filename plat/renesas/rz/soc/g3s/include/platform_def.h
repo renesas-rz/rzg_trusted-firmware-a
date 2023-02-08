@@ -45,24 +45,14 @@
 /*******************************************************************************
  * BL2 specific defines.
  ******************************************************************************/
-#if !DEBUG_FPGA
 #define BL2_BASE					U(0x000A3000)
 #define BL2_LIMIT					U(0x00110000)
-#else
-#define BL2_BASE					U(0x000A3000)
-#define BL2_LIMIT					U(0x000C3000)
-#endif
 
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
-#if !DEBUG_FPGA
 #define BL31_BASE					U(0x44000000)
 #define BL31_LIMIT					U(0x44040000)
-#else
-#define BL31_BASE					U(0x000E0000)
-#define BL31_LIMIT					U(0x00100000)
-#endif
 
 #define BL31_SRAM_BASE				U(0x00118000)
 #define BL31_SRAM_LIMIT				U(0x0011F000)

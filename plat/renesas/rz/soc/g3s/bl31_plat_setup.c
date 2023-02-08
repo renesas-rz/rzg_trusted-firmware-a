@@ -101,11 +101,9 @@ void bl31_plat_arch_setup(void)
 
 void bl31_platform_setup(void)
 {
-#if !DEBUG_FPGA
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
-#endif
 
 	plat_copy_code_to_system_ram();
 	pwrc_setup();

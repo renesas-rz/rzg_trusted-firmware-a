@@ -149,7 +149,6 @@ static void plat_tzc_msram_setup(void)
 
 static void plat_tzc_ddr_setup(void)
 {
-#if !DEBUG_FPGA
 	const arm_tzc_regions_info_t ddr_tzc_regions[] = {
 #if TRUSTED_BOARD_BOOT
 		{
@@ -186,7 +185,6 @@ static void plat_tzc_ddr_setup(void)
 	};
 
 	plat_tzc400_setup(RZG3S_TZC400_DDR_BASE, &ddr_tzc_regions[0]);
-#endif
 }
 
 static void plat_tzc_spi_setup(void)

@@ -86,11 +86,7 @@
 #define RZG3S_M33_FW_SIZE				UL(0x00030000)
 
 #define RZG3S_SYC_INCK_HZ				U(24000000)							//TODO: G3S: Update
-#if !DEBUG_FPGA
 #define RZG3S_UART_INCK_HZ				U(100000000)
-#else
-#define RZG3S_UART_INCK_HZ				U(12000000)
-#endif
 #define RZG3S_UART_BARDRATE				U(115200)
 
 /* Definitions used in common code */

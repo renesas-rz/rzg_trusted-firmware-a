@@ -360,14 +360,12 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		0x00030000,
 		CPG_T_CLK
 	},
-#if !DEBUG_FPGA
 	{		/* GPIO */
 		(uintptr_t)CPG_CLKON_GPIO,
 		(uintptr_t)CPG_CLKMON_GPIO,
 		0x00010001,
 		CPG_T_CLK
 	},
-#endif
 	{		/* ADC */
 		(uintptr_t)CPG_CLKON_ADC,
 		(uintptr_t)CPG_CLKMON_ADC,
@@ -521,14 +519,12 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		0x00030000,
 		CPG_T_RST
 	},
-#if !DEBUG_FPGA
 	{		/* GPIO */
 		(uintptr_t)CPG_RST_GPIO,
 		(uintptr_t)CPG_RSTMON_GPIO,
 		0x00010001,
 		CPG_T_RST
 	},
-#endif
 	{		/* ADC */
 		(uintptr_t)CPG_RST_ADC,
 		(uintptr_t)CPG_RSTMON_ADC,
@@ -752,7 +748,6 @@ static void cpg_clock_on_setup(void)
 
 static void cpg_wdtrst_sel_setup(void)
 {
-#if !DEBUG_FPGA
 	uintptr_t reg = mmio_read_32(CPG_WDTRST_SEL);
 
 	reg |=  WDTRST_SEL_WDTRSTSEL0 | WDTRST_SEL_WDTRSTSEL0_WEN |
@@ -760,7 +755,6 @@ static void cpg_wdtrst_sel_setup(void)
 			WDTRST_SEL_WDTRSTSEL2 | WDTRST_SEL_WDTRSTSEL2_WEN;
 	
 	mmio_write_32(CPG_WDTRST_SEL, reg);
-#endif
 }
 
 static void cpg_pwrdown_ip_setup(void)

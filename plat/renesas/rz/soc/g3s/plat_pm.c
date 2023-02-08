@@ -50,28 +50,25 @@ static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
 	if (CORE_PWR_STATE(target_state) != PLAT_MAX_OFF_STATE)
 		return;
 
-#if !DEBUG_FPGA
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	// plat_gic_save();
 #endif /* PLAT_SYSTEM_SUSPEND_vbat */
-#endif
+
 	/* Enable the transition request interrupt to the Cortex-A55 Sleep Mode */
 	mmio_write_32(SYS_LP_CTL6, 0x00000100);
 }
 
 static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 {
-#if !DEBUG_FPGA
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	plat_gic_driver_init();
 	plat_gic_init();
 	// plat_gic_resume();
 #else
 	plat_gic_cpuif_enable();
-#endif
-#endif
+#endif /* PLAT_SYSTEM_SUSPEND_vbat */
 
 	plat_copy_code_to_system_ram();
 	pwrc_setup();
