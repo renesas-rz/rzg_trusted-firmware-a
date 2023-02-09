@@ -24,8 +24,12 @@ DEBUG_FPGA						:= 0
 override CRYPTO_SUPPORT			:= 0
 
 ifneq (${PLAT_SYSTEM_SUSPEND},0)
+ifneq ($(filter awo vbat,${PLAT_SYSTEM_SUSPEND}),)
 override PLAT_SUSPEND_MODE		:= ${PLAT_SYSTEM_SUSPEND}
 override PLAT_SYSTEM_SUSPEND	:= 1
+else
+$(error Unknown suspend mode ${PLAT_SYSTEM_SUSPEND})
+endif
 endif
 
 ifeq (${PLAT_SYSTEM_SUSPEND_awo},1)
