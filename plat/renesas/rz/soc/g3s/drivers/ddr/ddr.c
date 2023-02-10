@@ -33,8 +33,6 @@ void ddr_setup(void)
 	wait_pclk(2);
 	INFO("DDR: Initialize MC registers.\n");
 	setup_mc();
-	DDRTOP_mc_param_wr(PWRUP_SREFRESH_EXIT_ADDR, PWRUP_SREFRESH_EXIT_OFFSET, PWRUP_SREFRESH_EXIT_WIDTH, 0);
-	DDRTOP_mc_param_wr(PHY_INDEP_INIT_MODE_ADDR, PHY_INDEP_INIT_MODE_OFFSET, PHY_INDEP_INIT_MODE_WIDTH, 0);
 	INFO("DDR: Activate CPG2\n");
 	cpg_active_ddr2();
 	/* Wait at least 2 PCLK cycles */
@@ -58,7 +56,7 @@ void ddr_setup(void)
 void ddr_retention_entry(void)
 {
 	/* Disable PhyMaster */
-	dwc_ddrphy_apb_wr(0x00020010, 0);
+	dwc_ddrphy_apb_wr(0x00058010, 0);
 	/* Wait for MC to ready */
 	DDRTOP_mc_param_poll(CONTROLLER_BUSY_ADDR, CONTROLLER_BUSY_OFFSET, CONTROLLER_BUSY_WIDTH, 0);
 	/* Disable SREQ_REQ */

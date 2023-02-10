@@ -11,8 +11,7 @@ include plat/renesas/rz/common/g3s_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
 DDR_SOURCES			+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr.c				\
-						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_misc.c			\
-						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_retcsr_io.c
+						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_misc.c
 
 BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c					\
 						plat/renesas/rz/soc/g3s/drivers/riic.c					\
