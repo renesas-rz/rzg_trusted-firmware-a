@@ -157,6 +157,11 @@ static void manage_extensions_realm_per_world(void)
 		sme_enable_per_world(&per_world_context[CPU_CONTEXT_REALM]);
 	}
 
+	/* NS can access this but Realm shouldn't */
+	if (is_feat_sys_reg_trace_supported()) {
+		sys_reg_trace_disable(ctx);
+	}
+
 	pmuv3_enable(ctx);
 }
 
