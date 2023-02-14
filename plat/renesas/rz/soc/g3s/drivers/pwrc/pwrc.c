@@ -28,6 +28,8 @@ static void __dead2 pwrc_go_suspend_to_ram(void)
 {
 	ddr_retention_entry();
 
+	cpg_suspend_setup();
+
 	pwrc_board_suspend_on();
 
 	while (1)
@@ -41,10 +43,6 @@ void __dead2 pwrc_suspend_to_ram(void)
 
 	/* disable MMU */
 	disable_mmu_el3();
-
-#if PLAT_SYSTEM_SUSPEND_awo
-	cpg_suspend_setup();
-#endif
 
 	pwrc_func_call_with_pmustack((uintptr_t)pwrc_go_suspend_to_ram, NULL);
 

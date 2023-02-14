@@ -10,6 +10,8 @@
 
 #include <riic.h>
 
+#define PMIC		(0x12)
+#define GPAK		(0x38)
 
 #if IMAGE_BL2
 bool pwrc_board_is_resume(void)
@@ -27,7 +29,7 @@ bool pwrc_board_is_resume(void)
 			uint8_t ctrl_reg;
 			uint8_t ists_reg;
 
-			if ((0 > riic_read(0x38, 0xF4, &ctrl_reg)) || (0 > riic_read(0x38, 0xF1, &ists_reg))) {
+			if ((0 > riic_read(GPAK, 0xF4, &ctrl_reg)) || (0 > riic_read(GPAK, 0xF1, &ists_reg))) {
 				panic();
 			}
 
@@ -36,11 +38,12 @@ bool pwrc_board_is_resume(void)
 				break;
 			}
 
+			/* Resume from sleep state */
 			if ((0 != (0x20 & ists_reg)) && (0 != (0x40 & ists_reg))) {
 
 				is_retention = true;
 
-				if (0 > riic_write(0x38, 0xF4, 0x00))
+				if (0 > riic_write(GPAK, 0xF4, 0x00))
 					panic();
 
 				break;
@@ -56,11 +59,18 @@ bool pwrc_board_is_resume(void)
 
 void pwrc_board_suspend_on(void)
 {
-	if (0 > riic_write(0x38, 0xB0, 0xFF))
-		panic();
+#if defined(PLAT_SYSTEM_SUSPEND_awo)
+	/* Switch the sleep mode from VBAT to AWO */
+	riic_write(PMIC, 0x35, 0x07);
+	riic_write(PMIC, 0x4B, 0x0C);
+	riic_write(PMIC, 0x50, 0x0F);
+	riic_write(PMIC, 0x80, 0x3E);
 
-	if (0 > riic_write(0x38, 0xF4, 0x31))
-		panic();
+	riic_write(GPAK, 0xF4, 0x31);
+#elif defined(PLAT_SYSTEM_SUSPEND_vbat)
+	riic_write(GPAK, 0xB0, 0xFF);
+	riic_write(GPAK, 0xF4, 0x31);
+#endif
 }
 
 void pwrc_board_setup(void)

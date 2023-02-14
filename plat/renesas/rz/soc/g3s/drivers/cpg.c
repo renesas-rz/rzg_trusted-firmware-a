@@ -44,11 +44,11 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_pll4_tbl[] = {
-#if (DDR_PLL4 == 1866)
+#if (DDR_PLL4 == 1600)
 	{ CPG_PLL4_CLK1, 0x0498E000 },
 	{ CPG_PLL4_CLK2, 0x00000002 },
 #else
-#error "Unknown Board Type."
+#error "Unknown DDR Type."
 #endif
 	{ CPG_PLL4_STBY, 0x00010001 }
 };
@@ -99,6 +99,74 @@ static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
 	{ (uintptr_t)CPG_BUS_TZCDDR_MSTOP,		0x00070007 },
 	{ (uintptr_t)CPG_MHU_MSTOP,				0x00010001 },
 	{ (uintptr_t)CPG_PWRDN_MSTOP,			0x00010001 },
+};
+
+static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
+	{		/* I2C Ch1 */
+		(uintptr_t)CPG_CLKON_I2C,
+		(uintptr_t)CPG_CLKMON_I2C,
+		0x00020002,
+		CPG_T_CLK
+	},
+	{		/* I2C Ch1 */
+		(uintptr_t)CPG_RST_I2C,
+		(uintptr_t)CPG_RSTMON_I2C,
+		0x00020002,
+		CPG_T_RST
+	},
+};
+
+static const CPG_REG_SETTING cpg_s2r_mstop_tbl[] = {
+			/* I2C Ch1 */
+	{ (uintptr_t)CPG_BUS_MCPU2_MSTOP,	0x08000000 },
+};
+
+static const CPG_SETUP_DATA cpg_ddr_clkrst_tbl[] = {
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x01CF0080,
+		CPG_T_RST
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_CLKON_DDR,
+		(uintptr_t)CPG_CLKMON_DDR,
+		0x000F000F,
+		CPG_T_CLK
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x01000100,
+		CPG_T_RST
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x004D004D,
+		CPG_T_RST
+	},
+	{		/* DDR */
+		(uintptr_t)CPG_RST_DDR,
+		(uintptr_t)CPG_RSTMON_DDR,
+		0x00820082,
+		CPG_T_RST
+	},
+};
+
+static const CPG_SETUP_DATA cpg_m33_clkrst_tbl[] = {
+	{		/* CM33 */
+		(uintptr_t)CPG_CLKON_CM33,
+		(uintptr_t)CPG_CLKMON_CM33,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* CM33 */
+		(uintptr_t)CPG_RST_CM33,
+		(uintptr_t)CPG_RSTMON_CM33,
+		0x00070007,
+		CPG_T_RST
+	},
 };
 
 static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
@@ -569,57 +637,6 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 	},
 };
 
-static const CPG_SETUP_DATA cpg_ddr_clock_tbl[] = {
-	{		/* DDR */
-		(uintptr_t)CPG_CLKON_DDR,
-		(uintptr_t)CPG_CLKMON_DDR,
-		0x000F000F,
-		CPG_T_CLK
-	},
-};
-
-static const CPG_SETUP_DATA cpg_ddr_reset_tbl[] = {
-	{		/* DDR */
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x01CF0080,
-		CPG_T_RST
-	},
-	{		/* DDR */
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x01000100,
-		CPG_T_RST
-	},
-	{		/* DDR */
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x004D004D,
-		CPG_T_RST
-	},
-	{		/* DDR */
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x00820082,
-		CPG_T_RST
-	},
-};
-
-static const CPG_SETUP_DATA cpg_cm33_clk_rst_tbl[] = {
-	{		/* CM33 */
-		(uintptr_t)CPG_CLKON_CM33,
-		(uintptr_t)CPG_CLKMON_CM33,
-		0x00010001,
-		CPG_T_CLK
-	},
-	{		/* CM33 */
-		(uintptr_t)CPG_RST_CM33,
-		(uintptr_t)CPG_RSTMON_CM33,
-		0x00070007,
-		CPG_T_RST
-	},
-};
-
 static void cpg_sel_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
 {
 	int cnt;
@@ -652,6 +669,7 @@ static void cpg_div_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
 		;
 }
 
+#if defined(PLAT_SYSTEM_SUSPEND_awo)
 static void cpg_module_stop(const CPG_REG_SETTING *tbl, const uint32_t size)
 {
 	int cnt;
@@ -659,6 +677,7 @@ static void cpg_module_stop(const CPG_REG_SETTING *tbl, const uint32_t size)
 		mmio_write_32(tbl->reg, tbl->val);
 	}
 }
+#endif
 
 static void cpg_module_start(const CPG_REG_SETTING *tbl, const uint32_t size)
 {
@@ -786,30 +805,36 @@ void cpg_setup(void)
 void cpg_active_ddr1(void)
 {
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
-	cpg_clkrst_start(&cpg_ddr_reset_tbl[0], 1);
+	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[0], 1);
 	udelay(1);
 	
-	cpg_clkrst_start(cpg_ddr_clock_tbl, ARRAY_SIZE(cpg_ddr_clock_tbl));
-
-	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
-	cpg_clkrst_start(&cpg_ddr_reset_tbl[1], 1);
+	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[1], 1);
 	udelay(1);
 
-	cpg_clkrst_start(&cpg_ddr_reset_tbl[2], 1);
+	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
+	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[2], 1);
+	udelay(1);
+
+	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[3], 1);
 	udelay(1);
 }
 
 void cpg_active_ddr2(void)
 {
-	cpg_clkrst_start(&cpg_ddr_reset_tbl[3], 1);
+	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[4], 1);
 	udelay(1);
 }
 
 void cpg_suspend_setup(void)
 {
+#if defined(PLAT_SYSTEM_SUSPEND_awo)
 	cpg_module_stop(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl)); 
 	cpg_clkrst_stop(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
 	cpg_clkrst_stop(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
+#endif
+	/* Enable IP to use for suspend */
+	cpg_clkrst_start(cpg_s2r_clkrst_tbl, ARRAY_SIZE(cpg_s2r_clkrst_tbl));
+	cpg_module_start(cpg_s2r_mstop_tbl,  ARRAY_SIZE(cpg_s2r_mstop_tbl));
 }
 
 void cpg_resume_setup(void)
@@ -821,5 +846,5 @@ void cpg_resume_setup(void)
 
 void cpg_m33_setup(void)
 {
-	cpg_clkrst_start(cpg_cm33_clk_rst_tbl, ARRAY_SIZE(cpg_cm33_clk_rst_tbl));
+	cpg_clkrst_start(cpg_m33_clkrst_tbl, ARRAY_SIZE(cpg_m33_clkrst_tbl));
 }

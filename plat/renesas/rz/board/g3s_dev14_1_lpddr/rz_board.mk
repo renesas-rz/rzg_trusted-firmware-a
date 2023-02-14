@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 LPDDR4		:= 1
-DDR_PLL4	:= 1866
+DDR_PLL4	:= 1600
 
 $(eval $(call add_define,LPDDR4))
 $(eval $(call add_define,DDR_PLL4))
