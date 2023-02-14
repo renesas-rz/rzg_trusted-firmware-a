@@ -32,7 +32,7 @@ $(error Unknown suspend mode ${PLAT_SYSTEM_SUSPEND})
 endif
 endif
 
-ifeq (${PLAT_SYSTEM_SUSPEND_awo},1)
+ifeq (${PLAT_SUSPEND_MODE},awo)
 override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 
