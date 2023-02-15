@@ -121,6 +121,7 @@ static void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *
 
 static void plat_tzc_msram_setup(void)
 {
+#if PLAT_M33_BOOT_SUPPORT
 	const arm_tzc_regions_info_t msram0_tzc_regions[] = {
 		{
 			/* Default Region 0: Lock down */
@@ -145,6 +146,7 @@ static void plat_tzc_msram_setup(void)
 
 	plat_tzc400_setup(RZG3S_TZC400_MSRAM_0_BASE, &msram0_tzc_regions[0]);
 	plat_tzc400_setup(RZG3S_TZC400_MSRAM_1_BASE, &msram1_tzc_regions[0]);
+#endif
 }
 
 static void plat_tzc_ddr_setup(void)
