@@ -49,6 +49,7 @@ int16_t sys_get_boot_mode(void)
 	return boot_mode;
 }
 
+#if PLAT_M33_BOOT_SUPPORT
 void sys_m33_core_boot_op(uintptr_t vector)
 {
 	if (0 != (mmio_read_32(CPG_PLL6_STBY) & PLL6_STBY_SSC_EN))
@@ -66,6 +67,7 @@ void sys_m33_core_boot_op(uintptr_t vector)
 
 	cpg_m33_setup();
 }
+#endif /* PLAT_M33_BOOT_SUPPORT */
 
 bool sys_is_m33_core_booted(void)
 {
