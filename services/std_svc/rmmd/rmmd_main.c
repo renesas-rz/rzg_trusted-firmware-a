@@ -156,6 +156,8 @@ static void manage_extensions_realm_per_world(void)
 	if (is_feat_sme_supported()) {
 		sme_enable_per_world(&per_world_context[CPU_CONTEXT_REALM]);
 	}
+
+	pmuv3_enable(ctx);
 }
 
 /*******************************************************************************

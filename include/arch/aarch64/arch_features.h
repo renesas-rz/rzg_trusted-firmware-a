@@ -290,25 +290,4 @@ static inline bool is_feat_mtpmu_supported(void)
 	return (mtpmu != 0U) && (mtpmu != ID_AA64DFR0_MTPMU_DISABLED);
 }
 
-/*******************************************************************************
- * Function to get hardware granularity support
- ******************************************************************************/
-
-static inline unsigned int read_id_aa64mmfr0_el0_tgran4_field(void)
-{
-	return ISOLATE_FIELD(read_id_aa64mmfr0_el1(), ID_AA64MMFR0_EL1_TGRAN4);
-}
-
-static inline unsigned int read_id_aa64mmfr0_el0_tgran16_field(void)
-{
-	return ISOLATE_FIELD(read_id_aa64mmfr0_el1(),
-			     ID_AA64MMFR0_EL1_TGRAN16);
-}
-
-static inline unsigned int read_id_aa64mmfr0_el0_tgran64_field(void)
-{
-	return ISOLATE_FIELD(read_id_aa64mmfr0_el1(),
-			     ID_AA64MMFR0_EL1_TGRAN64);
-}
-
 #endif /* ARCH_FEATURES_H */
