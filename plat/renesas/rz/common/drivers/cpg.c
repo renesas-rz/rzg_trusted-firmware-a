@@ -899,13 +899,10 @@ void cpg_early_setup(void)
 
 void cpg_wdtrst_sel_setup(void)
 {
-	uint32_t reg;
-	reg = mmio_read_32(CPG_WDTRST_SEL);
-	reg |=
-		WDTRST_SEL_WDTRSTSEL0 | WDTRST_SEL_WDTRSTSEL0_WEN |
-		WDTRST_SEL_WDTRSTSEL1 | WDTRST_SEL_WDTRSTSEL1_WEN |
-		WDTRST_SEL_WDTRSTSEL2 | WDTRST_SEL_WDTRSTSEL2_WEN ;
-	mmio_write_32(CPG_WDTRST_SEL, reg);
+	mmio_write_32(CPG_WDTRST_SEL, mmio_read_32(CPG_WDTRST_SEL) |
+					WDTRST_SEL_WDTRSTSEL0 |
+					WDTRST_SEL_WDTRSTSEL1 |
+					WDTRST_SEL_WDTRSTSEL2);
 }
 
 void cpg_setup(void)
