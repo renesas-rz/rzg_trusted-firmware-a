@@ -115,8 +115,7 @@
 #define RZ_SOC_EMMC_DDR_CFG_SIZE		RZG3S_DDR_CONFIG_MAX
 
 #define RZ_SOC_SYSC_BASE_DEVID			SYS_LSI_DEVID
-#define RZ_SOC_OTP_BASE_DEVID			(RZG3S_OTP_BASE + 0x1178)		/* OTPPRODUCT */	//TODO: G3S: Check OTP register used. Document not available at time of writing
-#define RZ_SOC_OTP_BASE_CHIPID			(RZG3S_OTP_BASE + 0x1140)		/* OTPCPID0 */		//TODO: G3S: Check OTP register used. Document not available at time of writing
+#define RZ_SOC_OTP_BASE_CHIPID			(RZG3S_OTP_BASE + 0x1140)
 
 #define RZ_SOC_I2C_BASE					RZG3S_I2C_1_BASE
 
