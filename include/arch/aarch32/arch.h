@@ -128,10 +128,6 @@
 #define ID_MMFR3_PAN_SHIFT	U(16)
 #define ID_MMFR3_PAN_MASK	U(0xf)
 
-/* ID_MMFR3 definitions */
-#define ID_MMFR3_PAN_SHIFT	U(16)
-#define ID_MMFR3_PAN_MASK	U(0xf)
-
 /* ID_MMFR4 definitions */
 #define ID_MMFR4_CNP_SHIFT	U(12)
 #define ID_MMFR4_CNP_LENGTH	U(4)
