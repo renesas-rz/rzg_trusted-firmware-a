@@ -75,6 +75,8 @@ void ddr_retention_entry(void)
 	dwc_ddrphy_apb_poll(0x0006E0fa, 1 << 0, 1 << 0);
 	/* PwrOkIn = 0 */
 	mmio_write_32(CPG_RST_DDR, 0x01000000);
+	/* DDRPHY Power Donw Ctrl */
+	mmio_write_32(PWRDN_DDRPHY_CTRL, 0x00000311);
 	/* Wait 18 DfiClk */
 	wait_dficlk(18);
 }
@@ -82,6 +84,8 @@ void ddr_retention_entry(void)
 void ddr_retention_exit(void)
 {
 	INFO("DDR: Retention Exit (Rev. %s)\n", DDR_VERSION);
+	/* DDRPHY Power Donw Ctrl */
+	mmio_write_32(PWRDN_DDRPHY_CTRL, 0x00000200);
 	INFO("DDR: Activate CPG1\n");
 	cpg_active_ddr1();
 	/* Wait at least the longest cycles of the next: 2 axiY_ACLK, 2 PCLK */

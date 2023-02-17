@@ -116,11 +116,29 @@ static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
 		0x00020002,
 		CPG_T_RST
 	},
+#if defined(PLAT_SYSTEM_SUSPEND_vbat)
+	{		/* VBAT */
+		(uintptr_t)CPG_CLKON_VBAT,
+		(uintptr_t)CPG_CLKMON_VBAT,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* VBAT */
+		(uintptr_t)CPG_RST_VBAT,
+		(uintptr_t)CPG_RSTMON_VBAT,
+		0x00010001,
+		CPG_T_RST
+	},
+#endif
 };
 
 static const CPG_REG_SETTING cpg_s2r_mstop_tbl[] = {
 			/* I2C Ch1 */
 	{ (uintptr_t)CPG_BUS_MCPU2_MSTOP,	0x08000000 },
+#if defined(PLAT_SYSTEM_SUSPEND_vbat)
+			/* VBAT */
+	{ (uintptr_t)CPG_BUS_MCPU3_MSTOP,	0x01000000 },
+#endif
 };
 
 static const CPG_SETUP_DATA cpg_ddr_clkrst_tbl[] = {
