@@ -24,6 +24,8 @@ bool pwrc_board_is_resume(void)
 
 		volatile uint32_t timeout = 100;
 
+		riic_setup();
+
 		while (0 < timeout--)
 		{
 			uint8_t ctrl_reg;
@@ -59,15 +61,9 @@ bool pwrc_board_is_resume(void)
 
 void pwrc_board_suspend_on(void)
 {
-#if defined(PLAT_SYSTEM_SUSPEND_awo)
-	/* Switch the sleep mode from VBAT to AWO */
-	riic_write(PMIC, 0x35, 0x07);
-	riic_write(PMIC, 0x4B, 0x0C);
-	riic_write(PMIC, 0x50, 0x0F);
-	riic_write(PMIC, 0x80, 0x3E);
+#if defined(PLAT_SYSTEM_SUSPEND_vbat)
+	riic_setup();
 
-	riic_write(GPAK, 0xF4, 0x31);
-#elif defined(PLAT_SYSTEM_SUSPEND_vbat)
 	riic_write(GPAK, 0xB0, 0xFF);
 	riic_write(GPAK, 0xF4, 0x31);
 #endif
@@ -75,5 +71,4 @@ void pwrc_board_suspend_on(void)
 
 void pwrc_board_setup(void)
 {
-	riic_setup();
 }
