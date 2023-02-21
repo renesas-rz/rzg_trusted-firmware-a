@@ -3204,6 +3204,17 @@ as Group 0 secure interrupt, Group 1 secure interrupt or Group 1 NS interrupt.
 
 Common helper functions
 -----------------------
+Function : elx_panic()
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    Argument : void
+    Return   : void
+
+This API is called from assembly files when reporting a critical failure
+that has occured in lower EL and is been trapped in EL3. This call
+**must not** return.
 
 Function : el3_panic()
 ~~~~~~~~~~~~~~~~~~~~~~
