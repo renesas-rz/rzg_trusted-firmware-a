@@ -362,6 +362,13 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		CPG_T_CLK
 	},
 #endif /* PLAT_M33_BOOT_SUPPORT */
+	{
+			/* IA55 */
+		(uintptr_t)CPG_CLKON_IA55,
+		(uintptr_t)CPG_CLKMON_IA55,
+		0x00030003,
+		CPG_T_CLK
+	},
 	{		/* DMAC_REG */
 		(uintptr_t)CPG_CLKON_DMAC_REG,
 		(uintptr_t)CPG_CLKMON_DMAC_REG,
@@ -517,6 +524,12 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		CPG_T_RST
 	},
 #endif /* PLAT_M33_BOOT_SUPPORT */
+	{		/* IA55 */
+		(uintptr_t)CPG_RST_IA55,
+		(uintptr_t)CPG_RSTMON_IA55,
+		0x00010001,
+		CPG_T_RST
+	},
 	{		/* DMAC */
 		(uintptr_t)CPG_RST_DMAC,
 		(uintptr_t)CPG_RSTMON_DMAC,
