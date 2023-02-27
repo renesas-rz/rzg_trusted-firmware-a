@@ -282,7 +282,7 @@ static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
 	{		/* GIC */
 		(uintptr_t)CPG_RST_GIC600,
 		(uintptr_t)CPG_RSTMON_GIC600,
-		0x00010001,
+		0x00030003,
 		CPG_T_RST
 	},
 	{		/* MHU */
