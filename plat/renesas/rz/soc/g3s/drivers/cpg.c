@@ -365,7 +365,7 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 	{		/* DMAC_REG */
 		(uintptr_t)CPG_CLKON_DMAC_REG,
 		(uintptr_t)CPG_CLKMON_DMAC_REG,
-		0x00030000,
+		0x00030001,
 		CPG_T_CLK
 	},
 	{		/* SYSC */
@@ -520,7 +520,7 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 	{		/* DMAC */
 		(uintptr_t)CPG_RST_DMAC,
 		(uintptr_t)CPG_RSTMON_DMAC,
-		0x00030000,
+		0x00030003,
 		CPG_T_RST
 	},
 	{		/* SYSC */
