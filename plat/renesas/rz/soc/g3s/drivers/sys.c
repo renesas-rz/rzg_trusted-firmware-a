@@ -82,7 +82,11 @@ bool sys_is_m33_core_booted(void)
 	return is_booted;
 }
 
-bool sys_is_peri_suspended(void)
+bool sys_resume_peripheral(void)
 {
-	return sys_is_m33_core_booted();
+#if defined(PLAT_SYSTEM_SUSPEND_awo)
+	return pwrc_board_is_resume();
+#else
+	return false;
+#endif
 }

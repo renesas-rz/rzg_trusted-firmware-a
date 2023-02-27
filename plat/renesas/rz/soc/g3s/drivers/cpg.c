@@ -40,7 +40,19 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 		(uintptr_t)CPG_RSTMON_SYC,
 		0x00010001,
 		CPG_T_RST
-	}
+	},
+	{		/* I2C Ch1 */
+		(uintptr_t)CPG_CLKON_I2C,
+		(uintptr_t)CPG_CLKMON_I2C,
+		0x000F0003,
+		CPG_T_CLK
+	},
+	{		/* I2C Ch1 */
+		(uintptr_t)CPG_RST_I2C,
+		(uintptr_t)CPG_RSTMON_I2C,
+		0x000F0003,
+		CPG_T_RST
+	},
 };
 
 static const CPG_REG_SETTING cpg_pll4_tbl[] = {
@@ -416,12 +428,6 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		0x00010000,
 		CPG_T_CLK
 	},
-	{		/* I2C */
-		(uintptr_t)CPG_CLKON_I2C,
-		(uintptr_t)CPG_CLKMON_I2C,
-		0x000F0003,
-		CPG_T_CLK
-	},
 	{		/* SCIF */
 		(uintptr_t)CPG_CLKON_SCIF,
 		(uintptr_t)CPG_CLKMON_SCIF,
@@ -575,12 +581,6 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		(uintptr_t)CPG_RST_SRC,
 		(uintptr_t)CPG_RSTMON_SRC,
 		0x00010000,
-		CPG_T_RST
-	},
-	{		/* I2C */
-		(uintptr_t)CPG_RST_I2C,
-		(uintptr_t)CPG_RSTMON_I2C,
-		0x000F0003,
 		CPG_T_RST
 	},
 	{		/* SCIF */

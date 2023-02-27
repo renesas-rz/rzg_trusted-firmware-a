@@ -97,7 +97,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	/* early setup Clock and Reset */
 	cpg_early_setup();
 		 
-	if (!sys_is_peri_suspended()) {
+	if (!sys_resume_peripheral()) {
 		/* initialize SYC */
 		syc_init(RZG3S_SYC_INCK_HZ);
 

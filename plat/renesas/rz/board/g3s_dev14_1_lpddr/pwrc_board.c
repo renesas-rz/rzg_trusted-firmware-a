@@ -17,7 +17,7 @@
 bool pwrc_board_is_resume(void)
 {
 	static bool is_retention = false;
-#if PLAT_SYSTEM_SUSPEND
+#if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	static bool first_call = true;
 
 	if (first_call) {
@@ -26,8 +26,7 @@ bool pwrc_board_is_resume(void)
 
 		riic_setup();
 
-		while (0 < timeout--)
-		{
+		while (0 < timeout--) {
 			uint8_t ctrl_reg;
 			uint8_t ists_reg;
 
@@ -54,6 +53,8 @@ bool pwrc_board_is_resume(void)
 
 		first_call = false;
 	}
+#elif defined(PLAT_SYSTEM_SUSPEND_awo)
+	// TODO
 #endif
 	return is_retention;
 }
