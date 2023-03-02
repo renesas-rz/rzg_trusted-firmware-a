@@ -12,6 +12,7 @@
 #include <lib/bakery_lock.h>
 #include <plat/common/platform.h>
 
+#include <syc.h>
 #include <pwrc.h>
 #include <sys_regs.h>
 #include <rz_private.h>
@@ -52,6 +53,7 @@ static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
 
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
+	plat_gic_save();
 
 	/* Enable the transition request interrupt to the Cortex-A55 Sleep Mode */
 	mmio_write_32(SYS_LP_CTL6, 0x00000100);
@@ -60,7 +62,8 @@ static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
 static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 {
 	plat_gic_driver_init();
-	plat_gic_init();
+	plat_gic_resume();
+	plat_gic_cpuif_enable();
 
 	plat_copy_code_to_system_ram();
 	pwrc_setup();
@@ -147,3 +150,9 @@ int plat_setup_psci_ops(uintptr_t sec_entrypoint, const plat_psci_ops_t **psci_o
 	*psci_ops = &rz_plat_psci_ops;
 	return 0;
 }
+
+void arm_gicv3_distif_pre_save(unsigned int rdist_proc_num)
+{}
+
+void arm_gicv3_distif_post_restore(unsigned int rdist_proc_num)
+{}
