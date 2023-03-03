@@ -13,6 +13,8 @@
 
 #define SPI_LOAD_OFFSET		(0x00000200)
 #define MMC_LOAD_OFFSET		(0x00000400)
+#define SCIF_LOAD_OFFSET	(0x00000200)
+#define ESD_LOAD_OFFSET		(0x00001000)
 #define BOOT_PARAM_SIGN		(0xAA55FFFF)
 
 struct
@@ -35,17 +37,29 @@ static off_t fsize(const char *filename)
 	return -1;
 }
 
-static int get_destadr(char *mode, uint32_t *ldr)
+static int get_loadinfo(char *mode, uint32_t *ldr, uint32_t *bpn)
 {
 	int err = 0;
 
 	if (0 == strcmp(mode, "spi"))
 	{
 		*ldr = SPI_LOAD_OFFSET;
+		*bpn = 1;
 	}
 	else if (0 == strcmp(mode, "mmc"))
 	{
 		*ldr = MMC_LOAD_OFFSET;
+		*bpn = 1;
+	}
+	else if (0 == strcmp(mode, "scif"))
+	{
+		*ldr = SCIF_LOAD_OFFSET;
+		*bpn = 1;
+	}
+	else if (0 == strcmp(mode, "esd"))
+	{
+		*ldr = ESD_LOAD_OFFSET;
+		*bpn = 7;
 	}
 	else
 	{
@@ -61,7 +75,9 @@ int main(int argc, char *argv[])
 	FILE *fp = NULL;
 
 	char *mode = "spi";
+	uint32_t i;
 	uint32_t load_offset_adr = 0;
+	uint32_t boot_param_num = 0;
 	off_t size = 0;
 
 	memset(&bootparam, 0xFF, sizeof(bootparam));
@@ -72,7 +88,7 @@ int main(int argc, char *argv[])
 		printf("\t<IPL_FILE>       IPL file path. \n");
 		printf("\t<BOOT_PARAM>     Boot parameter file path. \n");
 		printf("\t[BOOT_MODE]      Boot mode selection (default: spi). \n");
-		printf("\t                 - \"spi\", \"mmc\" \n");
+		printf("\t                 - \"spi\", \"mmc\", \"scif\", \"esd\"\n");
 		goto exit;
 	}
 
@@ -93,19 +109,21 @@ int main(int argc, char *argv[])
 		goto exit;
 	}
 
-	if (0 != get_destadr(mode, &load_offset_adr))
+	if (0 != get_loadinfo(mode, &load_offset_adr, &boot_param_num))
 	{
-		printf("Could not get load addr of boot mode %s.\n", mode);
+		printf("Could not get load info of boot mode %s.\n", mode);
 		goto exit;
 	}
-
 
 	bootparam.size = (uint32_t)((size + 3) & (~0x3));
 	bootparam.load = (uint32_t)load_offset_adr;
 	bootparam.dest = (uint32_t)DEST_OFFSET_ADR;
 	bootparam.sign = (uint32_t)BOOT_PARAM_SIGN;
 
-	fwrite(&bootparam, 1, sizeof(bootparam), fp);
+	for (i = 0; i < boot_param_num; i++)
+	{
+		fwrite(&bootparam, 1, sizeof(bootparam), fp);
+	}
 
 	err = 0;
 

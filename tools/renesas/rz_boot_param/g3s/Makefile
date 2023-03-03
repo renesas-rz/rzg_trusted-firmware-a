@@ -3,18 +3,18 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
-MAKE_HELPERS_DIRECTORY := ../../../make_helpers/
+MAKE_HELPERS_DIRECTORY := ../../../../make_helpers/
 include ${MAKE_HELPERS_DIRECTORY}build_macros.mk
 include ${MAKE_HELPERS_DIRECTORY}build_env.mk
 
-ifeq (${TRUSTED_BOARD_BOOT},0)
+ifneq (${TRUSTED_BOARD_BOOT},1)
 DEST_OFFSET_ADR	?=	0x000A3000
 else
 DEST_OFFSET_ADR	?=	0x000A2000
 endif
 
 BPTOOL	?= bptool${BIN_EXT}
-PROJECT := $(notdir ${BPTOOL})
+PROJECT := ../${BPTOOL}
 OBJECTS := bptool.o
 V ?= 0
 
@@ -26,11 +26,15 @@ else
   HOSTCCFLAGS += -O2
 endif
 
+LDLIBS := 
+
 ifeq (${V},0)
   Q := @
 else
   Q :=
 endif
+
+INCLUDE_PATHS :=
 
 HOSTCC ?= gcc
 
