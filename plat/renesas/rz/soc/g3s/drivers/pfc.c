@@ -11,8 +11,6 @@
 #include <sys.h>
 #include <lib/mmio.h>
 
-//TODO: Check IOLH drive level. V2H values used.
-
 static PFC_REGS pfc_mux_sd_reg_tbl[PFC_MUX_SD_TBL_NUM] = {
 	/* P0(SD0/SD1) CD, WP*/
 	{
