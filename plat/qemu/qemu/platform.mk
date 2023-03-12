@@ -238,17 +238,3 @@ endif
 ifeq (${EL3_EXCEPTION_HANDLING},1)
 BL31_SOURCES		+=	plat/common/aarch64/plat_ehf.c
 endif
-
-qemu_fw.bios: bl1 fip
-	$(ECHO) "  DD      $@"
-	$(Q)cp ${BUILD_PLAT}/bl1.bin ${BUILD_PLAT}/$@
-	$(Q)dd if=${BUILD_PLAT}/fip.bin of=${BUILD_PLAT}/$@ bs=64k seek=4 status=none
-
-qemu_fw.rom: qemu_fw.bios
-	$(ECHO) "  DD      $@"
-	$(Q)cp ${BUILD_PLAT}/$^ ${BUILD_PLAT}/$@
-	$(Q)dd if=/dev/zero of=${BUILD_PLAT}/$@ bs=1M seek=64 count=0 status=none
-
-ifneq (${BL33},)
-all: qemu_fw.bios qemu_fw.rom
-endif
