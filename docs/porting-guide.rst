@@ -636,21 +636,6 @@ enabled, the following constants and configuration must also be defined:
 Please see the reference implementation code for the Juno platform as an example.
 
 
-- **ARM_ETHOSN_NPU_FW_IMAGE_BASE** and **ARM_ETHOSN_NPU_FW_IMAGE_LIMIT**
-
-- Provide FCONF entries to configure the image source for NPU firmware (and certificates).
-
-- Add MMU mappings such that:
-
- - BL2 can write the NPU firmware into the region defined by
-   ``ARM_ETHOSN_NPU_FW_IMAGE_BASE`` and ``ARM_ETHOSN_NPU_FW_IMAGE_LIMIT``
- - BL31 (SiP service) can read the NPU firmware from the same region
-
-- Add the firmware image ID ``ARM_ETHOSN_NPU_FW_IMAGE_ID`` to the list of images loaded by BL2
-
-Please see the reference implementation code for the Juno platform as an example.
-
-
 The following constant is optional. It should be defined to override the default
 behaviour of the ``assert()`` function (for example, to save memory).
 
