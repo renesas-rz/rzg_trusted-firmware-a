@@ -29,8 +29,10 @@ static unsigned char tos_fw_content_cert_buf[CONTENT_CERT_LEN];
 static unsigned char nt_fw_key_cert_buf[KEY_CERT_LEN];
 static unsigned char nt_fw_content_cert_buf[CONTENT_CERT_LEN];
 
+#if PLAT_M33_BOOT_SUPPORT
 static unsigned char m33_fw_key_cert_buf[KEY_CERT_LEN];
 static unsigned char m33_fw_content_cert_buf[CONTENT_CERT_LEN];
+#endif
 
 static auth_param_type_desc_t key_cert = AUTH_PARAM_TYPE_DESC(
 		AUTH_PARAM_RAW_DATA, 0);
@@ -299,7 +301,11 @@ static const auth_img_desc_t * const cot_desc[] = {
 	[NON_TRUSTED_FW_KEY_CERT_ID]		=	&non_trusted_fw_key_cert,
 	[NON_TRUSTED_FW_CONTENT_CERT_ID]	=	&non_trusted_fw_content_cert,
 	[BL33_IMAGE_ID]						=	&bl33_image,
+#if PLAT_M33_BOOT_SUPPORT
+	[BL22_KEY_CERT_ID]					=	&m33_fw_key_cert,
+	[BL22_CONTENT_CERT_ID]				=	&m33_fw_content_cert,
 	[BL22_IMAGE_ID]						=	&bl22_image,
+#endif
 };
 
 /* Register the CoT in the authentication module */

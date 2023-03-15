@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -79,22 +79,24 @@ int main(int argc, char *argv[])
 	uint32_t load_offset_adr = 0;
 	uint32_t boot_param_num = 0;
 	off_t size = 0;
+	char *endptr = NULL;
 
 	memset(&bootparam, 0xFF, sizeof(bootparam));
 
-	if (2 >= argc)
+	if (3 >= argc)
 	{
-		printf("Usage: %s <IPL_FILE> <BOOT_PARAM> [BOOT_MODE]\n", argv[0]);
-		printf("\t<IPL_FILE>       IPL file path. \n");
-		printf("\t<BOOT_PARAM>     Boot parameter file path. \n");
+		printf("Usage: %s <IPL_FILE> <BOOT_PARAM> <DEST_ADDR> [BOOT_MODE]\n", argv[0]);
+		printf("\t<IPL_FILE>       Input IPL file path. \n");
+		printf("\t<BOOT_PARAM>     Output Boot parameter file path. \n");
+		printf("\t<DEST_ADDR>      Destination address in hexadecimal. \n");
 		printf("\t[BOOT_MODE]      Boot mode selection (default: spi). \n");
 		printf("\t                 - \"spi\", \"mmc\", \"scif\", \"esd\"\n");
 		goto exit;
 	}
 
-	if (4 <= argc)
+	if (5 <= argc)
 	{
-		mode = argv[3];
+		mode = argv[4];
 	}
 	
 	if (NULL == (fp = fopen(argv[2], "wb")))
@@ -117,7 +119,7 @@ int main(int argc, char *argv[])
 
 	bootparam.size = (uint32_t)((size + 3) & (~0x3));
 	bootparam.load = (uint32_t)load_offset_adr;
-	bootparam.dest = (uint32_t)DEST_OFFSET_ADR;
+	bootparam.dest = (uint32_t)strtol(argv[3], &endptr, 16);
 	bootparam.sign = (uint32_t)BOOT_PARAM_SIGN;
 
 	for (i = 0; i < boot_param_num; i++)

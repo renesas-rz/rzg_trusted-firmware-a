@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+# Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -7,18 +7,12 @@ MAKE_HELPERS_DIRECTORY := ../../../../make_helpers/
 include ${MAKE_HELPERS_DIRECTORY}build_macros.mk
 include ${MAKE_HELPERS_DIRECTORY}build_env.mk
 
-ifneq (${TRUSTED_BOARD_BOOT},1)
-DEST_OFFSET_ADR	?=	0x000A3000
-else
-DEST_OFFSET_ADR	?=	0x000A2000
-endif
-
 BPTOOL	?= bptool${BIN_EXT}
 PROJECT := ../${BPTOOL}
 OBJECTS := bptool.o
 V ?= 0
 
-override CPPFLAGS += -D_GNU_SOURCE -D_XOPEN_SOURCE=700 -DDEST_OFFSET_ADR=${DEST_OFFSET_ADR}
+override CPPFLAGS += -D_GNU_SOURCE -D_XOPEN_SOURCE=700
 HOSTCCFLAGS := -Wall -Werror -pedantic -std=c99
 ifeq (${DEBUG},1)
   HOSTCCFLAGS += -g -O0 -DDEBUG
