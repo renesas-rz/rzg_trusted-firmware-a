@@ -174,6 +174,13 @@ static void plat_tzc_ddr_setup(void)
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
+
+		{
+			.base = PLAT_TEE_TZC_PROT_DRAM01_END + 1,
+			.end  = UL(0xFFFFFFFFF),
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
+		},
 #else
 		{
 			/* Default Region 0: Complete access */

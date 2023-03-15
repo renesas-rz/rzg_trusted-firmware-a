@@ -12,6 +12,7 @@
 #include <cpg.h>
 #include <cpg_regs.h>
 #include <lib/mmio.h>
+#include <pwrc_board.h>
 
 int16_t sys_get_boot_mode(void)
 {
