@@ -25,8 +25,3 @@ build:
 
 sphinx:
   configuration: docs/conf.py
-
-# Auxiliary formats to export to (in addition to the default HTML output).
-formats:
-  - pdf
-
