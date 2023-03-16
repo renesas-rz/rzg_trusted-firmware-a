@@ -57,8 +57,8 @@ void phyinit_load_1d_image(void)
 	for (i = 0; i < ARRAY_SIZE(param_phyinit_1d_imem); i++)
 		dwc_ddrphy_apb_wr(IMEM_BASE + i, (uint32_t)param_phyinit_1d_imem[i]);
 
-	while ((i + IMEM_BASE) < DMEM_BASE)
-		dwc_ddrphy_apb_wr(i++, 0);
+	for (i = i; (IMEM_BASE + i) < DMEM_BASE; i++)
+		dwc_ddrphy_apb_wr(IMEM_BASE + i, 0);
 
 	for (i = 0; i < ARRAY_SIZE(param_phyinit_1d_dmem); i++)
 		dwc_ddrphy_apb_wr(DMEM_BASE + i, (uint32_t)param_phyinit_1d_dmem[i]);
@@ -85,8 +85,8 @@ void phyinit_load_2d_image(void)
 	for (i = 0; i < ARRAY_SIZE(param_phyinit_2d_imem); i++)
 		dwc_ddrphy_apb_wr(IMEM_BASE + i, (uint32_t)param_phyinit_2d_imem[i]);
 
-	while ((i + IMEM_BASE) < DMEM_BASE)
-		dwc_ddrphy_apb_wr(i++, 0);
+	for (i = i; (IMEM_BASE + i) < DMEM_BASE; i++)
+		dwc_ddrphy_apb_wr(IMEM_BASE + i, 0);
 
 	for (i = 0; i < ARRAY_SIZE(param_phyinit_2d_dmem); i++)
 		dwc_ddrphy_apb_wr(DMEM_BASE + i, (uint32_t)param_phyinit_2d_dmem[i]);
