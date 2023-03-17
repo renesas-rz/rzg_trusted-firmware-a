@@ -15,6 +15,9 @@
 
 static sb_secure_boot_api_t secure_boot_api;
 
+#pragma weak cip_init
+void cip_init(void){}
+
 int crypto_sblib_auth(void *data_ptr, size_t len,
 				const void *key_cert, unsigned int key_cert_len,
 				const void *content_cert, unsigned int content_cert_len)
@@ -33,6 +36,9 @@ int crypto_sblib_auth(void *data_ptr, size_t len,
 
 void crypto_sblib_init(void)
 {
+	/* Cryptography IP */
+	cip_init();
+
 	secure_boot_api = (sb_secure_boot_api_t)RZ_SOC_AUTH_API_BASE;
 }
 

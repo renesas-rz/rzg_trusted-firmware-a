@@ -13,12 +13,12 @@ include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 DDR_SOURCES			+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr.c				\
 						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_misc.c
 
-BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c					\
-						plat/renesas/rz/soc/g3s/drivers/riic.c					\
-						plat/renesas/rz/soc/g3s/drivers/tzc/tzc400.c			\
-						plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc.c				\
-						plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc_stack.S		\
-						${DDR_SOURCES}
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c					\
+							plat/renesas/rz/soc/g3s/drivers/riic.c					\
+							plat/renesas/rz/soc/g3s/drivers/tzc/tzc400.c			\
+							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc.c				\
+							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc_stack.S		\
+							${DDR_SOURCES}
 
 BL2_SOURCES			+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c				\
 						plat/renesas/rz/soc/g3s/plat_storage.c					\
@@ -41,7 +41,13 @@ EMMC_SOURCES		+=	plat/renesas/rz/soc/g3s/drivers/emmc/emmc_interrupt.c	\
 
 XSPI_SOURCES		+=	plat/renesas/rz/common/drivers/xspi.c
 
+ifneq (${ENABLE_STACK_PROTECTOR},0)
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/rz_stack_protector.c
+endif
+
 ifneq (${TRUSTED_BOARD_BOOT},0)
+	PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/auth/cip/cip.c
+
 	# Include the selected chain of trust sources.
 	ifeq (${COT},tbbr)
 		BL2_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/auth/tbbr/tbbr_cot.c
