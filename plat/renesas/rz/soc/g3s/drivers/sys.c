@@ -7,11 +7,12 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <assert.h>
+#include <lib/mmio.h>
 #include <sys.h>
 #include <sys_regs.h>
 #include <cpg.h>
 #include <cpg_regs.h>
-#include <lib/mmio.h>
+#include <vbatt_regs.h>
 #include <pwrc_board.h>
 
 int16_t sys_get_boot_mode(void)
@@ -83,10 +84,31 @@ bool sys_is_m33_core_booted(void)
 	return is_booted;
 }
 
-bool sys_resume_peripheral(void)
+bool sys_is_resume_reboot(void)
+{
+	static bool is_resume = false;
+#if defined(PLAT_SYSTEM_SUSPEND_awo)
+	static bool first_call = true;
+
+	if (first_call) {
+		/* Check the flag for reboot by resume */
+		if (0x000000F0 == mmio_read_32(VBATT_BKR0))
+			is_resume = true;
+		/* Flag clear */
+		mmio_write_32(VBATT_BKR0, 0x00000000);
+
+		first_call = false;
+	}
+#elif defined(PLAT_SYSTEM_SUSPEND_vbat)
+	is_resume = pwrc_board_is_resume();
+#endif
+	return is_resume;
+}
+
+bool sys_is_resume_peripheral(void)
 {
 #if defined(PLAT_SYSTEM_SUSPEND_awo)
-	return pwrc_board_is_resume();
+	return sys_is_resume_peripheral();
 #else
 	return false;
 #endif

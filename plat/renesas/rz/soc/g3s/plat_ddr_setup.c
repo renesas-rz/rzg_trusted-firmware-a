@@ -18,8 +18,8 @@
 #include <lib/utils.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 #include <plat/common/platform.h>
+#include <sys.h>
 #include <ddr.h>
-#include <pwrc_board.h>
 
 uint32_t ddr_csr_table[RET_CSR_SIZE] __attribute__ ((aligned (8)));
 
@@ -99,7 +99,7 @@ exit:
 
 void plat_ddr_setup(void)
 {
-	if (!pwrc_board_is_resume())
+	if (!sys_is_resume_reboot())
 	{
 		ddr_setup();
 

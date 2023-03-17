@@ -20,18 +20,15 @@
 #include <sys.h>
 #include <scifa.h>
 #include <pwrc.h>
-#include <pwrc_board.h>
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
 #include <rz_private.h>
-#include <drivers/delay_timer.h>
-
 
 static console_t rzg3s_bl2_console;
 
 static uint32_t bl2_plat_get_boot_mode(void)
 {
-	if (pwrc_board_is_resume())
+	if (sys_is_resume_reboot())
 		return RZ_WARM_BOOT;
 	else
 		return RZ_COLD_BOOT;
@@ -97,7 +94,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	/* early setup Clock and Reset */
 	cpg_early_setup();
 		 
-	if (!sys_resume_peripheral()) {
+	if (!sys_is_resume_peripheral()) {
 		/* initialize SYC */
 		syc_init(RZG3S_SYC_INCK_HZ);
 

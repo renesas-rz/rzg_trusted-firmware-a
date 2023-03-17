@@ -16,7 +16,7 @@
 #if IMAGE_BL2
 bool pwrc_board_is_resume(void)
 {
-	static bool is_retention = false;
+	static bool is_resume = false;
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	static bool first_call = true;
 
@@ -35,14 +35,14 @@ bool pwrc_board_is_resume(void)
 			}
 
 			if (0 == (0x01 & ctrl_reg)) {
-				is_retention = false;
+				is_resume = false;
 				break;
 			}
 
 			/* Resume from sleep state */
 			if ((0 != (0x20 & ists_reg)) && (0 != (0x40 & ists_reg))) {
 
-				is_retention = true;
+				is_resume = true;
 
 				if (0 > riic_write(GPAK, 0xF4, 0x00))
 					panic();
@@ -53,10 +53,8 @@ bool pwrc_board_is_resume(void)
 
 		first_call = false;
 	}
-#elif defined(PLAT_SYSTEM_SUSPEND_awo)
-	// TODO
 #endif
-	return is_retention;
+	return is_resume;
 }
 #endif
 

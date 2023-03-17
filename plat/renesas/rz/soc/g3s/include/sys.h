@@ -22,8 +22,9 @@ typedef enum {
 int16_t sys_get_boot_mode(void);
 
 bool sys_is_m33_core_booted(void);
-bool sys_resume_peripheral(void);
-
 void sys_m33_core_boot_op(uintptr_t vector);
+
+bool sys_is_resume_reboot(void);
+bool sys_is_resume_peripheral(void);
 
 #endif	/* __SYS_H__ */
