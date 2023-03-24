@@ -275,7 +275,6 @@ BL31_SOURCES		+=	plat/arm/board/fvp/fvp_plat_attest_token.c	\
 # provide hardcoded token/key on request.
 BL31_SOURCES		+=	lib/psa/delegated_attestation.c
 
-PLAT_INCLUDES		+=	-Iinclude/lib/psa
 endif
 
 ifeq (${ENABLE_FEAT_RNG_TRAP},1)
