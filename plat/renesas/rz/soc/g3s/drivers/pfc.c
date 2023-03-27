@@ -136,7 +136,7 @@ static void pfc_scif_setup(void)
 	pfc_write_registers(PFC_MUX_SCIF_TBL_NUM, pfc_mux_scif_reg_tbl);
 
 	mmio_write_32(PFC_PWPR, 0x0);
-	mmio_write_32(PFC_PWPR, PWPR_B0Wl);
+	mmio_write_32(PFC_PWPR, PWPR_B0WI);
 }
 
 static void pfc_xspi_setup(void)
@@ -162,7 +162,7 @@ static void pfc_sd_setup(void)
 	pfc_write_registers(PFC_MUX_SD_TBL_NUM, pfc_mux_sd_reg_tbl);
 
 	mmio_write_32(PFC_PWPR, 0x0);
-	mmio_write_32(PFC_PWPR, PWPR_B0Wl);
+	mmio_write_32(PFC_PWPR, PWPR_B0WI);
 }
 
 static const PFC_REGS *pfc_boot_mode_tbls[SYS_BOOT_MODE_MAX] = {

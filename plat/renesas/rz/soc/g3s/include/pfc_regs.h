@@ -644,7 +644,7 @@
 #define ETH_ch1_1_8			(1 << 0)
 #define ETH_ch1_2_5			(2 << 0)
 /* Write protection definition */
-#define PWPR_B0Wl			(1 << 7)
+#define PWPR_B0WI			(1 << 7)
 #define PWPR_PFCWE			(1 << 6)
 /* Digital noise filter (FILONOFF) register */
 #define FILONOFF_FILON0		(1 << 0)
