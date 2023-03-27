@@ -17,6 +17,7 @@ PLAT_M33_BOOT_SUPPORT			:= 0
 PLAT_SYSTEM_SUSPEND				:= 0
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
+SECURE_RTC						:= 0
 DEBUG_FPGA						:= 0
 
 # This option gets enabled automatically if the TRUSTED_BOARD_BOOT
@@ -38,6 +39,7 @@ override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 
 $(eval $(call add_define,DEBUG_FPGA))
+$(eval $(call add_define,SECURE_RTC))
 $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,PLAT_TBBR_IMG_DEF))
 $(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))

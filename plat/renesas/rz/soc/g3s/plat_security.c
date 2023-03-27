@@ -34,7 +34,11 @@ static const struct {
 	{SYS_SLVACCCTL1,  0xFFFFFFFFU, 0xAAAAAAAAU},
 	{SYS_SLVACCCTL2,  0x00003FFFU, 0x00002AAAU},
 	{SYS_SLVACCCTL3,  0x0000FFFFU, 0x00000030U},
+#if SECURE_RTC
 	{SYS_SLVACCCTL4,  0x3FFFFFFFU, 0x20000002U},
+#else
+	{SYS_SLVACCCTL4,  0x3FFFFFFFU, 0x00000002U},
+#endif
 	{SYS_SLVACCCTL5,  0x00003FFFU, 0x00000000U},
 	{SYS_SLVACCCTL6,  0x0003FFFFU, 0x00000000U},
 	{SYS_SLVACCCTL7,  0x003FFFFFU, 0x00000000U},
@@ -125,8 +129,8 @@ static void plat_tzc_msram_setup(void)
 	const arm_tzc_regions_info_t msram0_tzc_regions[] = {
 		{
 			/* Default Region 0: Lock down */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
@@ -136,8 +140,8 @@ static void plat_tzc_msram_setup(void)
 	const arm_tzc_regions_info_t msram1_tzc_regions[] = {
 		{
 			/* Default Region 0: Lock down */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
@@ -155,8 +159,8 @@ static void plat_tzc_ddr_setup(void)
 #if TRUSTED_BOARD_BOOT
 		{
 			/* Default Region 0: Lock down */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
@@ -201,8 +205,8 @@ static void plat_tzc_spi_setup(void)
 	const arm_tzc_regions_info_t xspi_tzc_regions[] = {
 		{
 			/* Default Region 0: Lock down */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
