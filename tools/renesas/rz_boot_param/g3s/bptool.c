@@ -17,7 +17,7 @@
 #define ESD_LOAD_OFFSET		(0x00001000)
 #define BOOT_PARAM_SIGN		(0xAA55FFFF)
 
-struct
+static struct
 {
 	uint32_t size;
 	uint32_t pad1[3];
@@ -77,13 +77,14 @@ int main(int argc, char *argv[])
 	char *mode = "spi";
 	uint32_t i;
 	uint32_t load_offset_adr = 0;
+	uint32_t dest_offset_adr = 0;
 	uint32_t boot_param_num = 0;
 	off_t size = 0;
 	char *endptr = NULL;
 
 	memset(&bootparam, 0xFF, sizeof(bootparam));
 
-	if (3 >= argc)
+	if (4 > argc)
 	{
 		printf("Usage: %s <IPL_FILE> <BOOT_PARAM> <DEST_ADDR> [BOOT_MODE]\n", argv[0]);
 		printf("\t<IPL_FILE>       Input IPL file path. \n");
@@ -94,32 +95,39 @@ int main(int argc, char *argv[])
 		goto exit;
 	}
 
+	if (0 >= (size = fsize(argv[1])))
+	{
+		printf("Could not get size of file \"%s\".\n", argv[1]);
+		goto exit;
+	}
+
+	if (NULL == (fp = fopen(argv[2], "wb")))
+	{
+		printf("Could not open file \"%s\".\n", argv[2]);
+		goto exit;
+	}
+
+	dest_offset_adr = (uint32_t)strtol(argv[3], &endptr, 16);
+	if ('\0' != *endptr)
+	{
+		printf("Could not get dest addr \"%s\".\n", argv[3]);
+		goto exit;
+	}
+
 	if (5 <= argc)
 	{
 		mode = argv[4];
 	}
-	
-	if (NULL == (fp = fopen(argv[2], "wb")))
-	{
-		printf("Could not open file %s.\n", argv[2]);
-		goto exit;
-	}
-
-	if (0 >= (size = fsize(argv[1])))
-	{
-		printf("Could not get size of file %s.\n", argv[1]);
-		goto exit;
-	}
 
 	if (0 != get_loadinfo(mode, &load_offset_adr, &boot_param_num))
 	{
-		printf("Could not get load info of boot mode %s.\n", mode);
+		printf("Could not get load info of boot mode \"%s\".\n", mode);
 		goto exit;
 	}
 
 	bootparam.size = (uint32_t)((size + 3) & (~0x3));
-	bootparam.load = (uint32_t)load_offset_adr;
-	bootparam.dest = (uint32_t)strtol(argv[3], &endptr, 16);
+	bootparam.load = load_offset_adr;
+	bootparam.dest = dest_offset_adr;
 	bootparam.sign = (uint32_t)BOOT_PARAM_SIGN;
 
 	for (i = 0; i < boot_param_num; i++)
