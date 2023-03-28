@@ -56,7 +56,7 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_pll4_tbl[] = {
-#if (DDR_PLL4 == 1600)
+#if (DDR_PLL4 >= 800)
 	{ CPG_PLL4_CLK1, 0x0498E000 },
 	{ CPG_PLL4_CLK2, 0x00000002 },
 #else
@@ -375,15 +375,9 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		0x00030001,
 		CPG_T_CLK
 	},
-	{		/* SYSC */
-		(uintptr_t)CPG_CLKON_SYSC,
-		(uintptr_t)CPG_CLKMON_SYSC,
-		0x00030003,
-		CPG_T_CLK
-	},
 	{		/* OSTM */
-		(uintptr_t)CPG_CLKON_OSTM,
-		(uintptr_t)CPG_CLKMON_OSTM,
+		(uintptr_t)CPG_CLKON_GTM,
+		(uintptr_t)CPG_CLKMON_GTM,
 		0x00FF0000,
 		CPG_T_CLK
 	},
@@ -536,15 +530,9 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		0x00030003,
 		CPG_T_RST
 	},
-	{		/* SYSC */
-		(uintptr_t)CPG_RST_SYSC,
-		(uintptr_t)CPG_RSTMON_SYSC,
-		0x00070007,
-		CPG_T_RST
-	},
 	{		/* OSTM */
-		(uintptr_t)CPG_RST_OSTM,
-		(uintptr_t)CPG_RSTMON_OSTM,
+		(uintptr_t)CPG_RST_GTM,
+		(uintptr_t)CPG_RSTMON_GTM,
 		0x00FF0000,
 		CPG_T_RST
 	},
