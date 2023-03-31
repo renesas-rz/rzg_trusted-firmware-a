@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define	D1D008	0x031f	// 0x064008
+#define	D1D008	0x131f	// 0x064008
 #define	D1D009	0x0004	// 0x064009
 #define	D2D009	0x0004	// 0x064009
 
