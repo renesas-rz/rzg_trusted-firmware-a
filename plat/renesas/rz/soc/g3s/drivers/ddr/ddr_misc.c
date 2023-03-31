@@ -16,7 +16,7 @@
 static void soft_delay(uint64_t usec);
 
 #pragma weak decode_major_message
-void decode_major_message(uint32_t mail)
+void decode_major_message(uint32_t mail, uint8_t sel_train)
 {
 	;
 }
@@ -92,7 +92,7 @@ void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 	}
 }
 
-void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(void)
+void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(uint8_t sel_train)
 {
 	uint32_t mail;
 	
@@ -104,7 +104,7 @@ void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(void)
 
 		mail = get_mail(0);
 
-		decode_major_message(mail);
+		decode_major_message(mail, sel_train);
 
 	} while ((mail != 0xff) && (mail != 0x07));
 

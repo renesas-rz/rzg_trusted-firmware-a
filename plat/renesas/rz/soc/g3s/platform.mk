@@ -13,11 +13,13 @@ include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 DDR_SOURCES			+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr.c				\
 						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_misc.c
 
-PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c					\
-							plat/renesas/rz/soc/g3s/drivers/riic.c					\
-							plat/renesas/rz/soc/g3s/drivers/tzc/tzc400.c			\
-							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc.c				\
-							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc_stack.S		\
+PLAT_INCLUDES		+=	-Iplat/renesas/rz/soc/g3s/drivers/ddr
+
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c				\
+							plat/renesas/rz/soc/g3s/drivers/riic.c				\
+							plat/renesas/rz/soc/g3s/drivers/tzc/tzc400.c		\
+							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc.c			\
+							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc_stack.S	\
 							${DDR_SOURCES}
 
 BL2_SOURCES			+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c				\

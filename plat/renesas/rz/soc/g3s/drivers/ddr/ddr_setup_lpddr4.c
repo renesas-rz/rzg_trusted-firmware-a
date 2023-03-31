@@ -7,10 +7,10 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <lib/mmio.h>
+#include <ddr_param_def_lpddr4.h>
 
 #include "ddr_regs.h"
 #include "ddr_private.h"
-#include "ddr_param_def_lpddr4.h"
 
 #define IMEM_BASE	(0x00060000)
 #define DMEM_BASE	(0x00064000)
@@ -72,7 +72,7 @@ void phyinit_exec_1d_image(void)
 	dwc_ddrphy_apb_wr(0x0006E099, 0x9);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x0);
-	dwc_ddrphy_phyinit_userCustom_G_waitFwDone();
+	dwc_ddrphy_phyinit_userCustom_G_waitFwDone(3);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
 }
 
@@ -100,7 +100,7 @@ void phyinit_exec_2d_image(void)
 	dwc_ddrphy_apb_wr(0x0006E099, 0x9);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x0);
-	dwc_ddrphy_phyinit_userCustom_G_waitFwDone();
+	dwc_ddrphy_phyinit_userCustom_G_waitFwDone(4);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
 }
 
