@@ -100,7 +100,7 @@ void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(uint8_t sel_train)
 
 	do {
 		/* Wait at least 500 cycles */
-		wait_pclk(500 * 200);
+		wait_pclk(500);
 
 		mail = get_mail(0);
 
