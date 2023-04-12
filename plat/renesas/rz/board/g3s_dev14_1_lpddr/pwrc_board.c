@@ -7,8 +7,10 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <assert.h>
+#include <lib/mmio.h>
 
 #include <riic.h>
+#include <vbatt_regs.h>
 
 #define PMIC		(0x12)
 #define GPAK		(0x38)
@@ -53,18 +55,37 @@ bool pwrc_board_is_resume(void)
 
 		first_call = false;
 	}
+#elif defined(PLAT_SYSTEM_SUSPEND_awo)
+	static bool first_call = true;
+
+	if (first_call) {
+		/* Receive transition to resume from CM33 core */
+		if (0x000000F0 == mmio_read_32(VBATT_BKR0))
+			is_resume = true;
+
+		/* Flag clear */
+		mmio_write_32(VBATT_BKR0, 0x00000000);
+
+		first_call = false;
+	}
 #endif
 	return is_resume;
 }
-#endif
+#endif /* IMAGE_BL2 */
 
 void pwrc_board_suspend_on(void)
 {
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
-	riic_setup();
+	/* VBATT area shut-off control */
+	mmio_write_32(VBATT_ISOENPROT, 0x15AFFA51);
+	mmio_write_32(VBATT_ISOEN, 0x00000001);
 
+	riic_setup();
 	riic_write(GPAK, 0xB0, 0xFF);
 	riic_write(GPAK, 0xF4, 0x31);
+#elif defined(PLAT_SYSTEM_SUSPEND_awo)
+	/* Notifies the CM33 core of a transition to suspend */
+	mmio_write_32(VBATT_BKR0, 0x000000A5);
 #endif
 }
 

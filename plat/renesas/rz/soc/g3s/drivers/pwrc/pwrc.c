@@ -19,7 +19,6 @@
 #include <ddr.h>
 #include <pwrc.h>
 #include <sys_regs.h>
-#include <vbatt_regs.h>
 #include <rz_private.h>
 #include <pwrc_board.h>
 
@@ -31,16 +30,7 @@ static void __dead2 pwrc_go_suspend_to_ram(void)
 
 	cpg_suspend_setup();
 
-#if defined(PLAT_SYSTEM_SUSPEND_vbat)
-	/* VBATT area shut-off control */
-	mmio_write_32(VBATT_ISOENPROT, 0x15AFFA51);
-	mmio_write_32(VBATT_ISOEN, 0x00000001);
-
 	pwrc_board_suspend_on();
-#elif defined(PLAT_SYSTEM_SUSPEND_awo)
-	/* Notifies the CM33 core of a transition to suspend */
-	mmio_write_32(VBATT_BKR0, 0x000000A5);
-#endif
 
 	while (1)
 		wfi();

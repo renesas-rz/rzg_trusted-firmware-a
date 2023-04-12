@@ -12,7 +12,6 @@
 #include <sys_regs.h>
 #include <cpg.h>
 #include <cpg_regs.h>
-#include <vbatt_regs.h>
 #include <pwrc_board.h>
 
 int16_t sys_get_boot_mode(void)
@@ -54,7 +53,7 @@ int16_t sys_get_boot_mode(void)
 #if PLAT_M33_BOOT_SUPPORT
 void sys_m33_core_boot_op(uintptr_t vector)
 {
-	if (0 != (mmio_read_32(CPG_PLL6_STBY) & PLL6_STBY_SSC_EN))
+	if (0 != (mmio_read_32(CPG_PLL6_STBY) & PLL6_STBY_SSCG_EN))
 	{
 		mmio_write_32(SYS_CM33_CFG0, 0x01012E1E);
 		mmio_write_32(SYS_CM33_CFG1, 0x01012E1E);
@@ -87,19 +86,7 @@ bool sys_is_m33_core_booted(void)
 bool sys_is_resume_reboot(void)
 {
 	static bool is_resume = false;
-#if defined(PLAT_SYSTEM_SUSPEND_awo)
-	static bool first_call = true;
-
-	if (first_call) {
-		/* Check the flag for reboot by resume */
-		if (0x000000F0 == mmio_read_32(VBATT_BKR0))
-			is_resume = true;
-		/* Flag clear */
-		mmio_write_32(VBATT_BKR0, 0x00000000);
-
-		first_call = false;
-	}
-#elif defined(PLAT_SYSTEM_SUSPEND_vbat)
+#if PLAT_SYSTEM_SUSPEND
 	is_resume = pwrc_board_is_resume();
 #endif
 	return is_resume;

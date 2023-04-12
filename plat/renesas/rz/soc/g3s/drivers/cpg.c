@@ -41,6 +41,7 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 		0x00010001,
 		CPG_T_RST
 	},
+#if PLAT_SYSTEM_SUSPEND
 	{		/* I2C Ch1 */
 		(uintptr_t)CPG_CLKON_I2C,
 		(uintptr_t)CPG_CLKMON_I2C,
@@ -53,6 +54,19 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 		0x000F0003,
 		CPG_T_RST
 	},
+	{		/* VBAT */
+		(uintptr_t)CPG_CLKON_VBAT,
+		(uintptr_t)CPG_CLKMON_VBAT,
+		0x00010001,
+		CPG_T_CLK
+	},
+	{		/* VBAT */
+		(uintptr_t)CPG_RST_VBAT,
+		(uintptr_t)CPG_RSTMON_VBAT,
+		0x00010001,
+		CPG_T_RST
+	},
+#endif  /* PLAT_SYSTEM_SUSPEND */
 };
 
 static const CPG_REG_SETTING cpg_pll4_tbl[] = {
@@ -116,6 +130,7 @@ static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
 };
 
 static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
+#if PLAT_SYSTEM_SUSPEND
 	{		/* I2C Ch1 */
 		(uintptr_t)CPG_CLKON_I2C,
 		(uintptr_t)CPG_CLKMON_I2C,
@@ -128,7 +143,6 @@ static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
 		0x00020002,
 		CPG_T_RST
 	},
-#if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	{		/* VBAT */
 		(uintptr_t)CPG_CLKON_VBAT,
 		(uintptr_t)CPG_CLKMON_VBAT,
@@ -145,9 +159,9 @@ static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_s2r_mstop_tbl[] = {
+#if PLAT_SYSTEM_SUSPEND
 			/* I2C Ch1 */
 	{ (uintptr_t)CPG_BUS_MCPU2_MSTOP,	0x08000000 },
-#if defined(PLAT_SYSTEM_SUSPEND_vbat)
 			/* VBAT */
 	{ (uintptr_t)CPG_BUS_MCPU3_MSTOP,	0x01000000 },
 #endif
@@ -501,12 +515,6 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		0x00030000,
 		CPG_T_CLK
 	},
-	{		/* VBAT */
-		(uintptr_t)CPG_CLKON_VBAT,
-		(uintptr_t)CPG_CLKMON_VBAT,
-		0x00010001,
-		CPG_T_CLK
-	},
 };
 
 static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
@@ -654,12 +662,6 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		(uintptr_t)CPG_RST_I3C,
 		(uintptr_t)CPG_RSTMON_I3C,
 		0x00030000,
-		CPG_T_RST
-	},
-	{		/* VBAT */
-		(uintptr_t)CPG_RST_VBAT,
-		(uintptr_t)CPG_RSTMON_VBAT,
-		0x00010001,
 		CPG_T_RST
 	},
 };
