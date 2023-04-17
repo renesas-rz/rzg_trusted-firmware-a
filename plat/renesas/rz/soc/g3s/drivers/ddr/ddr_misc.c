@@ -92,7 +92,7 @@ void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 	}
 }
 
-void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(uint8_t sel_train)
+void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 {
 	uint32_t mail;
 	
@@ -109,7 +109,7 @@ void dwc_ddrphy_phyinit_userCustom_G_waitFwDone(uint8_t sel_train)
 	} while ((mail != 0xff) && (mail != 0x07));
 
 	if (mail == 0xff) {
-		ERROR("Firmware training failed.\n");
+		ERROR("Training failed.\n");
 		panic();
 	}
 }

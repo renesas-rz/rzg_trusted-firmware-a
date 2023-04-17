@@ -12,8 +12,8 @@
 #include "ddr_regs.h"
 #include "ddr_private.h"
 
-#define IMEM_BASE	(0x00060000)
-#define DMEM_BASE	(0x00064000)
+#define DAT0_BASE	(0x00060000)
+#define DAT1_BASE	(0x00064000)
 
 void setup_mc(void)
 {
@@ -54,14 +54,14 @@ void phyinit_load_1d_image(void)
 	dwc_ddrphy_apb_wr(0x00058060, 0x00000002);
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000000);
 
-	for (i = 0; i < ARRAY_SIZE(param_phyinit_1d_imem); i++)
-		dwc_ddrphy_apb_wr(IMEM_BASE + i, (uint32_t)param_phyinit_1d_imem[i]);
+	for (i = 0; i < ARRAY_SIZE(param_phyinit_1d_dat0); i++)
+		dwc_ddrphy_apb_wr(DAT0_BASE + i, (uint32_t)param_phyinit_1d_dat0[i]);
 
-	for (i = i; (IMEM_BASE + i) < DMEM_BASE; i++)
-		dwc_ddrphy_apb_wr(IMEM_BASE + i, 0);
+	for (i = i; (DAT0_BASE + i) < DAT1_BASE; i++)
+		dwc_ddrphy_apb_wr(DAT0_BASE + i, 0);
 
-	for (i = 0; i < ARRAY_SIZE(param_phyinit_1d_dmem); i++)
-		dwc_ddrphy_apb_wr(DMEM_BASE + i, (uint32_t)param_phyinit_1d_dmem[i]);
+	for (i = 0; i < ARRAY_SIZE(param_phyinit_1d_dat1); i++)
+		dwc_ddrphy_apb_wr(DAT1_BASE + i, (uint32_t)param_phyinit_1d_dat1[i]);
 
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000001);
 }
@@ -72,7 +72,7 @@ void phyinit_exec_1d_image(void)
 	dwc_ddrphy_apb_wr(0x0006E099, 0x9);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x0);
-	dwc_ddrphy_phyinit_userCustom_G_waitFwDone(3);
+	dwc_ddrphy_phyinit_userCustom_G_waitDone(3);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
 }
 
@@ -82,14 +82,14 @@ void phyinit_load_2d_image(void)
 
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000000);
 
-	for (i = 0; i < ARRAY_SIZE(param_phyinit_2d_imem); i++)
-		dwc_ddrphy_apb_wr(IMEM_BASE + i, (uint32_t)param_phyinit_2d_imem[i]);
+	for (i = 0; i < ARRAY_SIZE(param_phyinit_2d_dat0); i++)
+		dwc_ddrphy_apb_wr(DAT0_BASE + i, (uint32_t)param_phyinit_2d_dat0[i]);
 
-	for (i = i; (IMEM_BASE + i) < DMEM_BASE; i++)
-		dwc_ddrphy_apb_wr(IMEM_BASE + i, 0);
+	for (i = i; (DAT0_BASE + i) < DAT1_BASE; i++)
+		dwc_ddrphy_apb_wr(DAT0_BASE + i, 0);
 
-	for (i = 0; i < ARRAY_SIZE(param_phyinit_2d_dmem); i++)
-		dwc_ddrphy_apb_wr(DMEM_BASE + i, (uint32_t)param_phyinit_2d_dmem[i]);
+	for (i = 0; i < ARRAY_SIZE(param_phyinit_2d_dat1); i++)
+		dwc_ddrphy_apb_wr(DAT1_BASE + i, (uint32_t)param_phyinit_2d_dat1[i]);
 
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000001);
 }
@@ -100,7 +100,7 @@ void phyinit_exec_2d_image(void)
 	dwc_ddrphy_apb_wr(0x0006E099, 0x9);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x0);
-	dwc_ddrphy_phyinit_userCustom_G_waitFwDone(4);
+	dwc_ddrphy_phyinit_userCustom_G_waitDone(4);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
 }
 
