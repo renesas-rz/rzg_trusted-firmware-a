@@ -801,7 +801,7 @@ static void cpg_wdtrst_sel_setup(void)
 	reg |=  WDTRST_SEL_WDTRSTSEL0 | WDTRST_SEL_WDTRSTSEL0_WEN |
 			WDTRST_SEL_WDTRSTSEL1 | WDTRST_SEL_WDTRSTSEL1_WEN |
 			WDTRST_SEL_WDTRSTSEL2 | WDTRST_SEL_WDTRSTSEL2_WEN;
-	
+
 	mmio_write_32(CPG_WDTRST_SEL, reg);
 }
 
@@ -839,7 +839,7 @@ void cpg_active_ddr1(void)
 	cpg_clkrst_stop(&cpg_ddr_clkrst_tbl[1], 1);
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
 	udelay(1);
-	
+
 	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[2], 1);
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
 	udelay(1);
@@ -857,7 +857,7 @@ void cpg_active_ddr2(void)
 void cpg_suspend_setup(void)
 {
 #if defined(PLAT_SYSTEM_SUSPEND_awo)
-	cpg_module_stop(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl)); 
+	cpg_module_stop(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
 	cpg_clkrst_stop(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
 	cpg_clkrst_stop(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
 #endif

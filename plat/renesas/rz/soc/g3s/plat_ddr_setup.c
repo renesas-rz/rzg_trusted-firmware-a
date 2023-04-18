@@ -99,18 +99,15 @@ exit:
 
 void plat_ddr_setup(void)
 {
-	if (!sys_is_resume_reboot())
-	{
+	if (!sys_is_resume_reboot()) {
 		ddr_setup();
 
-		if (0 != save_ddr_config(DDR_CONFIG_ID, &ddr_config_info)) {
+		if (save_ddr_config(DDR_CONFIG_ID, &ddr_config_info) != 0) {
 			ERROR("Failed to save DDR retention info.\n");
 			panic();
 		}
-	}
-	else
-	{
-		if (0 != load_auth_image(DDR_CONFIG_ID, &ddr_config_info)) {
+	} else {
+		if (load_auth_image(DDR_CONFIG_ID, &ddr_config_info) != 0) {
 			ERROR("Failed to load DDR retention info.\n");
 			panic();
 		}

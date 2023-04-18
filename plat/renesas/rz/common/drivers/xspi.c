@@ -105,7 +105,7 @@ static int xspi_reset(void)
 	/* Issue the reset command */
 	st_xspi_cmd_info_t cmd_rsten = {RSTEN, 0, 0};
 	st_xspi_cmd_info_t cmd_reset = {RESET, 0, 0};
-	
+
 	ret = xspi_single_command(&cmd_rsten);
 	if (ret == XSPI_SUCCESS) {
 		ret = xspi_single_command(&cmd_reset);

@@ -1341,7 +1341,7 @@ static void decode_streaming_message_ddr4(uint32_t codede_message_hex, uint16_t 
 		INFO("PMU3: ACXConf:%d MaxNumDbytes:%d NumDfi:%d\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x04270005:
-		INFO("PMU1: setAltAcsmCLCWL setting cl=%d cwl=%d %d %d %d \n",args_list[0],args_list[1],args_list[2],args_list[3],args_list[4]);
+		INFO("PMU1: setAltAcsmCLCWL setting cl=%d cwl=%d %d %d %d \n", args_list[0], args_list[1], args_list[2], args_list[3], args_list[4]);
 		break;
 	default:
 		INFO("PMU Streaming Msg: Debug message not recognized !!  code: %x", codede_message_hex);
@@ -1353,7 +1353,7 @@ static void decode_streaming_message_ddr4(uint32_t codede_message_hex, uint16_t 
 static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16_t *args_list)
 {
 #if (DDR_LOG_EN && DEBUG)
-	switch(codede_message_hex) {
+	switch (codede_message_hex) {
 	case 0x00000001:
 		INFO("PMU0: Converting %d into an MR\n", args_list[0]);
 		break;

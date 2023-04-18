@@ -24,28 +24,34 @@ void decode_major_message(uint32_t mail, uint8_t sel_train)
 void wait_pclk(uint32_t cycles)
 {
 	const uint32_t pclk_freq = 100000000; /* PCLK = 100MHz */
+
 	soft_delay((((uint64_t)cycles * 1000000) / pclk_freq) + 1);
 }
 
 void wait_dficlk(uint32_t cycles)
 {
 	const uint32_t dficlk_freq = 400000000; /* dfiCLK = 400MHz */
+
 	soft_delay((((uint64_t)cycles * 1000000) / dficlk_freq) + 1);
 }
 
 void DDRTOP_mc_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask)
 {
 	uint32_t tmp_data;
+
 	tmp_data = DDRTOP_mc_apb_rd(addr);
 	data = (data & mask) | (tmp_data & (~mask));
+
 	DDRTOP_mc_apb_wr(addr, data);
 }
 
 void DDRTOP_mc_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 {
 	uint32_t tmp_data;
+
 	tmp_data = DDRTOP_mc_apb_rd(addr);
 	tmp_data &= mask;
+
 	while (tmp_data != data) {
 		wait_pclk(10);
 		tmp_data = DDRTOP_mc_apb_rd(addr);
@@ -57,8 +63,10 @@ void DDRTOP_mc_param_wr(uint32_t addr, uint32_t offset, uint32_t width, uint32_t
 {
 	uint32_t tmp_data;
 	uint32_t tmp_mask;
+
 	tmp_data = data << offset;
 	tmp_mask = ((1 << width) - 1) << offset;
+
 	DDRTOP_mc_apb_rmw(addr, tmp_data, tmp_mask);
 }
 
@@ -66,8 +74,10 @@ uint32_t DDRTOP_mc_param_rd(uint32_t addr, uint32_t offset, uint32_t width)
 {
 	uint32_t tmp_data;
 	uint32_t tmp_mask;
+
 	tmp_data = DDRTOP_mc_apb_rd(addr);
 	tmp_mask = ((1 << width) - 1) << offset;
+
 	return (tmp_data & tmp_mask) >> offset;
 }
 
@@ -75,16 +85,20 @@ void DDRTOP_mc_param_poll(uint32_t addr, uint32_t offset, uint32_t width, uint32
 {
 	uint32_t tmp_data;
 	uint32_t tmp_mask;
+
 	tmp_data = data << offset;
 	tmp_mask = ((1 << width) - 1) << offset;
+
 	DDRTOP_mc_apb_poll(addr, tmp_data, tmp_mask);
 }
 
 void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 {
 	uint32_t tmp_data;
+
 	tmp_data = dwc_ddrphy_apb_rd(addr);
 	tmp_data &= mask;
+
 	while (tmp_data != data) {
 		wait_pclk(10);
 		tmp_data = dwc_ddrphy_apb_rd(addr);
@@ -95,7 +109,7 @@ void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 {
 	uint32_t mail;
-	
+
 	wait_dficlk(10);
 
 	do {
@@ -119,18 +133,19 @@ uint32_t get_mail(uint8_t mode_32bits)
 	uint32_t mail = 0;
 	uint32_t wd_timer = 0;
 
-	while (0 != (dwc_ddrphy_apb_rd(0x0006E004) & 0x1));
+	while (0 != (dwc_ddrphy_apb_rd(0x0006E004) & 0x1))
+		;
 
 	mail = dwc_ddrphy_apb_rd(0x06E032);
 
-	if (0 != mode_32bits) {
+	if (mode_32bits != 0) {
 		mail = (dwc_ddrphy_apb_rd(0x0006E034) << 16) | mail;
 	}
 
 	dwc_ddrphy_apb_wr(0x06E031, 0x00000000);
 
 	while (0 == (dwc_ddrphy_apb_rd(0x0006E004) & 0x1)) {
-		if(1000 < wd_timer++) {
+		if (wd_timer++ > 1000) {
 			ERROR("Watchdog timer overflow.\n");
 			panic();
 		}

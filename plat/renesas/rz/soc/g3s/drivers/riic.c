@@ -95,7 +95,7 @@ static int riic_check_busy(void)
 	uint32_t loop_cnt = 0;
 
 	do {
-		icsr2 = mmio_read_8(RIIC_ICCR2); 
+		icsr2 = mmio_read_8(RIIC_ICCR2);
 		if (0 == (icsr2 & ICCR2_BBSY))
 			return 0;
 	} while (RIIC_WAIT_COUNT_MAX > loop_cnt++);
@@ -108,10 +108,10 @@ static int riic_wait_for_icsr2(uint8_t bit)
 {
 	uint8_t icsr2;
 	uint32_t loop_cnt = 0;
-	
+
 	do {
 		icsr2 = mmio_read_8(RIIC_ICSR2);
-		
+
 		if (0 != (icsr2 & ICSR2_NACKF))
 			return -1;
 		if (0 != (icsr2 & bit))
@@ -206,7 +206,7 @@ static int riic_send_mem_addr(uint32_t addr, int alen)
 
 	if (alen > 4 || alen <= 0)
 		return -1;
-		
+
 	for (i = alen - 1; i >= 0; i--, addr >>= 8)
 		buf[i] = addr & 0xff;
 
@@ -271,7 +271,7 @@ int32_t riic_write(uint8_t slave, uint8_t addr, uint8_t data)
 	ret = riic_check_busy();
 	if (ret < 0)
 		return ret;
-	
+
 	ret = riic_send_start_cond(0);
 	if (ret < 0)
 		goto force_exit;
@@ -284,7 +284,7 @@ int32_t riic_write(uint8_t slave, uint8_t addr, uint8_t data)
 	ret = riic_send_mem_addr(addr, 1);
 	if (ret < 0)
 		goto force_exit;
-	
+
 	/* transmit data */
 	ret = riic_i2c_raw_write(&data, 1);
 	if (ret < 0)
@@ -295,7 +295,7 @@ int32_t riic_write(uint8_t slave, uint8_t addr, uint8_t data)
 force_exit:
 	riic_send_stop_cond();
 
-	return ret;	
+	return ret;
 }
 
 int32_t riic_read(uint8_t slave, uint8_t addr, uint8_t *data)

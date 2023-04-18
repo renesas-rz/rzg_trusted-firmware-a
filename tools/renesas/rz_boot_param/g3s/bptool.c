@@ -41,28 +41,19 @@ static int get_loadinfo(char *mode, uint32_t *ldr, uint32_t *bpn)
 {
 	int err = 0;
 
-	if (0 == strcmp(mode, "spi"))
-	{
+	if (0 == strcmp(mode, "spi")) {
 		*ldr = SPI_LOAD_OFFSET;
 		*bpn = 1;
-	}
-	else if (0 == strcmp(mode, "mmc"))
-	{
+	} else if (0 == strcmp(mode, "mmc")) {
 		*ldr = MMC_LOAD_OFFSET;
 		*bpn = 1;
-	}
-	else if (0 == strcmp(mode, "scif"))
-	{
+	} else if (0 == strcmp(mode, "scif")) {
 		*ldr = SCIF_LOAD_OFFSET;
 		*bpn = 1;
-	}
-	else if (0 == strcmp(mode, "esd"))
-	{
+	} else if (0 == strcmp(mode, "esd")) {
 		*ldr = ESD_LOAD_OFFSET;
 		*bpn = 7;
-	}
-	else
-	{
+	} else {
 		err = -1;
 	}
 
@@ -84,8 +75,7 @@ int main(int argc, char *argv[])
 
 	memset(&bootparam, 0xFF, sizeof(bootparam));
 
-	if (4 > argc)
-	{
+	if (4 > argc) {
 		printf("Usage: %s <IPL_FILE> <BOOT_PARAM> <DEST_ADDR> [BOOT_MODE]\n", argv[0]);
 		printf("\t<IPL_FILE>       Input IPL file path. \n");
 		printf("\t<BOOT_PARAM>     Output Boot parameter file path. \n");
@@ -95,32 +85,29 @@ int main(int argc, char *argv[])
 		goto exit;
 	}
 
-	if (0 >= (size = fsize(argv[1])))
-	{
+	size = fsize(argv[1]);
+	if (size <= 0) {
 		printf("Could not get size of file \"%s\".\n", argv[1]);
 		goto exit;
 	}
 
-	if (NULL == (fp = fopen(argv[2], "wb")))
-	{
+	fp = fopen(argv[2], "wb");
+	if (fp == NULL) {
 		printf("Could not open file \"%s\".\n", argv[2]);
 		goto exit;
 	}
 
 	dest_offset_adr = (uint32_t)strtol(argv[3], &endptr, 16);
-	if ('\0' != *endptr)
-	{
+	if ('\0' != *endptr) {
 		printf("Could not get dest addr \"%s\".\n", argv[3]);
 		goto exit;
 	}
 
-	if (5 <= argc)
-	{
+	if (argc >= 5) {
 		mode = argv[4];
 	}
 
-	if (0 != get_loadinfo(mode, &load_offset_adr, &boot_param_num))
-	{
+	if (0 != get_loadinfo(mode, &load_offset_adr, &boot_param_num)) {
 		printf("Could not get load info of boot mode \"%s\".\n", mode);
 		goto exit;
 	}
@@ -130,8 +117,7 @@ int main(int argc, char *argv[])
 	bootparam.dest = dest_offset_adr;
 	bootparam.sign = (uint32_t)BOOT_PARAM_SIGN;
 
-	for (i = 0; i < boot_param_num; i++)
-	{
+	for (i = 0; i < boot_param_num; i++) {
 		fwrite(&bootparam, 1, sizeof(bootparam), fp);
 	}
 
@@ -139,7 +125,7 @@ int main(int argc, char *argv[])
 
 exit:
 
-	if (NULL != fp)
+	if (fp != NULL)
 		fclose(fp);
 
 	return err;

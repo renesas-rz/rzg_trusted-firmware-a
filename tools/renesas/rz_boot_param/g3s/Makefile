@@ -20,7 +20,7 @@ else
   HOSTCCFLAGS += -O2
 endif
 
-LDLIBS := 
+LDLIBS :=
 
 ifeq (${V},0)
   Q := @

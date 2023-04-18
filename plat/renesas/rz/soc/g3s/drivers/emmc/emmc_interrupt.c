@@ -162,7 +162,7 @@ static EMMC_ERROR_CODE emmc_trans_sector(uint32_t *buff_address_virtual)
 		/* Write */
 		if (mmc_drv_obj.cmd_info.dir == HAL_MEMCARD_WRITE) {
 			/* Checks when the write data reaches SD_SIZE. */
-            if (((i % (uint32_t) (EMMC_BLOCK_LENGTH >> EMMC_BUF_SIZE_SHIFT)) == 0U) && (i != 0U)) {
+			if (((i % (uint32_t)(EMMC_BLOCK_LENGTH >> EMMC_BUF_SIZE_SHIFT)) == 0U) && (i != 0U)) {
 				/* BWE check */
 				while (((GETR_32(SD_INFO2)) & SD_INFO2_BWE) == 0U) {
 					/* ERROR check */

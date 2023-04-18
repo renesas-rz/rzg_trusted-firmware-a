@@ -98,10 +98,9 @@ static int rz_validate_power_state(unsigned int power_state, psci_power_state_t 
 	if (pstate == PSTATE_TYPE_STANDBY) {
 		if (pwrlvl != MPIDR_AFFLVL0)
 			return PSCI_E_INVALID_PARAMS;
-		
+
 		req_state->pwr_domain_state[MPIDR_AFFLVL0] = PLAT_MAX_RET_STATE;
-	}
-	else {
+	} else {
 		for (i = MPIDR_AFFLVL0; i <= pwrlvl; i++)
 			req_state->pwr_domain_state[i] = PLAT_MAX_OFF_STATE;
 	}

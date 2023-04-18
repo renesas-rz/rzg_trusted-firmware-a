@@ -43,8 +43,7 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 		if (sys_is_m33_core_booted())
 			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
 #endif
-	}
-	else {
+	} else {
 		if (RZ_WARM_BOOT == bl2_plat_get_boot_mode())
 			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
 	}
@@ -93,14 +92,14 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	/* early setup Clock and Reset */
 	cpg_early_setup();
-		 
+
 	if (!sys_is_resume_peripheral()) {
 		/* initialize SYC */
 		syc_init(RZG3S_SYC_INCK_HZ);
 
 		/* initialize Timer */
 		generic_delay_timer_init();
-		
+
 		/* setup PFC */
 		pfc_setup();
 
@@ -118,8 +117,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 		console_set_scope(&rzg3s_bl2_console,
 				CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
-	}
-	else {
+	} else {
 		/* resume Clock and Reset */
 		cpg_resume_setup();
 	}
@@ -174,7 +172,7 @@ void bl2_el3_plat_prepare_exit(void)
 {
 #if PLAT_M33_BOOT_SUPPORT
 	if (!sys_is_m33_core_booted()) {
-		bl_mem_params_node_t * bl22_mem_params = get_bl_mem_params_node(BL22_IMAGE_ID);
+		bl_mem_params_node_t *bl22_mem_params = get_bl_mem_params_node(BL22_IMAGE_ID);
 		if (NULL != bl22_mem_params) {
 			sys_m33_core_boot_op((bl22_mem_params->ep_info).pc);
 		}

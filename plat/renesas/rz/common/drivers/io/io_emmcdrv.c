@@ -156,7 +156,7 @@ static int32_t emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 			memcpy((uint8_t *)&sector_buf[first_offset], (uint8_t *)buffer, buffer_offset);
 
-			if (emmc_write_sector((uint32_t *)sector_buf, first_sector, 1, emmc_dma) != EMMC_SUCCESS){
+			if (emmc_write_sector((uint32_t *)sector_buf, first_sector, 1, emmc_dma) != EMMC_SUCCESS) {
 				result = IO_FAIL;
 				goto block_read_done;
 			}
@@ -179,7 +179,7 @@ static int32_t emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 			memcpy(&sector_buf[0], (uint8_t *) buffer + (length - last_offset), last_offset);
 
-			if (emmc_write_sector((uint32_t *)sector_buf, last_sector, 1, emmc_dma) != EMMC_SUCCESS){
+			if (emmc_write_sector((uint32_t *)sector_buf, last_sector, 1, emmc_dma) != EMMC_SUCCESS) {
 				result = IO_FAIL;
 				goto block_read_done;
 			}
@@ -190,8 +190,7 @@ static int32_t emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 	// middle sector
 	if (sector_count > 0) {
-
-		if(emmc_write_sector((uint32_t *)(buffer + buffer_offset), 
+		if (emmc_write_sector((uint32_t *)(buffer + buffer_offset),
 				first_sector, sector_count, emmc_dma) != EMMC_SUCCESS) {
 			result = IO_FAIL;
 			goto block_read_done;

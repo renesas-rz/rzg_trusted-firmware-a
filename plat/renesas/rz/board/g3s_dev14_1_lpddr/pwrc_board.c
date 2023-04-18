@@ -18,56 +18,58 @@
 #if IMAGE_BL2
 bool pwrc_board_is_resume(void)
 {
-	static bool is_resume = false;
+	static bool is_resume;
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	static bool first_call = true;
 
 	if (first_call) {
-
-		volatile uint32_t timeout = 100;
+		int32_t timeout = 100;
 
 		riic_setup();
 
-		while (0 < timeout--) {
+		while (timeout-- > 0) {
 			uint8_t ctrl_reg;
 			uint8_t ists_reg;
 
-			if ((0 > riic_read(GPAK, 0xF4, &ctrl_reg)) || (0 > riic_read(GPAK, 0xF1, &ists_reg))) {
+			is_resume = false;
+
+			if ((riic_read(GPAK, 0xF4, &ctrl_reg) < 0) || (riic_read(GPAK, 0xF1, &ists_reg) < 0)) {
 				panic();
 			}
 
-			if (0 == (0x01 & ctrl_reg)) {
-				is_resume = false;
+			if ((0x01 & ctrl_reg) == 0) {
 				break;
 			}
 
 			/* Resume from sleep state */
-			if ((0 != (0x20 & ists_reg)) && (0 != (0x40 & ists_reg))) {
+			if (((0x20 & ists_reg) != 0) && ((0x40 & ists_reg) != 0)) {
 
 				is_resume = true;
 
-				if (0 > riic_write(GPAK, 0xF4, 0x00))
+				if (riic_write(GPAK, 0xF4, 0x00) < 0)
 					panic();
 
 				break;
 			}
 		}
-
-		first_call = false;
 	}
+	first_call = false;
 #elif defined(PLAT_SYSTEM_SUSPEND_awo)
 	static bool first_call = true;
 
 	if (first_call) {
 		/* Receive transition to resume from CM33 core */
-		if (0x000000F0 == mmio_read_32(VBATT_BKR0))
+		if (mmio_read_32(VBATT_BKR0) == 0x000000F0)
 			is_resume = true;
+		else
+			is_resume = false;
 
 		/* Flag clear */
 		mmio_write_32(VBATT_BKR0, 0x00000000);
-
-		first_call = false;
 	}
+	first_call = false;
+#else
+	is_resume = false;
 #endif
 	return is_resume;
 }

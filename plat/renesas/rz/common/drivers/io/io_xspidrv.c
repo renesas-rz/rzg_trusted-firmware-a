@@ -45,14 +45,14 @@ static uint8_t page_buf[XSPI_WRITE_PROG_SIZE];
 /* Memmap device functions */
 static int memmap_dev_open(const uintptr_t dev_spec, io_dev_info_t **dev_info);
 static int memmap_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
-			     io_entity_t *entity);
+				 io_entity_t *entity);
 static int memmap_block_seek(io_entity_t *entity, int mode,
-			     signed long long offset);
+				 signed long long offset);
 static int memmap_block_len(io_entity_t *entity, size_t *length);
 static int memmap_block_read(io_entity_t *entity, uintptr_t buffer,
-			     size_t length, size_t *length_read);
+				 size_t length, size_t *length_read);
 static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
-			      size_t length, size_t *length_written);
+				  size_t length, size_t *length_written);
 static int memmap_block_close(io_entity_t *entity);
 static int memmap_dev_close(io_dev_info_t *dev_info);
 
@@ -105,7 +105,7 @@ static int memmap_dev_close(io_dev_info_t *dev_info)
 
 /* Open a file on the memmap device */
 static int memmap_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
-			     io_entity_t *entity)
+				 io_entity_t *entity)
 {
 	int result = -ENOMEM;
 	const io_block_spec_t *block_spec = (io_block_spec_t *)spec;
@@ -135,7 +135,7 @@ static int memmap_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 
 /* Seek to a particular file offset on the memmap device */
 static int memmap_block_seek(io_entity_t *entity, int mode,
-			     signed long long offset)
+				 signed long long offset)
 {
 	int result = -ENOENT;
 	memmap_file_state_t *fp;
@@ -148,7 +148,7 @@ static int memmap_block_seek(io_entity_t *entity, int mode,
 
 		/* Assert that new file position is valid */
 		assert((offset >= 0) &&
-		       ((unsigned long long)offset < fp->size));
+			   ((unsigned long long)offset < fp->size));
 
 		/* Reset file position */
 		fp->file_pos = (unsigned long long)offset;
@@ -173,7 +173,7 @@ static int memmap_block_len(io_entity_t *entity, size_t *length)
 
 /* Read data from a file on the memmap device */
 static int memmap_block_read(io_entity_t *entity, uintptr_t buffer,
-			     size_t length, size_t *length_read)
+				 size_t length, size_t *length_read)
 {
 	memmap_file_state_t *fp;
 	unsigned long long pos_after;
@@ -188,7 +188,7 @@ static int memmap_block_read(io_entity_t *entity, uintptr_t buffer,
 	assert((pos_after >= fp->file_pos) && (pos_after <= fp->size));
 
 	memcpy((void *)buffer,
-	       (void *)((uintptr_t)(fp->base + fp->file_pos)), length);
+		   (void *)((uintptr_t)(fp->base + fp->file_pos)), length);
 
 	*length_read = length;
 
@@ -201,7 +201,7 @@ static int memmap_block_read(io_entity_t *entity, uintptr_t buffer,
 
 /* Write data to a file on the memmap device */
 static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
-			      size_t length, size_t *length_written)
+				  size_t length, size_t *length_written)
 {
 	memmap_file_state_t *fp;
 	unsigned long long pos_after;
@@ -238,7 +238,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 			if (XSPI_SUCCESS != xspi_write(fp->base + first_page, (uintptr_t)page_buf, sizeof(page_buf))) {
 				return EIO;
 			}
-	
+
 			flush_dcache_range(fp->base + first_page, sizeof(page_buf));
 
 			first_page += XSPI_WRITE_PROG_SIZE;
@@ -251,7 +251,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 			memcpy(&page_buf[0], (uint8_t *) buffer + (length - last_offset), last_offset);
 
-			if (XSPI_SUCCESS != xspi_write(fp->base + last_page, (uintptr_t)page_buf, sizeof(page_buf))){
+			if (XSPI_SUCCESS != xspi_write(fp->base + last_page, (uintptr_t)page_buf, sizeof(page_buf))) {
 				return EIO;
 			}
 

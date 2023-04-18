@@ -17,7 +17,7 @@
 
 static uintptr_t rz_otp_handler_devid(void *handle, u_register_t x1)
 {
-#if defined(RZ_SOC_OTP_BASE_DEVID) 
+#if defined(RZ_SOC_OTP_BASE_DEVID)
 	uint32_t devid_1 = mmio_read_32(RZ_SOC_OTP_BASE_DEVID);
 #else
 	uint32_t devid_1 = 0;

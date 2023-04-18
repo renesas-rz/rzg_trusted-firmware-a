@@ -15,9 +15,9 @@
 #error "TRUSTED_BOARD_BOOT must be enabled"
 #endif
 
-typedef uint32_t (* cip_init_api_t)(void);
-typedef uint32_t (* cip_hukl_api_t)(void);
-typedef uint32_t (* cip_rand_api_t)(uint32_t * random);
+typedef uint32_t (*cip_init_api_t)(void);
+typedef uint32_t (*cip_hukl_api_t)(void);
+typedef uint32_t (*cip_rand_api_t)(uint32_t *random);
 
 static cip_rand_api_t cip_rand_api;
 
@@ -47,10 +47,10 @@ void cip_rng(uintptr_t buffer, size_t len)
 	static uint32_t random[4];
 
 	assert((void *)buffer != NULL);
-	
+
 	cip_init();
 
-	for (size_t i = 0; i < len; i+= sizeof(random)) {
+	for (size_t i = 0; i < len; i += sizeof(random)) {
 		cip_rand_api(random);
 		memcpy((void *)(buffer + i), random, MIN(len - i, sizeof(random)));
 	}

@@ -209,8 +209,7 @@ void tzc400_init(uintptr_t base)
 	if (RZG3S_TZC400_DDR_BASE != tzc400.base) {
 		tzc400.num_filters = (uint8_t)((tzc400_build >> BUILD_CONFIG_NF_SHIFT) &
 						BUILD_CONFIG_NF_MASK) + 1U;
-	}
-	else {
+	} else {
 		tzc400.num_filters = PLAT_TZC400_DDR_FILTER_NUM;
 	}
 	tzc400.addr_width  = (uint8_t)((tzc400_build >> BUILD_CONFIG_AW_SHIFT) &
