@@ -41,11 +41,11 @@ static inline uint32_t dwc_ddrphy_apb_rd(uint32_t addr)
 extern void DDRTOP_mc_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask);
 extern void DDRTOP_mc_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
 extern void DDRTOP_mc_param_wr(uint32_t addr, uint32_t offset, uint32_t width, uint32_t data);
-extern uint32_t DDRTOP_mc_param_rd (uint32_t addr, uint32_t offset, uint32_t width);
+extern uint32_t DDRTOP_mc_param_rd(uint32_t addr, uint32_t offset, uint32_t width);
 extern void DDRTOP_mc_param_poll(uint32_t addr, uint32_t offset, uint32_t width, uint32_t data);
 
 extern void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train);
-extern void dwc_ddrphy_apb_rmw (uint32_t addr, uint32_t data, uint32_t mask);
+extern void dwc_ddrphy_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask);
 extern void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
 
 extern uint32_t get_mail(uint8_t mode_32bits);

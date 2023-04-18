@@ -280,7 +280,7 @@ static void update_dev_policies(uint16_t boot_mode)
 		policies[DDR_CONFIG_ID]			= spirom_ddr_config_policy;
 #endif
 #if PLAT_M33_BOOT_SUPPORT
-		policies[BL22_IMAGE_ID] 		= spirom_bl22_image_policy;
+		policies[BL22_IMAGE_ID]			= spirom_bl22_image_policy;
 #if TRUSTED_BOARD_BOOT
 		policies[BL22_KEY_CERT_ID]		= spirom_bl22_kcert_policy;
 		policies[BL22_CONTENT_CERT_ID]	= spirom_bl22_ccert_policy;
@@ -294,7 +294,7 @@ static void update_dev_policies(uint16_t boot_mode)
 		policies[DDR_CONFIG_ID]			= emmc_ddr_config_policy;
 #endif
 #if PLAT_M33_BOOT_SUPPORT
-		policies[BL22_IMAGE_ID] 		= emmc_bl22_image_policy;
+		policies[BL22_IMAGE_ID]		= emmc_bl22_image_policy;
 #if TRUSTED_BOARD_BOOT
 		policies[BL22_KEY_CERT_ID]		= emmc_bl22_kcert_policy;
 		policies[BL22_CONTENT_CERT_ID]	= emmc_bl22_ccert_policy;
@@ -353,4 +353,3 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 
 	return 0;
 }
-

@@ -77,10 +77,8 @@ void plat_access_control_setup(void)
 
 static uint8_t tzc400_get_num_filters(uintptr_t tzc_base)
 {
-	if (RZG3S_TZC400_DDR_BASE != tzc_base) {
-		uint32_t tzc400_build;
-		tzc400_build = mmio_read_32(tzc_base + BUILD_CONFIG_OFF);
-		return (uint8_t)((tzc400_build >> BUILD_CONFIG_NF_SHIFT) & BUILD_CONFIG_NF_MASK) + 1U;
+	if (tzc_base != RZG3S_TZC400_DDR_BASE) {
+		return (uint8_t)((mmio_read_32(tzc_base + BUILD_CONFIG_OFF) >> BUILD_CONFIG_NF_SHIFT) & BUILD_CONFIG_NF_MASK) + 1U;
 	} else {
 		return (uint8_t)PLAT_TZC400_DDR_FILTER_NUM;
 	}

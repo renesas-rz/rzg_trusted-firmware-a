@@ -30,7 +30,7 @@ static void clear_temp_vars(void)
 	do {							\
 		zeromem(&x, sizeof(x));				\
 		clean_dcache_range((uintptr_t)&x, sizeof(x));	\
-	} while (0);
+	} while (0)
 
 #undef ZERO_AND_CLEAN
 }
@@ -106,5 +106,4 @@ static int get_auth_param(const auth_param_type_desc_t *type_desc,
 	return rc;
 }
 
-REGISTER_IMG_PARSER_LIB(IMG_PLAT, LIB_NAME, init, \
-				check_integrity, get_auth_param);
+REGISTER_IMG_PARSER_LIB(IMG_PLAT, LIB_NAME, init, check_integrity, get_auth_param);

@@ -19,7 +19,7 @@
 #include "io_emmcdrv.h"
 #include "io_private.h"
 
-static uint8_t sector_buf[EMMC_SECTOR_SIZE] __attribute__ ((aligned (8)));
+static uint8_t sector_buf[EMMC_SECTOR_SIZE] __aligned(8);
 
 static int32_t emmcdrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
 				io_dev_info_t **dev_info);
@@ -131,7 +131,7 @@ static int32_t emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 			size_t length, size_t *length_written)
 {
 	file_state_t *fp = (file_state_t *) entity->info;
-	uint32_t first_sector, last_sector, sector_count, emmc_dma = 0;;
+	uint32_t first_sector, last_sector, sector_count, emmc_dma = 0;
 	size_t buffer_offset = 0;
 	int32_t result = IO_SUCCESS;
 
@@ -169,7 +169,7 @@ static int32_t emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 	// last sector
 	uint32_t last_offset = (fp->base + fp->file_pos + length) % EMMC_SECTOR_SIZE;
 
-	if ((0 < sector_count) && (0 < last_offset)) {
+	if ((sector_count > 0) && (last_offset > 0)) {
 		memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
 		if (emmc_read_sector((uint32_t *)sector_buf,
 				last_sector, 1, emmc_dma) != EMMC_SUCCESS) {

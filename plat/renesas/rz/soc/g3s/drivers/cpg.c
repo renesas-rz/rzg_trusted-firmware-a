@@ -702,6 +702,7 @@ static void cpg_div_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
 static void cpg_module_stop(const CPG_REG_SETTING *tbl, const uint32_t size)
 {
 	int cnt;
+
 	for (cnt = 0; cnt < size; cnt++, tbl++) {
 		mmio_write_32(tbl->reg, tbl->val);
 	}
@@ -711,6 +712,7 @@ static void cpg_module_stop(const CPG_REG_SETTING *tbl, const uint32_t size)
 static void cpg_module_start(const CPG_REG_SETTING *tbl, const uint32_t size)
 {
 	int cnt;
+
 	for (cnt = 0; cnt < size; cnt++, tbl++) {
 		mmio_write_32(tbl->reg, tbl->val & 0xFFFF0000);
 	}

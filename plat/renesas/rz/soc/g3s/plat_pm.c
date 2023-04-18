@@ -115,6 +115,7 @@ static int rz_validate_power_state(unsigned int power_state, psci_power_state_t 
 static void rz_get_sys_suspend_power_state(psci_power_state_t *req_state)
 {
 	int i;
+
 	for (i = MPIDR_AFFLVL0; i <= PLAT_MAX_PWR_LVL; i++)
 		req_state->pwr_domain_state[i] = PLAT_MAX_OFF_STATE;
 }
@@ -132,8 +133,8 @@ const plat_psci_ops_t rz_plat_psci_ops = {
 	.pwr_domain_on						= NULL,
 	.pwr_domain_on_finish				= NULL,
 	.pwr_domain_off						= NULL,
-	.pwr_domain_suspend				 	= rz_pwr_domain_suspend,
-	.pwr_domain_suspend_finish		 	= rz_pwr_domain_suspend_finish,
+	.pwr_domain_suspend					= rz_pwr_domain_suspend,
+	.pwr_domain_suspend_finish			= rz_pwr_domain_suspend_finish,
 	.pwr_domain_pwr_down_wfi			= rz_pwr_domain_pwr_down_wfi,
 	.validate_ns_entrypoint				= rz_validate_ns_entrypoint,
 	.validate_power_state				= rz_validate_power_state,

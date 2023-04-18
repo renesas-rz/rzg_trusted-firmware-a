@@ -10,13 +10,13 @@
 #include <stdbool.h>
 
 typedef enum {
-    SYS_BOOT_MODE_ESD = 0,
-    SYS_BOOT_MODE_EMMC_1_8,
-    SYS_BOOT_MODE_EMMC_3_3,
-    SYS_BOOT_MODE_SPI_1_8,
-    SYS_BOOT_MODE_SPI_3_3,
-    SYS_BOOT_MODE_SCIF,
-    SYS_BOOT_MODE_MAX,
+	SYS_BOOT_MODE_ESD = 0,
+	SYS_BOOT_MODE_EMMC_1_8,
+	SYS_BOOT_MODE_EMMC_3_3,
+	SYS_BOOT_MODE_SPI_1_8,
+	SYS_BOOT_MODE_SPI_3_3,
+	SYS_BOOT_MODE_SCIF,
+	SYS_BOOT_MODE_MAX,
 } boot_mode_t;
 
 int16_t sys_get_boot_mode(void);

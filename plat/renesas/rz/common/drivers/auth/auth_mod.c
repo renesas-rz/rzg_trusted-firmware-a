@@ -53,8 +53,7 @@ static int auth_get_param(const auth_param_type_desc_t *param_type_desc,
 		return 1;
 
 	for (i = 0 ; i < COT_MAX_VERIFIED_PARAMS ; i++) {
-		if (0 == cmp_auth_param_type_desc(param_type_desc,
-				img_desc->authenticated_data[i].type_desc)) {
+		if (cmp_auth_param_type_desc(param_type_desc, img_desc->authenticated_data[i].type_desc) == 0) {
 			*param = img_desc->authenticated_data[i].data.ptr;
 			*len = img_desc->authenticated_data[i].data.len;
 			return 0;

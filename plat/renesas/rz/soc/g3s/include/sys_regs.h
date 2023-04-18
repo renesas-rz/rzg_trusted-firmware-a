@@ -804,10 +804,10 @@
 
 #define SYS_LSI_MODE_ESD					(0x0)
 #define SYS_LSI_MODE_EMMC					(0x1)
-#define SYS_LSI_MODE_SFLASH 				(0x2)
+#define SYS_LSI_MODE_SFLASH					(0x2)
 #define SYS_LSI_MODE_SCIF					(0x3)
-#define SYS_LSI_MODE_VOL_1_8			    (0x0)
-#define SYS_LSI_MODE_VOL_3_3		    	(0x4)
+#define SYS_LSI_MODE_VOL_1_8				(0x0)
+#define SYS_LSI_MODE_VOL_3_3				(0x4)
 #define SYS_LSI_MODE_MASK					(0x7)
 #define SYS_LSI_MODE_SHIFT					(0x4)
 

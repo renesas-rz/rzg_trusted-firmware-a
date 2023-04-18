@@ -105,7 +105,7 @@
  * get written while being protected by different locks causing corruption of
  * a valid mailbox address.
  ******************************************************************************/
-#define CACHE_WRITEBACK_SHIFT   	U(6)
-#define CACHE_WRITEBACK_GRANULE 	(U(1) << CACHE_WRITEBACK_SHIFT)
+#define CACHE_WRITEBACK_SHIFT		U(6)
+#define CACHE_WRITEBACK_GRANULE		(U(1) << CACHE_WRITEBACK_SHIFT)
 
 #endif /* PLATFORM_DEF_H */

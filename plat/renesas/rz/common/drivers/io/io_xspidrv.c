@@ -215,7 +215,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 	fp = (memmap_file_state_t *) entity->info;
 
-	if (0 < length) {
+	if (length > 0) {
 
 		first_page = round_down(fp->file_pos, XSPI_WRITE_PROG_SIZE);
 		first_offset = (fp->file_pos) % XSPI_WRITE_PROG_SIZE;
@@ -227,7 +227,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 		page_count = ((last_page - first_page) / XSPI_WRITE_PROG_SIZE) + 1;
 
 		/* First Page */
-		if (0 < first_offset) {
+		if (first_offset > 0) {
 			memcpy(page_buf, (void *)(fp->base + first_page), XSPI_WRITE_PROG_SIZE);
 
 			buffer_offset = XSPI_WRITE_PROG_SIZE - (fp->file_pos - first_page);
@@ -235,7 +235,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 			memcpy(&page_buf[first_offset], (uint8_t *)buffer, buffer_offset);
 
-			if (XSPI_SUCCESS != xspi_write(fp->base + first_page, (uintptr_t)page_buf, sizeof(page_buf))) {
+			if (xspi_write(fp->base + first_page, (uintptr_t)page_buf, sizeof(page_buf)) != XSPI_SUCCESS) {
 				return EIO;
 			}
 
@@ -246,12 +246,12 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 		}
 
 		/* Last Page */
-		if ((0 < page_count) && (0 < last_offset)) {
+		if ((page_count > 0) && (last_offset > 0)) {
 			memcpy(page_buf, (void *)(fp->base + last_page), XSPI_WRITE_PROG_SIZE);
 
 			memcpy(&page_buf[0], (uint8_t *) buffer + (length - last_offset), last_offset);
 
-			if (XSPI_SUCCESS != xspi_write(fp->base + last_page, (uintptr_t)page_buf, sizeof(page_buf))) {
+			if (xspi_write(fp->base + last_page, (uintptr_t)page_buf, sizeof(page_buf)) != XSPI_SUCCESS) {
 				return EIO;
 			}
 
@@ -261,8 +261,8 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 		}
 
 		/* Middle Page */
-		if (0 < page_count) {
-			if (XSPI_SUCCESS != xspi_write(fp->base + first_page, buffer + buffer_offset, page_count * XSPI_WRITE_PROG_SIZE)) {
+		if (page_count > 0) {
+			if (xspi_write(fp->base + first_page, buffer + buffer_offset, page_count * XSPI_WRITE_PROG_SIZE) != XSPI_SUCCESS) {
 				return EIO;
 			}
 
@@ -303,6 +303,7 @@ static int memmap_block_close(io_entity_t *entity)
 int register_io_dev_xspidrv(const io_dev_connector_t **dev_con)
 {
 	int result;
+
 	assert(dev_con != NULL);
 
 	result = io_register_device(&memmap_dev_info);

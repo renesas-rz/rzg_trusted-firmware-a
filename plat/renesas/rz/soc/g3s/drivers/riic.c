@@ -98,7 +98,7 @@ static int riic_check_busy(void)
 		icsr2 = mmio_read_8(RIIC_ICCR2);
 		if (0 == (icsr2 & ICCR2_BBSY))
 			return 0;
-	} while (RIIC_WAIT_COUNT_MAX > loop_cnt++);
+	} while (loop_cnt++ < RIIC_WAIT_COUNT_MAX);
 
 	ERROR("%s: i2c bus is busy.\n", __func__);
 	return -1;
@@ -116,7 +116,7 @@ static int riic_wait_for_icsr2(uint8_t bit)
 			return -1;
 		if (0 != (icsr2 & bit))
 			return 0;
-	} while (RIIC_WAIT_COUNT_MAX > loop_cnt++);
+	} while (loop_cnt++ < RIIC_WAIT_COUNT_MAX);
 
 	ERROR("%s: timeout!(bit = %x icsr2 = %x, iccr2 = %x)\n", __func__,
 		bit, mmio_read_8(RIIC_ICSR2), mmio_read_8(RIIC_ICCR2));
@@ -260,8 +260,6 @@ void riic_setup(void)
 	ret = riic_init_setting(RIIC_SPEED_RATE);
 	if (ret)
 		panic();
-
-	return;
 }
 
 int32_t riic_write(uint8_t slave, uint8_t addr, uint8_t data)

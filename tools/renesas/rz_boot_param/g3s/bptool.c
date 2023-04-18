@@ -32,8 +32,10 @@ static struct
 static off_t fsize(const char *filename)
 {
 	struct stat st;
+
 	if (stat(filename, &st) == 0)
 		return st.st_size;
+
 	return -1;
 }
 
@@ -41,16 +43,16 @@ static int get_loadinfo(char *mode, uint32_t *ldr, uint32_t *bpn)
 {
 	int err = 0;
 
-	if (0 == strcmp(mode, "spi")) {
+	if (strcmp(mode, "spi") == 0) {
 		*ldr = SPI_LOAD_OFFSET;
 		*bpn = 1;
-	} else if (0 == strcmp(mode, "mmc")) {
+	} else if (strcmp(mode, "mmc") == 0) {
 		*ldr = MMC_LOAD_OFFSET;
 		*bpn = 1;
-	} else if (0 == strcmp(mode, "scif")) {
+	} else if (strcmp(mode, "scif") == 0) {
 		*ldr = SCIF_LOAD_OFFSET;
 		*bpn = 1;
-	} else if (0 == strcmp(mode, "esd")) {
+	} else if (strcmp(mode, "esd") == 0) {
 		*ldr = ESD_LOAD_OFFSET;
 		*bpn = 7;
 	} else {
@@ -75,12 +77,12 @@ int main(int argc, char *argv[])
 
 	memset(&bootparam, 0xFF, sizeof(bootparam));
 
-	if (4 > argc) {
+	if (argc < 4) {
 		printf("Usage: %s <IPL_FILE> <BOOT_PARAM> <DEST_ADDR> [BOOT_MODE]\n", argv[0]);
-		printf("\t<IPL_FILE>       Input IPL file path. \n");
-		printf("\t<BOOT_PARAM>     Output Boot parameter file path. \n");
-		printf("\t<DEST_ADDR>      Destination address in hexadecimal. \n");
-		printf("\t[BOOT_MODE]      Boot mode selection (default: spi). \n");
+		printf("\t<IPL_FILE>       Input IPL file path.\n");
+		printf("\t<BOOT_PARAM>     Output Boot parameter file path.\n");
+		printf("\t<DEST_ADDR>      Destination address in hexadecimal.\n");
+		printf("\t[BOOT_MODE]      Boot mode selection (default: spi).\n");
 		printf("\t                 - \"spi\", \"mmc\", \"scif\", \"esd\"\n");
 		goto exit;
 	}
@@ -107,7 +109,7 @@ int main(int argc, char *argv[])
 		mode = argv[4];
 	}
 
-	if (0 != get_loadinfo(mode, &load_offset_adr, &boot_param_num)) {
+	if (get_loadinfo(mode, &load_offset_adr, &boot_param_num) != 0) {
 		printf("Could not get load info of boot mode \"%s\".\n", mode);
 		goto exit;
 	}

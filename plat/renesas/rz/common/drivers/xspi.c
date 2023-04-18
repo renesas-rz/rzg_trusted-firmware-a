@@ -79,7 +79,7 @@ static int xspi_single_command(const st_xspi_cmd_info_t * const p_cmd_info)
 
 	mmio_write_32(XSPI_CDABUF0, p_cmd_info->addr);
 
-	if (XSPI_OUT == cmds[p_cmd_info->cmd_idx].direction) {
+	if (cmds[p_cmd_info->cmd_idx].direction == XSPI_OUT) {
 		mmio_write_32(XSPI_CDD0BUF0, p_cmd_info->data);
 	}
 
@@ -146,7 +146,7 @@ static int xspi_read_status(void)
 
 	st_xspi_cmd_info_t cmd_rdsta = {RDSTA, 0, 0};
 
-	if (XSPI_SUCCESS == xspi_single_command(&cmd_rdsta)) {
+	if (xspi_single_command(&cmd_rdsta) == XSPI_SUCCESS) {
 		/* Command success */
 		status = mmio_read_32(XSPI_CDD0BUF0);
 	}
@@ -168,7 +168,7 @@ int xspi_erase(const uintptr_t addr, uint32_t byte_count)
 	for (int i = 0; i < count; i++) {
 
 		ret = xspi_single_command(&cmd_wten);
-		if (XSPI_SUCCESS != ret)
+		if (ret != XSPI_SUCCESS)
 			return ret;
 
 		do {
@@ -176,7 +176,7 @@ int xspi_erase(const uintptr_t addr, uint32_t byte_count)
 		} while (0 == (status & 0x02));
 
 		ret = xspi_single_command(&cmd_erase);
-		if (XSPI_SUCCESS != ret)
+		if (ret != XSPI_SUCCESS)
 			return ret;
 
 		do {
@@ -202,13 +202,13 @@ int xspi_write(const uintptr_t addr, uintptr_t data, uint32_t byte_count)
 	volatile uint32_t status = 0xFFFFFFFF;
 
 	ret = xspi_erase(addr, byte_count);
-	if (XSPI_SUCCESS != ret)
+	if (ret != XSPI_SUCCESS)
 		return ret;
 
 	for (int i = 0; i < count; i++) {
 
 		ret = xspi_single_command(&cmd_wten);
-		if (XSPI_SUCCESS != ret)
+		if (ret != XSPI_SUCCESS)
 			return ret;
 
 		do {
@@ -217,7 +217,7 @@ int xspi_write(const uintptr_t addr, uintptr_t data, uint32_t byte_count)
 
 		cmd_write.data = src[i];
 		ret = xspi_single_command(&cmd_write);
-		if (XSPI_SUCCESS != ret)
+		if (ret != XSPI_SUCCESS)
 			return ret;
 
 		do {

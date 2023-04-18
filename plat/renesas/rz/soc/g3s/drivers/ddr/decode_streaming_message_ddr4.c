@@ -21,61 +21,61 @@ void decode_major_message(uint32_t mail, uint8_t sel_train)
 #if (DDR_LOG_EN && DEBUG)
 	switch (mail) {
 	case 0x00:
-		INFO("PMU Major Msg: End of initialization                                         \n");
+		INFO("PMU Major Msg: End of initialization\n");
 		break;
 	case 0x01:
-		INFO("PMU Major Msg: End of fine write leveling                                    \n");
+		INFO("PMU Major Msg: End of fine write leveling\n");
 		break;
 	case 0x02:
-		INFO("PMU Major Msg: End of read enable training                                   \n");
+		INFO("PMU Major Msg: End of read enable training\n");
 		break;
 	case 0x03:
-		INFO("PMU Major Msg: End of read delay center optimization                         \n");
+		INFO("PMU Major Msg: End of read delay center optimization\n");
 		break;
 	case 0x04:
-		INFO("PMU Major Msg: End of write delay center optimization                        \n");
+		INFO("PMU Major Msg: End of write delay center optimization\n");
 		break;
 	case 0x05:
-		INFO("PMU Major Msg: End of 2D read delay/voltage center optimization              \n");
+		INFO("PMU Major Msg: End of 2D read delay/voltage center optimization\n");
 		break;
 	case 0x06:
-		INFO("PMU Major Msg: End of 2D write delay /voltage center optimization            \n");
+		INFO("PMU Major Msg: End of 2D write delay /voltage center optimization\n");
 		break;
 	case 0x07:
-		INFO("PMU Major Msg: Training run has completed                                    \n");
+		INFO("PMU Major Msg: Training run has completed\n");
 		break;
 	case 0x08:
-		INFO("PMU Major Msg: Enter streaming message mode                                  \n");
+		INFO("PMU Major Msg: Enter streaming message mode\n");
 		break;
 	case 0x09:
-		INFO("PMU Major Msg: End of max read latency training                              \n");
+		INFO("PMU Major Msg: End of max read latency training\n");
 		break;
 	case 0x0a:
-		INFO("PMU Major Msg: End of read dq deskew training                                \n");
+		INFO("PMU Major Msg: End of read dq deskew training\n");
 		break;
 	case 0x0b:
-		INFO("PMU Major Msg: End of LCDL offset calibration                                \n");
+		INFO("PMU Major Msg: End of LCDL offset calibration\n");
 		break;
 	case 0x0c:
-		INFO("PMU Major Msg: End of LRDIMM Specific training (DWL, MREP, MRD and MWD)      \n");
+		INFO("PMU Major Msg: End of LRDIMM Specific training (DWL, MREP, MRD and MWD)\n");
 		break;
 	case 0x0d:
-		INFO("PMU Major Msg: End of CA training                                            \n");
+		INFO("PMU Major Msg: End of CA training\n");
 		break;
 	case 0xfd:
-		INFO("PMU Major Msg: End of MPR read delay center optimization                     \n");
+		INFO("PMU Major Msg: End of MPR read delay center optimization\n");
 		break;
 	case 0xfe:
-		INFO("PMU Major Msg: End of Write leveling coarse delay                            \n");
+		INFO("PMU Major Msg: End of Write leveling coarse delay\n");
 		break;
 	case 0xff:
-		INFO("PMU Major Msg: FATAL ERROR.                                                  \n");
+		INFO("PMU Major Msg: FATAL ERROR.\n");
 		break;
 	default:
 		INFO("PMU Major Msg: Un-recognized message... !\n");
 	}
 #endif
-	if (0x08 == mail)
+	if (mail == 0x08)
 		decode_streaming_message(sel_train);
 }
 
@@ -150,7 +150,7 @@ static void decode_streaming_message_ddr4(uint32_t codede_message_hex, uint16_t 
 		INFO("PMU0: MaxRdLat non consistant DtsmLoThldXingInd 0x%x\n", args_list[0]);
 		break;
 	case 0x000e0003:
-		INFO("PMU4: CS %d Dbyte %d worked with DFIMRL = %d DFICLKs \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU4: CS %d Dbyte %d worked with DFIMRL = %d DFICLKs\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x000f0004:
 		INFO("PMU3: MaxRdLat Read Lane err mask for csn %d, DFIMRL %d DFIClks, dbyte %d = 0x%x\n", args_list[0], args_list[1], args_list[2], args_list[3]);
@@ -504,7 +504,7 @@ static void decode_streaming_message_ddr4(uint32_t codede_message_hex, uint16_t 
 		INFO("PMU3: DEBUG enterCAtrain_lp4 5: Send MR13 to turn on CA training\n");
 		break;
 	case 0x00840003:
-		INFO("PMU3: DEBUG enterCAtrain_lp4 7: idx = %d vref = %x mr12 = %x \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU3: DEBUG enterCAtrain_lp4 7: idx = %d vref = %x mr12 = %x\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x00850001:
 		INFO("PMU3: CATrain_rdwr_lp4 looking for pattern %x\n", args_list[0]);
@@ -789,10 +789,10 @@ static void decode_streaming_message_ddr4(uint32_t codede_message_hex, uint16_t 
 		INFO("PMU3:getDqs2Dq set dqs2dq:%d/32 ui (%d ps) from dbyte %d\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x00e30003:
-		INFO("PMU3: Setting coarse delay in AtxDly chiplet %d from 0x%x to 0x%x \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU3: Setting coarse delay in AtxDly chiplet %d from 0x%x to 0x%x\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x00e40003:
-		INFO("PMU3: Clearing coarse delay in AtxDly chiplet %d from 0x%x to 0x%x \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU3: Clearing coarse delay in AtxDly chiplet %d from 0x%x to 0x%x\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x00e50000:
 		INFO("PMU3: Performing DDR4 geardown sync sequence\n");
@@ -843,7 +843,7 @@ static void decode_streaming_message_ddr4(uint32_t codede_message_hex, uint16_t 
 		INFO("PMU5: CS%d <<KEY>> 0 TxDqsDly, 1 TxDqDly <<KEY>> coarse(9:6) fine(5:0)\n", args_list[0]);
 		break;
 	case 0x00f50001:
-		INFO("PMU5: CS%d <<KEY>> 0 RxPBDly <<KEY>> 1 Delay Unit ~= 7ps \n", args_list[0]);
+		INFO("PMU5: CS%d <<KEY>> 0 RxPBDly <<KEY>> 1 Delay Unit ~= 7ps\n", args_list[0]);
 		break;
 	case 0x00f60000:
 		INFO("PMU5: all CS <<KEY>> 0 DFIMRL <<KEY>> Units = DFI clocks\n");
@@ -1332,7 +1332,7 @@ static void decode_streaming_message_ddr4(uint32_t codede_message_hex, uint16_t 
 		INFO("PMU1: lock_pll_dll: DEBUG: pllbypass = %d\n", args_list[0]);
 		break;
 	case 0x04240001:
-		INFO("PMU3: SaveLcdlSeed: Saving seed seed %d\n", args_list[0]);
+		INFO("PMU3: SaveLcdlSeed: Saving seed %d\n", args_list[0]);
 		break;
 	case 0x04250000:
 		INFO("PMU1: in phy_defaults()\n");
@@ -1341,7 +1341,7 @@ static void decode_streaming_message_ddr4(uint32_t codede_message_hex, uint16_t 
 		INFO("PMU3: ACXConf:%d MaxNumDbytes:%d NumDfi:%d\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x04270005:
-		INFO("PMU1: setAltAcsmCLCWL setting cl=%d cwl=%d %d %d %d \n", args_list[0], args_list[1], args_list[2], args_list[3], args_list[4]);
+		INFO("PMU1: setAltAcsmCLCWL setting cl=%d cwl=%d %d %d %d\n", args_list[0], args_list[1], args_list[2], args_list[3], args_list[4]);
 		break;
 	default:
 		INFO("PMU Streaming Msg: Debug message not recognized !!  code: %x", codede_message_hex);
@@ -1373,7 +1373,7 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU0: DAC %d Range %d\n", args_list[0], args_list[1]);
 		break;
 	case 0x00060003:
-		INFO("PMU0: Range %d, Range_idx %d, vref_idx offset %d \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU0: Range %d, Range_idx %d, vref_idx offset %d\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x00070002:
 		INFO("PMU0: MR 0x%x -> VrefIdx %d\n", args_list[0], args_list[1]);
@@ -1421,7 +1421,7 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU3: Voltage Range = [%d, %d]\n", args_list[0], args_list[1]);
 		break;
 	case 0x00160004:
-		INFO("PMU4: -- DB%d L%d -- centers: delay = %d, voltage = %d \n", args_list[0], args_list[1], args_list[2], args_list[3]);
+		INFO("PMU4: -- DB%d L%d -- centers: delay = %d, voltage = %d\n", args_list[0], args_list[1], args_list[2], args_list[3]);
 		break;
 	case 0x00170001:
 		INFO("PMU5: <<KEY>> 0 TxDqDlyTg%d <<KEY>> coarse(6:6) fine(5:0)\n", args_list[0]);
@@ -1676,10 +1676,10 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU0: Merging collected eyes [%d..%d) and analyzing for nibble %d's optimal rxClkDly\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x006b0002:
-		INFO("PMU0: -- centers: delay = %d, voltage = %d \n", args_list[0], args_list[1]);
+		INFO("PMU0: -- centers: delay = %d, voltage = %d\n", args_list[0], args_list[1]);
 		break;
 	case 0x006c0003:
-		INFO("PMU0: dumping optimized eye -- centers: delay = %d (%d), voltage = %d \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU0: dumping optimized eye -- centers: delay = %d (%d), voltage = %d\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x006d0000:
 		INFO("PMU0: TX optimizing txDqDelays\n");
@@ -1697,10 +1697,10 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU0: Merging collected eyes [%d..%d) and analyzing for optimal device txVref\n", args_list[0], args_list[1]);
 		break;
 	case 0x00720002:
-		INFO("PMU0: -- centers: delay = %d, voltage = %d \n", args_list[0], args_list[1]);
+		INFO("PMU0: -- centers: delay = %d, voltage = %d\n", args_list[0], args_list[1]);
 		break;
 	case 0x00730003:
-		INFO("PMU0: dumping optimized eye -- centers: delay = %d (%d), voltage = %d \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU0: dumping optimized eye -- centers: delay = %d (%d), voltage = %d\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x00740000:
 		INFO("PMU4: VrefDac (compound all TG) Bottom Top -> Center\n");
@@ -1802,10 +1802,10 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU4: Adjusting vrefDac1 for just 0->x transitions\n");
 		break;
 	case 0x00950001:
-		INFO("PMU5: Strong 1, pull-up csr_DrvStrenFSDqP %#X \n", args_list[0]);
+		INFO("PMU5: Strong 1, pull-up csr_DrvStrenFSDqP %#X\n", args_list[0]);
 		break;
 	case 0x00960001:
-		INFO("PMU5: Strong 0, pull-down csr_DrvStrenFSDqN %#X \n", args_list[0]);
+		INFO("PMU5: Strong 0, pull-down csr_DrvStrenFSDqN %#X\n", args_list[0]);
 		break;
 	case 0x00970000:
 		INFO("PMU4: Enabling weak drive strengths (FFE)\n");
@@ -1868,7 +1868,7 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU0: MaxRdLat non consistant DtsmLoThldXingInd 0x%x\n", args_list[0]);
 		break;
 	case 0x00ab0003:
-		INFO("PMU4: CS %d Dbyte %d worked with DFIMRL = %d DFICLKs \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU4: CS %d Dbyte %d worked with DFIMRL = %d DFICLKs\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x00ac0004:
 		INFO("PMU3: MaxRdLat Read Lane err mask for csn %d, DFIMRL %d DFIClks, dbyte %d = 0x%x\n", args_list[0], args_list[1], args_list[2], args_list[3]);
@@ -2222,7 +2222,7 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU3: DEBUG enterCAtrain_lp4 5: Send MR13 to turn on CA training\n");
 		break;
 	case 0x01210003:
-		INFO("PMU3: DEBUG enterCAtrain_lp4 7: idx = %d vref = %x mr12 = %x \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU3: DEBUG enterCAtrain_lp4 7: idx = %d vref = %x mr12 = %x\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x01220001:
 		INFO("PMU3: CATrain_rdwr_lp4 looking for pattern %x\n", args_list[0]);
@@ -2507,10 +2507,10 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU3:getDqs2Dq set dqs2dq:%d/32 ui (%d ps) from dbyte %d\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x01800003:
-		INFO("PMU3: Setting coarse delay in AtxDly chiplet %d from 0x%x to 0x%x \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU3: Setting coarse delay in AtxDly chiplet %d from 0x%x to 0x%x\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x01810003:
-		INFO("PMU3: Clearing coarse delay in AtxDly chiplet %d from 0x%x to 0x%x \n", args_list[0], args_list[1], args_list[2]);
+		INFO("PMU3: Clearing coarse delay in AtxDly chiplet %d from 0x%x to 0x%x\n", args_list[0], args_list[1], args_list[2]);
 		break;
 	case 0x01820000:
 		INFO("PMU3: Performing DDR4 geardown sync sequence\n");
@@ -2561,7 +2561,7 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU5: CS%d <<KEY>> 0 TxDqsDly, 1 TxDqDly <<KEY>> coarse(9:6) fine(5:0)\n", args_list[0]);
 		break;
 	case 0x01920001:
-		INFO("PMU5: CS%d <<KEY>> 0 RxPBDly <<KEY>> 1 Delay Unit ~= 7ps \n", args_list[0]);
+		INFO("PMU5: CS%d <<KEY>> 0 RxPBDly <<KEY>> 1 Delay Unit ~= 7ps\n", args_list[0]);
 		break;
 	case 0x01930000:
 		INFO("PMU5: all CS <<KEY>> 0 DFIMRL <<KEY>> Units = DFI clocks\n");
@@ -3050,7 +3050,7 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 		INFO("PMU1: lock_pll_dll: DEBUG: pllbypass = %d\n", args_list[0]);
 		break;
 	case 0x04240001:
-		INFO("PMU3: SaveLcdlSeed: Saving seed seed %d\n", args_list[0]);
+		INFO("PMU3: SaveLcdlSeed: Saving seed %d\n", args_list[0]);
 		break;
 	case 0x04250000:
 		INFO("PMU1: in phy_defaults()\n");

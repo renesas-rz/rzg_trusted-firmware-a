@@ -21,7 +21,7 @@
 #include <sys.h>
 #include <ddr.h>
 
-uint32_t ddr_csr_table[RET_CSR_SIZE] __attribute__ ((aligned (8)));
+uint32_t ddr_csr_table[RET_CSR_SIZE] __aligned(8);
 
 #if PLAT_SYSTEM_SUSPEND
 static image_info_t ddr_config_info = {
