@@ -38,7 +38,7 @@ Platform Ports
    rcar-gen3
    rz-g2
    rz-g2l
-   rz-v2h
+   rz-g3s
    rockchip
    socionext-uniphier
    synquacer
