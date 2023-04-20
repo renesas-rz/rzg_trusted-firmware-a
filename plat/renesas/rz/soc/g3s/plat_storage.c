@@ -12,6 +12,7 @@
 #include <io_common.h>
 #include <io_emmcdrv.h>
 #include <io_xspidrv.h>
+#include <io_sddrv.h>
 #include <lib/mmio.h>
 #include <tools_share/firmware_image_package.h>
 
@@ -22,6 +23,7 @@
 static uintptr_t fip_dev_handle;
 static uintptr_t xspidrv_dev_handle;
 static uintptr_t emmcdrv_dev_handle;
+static uintptr_t sddrv_dev_handle;
 
 static uintptr_t boot_io_drv_id;
 
@@ -32,6 +34,11 @@ static const io_block_spec_t spirom_block_spec = {
 
 static const io_drv_spec_t emmc_block_spec = {
 	.offset = RZ_SOC_EMMC_FIP_BASE,
+	.length = RZG3S_FIP_SIZE_MAX,
+};
+
+static const io_drv_spec_t sd_block_spec = {
+	.offset = RZ_SOC_SD_FIP_BASE,
 	.length = RZG3S_FIP_SIZE_MAX,
 };
 
@@ -83,6 +90,11 @@ static const io_drv_spec_t emmc_ddr_cfg_spec = {
 	.offset = RZ_SOC_EMMC_DDR_CFG_BASE,
 	.length = RZ_SOC_EMMC_DDR_CFG_SIZE,
 };
+
+static const io_drv_spec_t sd_ddr_cfg_spec = {
+	.offset = RZ_SOC_SD_DDR_CFG_BASE,
+	.length = RZ_SOC_SD_DDR_CFG_SIZE,
+};
 #endif /* PLAT_SYSTEM_SUSPEND */
 
 #if PLAT_M33_BOOT_SUPPORT
@@ -125,10 +137,31 @@ static const io_block_spec_t emmc_bl22_image_spec = {
 	.length = RZG3S_M33_FW_SIZE,
 };
 #endif /* TRUSTED_BOARD_BOOT */
+
+#if TRUSTED_BOARD_BOOT
+static const io_block_spec_t sd_bl22_key_cert_file_spec = {
+	.offset = RZG3S_SD_M33_FW_BASE,
+	.length = RZ_TBB_CERT_SIZE,
+};
+static const io_block_spec_t sd_bl22_content_cert_file_spec = {
+	.offset = sd_bl22_key_cert_file_spec.offset + RZ_TBB_CERT_SIZE,
+	.length = RZ_TBB_CERT_SIZE,
+};
+static const io_block_spec_t sd_bl22_image_spec = {
+	.offset = sd_bl22_content_cert_file_spec.offset + RZ_TBB_CERT_SIZE,
+	.length = RZG3S_M33_FW_SIZE,
+};
+#else /* TRUSTED_BOARD_BOOT */
+static const io_block_spec_t sd_bl22_image_spec = {
+	.offset = RZG3S_SD_M33_FW_BASE,
+	.length = RZG3S_M33_FW_SIZE,
+};
+#endif /* TRUSTED_BOARD_BOOT */
 #endif /* PLAT_M33_BOOT_SUPPORT */
 
 static int32_t open_emmcdrv(const uintptr_t spec);
 static int32_t open_xspidrv(const uintptr_t spec);
+static int32_t open_sddrv(const uintptr_t spec);
 static int32_t open_fipdrv(const uintptr_t spec);
 
 struct plat_io_policy {
@@ -147,6 +180,11 @@ static const struct plat_io_policy spirom_fip_policy = {
 	(uintptr_t) &spirom_block_spec,
 	&open_xspidrv
 };
+static const struct plat_io_policy sd_fip_policy = {
+	&sddrv_dev_handle,
+	(uintptr_t) &sd_block_spec,
+	&open_sddrv
+};
 
 #if PLAT_SYSTEM_SUSPEND
 static const struct plat_io_policy emmc_ddr_config_policy = {
@@ -158,6 +196,11 @@ static const struct plat_io_policy spirom_ddr_config_policy = {
 	&xspidrv_dev_handle,
 	(uintptr_t) &spirom_ddr_cfg_spec,
 	&open_xspidrv
+};
+static const struct plat_io_policy sd_ddr_config_policy = {
+	&sddrv_dev_handle,
+	(uintptr_t) &sd_ddr_cfg_spec,
+	&open_sddrv
 };
 #endif /* PLAT_SYSTEM_SUSPEND */
 
@@ -172,6 +215,11 @@ static const struct plat_io_policy spirom_bl22_image_policy = {
 	(uintptr_t) &spirom_bl22_image_spec,
 	&open_xspidrv
 };
+static const struct plat_io_policy sd_bl22_image_policy = {
+	&sddrv_dev_handle,
+	(uintptr_t) &sd_bl22_image_spec,
+	&open_sddrv
+};
 #if TRUSTED_BOARD_BOOT
 static const struct plat_io_policy emmc_bl22_kcert_policy = {
 	&emmcdrv_dev_handle,
@@ -183,6 +231,11 @@ static const struct plat_io_policy spirom_bl22_kcert_policy = {
 	(uintptr_t) &spirom_bl22_key_cert_file_spec,
 	&open_xspidrv
 };
+static const struct plat_io_policy sd_bl22_kcert_policy = {
+	&sddrv_dev_handle,
+	(uintptr_t) &sd_bl22_key_cert_file_spec,
+	&open_sddrv
+};
 static const struct plat_io_policy emmc_bl22_ccert_policy = {
 	&emmcdrv_dev_handle,
 	(uintptr_t) &emmc_bl22_content_cert_file_spec,
@@ -192,6 +245,11 @@ static const struct plat_io_policy spirom_bl22_ccert_policy = {
 	&xspidrv_dev_handle,
 	(uintptr_t) &spirom_bl22_content_cert_file_spec,
 	&open_xspidrv
+};
+static const struct plat_io_policy sd_bl22_ccert_policy = {
+	&sddrv_dev_handle,
+	(uintptr_t) &sd_bl22_content_cert_file_spec,
+	&open_sddrv
 };
 #endif /* TRUSTED_BOARD_BOOT */
 #endif /* PLAT_M33_BOOT_SUPPORT */
@@ -270,6 +328,11 @@ static int32_t open_emmcdrv(const uintptr_t spec)
 	return io_dev_init(emmcdrv_dev_handle, 0);
 }
 
+static int32_t open_sddrv(const uintptr_t spec)
+{
+	return io_dev_init(sddrv_dev_handle, 0);
+}
+
 static void update_dev_policies(uint16_t boot_mode)
 {
 	switch (boot_mode) {
@@ -294,10 +357,23 @@ static void update_dev_policies(uint16_t boot_mode)
 		policies[DDR_CONFIG_ID]			= emmc_ddr_config_policy;
 #endif
 #if PLAT_M33_BOOT_SUPPORT
-		policies[BL22_IMAGE_ID]		= emmc_bl22_image_policy;
+		policies[BL22_IMAGE_ID]			= emmc_bl22_image_policy;
 #if TRUSTED_BOARD_BOOT
 		policies[BL22_KEY_CERT_ID]		= emmc_bl22_kcert_policy;
 		policies[BL22_CONTENT_CERT_ID]	= emmc_bl22_ccert_policy;
+#endif
+#endif
+		break;
+	case SYS_BOOT_MODE_ESD:
+		policies[FIP_IMAGE_ID]			= sd_fip_policy;
+#if PLAT_SYSTEM_SUSPEND
+		policies[DDR_CONFIG_ID]			= sd_ddr_config_policy;
+#endif
+#if PLAT_M33_BOOT_SUPPORT
+		policies[BL22_IMAGE_ID]			= sd_bl22_image_policy;
+#if TRUSTED_BOARD_BOOT
+		policies[BL22_KEY_CERT_ID]		= sd_bl22_kcert_policy;
+		policies[BL22_CONTENT_CERT_ID]	= sd_bl22_ccert_policy;
 #endif
 #endif
 		break;
@@ -310,6 +386,7 @@ void rz_io_setup(void)
 {
 	const io_dev_connector_t *xspi;
 	const io_dev_connector_t *emmc;
+	const io_dev_connector_t *sd;
 	const io_dev_connector_t *rzsoc;
 	uint16_t boot_mode;
 
@@ -329,6 +406,9 @@ void rz_io_setup(void)
 			   boot_mode == SYS_BOOT_MODE_EMMC_3_3) {
 		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
+	} else if (boot_mode == SYS_BOOT_MODE_ESD) {
+		register_io_dev_sddrv(&sd);
+		io_dev_open(sd, 0, &sddrv_dev_handle);
 	} else {
 		ERROR("Unsupported IO device %d.\n", boot_mode);
 		panic();

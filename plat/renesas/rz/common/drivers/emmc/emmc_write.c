@@ -34,17 +34,17 @@ static EMMC_ERROR_CODE emmc_multiple_block_write(uint32_t *buff_address_virtual,
 	}
 
 	/* Transfer Data Length */
-	SETR_32( SD_SIZE, EMMC_BLOCK_LENGTH );
+	SETR_32(SD_SIZE, EMMC_BLOCK_LENGTH);
 
 	/* CMD23 */
-	emmc_make_nontrans_cmd(CMD23_SET_BLOCK_COUNT, ( 0x80000000U | count) );
+	emmc_make_nontrans_cmd(CMD23_SET_BLOCK_COUNT, (0x80000000U | count));
 	result = emmc_exec_cmd(EMMC_R1_ERROR_MASK, mmc_drv_obj.response);
 	if (result != EMMC_SUCCESS) {
 		return result;
 	}
-	SETR_32( SD_SECCNT, count );
-	SETR_32( SD_STOP, 0x00000100U );
-	SETR_32( CC_EXT_MODE, (CC_EXT_MODE_CLEAR | CC_EXT_MODE_DMASDRW_ENABLE) );     /* SD_BUF Read/Write DMA Transfer enable */
+	SETR_32(SD_SECCNT, count);
+	SETR_32(SD_STOP, 0x00000100U);
+	SETR_32(CC_EXT_MODE, (CC_EXT_MODE_CLEAR | CC_EXT_MODE_DMASDRW_ENABLE));     /* SD_BUF Read/Write DMA Transfer enable */
 
 	/* CMD25 */
 	emmc_make_trans_cmd(CMD25_WRITE_MULTIPLE_BLOCK, sector_number, buff_address_virtual, count<<EMMC_SECTOR_SIZE_SHIFT, HAL_MEMCARD_WRITE, transfer_mode);
@@ -61,7 +61,7 @@ static EMMC_ERROR_CODE emmc_multiple_block_write(uint32_t *buff_address_virtual,
 	}
 
 	/* ready status check */
-	if ( (mmc_drv_obj.r1_card_status & EMMC_R1_READY) == 0) {
+	if ((mmc_drv_obj.r1_card_status & EMMC_R1_READY) == 0) {
 		emmc_write_error_info(EMMC_FUNCNO_WRITE_SECTOR, EMMC_ERR_CARD_BUSY);
 		return EMMC_ERR_CARD_BUSY;
 	}

@@ -10,10 +10,11 @@ PLAT_INCLUDES		:=	-Iplat/renesas/rz/soc/g3s/include
 include plat/renesas/rz/common/g3s_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
-DDR_SOURCES			+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr.c				\
-						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_misc.c
+DDR_SOURCES				+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr.c				\
+							plat/renesas/rz/soc/g3s/drivers/ddr/ddr_misc.c
 
-PLAT_INCLUDES		+=	-Iplat/renesas/rz/soc/g3s/drivers/ddr
+PLAT_INCLUDES			+=	-Iplat/renesas/rz/soc/g3s/drivers/ddr					\
+							-Iplat/renesas/rz/soc/g3s/drivers/emmc
 
 PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c				\
 							plat/renesas/rz/soc/g3s/drivers/riic.c				\
@@ -22,26 +23,27 @@ PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c				\
 							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc_stack.S	\
 							${DDR_SOURCES}
 
-BL2_SOURCES			+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c				\
-						plat/renesas/rz/soc/g3s/plat_storage.c					\
-						plat/renesas/rz/soc/g3s/plat_security.c					\
-						plat/renesas/rz/soc/g3s/bl2_plat_mem_params_desc.c		\
-						plat/renesas/rz/soc/g3s/drivers/sys.c					\
-						plat/renesas/rz/soc/g3s/drivers/pfc.c					\
-						plat/renesas/rz/soc/g3s/plat_ddr_setup.c
+BL2_SOURCES				+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c				\
+							plat/renesas/rz/soc/g3s/plat_storage.c					\
+							plat/renesas/rz/soc/g3s/plat_security.c					\
+							plat/renesas/rz/soc/g3s/bl2_plat_mem_params_desc.c		\
+							plat/renesas/rz/soc/g3s/drivers/sys.c					\
+							plat/renesas/rz/soc/g3s/drivers/pfc.c					\
+							plat/renesas/rz/soc/g3s/plat_ddr_setup.c
 
-BL31_SOURCES		+=	plat/renesas/rz/soc/g3s/bl31_plat_setup.c				\
-						plat/renesas/rz/soc/g3s/plat_pm.c
+BL31_SOURCES			+=	plat/renesas/rz/soc/g3s/bl31_plat_setup.c				\
+							plat/renesas/rz/soc/g3s/plat_pm.c
 
-EMMC_SOURCES		+=	plat/renesas/rz/soc/g3s/drivers/emmc/emmc_interrupt.c	\
-						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_utility.c		\
-						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_mount.c		\
-						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_init.c		\
-						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_read.c		\
-						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_cmd.c			\
-						plat/renesas/rz/soc/g3s/drivers/emmc/emmc_write.c
+EMMC_SOURCES			+=	plat/renesas/rz/soc/g3s/drivers/emmc/emmc_interrupt.c	\
+							plat/renesas/rz/soc/g3s/drivers/emmc/emmc_utility.c		\
+							plat/renesas/rz/soc/g3s/drivers/emmc/emmc_mount.c		\
+							plat/renesas/rz/soc/g3s/drivers/emmc/emmc_init.c		\
+							plat/renesas/rz/soc/g3s/drivers/emmc/emmc_read.c		\
+							plat/renesas/rz/soc/g3s/drivers/emmc/emmc_cmd.c			\
+							plat/renesas/rz/soc/g3s/drivers/emmc/emmc_write.c
 
-XSPI_SOURCES		+=	plat/renesas/rz/common/drivers/xspi.c
+SD_SOURCES				+=	plat/renesas/rz/soc/g3s/drivers/esddev.c
+
 
 ifneq (${ENABLE_STACK_PROTECTOR},0)
 PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/rz_stack_protector.c

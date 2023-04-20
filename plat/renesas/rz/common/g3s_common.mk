@@ -58,9 +58,8 @@ ERRATA_A55_1221012				:= 1
 ERRATA_A55_1530923				:= 1
 
 PLAT_INCLUDES			+=	-Iplat/renesas/rz/common/include						\
-							-Iplat/renesas/rz/common/drivers/emmc					\
 							-Iplat/renesas/rz/common/drivers/io						\
-							-Idrivers/renesas/common/io
+							-Iplat/renesas/rz/common/drivers/sd
 
 RZ_TIMER_SOURCES		:=	drivers/delay_timer/generic_delay_timer.c				\
 							drivers/delay_timer/delay_timer.c
@@ -79,10 +78,12 @@ BL2_SOURCES				+=	common/desc_image_load.c								\
 							drivers/io/io_fip.c										\
 							plat/renesas/rz/common/drivers/io/io_xspidrv.c			\
 							plat/renesas/rz/common/drivers/io/io_emmcdrv.c			\
+							plat/renesas/rz/common/drivers/io/io_sddrv.c			\
 							plat/renesas/rz/common/plat_image_load.c				\
 							${RZ_TIMER_SOURCES}										\
 							${EMMC_SOURCES}											\
-							${XSPI_SOURCES}
+							${XSPI_SOURCES}											\
+							${SD_SOURCES}
 
 # Include GICv3 driver files
 include drivers/arm/gic/v3/gicv3.mk
@@ -95,6 +96,18 @@ BL31_SOURCES			+=	plat/common/plat_gicv3.c								\
 							plat/renesas/rz/common/rz_sip_svc.c						\
 							${GICV3_SOURCES}
 
+
+XSPI_SOURCES			:=	plat/renesas/rz/common/drivers/xspi.c
+
+SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c				\
+							plat/renesas/rz/common/drivers/sd/sd_mount.c			\
+							plat/renesas/rz/common/drivers/sd/sd_util.c				\
+							plat/renesas/rz/common/drivers/sd/sd_cd.c				\
+							plat/renesas/rz/common/drivers/sd/sd_cmd.c				\
+							plat/renesas/rz/common/drivers/sd/sd_int.c				\
+							plat/renesas/rz/common/drivers/sd/sd_trns.c				\
+							plat/renesas/rz/common/drivers/sd/sd_read.c				\
+							plat/renesas/rz/common/drivers/sd/sd_main.c
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 

@@ -41,7 +41,7 @@ EMMC_ERROR_CODE emmc_erase_sector(uint32_t start_address, uint32_t end_address)
 	if (result != EMMC_SUCCESS) {
 		return result;
 	}
-	
+
 	/* CMD38 */
 	emmc_make_nontrans_cmd(CMD38_ERASE, 0);
 	result = emmc_exec_cmd(EMMC_R1_ERROR_MASK, mmc_drv_obj.response);

@@ -39,7 +39,7 @@ int16_t sys_get_boot_mode(void)
 #if DEBUG
 	case (SYS_LSI_MODE_VOL_1_8 | SYS_LSI_MODE_SCIF):
 	case (SYS_LSI_MODE_VOL_3_3 | SYS_LSI_MODE_SCIF):
-		boot_mode = SYS_BOOT_MODE_EMMC_3_3;
+		boot_mode = SYS_BOOT_MODE_ESD;
 		break;
 #endif
 	default:

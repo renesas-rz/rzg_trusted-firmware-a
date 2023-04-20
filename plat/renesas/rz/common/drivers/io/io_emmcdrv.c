@@ -10,20 +10,13 @@
 #include <common/debug.h>
 #include <drivers/io/io_driver.h>
 #include <drivers/io/io_storage.h>
+#include <emmc_config.h>
+#include <emmc_def.h>
+#include <emmc_hal.h>
+#include <emmc_std.h>
 
-#include "emmc_config.h"
-#include "emmc_def.h"
-#include "emmc_hal.h"
-#include "emmc_std.h"
 #include "io_common.h"
 #include "io_emmcdrv.h"
-#include "io_private.h"
-
-static uint8_t sector_buf[EMMC_SECTOR_SIZE] __aligned(8);
-
-static int32_t emmcdrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
-				io_dev_info_t **dev_info);
-static int32_t emmcdrv_dev_close(io_dev_info_t *dev_info);
 
 typedef struct {
 	uint32_t in_use;
@@ -40,25 +33,31 @@ static io_type_t device_type_emmcdrv(void)
 	return IO_TYPE_MEMMAP;
 }
 
-static int32_t emmcdrv_block_seek(io_entity_t *entity, int32_t mode,
+static uint8_t sector_buf[EMMC_SECTOR_SIZE] __aligned(8);
+
+static int emmcdrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
+				io_dev_info_t **dev_info);
+static int emmcdrv_dev_close(io_dev_info_t *dev_info);
+
+
+static int emmcdrv_block_seek(io_entity_t *entity, int32_t mode,
 				  signed long long offset)
 {
 	if (mode != IO_SEEK_SET) {
-		return IO_FAIL;
+		return -EINVAL;
 	}
 
 	((file_state_t *) entity->info)->file_pos = offset;
 
-	return IO_SUCCESS;
+	return 0;
 }
 
-static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
+static int emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 				  size_t length, size_t *length_read)
 {
 	file_state_t *fp = (file_state_t *) entity->info;
 	uint32_t first_sector, last_sector, sector_count, emmc_dma = 0;
 	size_t buffer_offset = 0;
-	int32_t result = IO_SUCCESS;
 
 	first_sector = (fp->base + fp->file_pos) >> EMMC_SECTOR_SIZE_SHIFT;
 	last_sector = (fp->base + fp->file_pos + length - 1) >> EMMC_SECTOR_SIZE_SHIFT;
@@ -71,29 +70,22 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 
 	assert((fp->file_pos + length) <= fp->size);
 
-//	Temporarily disable DMA.
-//	if ((buffer + length - 1U) <= (uintptr_t)UINT32_MAX) {
-//		emmc_dma = LOADIMAGE_FLAGS_DMA_ENABLE;
-//	}
-
 	// first sector
 	uint32_t first_offset = (fp->base + fp->file_pos) % EMMC_SECTOR_SIZE;
 
 	if (first_offset > 0) {
 		memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
-		if (emmc_read_sector((uint32_t *)sector_buf,
-			first_sector, 1, emmc_dma) != EMMC_SUCCESS) {
-			result = IO_FAIL;
-			goto block_read_done;
-		} else {
-			buffer_offset = EMMC_SECTOR_SIZE - first_offset;
-			buffer_offset = (length < buffer_offset) ? length : buffer_offset;
 
-			memcpy((uint8_t *)buffer, &sector_buf[first_offset], buffer_offset);
+		if (emmc_read_sector((uint32_t *)sector_buf, first_sector, 1, emmc_dma) != EMMC_SUCCESS)
+			return -EIO;
 
-			first_sector++;
-			sector_count--;
-		}
+		buffer_offset = EMMC_SECTOR_SIZE - first_offset;
+		buffer_offset = (length < buffer_offset) ? length : buffer_offset;
+
+		memcpy((uint8_t *)buffer, &sector_buf[first_offset], buffer_offset);
+
+		first_sector++;
+		sector_count--;
 	}
 
 	// last sector
@@ -101,39 +93,35 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 
 	if (0 < sector_count && 0 < last_offset) {
 		memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
-		if (emmc_read_sector((uint32_t *)sector_buf,
-				last_sector, 1, emmc_dma) != EMMC_SUCCESS) {
-			result = IO_FAIL;
-			goto block_read_done;
-		} else {
-			memcpy((uint8_t *) buffer + (length - last_offset), &sector_buf[0], last_offset);
-			sector_count--;
-		}
+
+		if (emmc_read_sector((uint32_t *)sector_buf, last_sector, 1, emmc_dma) != EMMC_SUCCESS)
+			return -EIO;
+
+		memcpy((uint8_t *) buffer + (length - last_offset), &sector_buf[0], last_offset);
+		sector_count--;
 	}
 
 	// middle sector
 	if (sector_count > 0) {
 		if (emmc_read_sector((uint32_t *)(buffer + buffer_offset),
 				first_sector, sector_count, emmc_dma) != EMMC_SUCCESS) {
-			result = IO_FAIL;
-			goto block_read_done;
+			return -EIO;
 		}
 	}
 
 	*length_read = length;
 	fp->file_pos += (signed long long)length;
-block_read_done:
-	return result;
+
+	return 0;
 }
 
 
-static int32_t emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
+static int emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 			size_t length, size_t *length_written)
 {
 	file_state_t *fp = (file_state_t *) entity->info;
 	uint32_t first_sector, last_sector, sector_count, emmc_dma = 0;
 	size_t buffer_offset = 0;
-	int32_t result = IO_SUCCESS;
 
 	first_sector = (fp->base + fp->file_pos) >> EMMC_SECTOR_SIZE_SHIFT;
 	last_sector = (fp->base + fp->file_pos + length - 1) >> EMMC_SECTOR_SIZE_SHIFT;
@@ -146,24 +134,20 @@ static int32_t emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 	if (first_offset > 0) {
 		memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
-		if (emmc_read_sector((uint32_t *)sector_buf,
-			first_sector, 1, emmc_dma) != EMMC_SUCCESS) {
-			result = IO_FAIL;
-			goto block_read_done;
-		} else {
-			buffer_offset = EMMC_SECTOR_SIZE - first_offset;
-			buffer_offset = (length < buffer_offset) ? length : buffer_offset;
 
-			memcpy((uint8_t *)&sector_buf[first_offset], (uint8_t *)buffer, buffer_offset);
+		if (emmc_read_sector((uint32_t *)sector_buf, first_sector, 1, emmc_dma) != EMMC_SUCCESS)
+			return -EIO;
 
-			if (emmc_write_sector((uint32_t *)sector_buf, first_sector, 1, emmc_dma) != EMMC_SUCCESS) {
-				result = IO_FAIL;
-				goto block_read_done;
-			}
+		buffer_offset = EMMC_SECTOR_SIZE - first_offset;
+		buffer_offset = (length < buffer_offset) ? length : buffer_offset;
 
-			first_sector++;
-			sector_count--;
-		}
+		memcpy((uint8_t *)&sector_buf[first_offset], (uint8_t *)buffer, buffer_offset);
+
+		if (emmc_write_sector((uint32_t *)sector_buf, first_sector, 1, emmc_dma) != EMMC_SUCCESS)
+			return -EIO;
+
+		first_sector++;
+		sector_count--;
 	}
 
 	// last sector
@@ -171,56 +155,50 @@ static int32_t emmcdrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 
 	if ((sector_count > 0) && (last_offset > 0)) {
 		memset(sector_buf, 0x00, EMMC_SECTOR_SIZE);
-		if (emmc_read_sector((uint32_t *)sector_buf,
-				last_sector, 1, emmc_dma) != EMMC_SUCCESS) {
-			result = IO_FAIL;
-			goto block_read_done;
-		} else {
 
-			memcpy(&sector_buf[0], (uint8_t *) buffer + (length - last_offset), last_offset);
+		if (emmc_read_sector((uint32_t *)sector_buf, last_sector, 1, emmc_dma) != EMMC_SUCCESS)
+			return -EIO;
 
-			if (emmc_write_sector((uint32_t *)sector_buf, last_sector, 1, emmc_dma) != EMMC_SUCCESS) {
-				result = IO_FAIL;
-				goto block_read_done;
-			}
+		memcpy(&sector_buf[0], (uint8_t *) buffer + (length - last_offset), last_offset);
 
-			sector_count--;
-		}
+		if (emmc_write_sector((uint32_t *)sector_buf, last_sector, 1, emmc_dma) != EMMC_SUCCESS)
+			return -EIO;
+
+		sector_count--;
 	}
 
 	// middle sector
 	if (sector_count > 0) {
 		if (emmc_write_sector((uint32_t *)(buffer + buffer_offset),
 				first_sector, sector_count, emmc_dma) != EMMC_SUCCESS) {
-			result = IO_FAIL;
-			goto block_read_done;
+			return -EIO;
 		}
 	}
 
 	*length_written = length;
 	fp->file_pos += (signed long long)length;
-block_read_done:
-	return result;
+
+	return 0;
 }
 
 
-static int32_t emmcdrv_block_len(io_entity_t *entity, size_t *length)
+static int emmcdrv_block_len(io_entity_t *entity, size_t *length)
 {
 	*length = ((file_state_t *) entity->info)->size;
 
 	INFO("%s: len: 0x%08lx\n", __func__, *length);
 
-	return IO_SUCCESS;
+	return 0;
 }
 
-static int32_t emmcdrv_block_open(io_dev_info_t *dev_info,
+static int emmcdrv_block_open(io_dev_info_t *dev_info,
 				const uintptr_t spec, io_entity_t *entity)
 {
 	const io_drv_spec_t *block_spec = (io_drv_spec_t *) spec;
 
 	if (current_file.in_use != 0U) {
 		WARN("mmc_block: Only one open spec at a time\n");
-		return IO_RESOURCES_EXHAUSTED;
+		return -EDEADLK;
 	}
 
 	current_file.base = block_spec->offset;
@@ -232,20 +210,20 @@ static int32_t emmcdrv_block_open(io_dev_info_t *dev_info,
 	INFO("eMMC boot from partition %d\n", current_file.partition);
 
 	if (emmc_select_partition(current_file.partition) != EMMC_SUCCESS) {
-		return IO_FAIL;
+		return -EIO;
 	}
 
 	entity->info = (uintptr_t) &current_file;
 
-	return IO_SUCCESS;
+	return 0;
 }
 
-static int32_t emmcdrv_block_close(io_entity_t *entity)
+static int emmcdrv_block_close(io_entity_t *entity)
 {
 	memset((void *)&current_file, 0, sizeof(current_file));
 	entity->info = 0U;
 
-	return IO_SUCCESS;
+	return 0;
 }
 
 static const io_dev_funcs_t emmcdrv_dev_funcs = {
@@ -269,7 +247,7 @@ static const io_dev_connector_t emmcdrv_dev_connector = {
 	&emmcdrv_dev_open,
 };
 
-static int32_t emmcdrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
+static int emmcdrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
 				io_dev_info_t **dev_info)
 {
 	*dev_info = (io_dev_info_t *) &emmcdrv_dev_info;
@@ -284,20 +262,20 @@ static int32_t emmcdrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
 		panic();
 	}
 
-	return IO_SUCCESS;
+	return 0;
 }
 
-static int32_t emmcdrv_dev_close(io_dev_info_t *dev_info)
+static int emmcdrv_dev_close(io_dev_info_t *dev_info)
 {
-	return IO_SUCCESS;
+	return 0;
 }
 
-int32_t register_io_dev_emmcdrv(const io_dev_connector_t **dev_con)
+int register_io_dev_emmcdrv(const io_dev_connector_t **dev_con)
 {
-	int32_t rc;
+	int rc;
 
 	rc = io_register_device(&emmcdrv_dev_info);
-	if (rc == IO_SUCCESS) {
+	if (rc == 0) {
 		*dev_con = &emmcdrv_dev_connector;
 	}
 

@@ -236,7 +236,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 			memcpy(&page_buf[first_offset], (uint8_t *)buffer, buffer_offset);
 
 			if (xspi_write(fp->base + first_page, (uintptr_t)page_buf, sizeof(page_buf)) != XSPI_SUCCESS) {
-				return EIO;
+				return -EIO;
 			}
 
 			flush_dcache_range(fp->base + first_page, sizeof(page_buf));
@@ -252,7 +252,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 			memcpy(&page_buf[0], (uint8_t *) buffer + (length - last_offset), last_offset);
 
 			if (xspi_write(fp->base + last_page, (uintptr_t)page_buf, sizeof(page_buf)) != XSPI_SUCCESS) {
-				return EIO;
+				return -EIO;
 			}
 
 			flush_dcache_range(fp->base + last_page, sizeof(page_buf));
@@ -263,7 +263,7 @@ static int memmap_block_write(io_entity_t *entity, const uintptr_t buffer,
 		/* Middle Page */
 		if (page_count > 0) {
 			if (xspi_write(fp->base + first_page, buffer + buffer_offset, page_count * XSPI_WRITE_PROG_SIZE) != XSPI_SUCCESS) {
-				return EIO;
+				return -EIO;
 			}
 
 			flush_dcache_range(fp->base + first_page, page_count * XSPI_WRITE_PROG_SIZE);
