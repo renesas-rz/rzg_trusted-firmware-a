@@ -30,28 +30,37 @@ static int riic_set_clock(int clock)
 	switch (clock) {
 	case 100000:
 		riic_clear_bit(ICFER_FMPE, RIIC_ICFER);
+		riic_set_bit(ICFER_SCLE | ICFER_NFE, RIIC_ICFER);
+		riic_clear_bit(ICMR3_NF_MASK, RIIC_ICMR3);
+		riic_set_bit(ICMR3_NF_FOUR, RIIC_ICMR3);
 		riic_clear_bit(ICMR1_CKS_MASK, RIIC_ICMR1);
-		riic_set_bit(ICMR1_CKS(3), RIIC_ICMR1);
-		mmio_write_8(RIIC_ICBRH, ICBRH_RESERVED | 23);
-		mmio_write_8(RIIC_ICBRL, ICBRL_RESERVED | 23);
+		riic_set_bit(ICMR1_CKS(4), RIIC_ICMR1);
+		mmio_write_8(RIIC_ICBRH, ICBRH_RESERVED | 24);
+		mmio_write_8(RIIC_ICBRL, ICBRL_RESERVED | 27);
 		break;
 	case 400000:
 		riic_clear_bit(ICFER_FMPE, RIIC_ICFER);
+		riic_set_bit(ICFER_SCLE | ICFER_NFE, RIIC_ICFER);
+		riic_clear_bit(ICMR3_NF_MASK, RIIC_ICMR3);
+		riic_set_bit(ICMR3_NF_FOUR, RIIC_ICMR3);
 		riic_clear_bit(ICMR1_CKS_MASK, RIIC_ICMR1);
-		riic_set_bit(ICMR1_CKS(1), RIIC_ICMR1);
-		mmio_write_8(RIIC_ICBRH, ICBRH_RESERVED | 20);
-		mmio_write_8(RIIC_ICBRL, ICBRL_RESERVED | 19);
+		riic_set_bit(ICMR1_CKS(2), RIIC_ICMR1);
+		mmio_write_8(RIIC_ICBRH, ICBRH_RESERVED | 25);
+		mmio_write_8(RIIC_ICBRL, ICBRL_RESERVED | 26);
 		break;
 	case 1000000:
 		riic_set_bit(ICFER_FMPE, RIIC_ICFER);
+		riic_set_bit(ICFER_SCLE | ICFER_NFE, RIIC_ICFER);
+		riic_clear_bit(ICMR3_NF_MASK, RIIC_ICMR3);
+		riic_set_bit(ICMR3_NF_FOUR, RIIC_ICMR3);
 		riic_clear_bit(ICMR1_CKS_MASK, RIIC_ICMR1);
-		riic_set_bit(ICMR1_CKS(0), RIIC_ICMR1);
+		riic_set_bit(ICMR1_CKS(1), RIIC_ICMR1);
 		mmio_write_8(RIIC_ICBRH, ICBRH_RESERVED | 14);
-		mmio_write_8(RIIC_ICBRL, ICBRL_RESERVED | 14);
+		mmio_write_8(RIIC_ICBRL, ICBRL_RESERVED | 24);
 		break;
 
 	default:
-		ERROR("%s: unsupported clock (%dkHz)\n", __func__, clock);
+		ERROR("%s: unsupported clock (%dHz)\n", __func__, clock);
 		return -1;
 	}
 

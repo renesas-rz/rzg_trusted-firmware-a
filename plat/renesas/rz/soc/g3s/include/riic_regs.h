@@ -68,6 +68,10 @@
 #define ICMR3_ACKBT		(0x08)
 #define ICMR3_ACKBR		(0x04)
 #define ICMR3_NF_MASK	(0x03)
+#define ICMR3_NF_ONE	(0x00)
+#define ICMR3_NF_TWO	(0x01)
+#define ICMR3_NF_THREE	(0x02)
+#define ICMR3_NF_FOUR	(0x03)
 
 /* ICFER */
 #define ICFER_FMPE		(0x80)
