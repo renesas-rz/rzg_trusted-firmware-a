@@ -91,7 +91,7 @@ bool sys_is_resume_reboot(void)
 bool sys_is_resume_peripheral(void)
 {
 #if defined(PLAT_SYSTEM_SUSPEND_awo)
-	return sys_is_resume_reboot();
+	return sys_is_m33_core_booted();
 #else
 	return false;
 #endif
