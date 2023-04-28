@@ -67,6 +67,7 @@ endif
 endif
 endif
 endif
+endif
 
 # enable unconditionally for all builds
 ifeq (${ARCH}, aarch64)
