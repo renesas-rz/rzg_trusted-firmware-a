@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+# Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -64,6 +64,20 @@ PLAT_INCLUDES			+=	-Iplat/renesas/rz/common/include						\
 RZ_TIMER_SOURCES		:=	drivers/delay_timer/generic_delay_timer.c				\
 							drivers/delay_timer/delay_timer.c
 
+EMMC_SOURCES			:=
+
+XSPI_SOURCES			:=	plat/renesas/rz/common/drivers/xspi.c
+
+SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c				\
+							plat/renesas/rz/common/drivers/sd/sd_mount.c			\
+							plat/renesas/rz/common/drivers/sd/sd_util.c				\
+							plat/renesas/rz/common/drivers/sd/sd_cd.c				\
+							plat/renesas/rz/common/drivers/sd/sd_cmd.c				\
+							plat/renesas/rz/common/drivers/sd/sd_int.c				\
+							plat/renesas/rz/common/drivers/sd/sd_trns.c				\
+							plat/renesas/rz/common/drivers/sd/sd_read.c				\
+							plat/renesas/rz/common/drivers/sd/sd_main.c
+
 BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S
 
 include lib/xlat_tables_v2/xlat_tables.mk
@@ -95,19 +109,6 @@ BL31_SOURCES			+=	plat/common/plat_gicv3.c								\
 							plat/renesas/rz/common/rz_plat_sip_handler.c			\
 							plat/renesas/rz/common/rz_sip_svc.c						\
 							${GICV3_SOURCES}
-
-
-XSPI_SOURCES			:=	plat/renesas/rz/common/drivers/xspi.c
-
-SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c				\
-							plat/renesas/rz/common/drivers/sd/sd_mount.c			\
-							plat/renesas/rz/common/drivers/sd/sd_util.c				\
-							plat/renesas/rz/common/drivers/sd/sd_cd.c				\
-							plat/renesas/rz/common/drivers/sd/sd_cmd.c				\
-							plat/renesas/rz/common/drivers/sd/sd_int.c				\
-							plat/renesas/rz/common/drivers/sd/sd_trns.c				\
-							plat/renesas/rz/common/drivers/sd/sd_read.c				\
-							plat/renesas/rz/common/drivers/sd/sd_main.c
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 

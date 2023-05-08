@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2022-2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -29,17 +29,17 @@ static uintptr_t boot_io_drv_id;
 
 static const io_block_spec_t spirom_block_spec = {
 	.offset = RZ_SOC_SPIROM_FIP_BASE,
-	.length = RZG3S_FIP_SIZE_MAX,
+	.length = RZ_SOC_SPIROM_FIP_SIZE,
 };
 
 static const io_drv_spec_t emmc_block_spec = {
 	.offset = RZ_SOC_EMMC_FIP_BASE,
-	.length = RZG3S_FIP_SIZE_MAX,
+	.length = RZ_SOC_EMMC_FIP_SIZE,
 };
 
 static const io_drv_spec_t sd_block_spec = {
 	.offset = RZ_SOC_SD_FIP_BASE,
-	.length = RZG3S_FIP_SIZE_MAX,
+	.length = RZ_SOC_SD_FIP_SIZE,
 };
 
 static const io_uuid_spec_t bl31_file_spec = {

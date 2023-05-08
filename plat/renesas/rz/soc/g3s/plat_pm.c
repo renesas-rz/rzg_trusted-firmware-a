@@ -17,6 +17,7 @@
 #include <sys_regs.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
+#include <rz_soc_private.h>
 #include <common/bl_common.h>
 
 #define SYSTEM_PWR_STATE(s)		((s)->pwr_domain_state[PLAT_MAX_PWR_LVL])
