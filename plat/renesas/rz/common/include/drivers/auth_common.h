@@ -59,7 +59,7 @@ typedef enum auth_method_type_enum {
 	AUTH_METHOD_HASH,	/* Authenticate by hash matching */
 	AUTH_METHOD_SIG,	/* Authenticate by PK operation */
 	AUTH_METHOD_NV_CTR,	/* Authenticate by Non-Volatile Counter */
-	AUTH_METHOD_SBLIB,	/* Authenticate by Renesas RZ/G2L SBLib */
+	AUTH_METHOD_SBLIB,	/* Authenticate by Renesas SBLib */
 	AUTH_METHOD_NUM		/* Number of methods */
 } auth_method_type_t;
 

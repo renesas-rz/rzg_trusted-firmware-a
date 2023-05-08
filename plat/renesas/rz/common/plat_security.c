@@ -73,7 +73,7 @@ uint8_t tzc400_get_num_filters(uintptr_t tzc_base)
 	return (uint8_t)((tzc400_build >> BUILD_CONFIG_NF_SHIFT) & BUILD_CONFIG_NF_MASK) + 1U;
 }
 
-void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_regions)
+static void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_regions)
 {
 	uint8_t num_filters;
 	unsigned int region_index = 1U;

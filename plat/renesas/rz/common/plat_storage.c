@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2020-2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,17 +12,19 @@
 #include <drivers/io/io_memmap.h>
 #include <io_common.h>
 #include <io_emmcdrv.h>
+#include <io_sddrv.h>
 #include <lib/mmio.h>
 #include <tools_share/firmware_image_package.h>
 
 #include <rz_soc_def.h>
-#include <sys.h>
 #include <spi_multi.h>
-#include <emmc_def.h>
+#include <sys.h>
+#include <sys_regs.h>
 
-static uintptr_t memdrv_dev_handle;
 static uintptr_t fip_dev_handle;
+static uintptr_t memdrv_dev_handle;
 static uintptr_t emmcdrv_dev_handle;
+static uintptr_t sddrv_dev_handle;
 
 static uintptr_t boot_io_drv_id;
 
@@ -34,6 +36,11 @@ static const io_block_spec_t spirom_block_spec = {
 static const io_drv_spec_t emmc_block_spec = {
 	.offset = RZ_SOC_EMMC_FIP_BASE,
 	.length = RZ_SOC_EMMC_FIP_SIZE,
+};
+
+static const io_drv_spec_t sd_block_spec = {
+	.offset = RZ_SOC_SD_FIP_BASE,
+	.length = RZ_SOC_SD_FIP_SIZE,
 };
 
 static const io_uuid_spec_t bl31_file_spec = {
@@ -76,6 +83,7 @@ static const io_uuid_spec_t nt_fw_content_cert_file_spec = {
 
 static int32_t open_emmcdrv(const uintptr_t spec);
 static int32_t open_memmap(const uintptr_t spec);
+static int32_t open_sddrv(const uintptr_t spec);
 static int32_t open_fipdrv(const uintptr_t spec);
 
 struct plat_io_policy {
@@ -84,59 +92,23 @@ struct plat_io_policy {
 	int32_t (*check)(const uintptr_t spec);
 };
 
-static const struct plat_io_policy *policies;
-
-static const struct plat_io_policy spirom_policies[] = {
-	[FIP_IMAGE_ID] = {
-				&memdrv_dev_handle,
-				(uintptr_t) &spirom_block_spec,
-				&open_memmap},
-	[BL31_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl31_file_spec,
-				&open_fipdrv},
-	[BL32_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl32_file_spec,
-				&open_fipdrv},
-	[BL33_IMAGE_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &bl33_file_spec,
-				&open_fipdrv},
-#if TRUSTED_BOARD_BOOT
-	[SOC_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &soc_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[SOC_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &soc_fw_content_cert_file_spec,
-				&open_fipdrv},
-	[TRUSTED_OS_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &tos_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[TRUSTED_OS_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &tos_fw_content_cert_file_spec,
-				&open_fipdrv},
-	[NON_TRUSTED_FW_KEY_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &nt_fw_key_cert_file_spec,
-				&open_fipdrv},
-	[NON_TRUSTED_FW_CONTENT_CERT_ID] = {
-				&fip_dev_handle,
-				(uintptr_t) &nt_fw_content_cert_file_spec,
-				&open_fipdrv},
-#endif
-	{ 0, 0, 0}
+static const struct plat_io_policy emmc_fip_policy = {
+	&emmcdrv_dev_handle,
+	(uintptr_t) &emmc_block_spec,
+	&open_emmcdrv
+};
+static const struct plat_io_policy spirom_fip_policy = {
+	&memdrv_dev_handle,
+	(uintptr_t) &spirom_block_spec,
+	&open_memmap
+};
+static const struct plat_io_policy sd_fip_policy = {
+	&sddrv_dev_handle,
+	(uintptr_t) &sd_block_spec,
+	&open_sddrv
 };
 
-static const struct plat_io_policy emmc_policies[] = {
-	[FIP_IMAGE_ID] = {
-				&emmcdrv_dev_handle,
-				(uintptr_t) &emmc_block_spec,
-				&open_emmcdrv},
+static struct plat_io_policy policies[MAX_NUMBER_IDS] = {
 	[BL31_IMAGE_ID] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl31_file_spec,
@@ -174,8 +146,8 @@ static const struct plat_io_policy emmc_policies[] = {
 				&fip_dev_handle,
 				(uintptr_t) &nt_fw_content_cert_file_spec,
 				&open_fipdrv},
-#endif
-	{ 0, 0, 0}
+#endif /* TRUSTED_BOARD_BOOT */
+	{0, 0, 0}
 };
 
 static int32_t open_fipdrv(const uintptr_t spec)
@@ -210,14 +182,37 @@ static int32_t open_emmcdrv(const uintptr_t spec)
 	return io_dev_init(emmcdrv_dev_handle, 0);
 }
 
+static int32_t open_sddrv(const uintptr_t spec)
+{
+	return io_dev_init(sddrv_dev_handle, 0);
+}
+
+static void update_dev_policies(uint16_t boot_dev)
+{
+	switch (boot_dev) {
+	case BOOT_MODE_SPI_1_8:
+	case BOOT_MODE_SPI_3_3:
+		policies[FIP_IMAGE_ID]			= spirom_fip_policy;
+		break;
+	case BOOT_MODE_EMMC_1_8:
+	case BOOT_MODE_EMMC_3_3:
+		policies[FIP_IMAGE_ID]			= emmc_fip_policy;
+		break;
+	case BOOT_MODE_ESD:
+		policies[FIP_IMAGE_ID]			= sd_fip_policy;
+		break;
+	default:
+		panic();
+	}
+}
+
 void rz_io_setup(void)
 {
 	const io_dev_connector_t *memmap;
 	const io_dev_connector_t *emmc;
+	const io_dev_connector_t *sd;
 	const io_dev_connector_t *rzsoc;
 	uint16_t boot_dev;
-
-	boot_dev = *((uint16_t *)RZ_SOC_BOOTINFO_BASE) & MASK_BOOTM_DEVICE;
 
 	boot_io_drv_id = FIP_IMAGE_ID;
 
@@ -225,32 +220,24 @@ void rz_io_setup(void)
 
 	io_dev_open(rzsoc, 0, &fip_dev_handle);
 
+	boot_dev = mmio_read_32(SYS_LSI_MODE) & MASK_BOOTM_DEVICE;
 	if (boot_dev == BOOT_MODE_SPI_1_8 ||
 		boot_dev == BOOT_MODE_SPI_3_3) {
 		spi_multi_setup();
 		register_io_dev_memmap(&memmap);
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
-
-		policies = &spirom_policies[0];
 	} else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
-				boot_dev == BOOT_MODE_EMMC_3_3) {
-		if (emmc_init() != EMMC_SUCCESS) {
-			NOTICE("BL2: Failed to eMMC driver initialize.\n");
-			panic();
-		}
-		emmc_memcard_power(EMMC_POWER_ON);
-		if (emmc_mount() != EMMC_SUCCESS) {
-			NOTICE("BL2: Failed to eMMC mount operation.\n");
-			panic();
-		}
-
+			   boot_dev == BOOT_MODE_EMMC_3_3) {
 		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
-
-		policies = &emmc_policies[0];
+	} else if (boot_dev == BOOT_MODE_ESD) {
+		register_io_dev_sddrv(&sd);
+		io_dev_open(sd, 0, &sddrv_dev_handle);
 	} else {
+		ERROR("Unsupported IO device %d.\n", boot_dev);
 		panic();
 	}
+	update_dev_policies(boot_dev);
 }
 
 int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
@@ -270,4 +257,3 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 
 	return 0;
 }
-

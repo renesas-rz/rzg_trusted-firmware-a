@@ -95,7 +95,6 @@ static void rzg2l_pwr_domain_off(const psci_power_state_t *state)
 	while ((mmio_read_32(SYS_LP_CTL5) & (0x00000100 << coreid)) != (0x00000100 << coreid))
 		;
 	/* Enter the Cortex-A55 Sleep Mode */
-	/* Start the Cortex-A55 Sleep Mode */
 	mmio_write_32(SYS_LP_CTL2, 0x00000001);
 
 	/* Issue Barrier instruction */
