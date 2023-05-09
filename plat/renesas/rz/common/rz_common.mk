@@ -20,6 +20,11 @@ $(eval $(call add_define,DEBUG_FPGA))
 WA_RZG2L_GIC64BIT				:= 1
 $(eval $(call add_define,WA_RZG2L_GIC64BIT))
 
+# This option gets enabled automatically if the TRUSTED_BOARD_BOOT
+# is set via root Makefile, but Renesas support Trusted-Boot without
+# Crypto module.
+override CRYPTO_SUPPORT			:= 0
+
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_1530923				:= 1
 
