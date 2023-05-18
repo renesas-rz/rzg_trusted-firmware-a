@@ -163,6 +163,16 @@ static void manage_extensions_realm_per_world(void)
 	}
 
 	pmuv3_enable(ctx);
+
+	/*
+	 * If SME/SME2 is supported and enabled for NS world, then enables SME
+	 * for Realm world. RMM will save/restore required registers that are
+	 * shared with SVE/FPU so that Realm can use FPU or SVE.
+	 */
+	if (is_feat_sme_supported()) {
+		/* sme_enable() also enables SME2 if supported by hardware */
+		sme_enable(ctx);
+	}
 }
 
 /*******************************************************************************
