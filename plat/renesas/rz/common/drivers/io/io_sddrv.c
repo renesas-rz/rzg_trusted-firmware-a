@@ -20,8 +20,6 @@
 #define DEV_SD0     (0)
 #define DEV_SD1     (1)
 
-extern int32_t esd_main(void);
-
 typedef struct {
 	uint32_t in_use;
 	uintptr_t base;
@@ -37,7 +35,7 @@ static io_type_t device_type_sddrv(void)
 	return IO_TYPE_MEMMAP;
 }
 
-static int32_t sd_port = DEV_SD0;
+static const int32_t sd_port = DEV_SD0;
 static uint8_t sd_work[SD_SIZE_OF_INIT] __aligned(8);
 static uint8_t sd_rw_buff[SD_SECTOR_SIZE] __aligned(8);
 
@@ -82,7 +80,7 @@ static int sddrv_block_read(io_entity_t *entity, uintptr_t buffer,
 	if (first_offset > 0) {
 		memset(sd_rw_buff, 0x00, SD_SECTOR_SIZE);
 
-		if (sd_read_sect(0, (uint8_t *)sd_rw_buff, first_sector, 1) != SD_OK)
+		if (sd_read_sect(sd_port, (uint8_t *)sd_rw_buff, first_sector, 1) != SD_OK)
 			return -EIO;
 
 		buffer_offset = SD_SECTOR_SIZE - first_offset;
@@ -100,7 +98,7 @@ static int sddrv_block_read(io_entity_t *entity, uintptr_t buffer,
 	if (0 < sector_count && 0 < last_offset) {
 		memset(sd_rw_buff, 0x00, SD_SECTOR_SIZE);
 
-		if (sd_read_sect(0, (uint8_t *)sd_rw_buff, last_sector, 1) != SD_OK)
+		if (sd_read_sect(sd_port, (uint8_t *)sd_rw_buff, last_sector, 1) != SD_OK)
 			return -EIO;
 
 		memcpy((uint8_t *) buffer + (length - last_offset), &sd_rw_buff[0], last_offset);
@@ -109,7 +107,7 @@ static int sddrv_block_read(io_entity_t *entity, uintptr_t buffer,
 
 	// middle sector
 	if (sector_count > 0) {
-		if (sd_read_sect(0, (uint8_t *)(buffer + buffer_offset),
+		if (sd_read_sect(sd_port, (uint8_t *)(buffer + buffer_offset),
 				first_sector, sector_count) != SD_OK) {
 			return -EIO;
 		}
@@ -124,7 +122,65 @@ static int sddrv_block_read(io_entity_t *entity, uintptr_t buffer,
 static int sddrv_block_write(io_entity_t *entity, const uintptr_t buffer,
 			size_t length, size_t *length_written)
 {
-	return -EIO;
+	file_state_t *fp = (file_state_t *) entity->info;
+	uint32_t first_sector, last_sector, sector_count;
+	size_t buffer_offset = 0;
+
+	first_sector = (fp->base + fp->file_pos) / SD_SECTOR_SIZE;
+	last_sector = (fp->base + fp->file_pos + length - 1) / SD_SECTOR_SIZE;
+	sector_count = last_sector - first_sector + 1;
+
+	assert((fp->file_pos + length) <= fp->size);
+
+	// first sector
+	uint32_t first_offset = (fp->base + fp->file_pos) % SD_SECTOR_SIZE;
+
+	if (first_offset > 0) {
+		memset(sd_rw_buff, 0x00, SD_SECTOR_SIZE);
+
+		if (sd_read_sect(sd_port, sd_rw_buff, first_sector, 1) != SD_OK)
+			return -EIO;
+
+		buffer_offset = SD_SECTOR_SIZE - first_offset;
+		buffer_offset = (length < buffer_offset) ? length : buffer_offset;
+
+		memcpy((uint8_t *)&sd_rw_buff[first_offset], (uint8_t *)buffer, buffer_offset);
+
+		if (sd_write_sect(sd_port, sd_rw_buff, first_sector, 1, SD_WRITE_WITH_PREERASE) != SD_OK)
+			return -EIO;
+
+		first_sector++;
+		sector_count--;
+	}
+
+	// last sector
+	uint32_t last_offset = (fp->base + fp->file_pos + length) % SD_SECTOR_SIZE;
+
+	if ((sector_count > 0) && (last_offset > 0)) {
+		memset(sd_rw_buff, 0x00, SD_SECTOR_SIZE);
+
+		if (sd_read_sect(sd_port, sd_rw_buff, last_sector, 1) != SD_OK)
+			return -EIO;
+
+		memcpy((uint8_t *)&sd_rw_buff[0], (uint8_t *)buffer + (length - last_offset), last_offset);
+
+		if (sd_write_sect(sd_port, sd_rw_buff, last_sector, 1, SD_WRITE_WITH_PREERASE) != SD_OK)
+			return -EIO;
+
+		sector_count--;
+	}
+
+	// middle sector
+	if (sector_count > 0) {
+		if (sd_write_sect(sd_port, (uint8_t *)buffer + buffer_offset, first_sector, sector_count, SD_WRITE_WITH_PREERASE) != SD_OK) {
+			return -EIO;
+		}
+	}
+
+	*length_written = length;
+	fp->file_pos += (signed long long)length;
+
+	return 0;
 }
 
 static int sddrv_block_len(io_entity_t *entity, size_t *length)
