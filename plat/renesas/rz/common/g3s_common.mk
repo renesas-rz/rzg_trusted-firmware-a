@@ -76,7 +76,7 @@ SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c				\
 							plat/renesas/rz/common/drivers/sd/sd_int.c				\
 							plat/renesas/rz/common/drivers/sd/sd_trns.c				\
 							plat/renesas/rz/common/drivers/sd/sd_read.c				\
-							plat/renesas/rz/common/drivers/sd/sd_main.c
+							plat/renesas/rz/common/drivers/sd/sd_write.c
 
 BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S
 

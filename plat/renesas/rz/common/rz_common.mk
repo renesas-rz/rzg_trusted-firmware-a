@@ -64,8 +64,8 @@ SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c				\
 							plat/renesas/rz/common/drivers/sd/sd_int.c				\
 							plat/renesas/rz/common/drivers/sd/sd_trns.c				\
 							plat/renesas/rz/common/drivers/sd/sd_read.c				\
-							plat/renesas/rz/common/drivers/sd/sd_main.c				\
-							plat/renesas/rz/common/drivers/sd/esddev.c
+							plat/renesas/rz/common/drivers/sd/sd_write.c			\
+							plat/renesas/rz/common/drivers/sd/sd_dev_low.c
 
 BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S							\
 							drivers/arm/tzc/tzc400.c
