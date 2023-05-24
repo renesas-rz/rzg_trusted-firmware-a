@@ -26,8 +26,7 @@ EMMC_SOURCES			+=	plat/renesas/rz/soc/g3s/drivers/emmc/emmc_interrupt.c	\
 
 SD_SOURCES				+=	plat/renesas/rz/common/drivers/sd/sd_dev_low.c
 
-PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c					\
-							plat/renesas/rz/soc/g3s/drivers/riic.c					\
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/riic.c					\
 							plat/renesas/rz/soc/g3s/drivers/tzc/tzc400.c			\
 							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc.c				\
 							plat/renesas/rz/soc/g3s/drivers/pwrc/pwrc_stack.S		\
@@ -38,7 +37,6 @@ BL2_SOURCES				+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c				\
 							plat/renesas/rz/soc/g3s/plat_security.c					\
 							plat/renesas/rz/soc/g3s/bl2_plat_mem_params_desc.c		\
 							plat/renesas/rz/soc/g3s/drivers/sys.c					\
-							plat/renesas/rz/soc/g3s/drivers/pfc.c					\
 							plat/renesas/rz/soc/g3s/plat_ddr_setup.c
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/g3s/bl31_plat_setup.c				\
