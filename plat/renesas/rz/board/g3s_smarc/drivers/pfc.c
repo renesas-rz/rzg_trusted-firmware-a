@@ -14,9 +14,9 @@
 static PFC_REGS pfc_mux_sd_reg_tbl[PFC_MUX_SD_TBL_NUM] = {
 	/* P0(SD0/SD1) CD, WP*/
 	{
-		{ PFC_ON,	(uintptr_t)PFC_PMC20,	0x0F },					/* PMC */
+		{ PFC_ON,	(uintptr_t)PFC_PMC20,	0x05 },					/* PMC */
 		{ PFC_ON,	(uintptr_t)PFC_PFC20,	0x00000000 },			/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH20,	0x0000000003030303 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH20,	0x0000000000030003 },	/* IOLH */
 		{ PFC_ON,	(uintptr_t)PFC_PUPD20,	0x0000000000000000 },	/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
@@ -40,16 +40,16 @@ static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 	{
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH04,	0x0000030303030303 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH04,	0x0000030000000303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	},
-	/* XSPI - IO7 - IO0*/
+	/* XSPI - IO3 - IO0*/
 	{
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH05,	0x0303030303030303 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH05,	0x0000000003030303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
@@ -129,7 +129,7 @@ static void pfc_write_registers(uint8_t tbl_size, PFC_REGS *pfc_reg_tbl)
 
 static void pfc_scif_setup(void)
 {
-	/* multiplexer terminal switching */
+	/* Write protection for PFC register */
 	mmio_write_32(PFC_PWPR, 0x0);
 	mmio_write_32(PFC_PWPR, PWPR_PFCWE);
 
@@ -155,7 +155,7 @@ static void pfc_sd_setup(void)
 
 	pfc_write_registers(PFC_SD_TBL_NUM, pfc_sd_reg_tbl);
 
-	/* multiplexer terminal switching */
+	/* Write protection for PFC register */
 	mmio_write_32(PFC_PWPR, 0x0);
 	mmio_write_32(PFC_PWPR, PWPR_PFCWE);
 

@@ -80,12 +80,6 @@ static const CPG_REG_SETTING cpg_pll4_tbl[] = {
 };
 
 static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
-	{		/* OCTA */
-		(uintptr_t)CPG_CLKON_OCTA,
-		(uintptr_t)CPG_CLKMON_OCTA,
-		0x00030000,
-		CPG_T_CLK
-	},
 	{		/* SPI */
 		(uintptr_t)CPG_CLKON_SPI,
 		(uintptr_t)CPG_CLKMON_SPI,
@@ -95,7 +89,6 @@ static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_static_select_tbl[] = {
-	{ (uintptr_t)CPG_OCTA_SSEL,				0x00010002 },	// 2'b10:CLK266FIX_CD
 	{ (uintptr_t)CPG_SPI_SSEL,				0x00010002 },	// 2'b10:CLK266FIX_CD
 };
 
@@ -111,7 +104,6 @@ static const CPG_REG_SETTING cpg_dynamic_division_tbl[] = {
 	{ (uintptr_t)CPG_PL6_DDIV,				0x00110000 },	// 3'b000:1/1(250MHz), 3'b000:1/1(250MHz)
 #endif /* PLAT_M33_BOOT_SUPPORT */
 	{ (uintptr_t)CPG_SDHI_DDIV,				0x01110111 },	// 1'b1:1/2, 1'b1:1/2, 1'b1:1/2
-	{ (uintptr_t)CPG_OCTA_DDIV,				0x00010003 },	// 3'b011:1/8
 	{ (uintptr_t)CPG_SPI_DDIV,				0x00010003 },	// 3'b011:1/8
 };
 
@@ -491,12 +483,6 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		0x00010000,
 		CPG_T_CLK
 	},
-	{		/* OCTA */
-		(uintptr_t)CPG_CLKON_OCTA,
-		(uintptr_t)CPG_CLKMON_OCTA,
-		0x00030003,
-		CPG_T_CLK
-	},
 	{		/* PDM */
 		(uintptr_t)CPG_CLKON_PDM,
 		(uintptr_t)CPG_CLKMON_PDM,
@@ -638,12 +624,6 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		(uintptr_t)CPG_RST_TSU,
 		(uintptr_t)CPG_RSTMON_TSU,
 		0x00010000,
-		CPG_T_RST
-	},
-	{		/* OCTA */
-		(uintptr_t)CPG_RST_OCTA,
-		(uintptr_t)CPG_RSTMON_OCTA,
-		0x00010001,
 		CPG_T_RST
 	},
 	{		/* PDM */
