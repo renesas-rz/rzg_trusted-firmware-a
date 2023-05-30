@@ -24,7 +24,7 @@ EMMC_SOURCES			+=	plat/renesas/rz/soc/g3s/drivers/emmc/emmc_interrupt.c	\
 							plat/renesas/rz/soc/g3s/drivers/emmc/emmc_cmd.c			\
 							plat/renesas/rz/soc/g3s/drivers/emmc/emmc_write.c
 
-SD_SOURCES				+=	plat/renesas/rz/common/drivers/sd/sd_dev_low.c
+SD_SOURCES				+=	plat/renesas/rz/soc/g3s/drivers/sd_dev_low.c
 
 PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/cpg.c					\
 							plat/renesas/rz/soc/g3s/drivers/riic.c					\

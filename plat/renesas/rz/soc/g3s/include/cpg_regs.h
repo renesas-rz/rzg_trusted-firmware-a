@@ -289,9 +289,6 @@
 #define CPG_PWRDN_MSTOP							(CPG_BASE + 0x0BC0)
 #define CPG_PWRDN_CLKON							(CPG_BASE + 0x0BC4)
 #define CPG_PWRDN_RST							(CPG_BASE + 0x0BC8)
-#define CPG_RST_BISR							(CPG_BASE + 0x0BD0)
-#define CPG_BISR_DOM_EN							(CPG_BASE + 0x0BD4)
-#define CPG_BISR_REPAIR_END						(CPG_BASE + 0x0BD8)
 #define CPG_OTHERFUNC2_REG						(CPG_BASE + 0x0BEC)	/* Other function registers2 */
 
 
@@ -647,12 +644,6 @@
 #define PWRDN_CLKON_PWRDN_CLKON_WEN				(1 << 16)
 #define PWRDN_RST_PWRDN_RST						(1 << 0)
 #define PWRDN_RST_PWRDN_RST_WEN					(1 << 16)
-
-#define RST_BISR_BISR_RSTB						(1 << 0)
-#define RST_BISR_BISR_RSTB_WEN					(1 << 16)
-#define BISR_DOM_EN_OFF							(0 << 0)
-#define BISR_DOM_EN_ON							(1 << 0)
-#define BISR_REPAIR_END							(1 << 0)
 
 #define OTHERFUNC2_REG_RES0_SET					(1 << 0)
 #define OTHERFUNC2_REG_RES0_ON_WEN				(1 << 16)
