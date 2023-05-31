@@ -56,13 +56,13 @@ static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 	}
 };
 
-static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
+static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM_DEV] = {
 	/* SD0 RST, CMD, CLK (eMMC) */
 	{
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH10,	0x0000000000030303 },	/* IOLH */
-		{ PFC_OFF,	(uintptr_t)PFC_OFF,		0 },					/* PUPD */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_ON,	(uintptr_t)PFC_IEN10,	0x0000000000000100 }	/* IEN */
 	},
@@ -153,7 +153,7 @@ static void pfc_sd_setup(void)
 	mmio_write_32(PFC_SD_ch0, 1);
 	mmio_write_32(PFC_SD_ch1, 0);
 
-	pfc_write_registers(PFC_SD_TBL_NUM, pfc_sd_reg_tbl);
+	pfc_write_registers(PFC_SD_TBL_NUM_DEV, pfc_sd_reg_tbl);
 
 	/* multiplexer terminal switching */
 	mmio_write_32(PFC_PWPR, 0x0);
@@ -176,9 +176,9 @@ static const PFC_REGS *pfc_boot_mode_tbls[SYS_BOOT_MODE_MAX] = {
 
 //different order here.
 static const uint8_t pfc_boot_mode_tbl_len[SYS_BOOT_MODE_MAX] = {
-	PFC_SD_TBL_NUM,
-	PFC_SD_TBL_NUM,
-	PFC_SD_TBL_NUM,
+	PFC_SD_TBL_NUM_DEV,
+	PFC_SD_TBL_NUM_DEV,
+	PFC_SD_TBL_NUM_DEV,
 	PFC_XSPI_TBL_NUM,
 	PFC_XSPI_TBL_NUM,
 	PFC_MUX_SCIF_TBL_NUM

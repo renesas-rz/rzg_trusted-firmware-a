@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -93,12 +93,12 @@ static const CPG_REG_SETTING cpg_static_select_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
-	{ (uintptr_t)CPG_PLL_DSEL,				0x04550455 },	// 1'b1:PLL6, 1'b1:PLL4, 1'b1:PLL3, 1'b1:PLL2, 1'b1:PLL1
+	{ (uintptr_t)CPG_PLL_DSEL,				0x00400040 },	// 1'b1:PLL4
 	{ (uintptr_t)CPG_SDHI_DSEL,				0x01110333 },	// 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C
 };
 
 static const CPG_REG_SETTING cpg_dynamic_division_tbl[] = {
-	{ (uintptr_t)CPG_PL2_DDIV,				0x00110000 },	// 3'b000:1/1(100MHz), 3'b000:1/1(200MHz)
+	{ (uintptr_t)CPG_PL2_DDIV,				0x00100000 },	// 3'b000:1/1(100MHz)
 	{ (uintptr_t)CPG_PL3_DDIV,				0x01110000 },	// 3'b000:1/1(200MHz), 3'b000:1/1(100MHz), 3'b000:1/1(200MHz)
 #if PLAT_M33_BOOT_SUPPORT
 	{ (uintptr_t)CPG_PL6_DDIV,				0x00110000 },	// 3'b000:1/1(250MHz), 3'b000:1/1(250MHz)
