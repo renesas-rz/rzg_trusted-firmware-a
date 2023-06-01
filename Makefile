@@ -693,6 +693,14 @@ include ${MAKE_HELPERS_DIRECTORY}march.mk
 
 TF_CFLAGS   +=	$(march-directive)
 
+################################################################################
+# Platform specific Makefile might provide us ARCH_MAJOR/MINOR use that to come
+# up with appropriate march values for compiler.
+################################################################################
+include ${MAKE_HELPERS_DIRECTORY}march.mk
+
+TF_CFLAGS   +=	$(march-directive)
+
 # This internal flag is common option which is set to 1 for scenarios
 # when the BL2 is running in EL3 level. This occurs in two scenarios -
 # 4 world system running BL2 at EL3 and two world system without BL1 running
