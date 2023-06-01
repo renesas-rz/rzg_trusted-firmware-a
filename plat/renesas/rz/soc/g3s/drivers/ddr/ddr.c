@@ -20,7 +20,6 @@ static void phyinit_d2h_1d(void);
 static void phyinit_d2h_2d(void);
 static void phyinit_i(void);
 static void phyinit_j(void);
-static void update_mc(void);
 static void	save_retcsr(void);
 static void	restore_retcsr(void);
 
@@ -100,11 +99,6 @@ static void phyinit_j(void)
 {
 	DDRTOP_mc_param_wr(START_ADDR, START_OFFSET, START_WIDTH, 1);
 	DDRTOP_mc_param_poll(INT_STATUS_INIT_ADDR, INT_STATUS_INIT_OFFSET + 1, 1, 1);
-}
-
-static void update_mc(void)
-{
-	DDRTOP_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0x1F);
 }
 
 static void	save_retcsr(void)

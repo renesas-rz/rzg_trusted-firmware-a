@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <lib/mmio.h>
+#include <sys_regs.h>
 #include <ddr_param_def_ddr4.h>
 
 #include "ddr_regs.h"
@@ -21,6 +22,12 @@ void setup_mc(void)
 
 	for (i = 0; i < ARRAY_SIZE(param_setup_mc_data); i++)
 		DDRTOP_mc_apb_wr(param_setup_mc_data[i][0], param_setup_mc_data[i][1]);
+}
+
+void update_mc(void)
+{
+	DDRTOP_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0x1F);
+	mmio_write_32(SYS_DDR_CFG, 0x00000001);
 }
 
 void phyinit_configuration(void)
@@ -96,11 +103,6 @@ void phyinit_load_2d_image(void)
 
 void phyinit_exec_2d_image(void)
 {
-	dwc_ddrphy_apb_wr(0x0006E000, 0x1);
-	dwc_ddrphy_apb_wr(0x0006E099, 0x9);
-	dwc_ddrphy_apb_wr(0x0006E099, 0x1);
-	dwc_ddrphy_apb_wr(0x0006E099, 0x0);
-	dwc_ddrphy_apb_wr(0x0006E031, 0x0);
 	dwc_ddrphy_apb_wr(0x0006E000, 0x1);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x9);
 	dwc_ddrphy_apb_wr(0x0006E099, 0x1);

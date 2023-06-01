@@ -3061,6 +3061,9 @@ static void decode_streaming_message_ddr4_2d(uint32_t codede_message_hex, uint16
 	case 0x04270005:
 		INFO("PMU1: setAltAcsmCLCWL setting cl=%d cwl=%d\n", args_list[0], args_list[1]);
 		break;
+	case 0x014c0000:
+		INFO("PMU3: Exiting write leveling mode\n");
+		break;
 	default:
 		INFO("PMU Streaming Msg: Debug message not recognized !!  code: %x", codede_message_hex);
 		panic();
