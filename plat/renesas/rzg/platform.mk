@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
+PLAT_INCLUDES	+=	-Iplat/renesas/rzg/include
+
 include plat/renesas/common/common.mk
 
 ifndef LSI
@@ -258,14 +260,30 @@ PLAT_INCLUDES	+=	-Idrivers/renesas/common/ddr		\
 			-Idrivers/renesas/common/scif		\
 			-Idrivers/renesas/common/emmc		\
 			-Idrivers/renesas/common/pwrc		\
-			-Idrivers/renesas/common/io		\
-			-Iplat/renesas/rzg/include
+			-Idrivers/renesas/common/io
 
 BL2_SOURCES	+=	plat/renesas/rzg/bl2_plat_setup.c	\
 			plat/renesas/rzg/bl2_fusa.c		\
+			plat/renesas/rzg/plat_storage.c		\
+			drivers/renesas/rzg/auth/auth_mod.c	\
+			drivers/renesas/rzg/auth/tbbr/tbbr_cot_bl2.c \
 			drivers/renesas/rzg/board/board.c
 
 BL31_SOURCES	+=	plat/renesas/rzg/rzg_sip_svc.c
+
+ifeq (${TRUSTED_BOARD_BOOT},1)
+$(eval $(call add_define, PLAT_TBBR_IMG_DEF))
+endif
+
+# Process RZG2_SECURE_BOOT flag
+ifndef RZG2_SECURE_BOOT
+RZG2_SECURE_BOOT := 0
+endif
+$(eval $(call add_define,RZG2_SECURE_BOOT))
+
+ifneq (${RZG2_SECURE_BOOT},0)
+    include drivers/renesas/rzg/auth/tsip/tsip.mk
+endif
 
 # build the layout images for the bootrom and the necessary srecords
 rzg: rzg_layout_create rzg_srecord
@@ -298,3 +316,18 @@ rzg_srecord: $(BL2_ELF_SRC) $(BL31_ELF_SRC)
 	$(Q)$(OC) -O srec --srec-forceS3 ${BL2_ELF_SRC}  ${SREC_PATH}/bl2.srec
 	@echo "generating srec: ${SREC_PATH}/bl31.srec"
 	$(Q)$(OC) -O srec --srec-forceS3 ${BL31_ELF_SRC} ${SREC_PATH}/bl31.srec
+
+.PHONY: sectools_make sectools_clean
+sectools: sectools_make
+distclean realclean clean: sectools_clean
+
+SIGNFW_PATH		?= tools/renesas/rzg_security_tools/sign_fw
+ENCRYPTFW_PATH	?= tools/renesas/rzg_security_tools/encrypt_fw
+
+sectools_make:
+	${Q}${MAKE} --no-print-directory -C ${SIGNFW_PATH}
+	${Q}${MAKE} --no-print-directory -C ${ENCRYPTFW_PATH}
+
+sectools_clean:
+	${Q}${MAKE} --no-print-directory -C ${SIGNFW_PATH} clean
+	${Q}${MAKE} --no-print-directory -C ${ENCRYPTFW_PATH} clean
