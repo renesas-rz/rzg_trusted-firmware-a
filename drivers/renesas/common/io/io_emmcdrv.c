@@ -25,6 +25,7 @@ static int32_t emmcdrv_dev_close(io_dev_info_t *dev_info);
 typedef struct {
 	uint32_t in_use;
 	uintptr_t base;
+	size_t size;
 	signed long long file_pos;
 	EMMC_PARTITION_ID partition;
 } file_state_t;
@@ -50,6 +51,15 @@ static int32_t emmcdrv_block_seek(io_entity_t *entity, int32_t mode,
 	return IO_SUCCESS;
 }
 
+static int32_t emmcdrv_block_len(io_entity_t *entity, size_t *length)
+{
+	*length = ((file_state_t *) entity->info)->size;
+
+	NOTICE("%s: len: 0x%08lx\n", __func__, *length);
+
+	return IO_SUCCESS;
+}
+
 static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 				  size_t length, size_t *length_read)
 {
@@ -57,12 +67,12 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
 	uint32_t sector_add, sector_num, emmc_dma = 0;
 	int32_t result = IO_SUCCESS;
 
-	sector_add = current_file.file_pos >> EMMC_SECTOR_SIZE_SHIFT;
+	sector_add = (current_file.base + current_file.file_pos) >> EMMC_SECTOR_SIZE_SHIFT;
 	sector_num = (length + EMMC_SECTOR_SIZE - 1U) >> EMMC_SECTOR_SIZE_SHIFT;
 
 	NOTICE("BL2: Load dst=0x%lx src=(p:%d)0x%llx(%d) len=0x%lx(%d)\n",
 	       buffer,
-	       current_file.partition, current_file.file_pos,
+	       current_file.partition, current_file.base + current_file.file_pos,
 	       sector_add, length, sector_num);
 
 	if ((buffer + length - 1U) <= (uintptr_t)UINT32_MAX) {
@@ -90,6 +100,8 @@ static int32_t emmcdrv_block_open(io_dev_info_t *dev_info,
 		return IO_RESOURCES_EXHAUSTED;
 	}
 
+	current_file.base = block_spec->offset;
+	current_file.size = block_spec->length;
 	current_file.file_pos = 0;
 	current_file.in_use = 1;
 
@@ -136,7 +148,7 @@ static const io_dev_funcs_t emmcdrv_dev_funcs = {
 	.type = &device_type_emmcdrv,
 	.open = &emmcdrv_block_open,
 	.seek = &emmcdrv_block_seek,
-	.size = NULL,
+	.size = &emmcdrv_block_len,
 	.read = &emmcdrv_block_read,
 	.write = NULL,
 	.close = &emmcdrv_block_close,

@@ -324,6 +324,8 @@ PLAT_INCLUDES	+=	-Idrivers/renesas/common/ddr		\
 			-Idrivers/renesas/common/io
 
 BL2_SOURCES	+=	plat/renesas/rcar/bl2_plat_setup.c	\
+			plat/renesas/common/plat_storage.c		\
+			drivers/renesas/common/auth/auth_mod.c	\
 			drivers/renesas/rcar/board/board.c
 
 ifeq (${RCAR_GEN3_BL33_GZIP},1)
@@ -368,4 +370,3 @@ rcar_srecord: $(BL2_ELF_SRC) $(BL31_ELF_SRC)
 	$(Q)$(OC) -O srec --srec-forceS3 ${BL2_ELF_SRC}  ${SREC_PATH}/bl2.srec
 	@echo "generating srec: ${SREC_PATH}/bl31.srec"
 	$(Q)$(OC) -O srec --srec-forceS3 ${BL31_ELF_SRC} ${SREC_PATH}/bl31.srec
-

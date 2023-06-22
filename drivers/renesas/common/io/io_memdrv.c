@@ -29,6 +29,7 @@ static int32_t memdrv_dev_close(io_dev_info_t *dev_info);
 typedef struct {
 	uint32_t in_use;
 	uintptr_t base;
+	size_t size;
 	signed long long file_pos;
 } file_state_t;
 
@@ -55,6 +56,7 @@ static int32_t memdrv_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 
 	/* File cursor offset for seek and incremental reads etc. */
 	current_file.base = block_spec->offset;
+	current_file.size = block_spec->length;
 	current_file.file_pos = 0;
 	current_file.in_use = 1;
 
@@ -71,6 +73,15 @@ static int32_t memdrv_block_seek(io_entity_t *entity, int32_t mode,
 	}
 
 	((file_state_t *) entity->info)->file_pos = offset;
+
+	return IO_SUCCESS;
+}
+
+static int32_t memdrv_block_len(io_entity_t *entity, size_t *length)
+{
+	*length = ((file_state_t *) entity->info)->size;
+
+	NOTICE("%s: len: 0x%08lx\n", __func__, *length);
 
 	return IO_SUCCESS;
 }
@@ -111,7 +122,7 @@ static const io_dev_funcs_t memdrv_dev_funcs = {
 	.type = &device_type_memdrv,
 	.open = &memdrv_block_open,
 	.seek = &memdrv_block_seek,
-	.size = NULL,
+	.size = &memdrv_block_len,
 	.read = &memdrv_block_read,
 	.write = NULL,
 	.close = &memdrv_block_close,
