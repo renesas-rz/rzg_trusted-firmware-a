@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <lib/mmio.h>
+#include <sys_regs.h>
 #include <ddr_param_def_lpddr4.h>
 
 #include "ddr_regs.h"
@@ -21,6 +22,12 @@ void setup_mc(void)
 
 	for (i = 0; i < ARRAY_SIZE(param_setup_mc_data); i++)
 		DDRTOP_mc_apb_wr(param_setup_mc_data[i][0], param_setup_mc_data[i][1]);
+}
+
+void update_mc(void)
+{
+	DDRTOP_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0x1F);
+	mmio_write_32(SYS_DDR_CFG, 0x00000000);
 }
 
 void phyinit_configuration(void)

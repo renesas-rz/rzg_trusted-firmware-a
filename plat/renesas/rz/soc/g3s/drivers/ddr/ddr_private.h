@@ -11,7 +11,7 @@
 
 #include "ddr_regs.h"
 
-#define DDR4_VERSION	"5.21"
+#define DDR4_VERSION	"5.22"
 #define LPDDR4_VERSION	"5.21"
 
 #if !LPDDR4
@@ -54,6 +54,7 @@ extern void wait_dficlk(uint32_t cycles);
 
 /* DDR setup MC funcion */
 extern void setup_mc(void);
+extern void update_mc(void);
 
 /* DDR phy init function */
 extern void phyinit_configuration(void);
