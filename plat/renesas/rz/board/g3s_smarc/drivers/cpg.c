@@ -41,14 +41,13 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 		0x00010001,
 		CPG_T_RST
 	},
-#if PLAT_SYSTEM_SUSPEND
-	{		/* I2C Ch1 */
+	{		/* I2C */
 		(uintptr_t)CPG_CLKON_I2C,
 		(uintptr_t)CPG_CLKMON_I2C,
 		0x000F0003,
 		CPG_T_CLK
 	},
-	{		/* I2C Ch1 */
+	{		/* I2C */
 		(uintptr_t)CPG_RST_I2C,
 		(uintptr_t)CPG_RSTMON_I2C,
 		0x000F0003,
@@ -66,7 +65,6 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 		0x00010001,
 		CPG_T_RST
 	},
-#endif  /* PLAT_SYSTEM_SUSPEND */
 };
 
 static const CPG_REG_SETTING cpg_pll4_tbl[] = {
