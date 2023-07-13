@@ -140,10 +140,6 @@ loop:
 				(void)putchar(va_arg(args, int));
 				count++;
 				break;
-			case 'c':
-				(void)putchar(va_arg(args, int));
-				count++;
-				break;
 			case 's':
 				str = va_arg(args, char *);
 				count += string_print(str);
