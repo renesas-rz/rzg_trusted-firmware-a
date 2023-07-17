@@ -120,7 +120,6 @@ static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
 };
 
 static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
-#if PLAT_SYSTEM_SUSPEND
 	{		/* I2C Ch1 */
 		(uintptr_t)CPG_CLKON_I2C,
 		(uintptr_t)CPG_CLKMON_I2C,
@@ -145,7 +144,6 @@ static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
 		0x00010001,
 		CPG_T_RST
 	},
-#endif
 };
 
 static const CPG_REG_SETTING cpg_s2r_mstop_tbl[] = {
