@@ -24,8 +24,6 @@
 void sme_init_el3(void);
 void sme_init_el2_unused(void);
 void sme_enable(cpu_context_t *context);
-void sme_init_el3(void);
-void sme_init_el2_unused(void);
 void sme_disable(cpu_context_t *context);
 void sme_enable_per_world(per_world_context_t *per_world_ctx);
 void sme_disable_per_world(per_world_context_t *per_world_ctx);
@@ -37,12 +35,6 @@ static inline void sme_init_el2_unused(void)
 {
 }
 static inline void sme_enable(cpu_context_t *context)
-{
-}
-static inline void sme_init_el3(void)
-{
-}
-static inline void sme_init_el2_unused(void)
 {
 }
 static inline void sme_disable(cpu_context_t *context)
