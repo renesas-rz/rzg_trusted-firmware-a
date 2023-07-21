@@ -15,8 +15,8 @@
 #include <platform_oid.h>
 #endif
 
-#define KEY_CERT_LEN			(256)
-#define CONTENT_CERT_LEN		(512)
+#define KEY_CERT_LEN			(RZ_TBB_CERT_SIZE)
+#define CONTENT_CERT_LEN		(RZ_TBB_CERT_SIZE)
 
 #ifdef IMAGE_BL2
 
