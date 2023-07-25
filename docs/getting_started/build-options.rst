@@ -684,13 +684,6 @@ Common build options
 
    This option defaults to 0.
 
--  ``MARCH_DIRECTIVE``: used to pass a -march option from the platform build
-   options to the compiler. An example usage:
-
-   .. code:: make
-
-      MARCH_DIRECTIVE := -march=armv8.5-a
-
 -  ``NON_TRUSTED_WORLD_KEY``: This option is used when ``GENERATE_COT=1``. It
    specifies a file that contains the Non-Trusted World private key in PEM
    format or a PKCS11 URI. If ``SAVE_KEYS=1``, only a file is accepted and it
@@ -858,12 +851,6 @@ Common build options
    state or at EL3 if ``SPMC_AT_EL3`` is enabled. The latter configurations
    support pre-Armv8.4 platforms (aka not implementing the ``FEAT_SEL2``
    extension).
-
--  ``ENABLE_SPMD_LP`` : This boolean option is used jointly with the SPM
-   Dispatcher option (``SPD=spmd``). When enabled (1) it indicates support
-   for logical partitions in EL3, managed by the SPMD as defined in the FF-A
-   1.2 specification. This flag is disabled by default. This flag must not be
-   used if ``SPMC_AT_EL3`` is enabled. This is an experimental feature.
 
 -  ``SPM_MM`` : Boolean option to enable the Management Mode (MM)-based Secure
    Partition Manager (SPM) implementation. The default value is ``0``
