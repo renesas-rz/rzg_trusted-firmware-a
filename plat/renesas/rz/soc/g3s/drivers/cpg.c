@@ -118,6 +118,7 @@ static const CPG_REG_SETTING cpg_pwrdown_ip_tbl[] = {
 	{ (uintptr_t)CPG_PWRDN_IP2,				0x001F001F },
 };
 
+#if defined(PLAT_SYSTEM_SUSPEND_awo)
 static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
 	{ (uintptr_t)CPG_BUS_ACPU_MSTOP,		0x00080008 },
 	{ (uintptr_t)CPG_BUS_PERI_COM_MSTOP,	0x0FFF0FFF },
@@ -126,8 +127,10 @@ static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
 	{ (uintptr_t)CPG_MHU_MSTOP,				0x00010001 },
 	{ (uintptr_t)CPG_PWRDN_MSTOP,			0x00010001 },
 };
+#endif
 
 static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
+#if PLAT_SYSTEM_SUSPEND
 	{		/* I2C Ch1 */
 		(uintptr_t)CPG_CLKON_I2C,
 		(uintptr_t)CPG_CLKMON_I2C,
@@ -152,6 +155,7 @@ static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
 		0x00010001,
 		CPG_T_RST
 	},
+#endif
 };
 
 static const CPG_REG_SETTING cpg_s2r_mstop_tbl[] = {
@@ -852,6 +856,13 @@ void cpg_active_ddr2(void)
 	udelay(1);
 }
 
+void cpg_prepare_suspend(void)
+{
+	/* Enable IP to use for suspend */
+	cpg_clkrst_start(cpg_s2r_clkrst_tbl, ARRAY_SIZE(cpg_s2r_clkrst_tbl));
+	cpg_module_start(cpg_s2r_mstop_tbl,  ARRAY_SIZE(cpg_s2r_mstop_tbl));
+}
+
 void cpg_suspend_setup(void)
 {
 #if defined(PLAT_SYSTEM_SUSPEND_awo)
@@ -859,16 +870,15 @@ void cpg_suspend_setup(void)
 	cpg_clkrst_stop(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
 	cpg_clkrst_stop(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
 #endif
-	/* Enable IP to use for suspend */
-	cpg_clkrst_start(cpg_s2r_clkrst_tbl, ARRAY_SIZE(cpg_s2r_clkrst_tbl));
-	cpg_module_start(cpg_s2r_mstop_tbl,  ARRAY_SIZE(cpg_s2r_mstop_tbl));
 }
 
 void cpg_resume_setup(void)
 {
+#if defined(PLAT_SYSTEM_SUSPEND_awo)
 	cpg_clkrst_start(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
 	cpg_clkrst_start(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
 	cpg_module_start(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
+#endif
 }
 
 void cpg_m33_setup(void)

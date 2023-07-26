@@ -26,6 +26,8 @@ extern void pwrc_func_call_with_pmustack(uintptr_t jump, void *arg);
 
 static void __dead2 pwrc_go_suspend_to_ram(void)
 {
+	cpg_prepare_suspend();
+
 	ddr_retention_entry();
 
 	cpg_suspend_setup();
