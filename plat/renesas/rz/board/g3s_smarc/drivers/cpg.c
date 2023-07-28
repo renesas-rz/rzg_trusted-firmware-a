@@ -119,14 +119,15 @@ static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
 	{ (uintptr_t)CPG_PWRDN_MSTOP,			0x00010001 },
 };
 
+/* used when going into suspend mode */
 static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
-	{		/* I2C Ch1 */
+	{		/* I2C */
 		(uintptr_t)CPG_CLKON_I2C,
 		(uintptr_t)CPG_CLKMON_I2C,
 		0x00020002,
 		CPG_T_CLK
 	},
-	{		/* I2C Ch1 */
+	{		/* I2C */
 		(uintptr_t)CPG_RST_I2C,
 		(uintptr_t)CPG_RSTMON_I2C,
 		0x00020002,
