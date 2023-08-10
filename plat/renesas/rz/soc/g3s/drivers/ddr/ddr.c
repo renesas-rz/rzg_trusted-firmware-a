@@ -9,6 +9,7 @@
 #include <common/debug.h>
 #include <sys_regs.h>
 #include <cpg_regs.h>
+#include <vbatt_regs.h>
 #include <cpg.h>
 #include <ddr.h>
 
@@ -51,14 +52,24 @@ void ddr_retention_entry(void)
 	dwc_ddrphy_apb_poll(0x0006E0fa, 0 << 0, 1 << 0);
 	mmio_write_32(SYS_DDR_MCAR_CTRL, mmio_read_32(SYS_DDR_MCAR_CTRL) & ~0x00010000);
 	dwc_ddrphy_apb_poll(0x0006E0fa, 1 << 0, 1 << 0);
-	mmio_write_32(CPG_RST_DDR, 0x01000000);
 	mmio_write_32(PWRDN_DDRPHY_CTRL, 0x00000311);
+	mmio_write_32(CPG_RST_DDR, 0x01000000);
 	wait_dficlk(18);
+#if defined(PLAT_SYSTEM_SUSPEND_vbat)
+	mmio_write_32(VBATT_BKPSR, 0x00000080);
+#endif
 }
 
 void ddr_retention_exit(void)
 {
 	INFO("DDR: Retention Exit (Rev. %s)\n", DDR_VERSION);
+#if defined(PLAT_SYSTEM_SUSPEND_vbat)
+	mmio_write_32(PWRDN_DDRPHY_CTRL, 0x00000311);
+	mmio_write_32(VBATT_BKPSR, 0x00000000);
+#elif defined(PLAT_SYSTEM_SUSPEND_awo)
+	mmio_write_32(PWRDN_DDRPHY_CTRL, 0x00000301);
+#endif
+	wait_dficlk(18);
 	mmio_write_32(PWRDN_DDRPHY_CTRL, 0x00000200);
 	cpg_active_ddr1();
 	wait_pclk(2);
