@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#ifndef _XSPI_REG_H_
+#define _XSPI_REG_H_
+
+#include <rz_soc_def.h>				/* Get the XSPI base address */
+
+#define XSPI_WRAPCFG				(XSPI_BASE + 0x000UL)
+#define XSPI_COMCFG					(XSPI_BASE + 0x004UL)
+#define XSPI_BMCFG					(XSPI_BASE + 0x008UL)
+#define XSPI_CMCFG0CS0				(XSPI_BASE + 0x010UL)
+#define XSPI_CMCFG1CS0				(XSPI_BASE + 0x014UL)
+#define XSPI_CMCFG2CS0				(XSPI_BASE + 0x018UL)
+#define XSPI_LIOCFGCS0				(XSPI_BASE + 0x050UL)
+#define XSPI_BMCTL0					(XSPI_BASE + 0x060UL)
+#define XSPI_CSSCTL					(XSPI_BASE + 0x06CUL)
+#define XSPI_CDCTL0					(XSPI_BASE + 0x070UL)
+#define XSPI_CDTBUF0				(XSPI_BASE + 0x080UL)
+#define XSPI_CDABUF0				(XSPI_BASE + 0x084UL)
+#define XSPI_CDD0BUF0				(XSPI_BASE + 0x088UL)
+#define XSPI_LIOCTL					(XSPI_BASE + 0x108UL)
+#define XSPI_INTS					(XSPI_BASE + 0x190UL)
+#define XSPI_INTC					(XSPI_BASE + 0x194UL)
+
+#define XSPI_CDTBUF_CMDSIZE_OFFSET	(0U)
+#define XSPI_CDTBUF_CMDSIZE_MSK		(0x3U << XSPI_CDTBUF_CMDSIZE_OFFSET)
+#define XSPI_CDTBUF_ADDSIZE_OFFSET	(2U)
+#define XSPI_CDTBUF_ADDSIZE_MSK		(0x7U << XSPI_CDTBUF_ADDSIZE_OFFSET)
+#define XSPI_CDTBUF_DATASIZE_OFFSET	(5U)
+#define XSPI_CDTBUF_LATE_OFFSET		(9U)
+#define XSPI_CDTBUF_TRTYPE_OFFSET	(15U)
+#define XSPI_CDTBUF_CMD_OFFSET		(16U)
+
+#define XSPI_INTC_CMDCMPC			(0U)
+#define XSPI_INTC_CMDCMPC_MSK		(0x1U << XSPI_INTC_CMDCMPC)
+
+#define XSPI_INTS_CMDCMP			(0U)
+#define XSPI_INTS_CMDCMP_MSK		(0x1U << XSPI_INTS_CMDCMP)
+
+#define XSPI_CDCTL0_TRREQ			(0U)
+#define XSPI_CDCTL0_TRREQ_MSK		(0x1U << XSPI_CDCTL0_TRREQ)
+
+#define XSPI_BMCTL0_CH0CS0ACC_READ	(0x1)
+#define XSPI_BMCTL0_CH0CS0ACC_WRITE	(0x2)
+
+#endif /* _XSPI_REG_H_ */
