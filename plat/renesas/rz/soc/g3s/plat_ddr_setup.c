@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -63,7 +63,7 @@ static int save_ddr_config(unsigned int image_id, image_info_t *image_data)
 		return io_result;
 	}
 
-	INFO("Saving DDR retantion info.\n");
+	INFO("Saving DDR retention info.\n");
 
 	io_result = io_size(image_handle, &image_size);
 	if ((io_result != 0) || (image_size == 0U)) {
@@ -88,7 +88,7 @@ static int save_ddr_config(unsigned int image_id, image_info_t *image_data)
 		goto exit;
 	}
 
-	INFO("DDR Retantion Info saved.\n");
+	INFO("DDR Retention Info saved.\n");
 
 exit:
 	(void)io_close(image_handle);

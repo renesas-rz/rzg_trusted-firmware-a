@@ -298,7 +298,8 @@ void tzc400_enable_filters(void)
 		state = _tzc400_get_gate_keeper(tzc400.base, filter);
 		if (state != 0U) {
 			/* Filter 0 is special and cannot be disabled.
-			 * So here we allow it being already enabled. */
+			 * So here we allow it being already enabled.
+			 */
 			if (filter == 0U) {
 				continue;
 			}

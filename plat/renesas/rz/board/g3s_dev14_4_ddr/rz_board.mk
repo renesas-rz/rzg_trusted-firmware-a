@@ -16,3 +16,7 @@ BL_COMMON_SOURCES	+=	plat/renesas/rz/board/g3s_dev14_4_ddr/pwrc_board.c
 DDR_SOURCES 		+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr_setup_ddr4.c					\
 						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_retcsr_ddr4.c					\
 						plat/renesas/rz/soc/g3s/drivers/ddr/decode_streaming_message_ddr4.c
+
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/board/g3s_dev14_4_ddr/drivers/cpg.c
+
+BL2_SOURCES				+=	plat/renesas/rz/board/g3s_dev14_4_ddr/drivers/pfc.c

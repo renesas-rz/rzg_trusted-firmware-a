@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -123,6 +123,7 @@
 
 #define RZ_SOC_SYSC_BASE_DEVID			SYS_LSI_DEVID
 #define RZ_SOC_OTP_BASE_CHIPID			(RZG3S_OTP_BASE + 0x1140)
+#define RZG3S_SYSC_PCIE_RST_RSM_B_OFFSET		UL(0x0D74)
 
 #define RZ_SOC_I2C_BASE					RZG3S_I2C_1_BASE
 

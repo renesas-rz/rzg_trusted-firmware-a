@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,12 +11,17 @@
 #include <sys.h>
 #include <lib/mmio.h>
 
+#define SDO_PWR_EN_PR_PIN	P_P1
+#define SDO_PWR_SEL_PR_PIN	P_P2
+#define SD1_PWR_EN_PR_PIN	P_P3
+#define SD1_PWR_SEL_PR_PIN	P_P2
+
 static PFC_REGS pfc_mux_sd_reg_tbl[PFC_MUX_SD_TBL_NUM] = {
 	/* P0(SD0/SD1) CD, WP*/
 	{
-		{ PFC_ON,	(uintptr_t)PFC_PMC20,	0x0F },					/* PMC */
+		{ PFC_ON,	(uintptr_t)PFC_PMC20,	0x05 },					/* PMC */
 		{ PFC_ON,	(uintptr_t)PFC_PFC20,	0x00000000 },			/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH20,	0x0000000003030303 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH20,	0x0000000000030003 },	/* IOLH */
 		{ PFC_ON,	(uintptr_t)PFC_PUPD20,	0x0000000000000000 },	/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
@@ -40,29 +45,29 @@ static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 	{
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH04,	0x0000030303030303 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH04,	0x0000030000000303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	},
-	/* XSPI - IO7 - IO0*/
+	/* XSPI - IO3 - IO0*/
 	{
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH05,	0x0303030303030303 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH05,	0x0000000003030303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	}
 };
 
-static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
+static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM_SMARC] = {
 	/* SD0 RST, CMD, CLK (eMMC) */
 	{
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH10,	0x0000000000030303 },	/* IOLH */
-		{ PFC_OFF,	(uintptr_t)PFC_OFF,		0 },					/* PUPD */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_ON,	(uintptr_t)PFC_IEN10,	0x0000000000000100 }	/* IEN */
 	},
@@ -92,6 +97,24 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_ON,	(uintptr_t)PFC_IEN13,	0x0000000001010101 }	/* IEN */
+	},
+	/* SD0 Pwr En, SD0 Pwr Sel, SD1 Pwr En*/
+	{
+		{ PFC_ON,	(uintptr_t)PFC_PMC31,	0x00 },					/* PMC */
+		{ PFC_ON,	(uintptr_t)PFC_PFC31,	0x00000000 },			/* PFC */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* IOLH */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
+	},
+	/* SD1 Pwr Sel */
+	{
+		{ PFC_ON,	(uintptr_t)PFC_PMC33,	0x00 },					/* PMC */
+		{ PFC_ON,	(uintptr_t)PFC_PFC33,	0x00000000 },			/* PFC */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* IOLH */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
+		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	}
 };
 
@@ -129,7 +152,7 @@ static void pfc_write_registers(uint8_t tbl_size, PFC_REGS *pfc_reg_tbl)
 
 static void pfc_scif_setup(void)
 {
-	/* multiplexer terminal switching */
+	/* Write protection for PFC register */
 	mmio_write_32(PFC_PWPR, 0x0);
 	mmio_write_32(PFC_PWPR, PWPR_PFCWE);
 
@@ -153,9 +176,9 @@ static void pfc_sd_setup(void)
 	mmio_write_32(PFC_SD_ch0, 1);
 	mmio_write_32(PFC_SD_ch1, 0);
 
-	pfc_write_registers(PFC_SD_TBL_NUM, pfc_sd_reg_tbl);
+	pfc_write_registers(PFC_SD_TBL_NUM_SMARC, pfc_sd_reg_tbl);
 
-	/* multiplexer terminal switching */
+	/* Write protection for PFC register */
 	mmio_write_32(PFC_PWPR, 0x0);
 	mmio_write_32(PFC_PWPR, PWPR_PFCWE);
 
@@ -176,9 +199,9 @@ static const PFC_REGS *pfc_boot_mode_tbls[SYS_BOOT_MODE_MAX] = {
 
 //different order here.
 static const uint8_t pfc_boot_mode_tbl_len[SYS_BOOT_MODE_MAX] = {
-	PFC_SD_TBL_NUM,
-	PFC_SD_TBL_NUM,
-	PFC_SD_TBL_NUM,
+	PFC_SD_TBL_NUM_SMARC,
+	PFC_SD_TBL_NUM_SMARC,
+	PFC_SD_TBL_NUM_SMARC,
 	PFC_XSPI_TBL_NUM,
 	PFC_XSPI_TBL_NUM,
 	PFC_MUX_SCIF_TBL_NUM
@@ -202,6 +225,24 @@ static void pfc_drive_setup(void)
 			}
 		}
 	}
+
+	uint8_t gpio_port4_out_val = mmio_read_8(PFC_P33);
+	/* Set SD card 1 pullup voltage to 3v3 */
+	gpio_port4_out_val = gpio_port4_out_val | SD1_PWR_SEL_PR_PIN;
+
+	uint8_t gpio_port2_out_val = mmio_read_8(PFC_P31);
+	/* Enable SD card 1 load switch */
+	gpio_port2_out_val = gpio_port2_out_val | SD1_PWR_EN_PR_PIN;
+
+	if (SYS_BOOT_MODE_ESD == boot_mode) {
+		/* Set SD card 0 pullup voltage to 3v3*/
+		gpio_port2_out_val = gpio_port2_out_val | SDO_PWR_SEL_PR_PIN;
+		/* Enable SD card 0 load switch */
+		gpio_port2_out_val = gpio_port2_out_val | SDO_PWR_EN_PR_PIN;
+	}
+
+	mmio_write_8(PFC_P33, gpio_port4_out_val);
+	mmio_write_8(PFC_P31, gpio_port2_out_val);
 }
 
 void pfc_setup(void)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -78,12 +78,6 @@ static const CPG_REG_SETTING cpg_pll4_tbl[] = {
 };
 
 static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
-	{		/* OCTA */
-		(uintptr_t)CPG_CLKON_OCTA,
-		(uintptr_t)CPG_CLKMON_OCTA,
-		0x00030000,
-		CPG_T_CLK
-	},
 	{		/* SPI */
 		(uintptr_t)CPG_CLKON_SPI,
 		(uintptr_t)CPG_CLKMON_SPI,
@@ -93,23 +87,21 @@ static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_static_select_tbl[] = {
-	{ (uintptr_t)CPG_OCTA_SSEL,				0x00010002 },	// 2'b10:CLK266FIX_CD
 	{ (uintptr_t)CPG_SPI_SSEL,				0x00010002 },	// 2'b10:CLK266FIX_CD
 };
 
 static const CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
-	{ (uintptr_t)CPG_PLL_DSEL,				0x04550455 },	// 1'b1:PLL6, 1'b1:PLL4, 1'b1:PLL3, 1'b1:PLL2, 1'b1:PLL1
+	{ (uintptr_t)CPG_PLL_DSEL,				0x00400040 },	// 1'b1:PLL4
 	{ (uintptr_t)CPG_SDHI_DSEL,				0x01110333 },	// 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C
 };
 
 static const CPG_REG_SETTING cpg_dynamic_division_tbl[] = {
-	{ (uintptr_t)CPG_PL2_DDIV,				0x00110000 },	// 3'b000:1/1(100MHz), 3'b000:1/1(200MHz)
+	{ (uintptr_t)CPG_PL2_DDIV,				0x00100000 },	// 3'b000:1/1(100MHz)
 	{ (uintptr_t)CPG_PL3_DDIV,				0x01110000 },	// 3'b000:1/1(200MHz), 3'b000:1/1(100MHz), 3'b000:1/1(200MHz)
 #if PLAT_M33_BOOT_SUPPORT
 	{ (uintptr_t)CPG_PL6_DDIV,				0x00110000 },	// 3'b000:1/1(250MHz), 3'b000:1/1(250MHz)
 #endif /* PLAT_M33_BOOT_SUPPORT */
 	{ (uintptr_t)CPG_SDHI_DDIV,				0x01110111 },	// 1'b1:1/2, 1'b1:1/2, 1'b1:1/2
-	{ (uintptr_t)CPG_OCTA_DDIV,				0x00010003 },	// 3'b011:1/8
 	{ (uintptr_t)CPG_SPI_DDIV,				0x00010003 },	// 3'b011:1/8
 };
 
@@ -129,6 +121,7 @@ static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
 };
 #endif
 
+/* used when going into suspend mode */
 static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
 #if PLAT_SYSTEM_SUSPEND
 	{		/* I2C Ch1 */
@@ -233,7 +226,7 @@ static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
 	{		/* SDHI */
 		(uintptr_t)CPG_CLKON_SDHI,
 		(uintptr_t)CPG_CLKMON_SDHI,
-		0x00FF00FF,
+		0x0FFF0FFF,
 		CPG_T_CLK
 	},
 	{		/* USB */
@@ -308,7 +301,7 @@ static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
 	{		/* SDHI */
 		(uintptr_t)CPG_RST_SDHI,
 		(uintptr_t)CPG_RSTMON_SDHI,
-		0x00030003,
+		0x00070007,
 		CPG_T_RST
 	},
 	{		/* USB */
@@ -491,12 +484,6 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		0x00010000,
 		CPG_T_CLK
 	},
-	{		/* OCTA */
-		(uintptr_t)CPG_CLKON_OCTA,
-		(uintptr_t)CPG_CLKMON_OCTA,
-		0x00030003,
-		CPG_T_CLK
-	},
 	{		/* PDM */
 		(uintptr_t)CPG_CLKON_PDM,
 		(uintptr_t)CPG_CLKMON_PDM,
@@ -638,12 +625,6 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		(uintptr_t)CPG_RST_TSU,
 		(uintptr_t)CPG_RSTMON_TSU,
 		0x00010000,
-		CPG_T_RST
-	},
-	{		/* OCTA */
-		(uintptr_t)CPG_RST_OCTA,
-		(uintptr_t)CPG_RSTMON_OCTA,
-		0x00010001,
 		CPG_T_RST
 	},
 	{		/* PDM */
