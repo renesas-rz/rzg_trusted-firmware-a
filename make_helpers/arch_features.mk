@@ -29,11 +29,6 @@ ifeq "8.2" "$(word 1, $(sort 8.2 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
 ENABLE_FEAT_RAS				:=	1
 endif
 
-# Enable the features which are mandatory from ARCH version 8.2 and upwards.
-ifeq "8.2" "$(word 1, $(sort 8.2 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
-ENABLE_FEAT_RAS		=	1
-endif
-
 # Enable the features which are mandatory from ARCH version 8.4 and upwards.
 ifeq "8.4" "$(word 1, $(sort 8.4 $(ARM_ARCH_MAJOR).$(ARM_ARCH_MINOR)))"
 ENABLE_FEAT_SEL2			:=	1
