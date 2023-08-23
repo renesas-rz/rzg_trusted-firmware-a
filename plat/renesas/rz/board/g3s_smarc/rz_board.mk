@@ -15,6 +15,7 @@ PLAT_INCLUDES		+= -Iplat/renesas/rz/board/g3s_smarc
 BL_COMMON_SOURCES	+=	plat/renesas/rz/board/g3s_smarc/pwrc_board.c
 
 DDR_SOURCES 		+=  plat/renesas/rz/soc/g3s/drivers/ddr/ddr_setup_lpddr4.c					\
+						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_param_def_lpddr4.c				\
 						plat/renesas/rz/soc/g3s/drivers/ddr/ddr_retcsr_lpddr4.c					\
 						plat/renesas/rz/soc/g3s/drivers/ddr/decode_streaming_message_lpddr4.c
 
