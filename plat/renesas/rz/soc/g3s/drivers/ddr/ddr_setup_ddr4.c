@@ -20,8 +20,8 @@ void setup_mc(void)
 {
 	size_t i;
 
-	for (i = 0; i < ARRAY_SIZE(param_setup_mc_data); i++)
-		DDRTOP_mc_apb_wr(param_setup_mc_data[i][0], param_setup_mc_data[i][1]);
+	for (i = 0; i < ARRAY_SIZE(param_setup_mc); i++)
+		DDRTOP_mc_apb_wr(param_setup_mc[i][0], param_setup_mc[i][1]);
 }
 
 void update_mc(void)
@@ -61,14 +61,14 @@ void phyinit_load_1d_image(void)
 	dwc_ddrphy_apb_wr(0x00058060, 0x00000002);
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000000);
 
-	for (i = 0; i < ARRAY_SIZE(param_phyinit_1d_dat0); i++)
-		dwc_ddrphy_apb_wr(DAT0_BASE + i, (uint32_t)param_phyinit_1d_dat0[i]);
+	for (i = 0; i < ARRAY_SIZE(phyinit_1d); i++)
+		dwc_ddrphy_apb_wr(DAT0_BASE + i, (uint32_t)phyinit_1d[i]);
 
 	for (i = i; (DAT0_BASE + i) < DAT1_BASE; i++)
 		dwc_ddrphy_apb_wr(DAT0_BASE + i, 0);
 
-	for (i = 0; i < ARRAY_SIZE(param_phyinit_1d_dat1); i++)
-		dwc_ddrphy_apb_wr(DAT1_BASE + i, (uint32_t)param_phyinit_1d_dat1[i]);
+	for (i = 0; i < ARRAY_SIZE(param_phyinit_f_1d_0); i++)
+		dwc_ddrphy_apb_wr(DAT1_BASE + i, (uint32_t)param_phyinit_f_1d_0[i]);
 
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000001);
 }
@@ -89,14 +89,14 @@ void phyinit_load_2d_image(void)
 
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000000);
 
-	for (i = 0; i < ARRAY_SIZE(param_phyinit_2d_dat0); i++)
-		dwc_ddrphy_apb_wr(DAT0_BASE + i, (uint32_t)param_phyinit_2d_dat0[i]);
+	for (i = 0; i < ARRAY_SIZE(phyinit_2d); i++)
+		dwc_ddrphy_apb_wr(DAT0_BASE + i, (uint32_t)phyinit_2d[i]);
 
 	for (i = i; (DAT0_BASE + i) < DAT1_BASE; i++)
 		dwc_ddrphy_apb_wr(DAT0_BASE + i, 0);
 
-	for (i = 0; i < ARRAY_SIZE(param_phyinit_2d_dat1); i++)
-		dwc_ddrphy_apb_wr(DAT1_BASE + i, (uint32_t)param_phyinit_2d_dat1[i]);
+	for (i = 0; i < ARRAY_SIZE(param_phyinit_f_2d_0); i++)
+		dwc_ddrphy_apb_wr(DAT1_BASE + i, (uint32_t)param_phyinit_f_2d_0[i]);
 
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000001);
 }
