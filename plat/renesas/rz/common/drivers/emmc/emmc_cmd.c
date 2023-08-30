@@ -245,12 +245,12 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 				return EMMC_ERR_CARD_BUSY;
 			}
 
-			/* clear register */
-			SETR_32(SD_INFO1, 0x00000000U);
-			SETR_32(SD_INFO2, SD_INFO2_CLEAR);
-			SETR_32(SD_INFO1_MASK, SD_INFO1_INFO0);
-			SETR_32(SD_INFO2_MASK,
-				(SD_INFO2_ALL_ERR | SD_INFO2_CLEAR));
+				/* clear register */
+				SETR_32(SD_INFO1, 0x00000000U);
+				SETR_32(SD_INFO2, SD_INFO2_CLEAR);
+				SETR_32(SD_INFO1_MASK, SD_INFO1_INFO0);
+				SETR_32(SD_INFO2_MASK,
+					(SD_INFO2_ALL_ERR | SD_INFO2_CLEAR));
 
 			state = ESTATE_ISSUE_CMD;
 
