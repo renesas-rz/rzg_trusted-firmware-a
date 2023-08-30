@@ -238,24 +238,25 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 
 		switch (state) {
 		case ESTATE_BEGIN:
-			/* Busy check */
-			if ((mmc_drv_obj.error_info.info2 & SD_INFO2_CBSY) != 0) {
-				emmc_write_error_info(EMMC_FUNCNO_EXEC_CMD,
-						      EMMC_ERR_CARD_BUSY);
-				return EMMC_ERR_CARD_BUSY;
+		case ESTATE_ISSUE_CMD:
+			if (state == ESTATE_BEGIN) {
+				/* Busy check */
+				if ((mmc_drv_obj.error_info.info2 & SD_INFO2_CBSY) != 0) {
+					emmc_write_error_info(EMMC_FUNCNO_EXEC_CMD,
+							      EMMC_ERR_CARD_BUSY);
+					return EMMC_ERR_CARD_BUSY;
+				}
+
+				/* clear register */
+				SETR_32(SD_INFO1, 0x00000000U);
+				SETR_32(SD_INFO2, SD_INFO2_CLEAR);
+				SETR_32(SD_INFO1_MASK, SD_INFO1_INFO0);
+				SETR_32(SD_INFO2_MASK,
+					(SD_INFO2_ALL_ERR | SD_INFO2_CLEAR));
+
+				state = ESTATE_ISSUE_CMD;
 			}
 
-			/* clear register */
-			SETR_32(SD_INFO1, 0x00000000U);
-			SETR_32(SD_INFO2, SD_INFO2_CLEAR);
-			SETR_32(SD_INFO1_MASK, SD_INFO1_INFO0);
-			SETR_32(SD_INFO2_MASK,
-				(SD_INFO2_ALL_ERR | SD_INFO2_CLEAR));
-
-			state = ESTATE_ISSUE_CMD;
-			/* through */
-
-		case ESTATE_ISSUE_CMD:
 			/* ARG */
 			SETR_32(SD_ARG, mmc_drv_obj.cmd_info.arg);
 			/* issue cmd */
@@ -446,16 +447,17 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 			break;
 
 		case ESTATE_TRANSFER_ERROR:
-			/* The error occurred in the Data transfer.  */
-			if (mmc_drv_obj.transfer_mode == HAL_MEMCARD_DMA) {
-				/* W (CC_EXT_MODE, H'0000_1010) SD_BUF DMA transfer disabled */
-				SETR_32(CC_EXT_MODE, CC_EXT_MODE_CLEAR);
-				SETR_32(SD_STOP, 0x00000000U);
-				mmc_drv_obj.during_dma_transfer = FALSE;
-			}
-			/* through */
-
 		case ESTATE_ERROR:
+			if (state == ESTATE_TRANSFER_ERROR) {
+				/* The error occurred in the Data transfer.  */
+				if (mmc_drv_obj.transfer_mode == HAL_MEMCARD_DMA) {
+					/* W (CC_EXT_MODE, H'0000_1010) SD_BUF DMA transfer disabled */
+					SETR_32(CC_EXT_MODE, CC_EXT_MODE_CLEAR);
+					SETR_32(SD_STOP, 0x00000000U);
+					mmc_drv_obj.during_dma_transfer = FALSE;
+				}
+			}
+
 			if (err_not_care_flag == TRUE) {
 				mmc_drv_obj.during_cmd_processing = FALSE;
 			} else {
