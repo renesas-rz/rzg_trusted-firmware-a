@@ -50,6 +50,16 @@ CASSERT(CRYPTO_MD_MAX_SIZE >= MBEDTLS_MD_MAX_SIZE,
 	* CRYPTO_SUPPORT == CRYPTO_AUTH_VERIFY_AND_HASH_CALC
 	*/
 
+static inline psa_algorithm_t mbedtls_md_psa_alg_from_type(
+						mbedtls_md_type_t md_type)
+{
+	assert((md_type == MBEDTLS_MD_SHA256) ||
+	       (md_type == MBEDTLS_MD_SHA384) ||
+	       (md_type == MBEDTLS_MD_SHA512));
+
+	return PSA_ALG_CATEGORY_HASH | (psa_algorithm_t) (md_type + 0x5);
+}
+
 /*
  * AlgorithmIdentifier  ::=  SEQUENCE  {
  *     algorithm               OBJECT IDENTIFIER,
