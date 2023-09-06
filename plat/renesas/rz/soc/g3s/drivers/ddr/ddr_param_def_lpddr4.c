@@ -3,17 +3,15 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef __DDR_PARAM_DEF_LPDDR4_H__
-#define __DDR_PARAM_DEF_LPDDR4_H__
-
 #include <stdint.h>
 #include <stddef.h>
+#include <lib/utils_def.h>
 
 #define	D1D008	0x131f	// 0x064008
 #define	D1D009	0x00c9	// 0x064009
 #define	D2D009	0x00c9	// 0x064009
 
-static const uint16_t param_phyinit_1d_dat0[] = {
+const uint16_t phyinit_1d[] = {
 	0x0114, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, // 0x060000
 	0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, // 0x060008
 	0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, // 0x060010
@@ -2039,7 +2037,7 @@ static const uint16_t param_phyinit_1d_dat0[] = {
 	0xd8ff, 0xd980, 0x754c, 0x746c, 0x7ee0, 0x0000, 0x0000, 0x0000, // 0x063F30
 };
 
-static const uint16_t param_phyinit_1d_dat1[] = {
+const uint16_t param_phyinit_f_1d_0[] = {
 	0x0000, 0x0000, 0x0000, 0x0640, 0x0002, 0x0000, 0x0014, 0x0000, // 0x064000
 	D1D008, D1D009, 0x0000, 0x0002, 0x0000, 0x0000, 0x0000, 0x0100, // 0x064008
 	0x0000, 0x0000, 0x0110, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, // 0x064010
@@ -2146,7 +2144,7 @@ static const uint16_t param_phyinit_1d_dat1[] = {
 	0x0002, 0x0002, 0x0011, 0x0007, 0x0000, 0x0000                  // 0x064338
 };
 
-static const uint16_t param_phyinit_2d_dat0[] = {
+const uint16_t phyinit_2d[] = {
 	0x0204, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, // 0x060000
 	0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, // 0x060008
 	0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, 0x0050, 0x0000, // 0x060010
@@ -3740,7 +3738,7 @@ static const uint16_t param_phyinit_2d_dat0[] = {
 	0xff6f, 0x780f, 0xc102, 0xa900, 0xc0ad, 0x1404, 0x341b, 0xc6c6, // 0x0631B0
 };
 
-static const uint16_t param_phyinit_2d_dat1[] = {
+const uint16_t param_phyinit_f_2d_0[] = {
 	0x0000, 0x0000, 0x0000, 0x0640, 0x0002, 0x0000, 0x0014, 0x0000, // 0x064000
 	0x0061, D2D009, 0x0000, 0x0002, 0x0000, 0x0000, 0x0000, 0x0100, // 0x064008
 	0x8020, 0x0000, 0x0110, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, // 0x064010
@@ -3831,7 +3829,7 @@ static const uint16_t param_phyinit_2d_dat1[] = {
 	0x0002, 0x0002, 0x0011, 0x0007, 0x0000, 0x0000,                 // 0x0642B8
 };
 
-static const uint32_t param_phyinit_swizzle[][2] = {
+const uint32_t param_phyinit_swizzle[][2] = {
 	{0x058100, 0x0005},
 	{0x058101, 0x0004},
 	{0x058102, 0x0002},
@@ -3856,7 +3854,7 @@ static const uint32_t param_phyinit_swizzle[][2] = {
 	{0x0310A7, 0x0001},
 };
 
-static const uint32_t param_phyinit_c[][2] = {
+const uint32_t param_phyinit_c[][2] = {
 	{0x0003005F, 0x0000014f},
 	{0x0003015F, 0x0000014f},
 	{0x0003105F, 0x0000014f},
@@ -3933,7 +3931,7 @@ static const uint32_t param_phyinit_c[][2] = {
 	{0x00030840, 0x00000027}
 };
 
-static const uint32_t param_phyinit_i[][2] = {
+const uint32_t param_phyinit_i[][2] = {
 	{0x00069000, 0x00000010},
 	{0x00069001, 0x00000400},
 	{0x00069002, 0x0000010e},
@@ -4467,7 +4465,7 @@ static const uint32_t param_phyinit_i[][2] = {
 	{0x0006D080, 0x00000002},
 };
 
-static const uint32_t param_setup_mc_data[][2] = {
+const uint32_t param_setup_mc[][2] = {
 	{  0, 0x00000b00},
 	{  1, 0x00000000},
 	{  2, 0x00000000},
@@ -5159,4 +5157,11 @@ static const uint32_t param_setup_mc_data[][2] = {
 	{701, 0x00000000}
 };
 
-#endif /* __DDR_PARAM_DEF_LPDDR4_H__ */
+const uint32_t param_phyinit_c_size = ARRAY_SIZE(param_phyinit_c);
+const uint32_t param_phyinit_i_size = ARRAY_SIZE(param_phyinit_i);
+const uint32_t param_phyinit_f_1d_0_size = ARRAY_SIZE(param_phyinit_f_1d_0);
+const uint32_t param_phyinit_f_2d_0_size = ARRAY_SIZE(param_phyinit_f_2d_0);
+const uint32_t phyinit_1d_size = ARRAY_SIZE(phyinit_1d);
+const uint32_t phyinit_2d_size = ARRAY_SIZE(phyinit_2d);
+const uint32_t param_phyinit_swizzle_size = ARRAY_SIZE(param_phyinit_swizzle);
+const uint32_t param_setup_mc_size = ARRAY_SIZE(param_setup_mc);
