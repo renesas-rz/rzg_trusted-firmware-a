@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-// include
-#include	<drivers/delay_timer.h>
-#include	<common/debug.h>
+#include <drivers/delay_timer.h>
+#include <common/debug.h>
 
 #include <ddr_internal.h>
-#include	<cpg.h>
+#include <cpg.h>
+#include <ddr_mc_regs.h>
+#include <ddr_phy_regs.h>
 
 #define	CEIL(a, div)	(((a) + ((div) - 1)) / (div))
 #define	_MIN(a, b)		((a) < (b) ? (a) : (b))
@@ -30,7 +31,6 @@ extern const uint32_t swizzle_mc_tbl[SWIZZLE_MC_NUM][2];
 extern const uint32_t swizzle_phy_tbl[SIZZLE_PHY_NUM][2];
 extern const char ddr_an_version[];
 
-// prototypes
 void ddr_setup(void);
 static void disable_phy_clk(void);
 static void program_mc1(uint8_t *lp_auto_entry_en);
@@ -67,7 +67,6 @@ char data_synd[] = {
 #endif
 #endif
 
-// main
 void ddr_setup(void)
 {
 	uint32_t	sl_lanes, byte_lanes;
@@ -77,50 +76,53 @@ void ddr_setup(void)
 	int i;
 
 	INFO("BL2: setup DDR (Rev. %s)\n", ddr_an_version);
-	// Step2 - Step11
+	/* Step 2-11 */
 	cpg_active_ddr(disable_phy_clk);
 
-	// Step12
+	/* Step 12 */
 	program_mc1(&lp_auto_entry_en);
 
-	// Step13
-	tmp = read_mc_reg(DDRMC_R019);
+	/* Step 13 */
+	tmp = read_mc_field(MEM_DP_REDUCTION_ADDR, MEM_DP_REDUCTION_WIDTH, MEM_DP_REDUCTION_OFFSET);
 	sl_lanes	= ((tmp & 0x1) == 0) ? 3 : 1;
 	byte_lanes	= ((tmp & 0x1) == 0) ? 2 : 1;
-	tmp = read_mc_reg(DDRMC_R039);
+	tmp = read_mc_reg(USER_DEF_REG_10_ADDR);
 	runBITLVL	= (tmp >> 20) & 0x1;
 	runSL		= (tmp >> 21) & 0x1;
 	runVREF		= (tmp >> 25) & 0x1;
 
-	// Step14
+	/* Step 14 */
 	program_phy1(sl_lanes, byte_lanes);
 
-	// Step15
+	/* Step 15 */
 	while ((read_phy_reg(DDRPHY_R42) & 0x00000003) != sl_lanes)
 		;
 
-	// Step16
+	/* Step 16 */
 	ddr_ctrl_reten_en_n(0);
-	rmw_mc_reg(DDRMC_R007, 0xFFFFFEFF, 0x00000000);
-	rmw_mc_reg(DDRMC_R001, 0xFEFFFFFF, 0x01000000);
-	rmw_mc_reg(DDRMC_R000, 0xFFFFFFFE, 0x00000001);
-	while ((read_mc_reg(DDRMC_R021) & 0x02000000) != 0x02000000)
+
+	rmw_mc_set_field(LPC_SR_ZQ_EN_ADDR, LPC_SR_ZQ_EN_WIDTH, LPC_SR_ZQ_EN_OFFSET, 0x0);
+	rmw_mc_set_field(PHY_INDEP_INIT_MODE_ADDR, PHY_INDEP_INIT_MODE_WIDTH, PHY_INDEP_INIT_MODE_OFFSET, 0x1);
+	rmw_mc_set_field(START_ADDR, START_WIDTH, START_OFFSET, 0x1);
+
+	while (read_mc_field(INT_STATUS_INIT_ADDR, 0x1, INT_STATUS_INIT_OFFSET + 1) != 0x1)
 		;
+
 	rmw_phy_reg(DDRPHY_R74, 0xFFF7FFFF, 0x00080000);
-	rmw_mc_reg(DDRMC_R029, 0xFF0000FF, 64 << 8);
-	rmw_mc_reg(DDRMC_R027, 0xE00000FF, 111 << 8);
-	rmw_mc_reg(DDRMC_R020, 0xFFFFFEFF, 0x00000100);
+	rmw_mc_set_field(TDFI_CTRLUPD_MIN_ADDR, TDFI_CTRLUPD_MIN_WIDTH, TDFI_CTRLUPD_MIN_OFFSET, 64);
+	rmw_mc_set_field(TDFI_CTRLUPD_MAX_ADDR, TDFI_CTRLUPD_MAX_WIDTH, TDFI_CTRLUPD_MAX_OFFSET, 111);
+	rmw_mc_set_field(CTRLUPD_REQ_ADDR, CTRLUPD_REQ_WIDTH, CTRLUPD_REQ_OFFSET, 0x1);
 	udelay(1);
 	rmw_phy_reg(DDRPHY_R74, 0xFFF7FFFF, 0x00000000);
 
-	// Step17
+	/* Step 17 */
 	cpg_reset_ddr_mc();
 	ddr_ctrl_reten_en_n(1);
 
-	// Step18-19
+	/* Step 18-19 */
 	program_mc1(&lp_auto_entry_en);
 
-	// Step20
+	/* Step 20 */
 	for (i = 0; i < ARRAY_SIZE(swizzle_mc_tbl); i++) {
 		write_mc_reg(swizzle_mc_tbl[i][0], swizzle_mc_tbl[i][1]);
 	}
@@ -128,78 +130,69 @@ void ddr_setup(void)
 		write_phy_reg(swizzle_phy_tbl[i][0], swizzle_phy_tbl[i][1]);
 	}
 
-	// Step21
-	rmw_mc_reg(DDRMC_R000, 0xFFFFFFFE, 0x00000001);
+	/* Step 21 */
+	rmw_mc_set_field(START_ADDR, START_WIDTH, START_OFFSET, 0x1);
 
-	// Step22
-	while ((read_mc_reg(DDRMC_R021) & 0x02000000) != 0x02000000)
+	/* Step 22 */
+	while (read_mc_field(INT_STATUS_INIT_ADDR, 0x1, INT_STATUS_INIT_OFFSET + 1) != 0x1)
 		;
 
-	// Step23
-	rmw_mc_reg(DDRMC_R023, 0xFDFFFFFF, 0x02000000);
+	/* Step 23 */
+	rmw_mc_set_field(INT_ACK_INIT_ADDR, 0x1, INT_ACK_INIT_OFFSET + 1, 0x1);
 
-	// Step24
+	/* Step 24 */
 	exec_trainingWRLVL(sl_lanes);
 
-	// Step25
+	/* Step 25 */
 	if (runVREF == 1)
 		exec_trainingVREF(sl_lanes, byte_lanes);
 
-	// Step26
+	/* Step 26 */
 	if (runBITLVL == 1)
 		exec_trainingBITLVL(sl_lanes);
 
-	// Step27
+	/* Step 27 */
 	opt_delay(sl_lanes, byte_lanes);
 
-	// Step28
+	/* Step 28 */
 	if (runSL == 1)
 		exec_trainingSL(sl_lanes);
 
-	// Step29
+	/* Step 29 */
 	program_phy2();
 
-	// Step30
+	/* Step 30 */
 	program_mc2();
 
-	// Step31 is skipped because ECC is unused.
+	/* Step 31 */
 #if (DDR_ECC_ENABLE == 1)
-	printf("NOTICE:  BL2: ECC MODE: ");
 #if (DDR_ECC_DETECT_CORRECT == 1)
-	printf(" Error Detect and Correct\n");
+	NOTICE("BL2: ECC MODE: Error Detect and Correct\n");
 #elif (DDR_ECC_DETECT == 1)
-	printf(" Error Detect\n");
+	NOTICE("BL2: ECC MODE: Error Detect\n");
 #else
-	printf(" Enable\n");
+	NOTICE("BL2: ECC MODE: Enable\n");
 #endif
-
-	printf("NOTICE:  BL2: ECC function initializing... ");
-
-	rmw_mc_reg(DDRMC_R052, 0xffffffff, (1 << 16));
-	mdelay(10);
 
 	init_ecc();
 
-	rmw_mc_reg(DDRMC_R052, ~(1 << 16), 0);
-	mdelay(10);
-
-	// Step32
-	// let the auto_exit_en to be value|0x8
-	// recommended value for "value" is 0x0
-	rmw_mc_reg(DDRMC_R006, 0xffffffff, (0x8 << 8));
-
-	printf("DONE\n");
+	NOTICE("ECC INIT DONE\n");
 #endif
-
-	rmw_mc_reg(DDRMC_R006, 0xFFFFFFF0, lp_auto_entry_en & 0xF);
+	/*
+	 * Step 32
+	 * let the auto_exit_en to be value|0x8
+	 * recommended value for "value" is 0x0
+	 */
+	rmw_mc_set_field(LP_AUTO_EXIT_EN_ADDR, LP_AUTO_EXIT_EN_WIDTH, LP_AUTO_EXIT_EN_OFFSET, 0x8);
+	rmw_mc_set_field(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_WIDTH, LP_AUTO_ENTRY_EN_OFFSET, lp_auto_entry_en);
 
 #if (DDR_ECC_ENABLE == 1)
-	// Extra step, test ECC CE function
-	printf("NOTICE:  BL2: ECC CE function testing .... ");
+	/* Extra step: test ECC CE function */
+	NOTICE("BL2: ECC CE function testing ....\n");
 	if (ecc_force_ce_error())
-		printf("FAILED\n");
+		ERROR("DDR ECC Force CE FAILED\n");
 	else
-		printf("OK\n");
+		NOTICE("OK\n");
 #endif
 }
 
@@ -216,7 +209,7 @@ static int ecc_force_ce_error(void)
 
 	bak_DDRMC_R052 = read_mc_reg(DDRMC_R052);
 
-	// make checkcode
+	/* make checkcode */
 	xor_check_code = (data_synd[0] << 8) | 1;
 	user_word = (uint64_t *)ECC_ERR_ADDRESS;
 
@@ -236,36 +229,40 @@ static int ecc_force_ce_error(void)
 		tmp = read_mc_reg(DDRMC_R064);
 	} while ((retry--) && !(tmp & 0xffffU));
 
-	// out of retry or not CE
+	/* out of retry or not CE */
 	if (!retry || !(tmp & 0x3)) {
+		ERROR("DDR error: out of retry or not CE.\n");
 		ret = -1;
 		goto err;
 	}
 
-	// ack ecc int
+	/* ack ecc int */
 	tmp = 0xffffU;
 	write_mc_reg(DDRMC_R066, tmp);
 
-	// check the error address
+	/* check the error address */
 	err_addr = (uint64_t)(read_mc_reg(DDRMC_R054) & 0x3);
 	err_addr = err_addr << 32;
 	err_addr |= (uint64_t)read_mc_reg(DDRMC_R053);
 	err_addr += DDR_BASE_ADDRESS;
 	if (((uint64_t)user_word) != err_addr) {
 		ret = -1;
+		ERROR("DDR error: ECC error address mismatch.\n");
 		goto err;
 	}
 
-	// check error synd
+	/* check error synd */
 	synd = read_mc_reg(DDRMC_R054);
 	synd = (synd >> 8) & 0xff;
 	if (synd != (xor_check_code >> 8)) {
 		ret = -1;
+		ERROR("DDR error: ECC error synd mismatch.\n");
 		goto err;
 	}
 
 	if ((*user_word ^ USER_WORD_DATA) != BIT(TEST_BIT_NO)) {
 		ret = -1;
+		ERROR("DDR error: ECC error data mismatch.\n");
 		goto err;
 	}
 
@@ -287,131 +284,96 @@ static int ecc_force_ce_error(void)
 
 static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 {
+	INFO("BL2: ECC prog all0 start\n");
+
 	int i;
 	uint32_t val;
 	uint64_t addr, prog_size;
 	uint32_t bak_lp_auto_entry_en, bak_in_order_accept;
 
-	// 1
+	/* Step 1 */
 	addr = addr_start - DDR_BASE_ADDRESS;
 	prog_size = addr_end - addr_start + 1;
 
-	// 2
-	val = read_mc_reg(DDRMC_R006);
-	bak_lp_auto_entry_en = val & 0xf;
-	rmw_mc_reg(DDRMC_R006, ~0xf, 0);
+	/* Step 2 */
+	bak_lp_auto_entry_en = read_mc_field(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_WIDTH, LP_AUTO_ENTRY_EN_OFFSET);
+	rmw_mc_set_field(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_WIDTH, LP_AUTO_ENTRY_EN_OFFSET, 0x0);
 
-	val = read_mc_reg(DDRMC_R019);
-	bak_in_order_accept = val & (1 << 16);
-	rmw_mc_reg(DDRMC_R019, 0xffffffff, (1 << 16));
+	bak_in_order_accept = read_mc_field(IN_ORDER_ACCEPT_ADDR, IN_ORDER_ACCEPT_WIDTH, IN_ORDER_ACCEPT_OFFSET);
+	rmw_mc_set_field(IN_ORDER_ACCEPT_ADDR, IN_ORDER_ACCEPT_WIDTH, IN_ORDER_ACCEPT_OFFSET, 0x1);
 
-	// 3
-	// set BIST_DATA_CHECK, unset BIST_ADDR_CHECK
-#if RZV2L
-	rmw_mc_reg(DDRMC_R045, ~(1 << 16), (1 << 8));
-#else
-	rmw_mc_reg(DDRMC_R045, ~(1 << 24), (1 << 16));
-#endif
+	/* Step 3 */
+	rmw_mc_set_field(BIST_DATA_CHECK_ADDR, BIST_DATA_CHECK_WIDTH, BIST_DATA_CHECK_OFFSET, 0x1);
+	rmw_mc_set_field(BIST_ADDR_CHECK_ADDR, BIST_ADDR_CHECK_WIDTH, BIST_ADDR_CHECK_OFFSET, 0x0);
+	rmw_mc_set_field(BIST_TEST_MODE_ADDR, BIST_TEST_MODE_WIDTH, BIST_TEST_MODE_OFFSET, 0x4);
 
-	rmw_mc_reg(DDRMC_R048, ~0x7, 0x4);
+	rmw_mc_set_field(BIST_DATA_PATTERN_0_ADDR, BIST_DATA_PATTERN_0_WIDTH, BIST_DATA_PATTERN_0_OFFSET, 0x0);
+	rmw_mc_set_field(BIST_DATA_PATTERN_1_ADDR, BIST_DATA_PATTERN_1_WIDTH, BIST_DATA_PATTERN_1_OFFSET, 0x0);
+	rmw_mc_set_field(INT_MASK_BIST_ADDR, INT_MASK_BIST_WIDTH, INT_MASK_BIST_OFFSET, 0x1);
 
-	val = 0;
-	write_mc_reg(DDRMC_R049, val);
-	write_mc_reg(DDRMC_R050, val);
 
-	rmw_mc_reg(DDRMC_R069, ~(0xff << 16), (1 << 16));
-
-	// 4
+	/* Step 4 */
 	for (i = 0 ; i < 34 ; i++) {
 		if (((prog_size >> i) & 1) == 1) {
-			val = addr & 0xffffffff;
-			write_mc_reg(DDRMC_R046, val);
+			rmw_mc_set_field(BIST_START_ADDRESS_0_ADDR, BIST_START_ADDRESS_0_WIDTH, BIST_START_ADDRESS_0_OFFSET, addr & 0xffffffff);
+			rmw_mc_set_field(BIST_START_ADDRESS_1_ADDR, BIST_START_ADDRESS_1_WIDTH, BIST_START_ADDRESS_1_OFFSET, (addr >> 32) & 0x3);
+			rmw_mc_set_field(ADDR_SPACE_ADDR, ADDR_SPACE_WIDTH, ADDR_SPACE_OFFSET, i);
 
-			val = (addr >> 32) & 0x3;
-			write_mc_reg(DDRMC_R047, val);
-
-#if RZV2L
-			rmw_mc_reg(DDRMC_R045, ~(0x3f), (i & 0x3f));
-#else
-			rmw_mc_reg(DDRMC_R045, ~(0x3f << 8), (i << 8));
-#endif
 			mdelay(10);
 
-			// bit_go=1
-#if RZV2L
-			rmw_mc_reg(DDRMC_R070, 0xffffffff, (1 << 16));
-#else
-			rmw_mc_reg(DDRMC_R018, 0xffffffff, (1 << 24));
-#endif
-
+			rmw_mc_set_field(BIST_GO_ADDR, BIST_GO_WIDTH, BIST_GO_OFFSET, 1);
 			do {
-				val = read_mc_reg(DDRMC_R065);
-			} while (!(val & (1 << 16)));
 
-			// bit_go=0
-#if RZV2L
-			rmw_mc_reg(DDRMC_R070, ~(1 << 16), 0);
-#else
-			rmw_mc_reg(DDRMC_R018, ~(1 << 24), 0);
-#endif
-			rmw_mc_reg(DDRMC_R067, 0xffffffff, (1 << 16));
+			} while (!(read_mc_field(INT_STATUS_BIST_ADDR, INT_STATUS_0_BIST_WIDTH, INT_STATUS_0_BIST_OFFSET)));
 
+			rmw_mc_set_field(BIST_GO_ADDR, BIST_GO_WIDTH, BIST_GO_OFFSET, 0);
+
+			rmw_mc_set_field(INT_ACK_BIST_ADDR, INT_ACK_0_BIST_WIDTH, INT_ACK_0_BIST_OFFSET, 1);
 			do {
-				val = read_mc_reg(DDRMC_R065);
-			} while (val & (1 << 16));
+
+			} while (read_mc_field(INT_STATUS_BIST_ADDR, INT_STATUS_0_BIST_WIDTH, INT_STATUS_0_BIST_OFFSET));
 
 			addr += (1 << i);
 		}
 	}
 
-	// 5
-	// ack ecc int
-	val = 0xffffU;
-	write_mc_reg(DDRMC_R066, val);
+	/* Step 5 */
+	rmw_mc_set_field(INT_ACK_ECC_ADDR, INT_ACK_ECC_WIDTH, INT_ACK_ECC_OFFSET, 0xFFFF);
 
-	// wait unitl the ecc int clear
 	do {
-		val = read_mc_reg(DDRMC_R064);
-	} while (val & 0xffffU);
+		val = read_mc_field(INT_STATUS_ECC_ADDR, INT_STATUS_ECC_WIDTH, INT_STATUS_ECC_OFFSET);
+	} while (val != 0);
 
-	// 6
-	rmw_mc_reg(DDRMC_R069, ~(0xff << 16), 0);
+	/* Step 6 */
+	rmw_mc_set_field(INT_MASK_BIST_ADDR, INT_MASK_BIST_WIDTH, INT_MASK_BIST_OFFSET, 0x0);
 
-	// unset BIST_DATA_CHECK
-#if RZV2L
-	rmw_mc_reg(DDRMC_R045, ~(1 << 8), 0);
-#else
-	rmw_mc_reg(DDRMC_R045, ~(1 << 16), 0);
-#endif
 
-	// 7
-	rmw_mc_reg(DDRMC_R006, ~0xf, bak_lp_auto_entry_en);
-
-	rmw_mc_reg(DDRMC_R019, ~(1 << 16), bak_in_order_accept);
+	/* Step 7 */
+	rmw_mc_set_field(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_WIDTH, LP_AUTO_ENTRY_EN_OFFSET, bak_lp_auto_entry_en);
+	rmw_mc_set_field(IN_ORDER_ACCEPT_ADDR, IN_ORDER_ACCEPT_WIDTH, IN_ORDER_ACCEPT_OFFSET, bak_in_order_accept);
+	INFO("BL2: ECC prog all0 done\n");
 }
 
-// follow DDRTOP_ApplicationNote_Rev01.14.excel
-// capter SubProc->Init0_ECC
 static void init_ecc(void)
 {
 	uint64_t addr_start, addr_end;
 	uint32_t cs_val_upper, val;
-
-	// 1. check DDR3/DDR3L/DDR4
-	val = read_mc_reg(DDRMC_R039);
+	INFO("BL2: ECC init start\n");
+	/* Step 1 */
+	val = read_mc_reg(USER_DEF_REG_10_ADDR);
 	val = (val >> 16) & 0xF;
 	if (val == 2)
 		addr_start = DDR_BASE_ADDRESS + 0x40;
 	else
 		addr_start = DDR_BASE_ADDRESS + 0x20;
 
-	// 2
-	cs_val_upper = read_mc_reg(DDRMC_R057);
+	/* Step 2 */
+	cs_val_upper = read_mc_reg(CS_VAL_UPPER_0_ADDR);
 	cs_val_upper = (cs_val_upper >> 16) & 0xffffU;
-	val = read_mc_reg(DDRMC_R063);
+	val = read_mc_reg(CS_MAP_ADDR);
 	val = (val >> 16) & 0x3;
 	if (val == 0x3) {
-		val = read_mc_reg(DDRMC_R059);
+		val = read_mc_reg(CS_VAL_UPPER_1_ADDR);
 		val = (val >> 16) & 0xffffU;
 		if (val > cs_val_upper) {
 			cs_val_upper = val;
@@ -419,74 +381,64 @@ static void init_ecc(void)
 	}
 	addr_end = (uint64_t)(((cs_val_upper + 1) << 18) - 1) + DDR_BASE_ADDRESS;
 
-	// 3
-	// ECC_DISABLE_W_UC_ERR <= 1
-	rmw_mc_reg(DDRMC_R052, 0xffffffff, (1 << 16));
+	/* Step 3 */
+	rmw_mc_set_field(ECC_DISABLE_W_UC_ERR_ADDR, ECC_DISABLE_W_UC_ERR_WIDTH, ECC_DISABLE_W_UC_ERR_OFFSET, 0x1);
 
-	// mask ECC interrupt
-	rmw_mc_reg(DDRMC_R068, ~0xffffU, 0x1CF);
+	rmw_mc_set_field(INT_MASK_ECC_ADDR, INT_MASK_ECC_WIDTH, INT_MASK_ECC_OFFSET, 0x01CF);
 
-	// 4. wait for 10 regACLK
+	/* Step 4 */
 	mdelay(10);
 
-	// 5.prog_all0
+	/* Step 5 */
 	ecc_prog_all0(addr_start, addr_end);
 
-	// 6.
-	// unmask ECC interrupt
-	rmw_mc_reg(DDRMC_R068, ~0xffffU, 0);
+	/* Step 6 */
+	rmw_mc_set_field(INT_MASK_ECC_ADDR, INT_MASK_ECC_WIDTH, INT_MASK_ECC_OFFSET, 0x0000);
 
-	// ack ECC interrupt
-	rmw_mc_reg(DDRMC_R066, 0xffffffff, 0x1CF);
+	rmw_mc_set_field(INT_ACK_ECC_ADDR, INT_ACK_ECC_WIDTH, INT_ACK_ECC_OFFSET, 0x01CF);
 
-	// ECC_DISABLE_W_UC_ERR = 0
-	rmw_mc_reg(DDRMC_R052, ~(1 << 16), 0);
+	rmw_mc_set_field(ECC_DISABLE_W_UC_ERR_ADDR, ECC_DISABLE_W_UC_ERR_WIDTH, ECC_DISABLE_W_UC_ERR_OFFSET, 0x0000);
+
 	mdelay(10);
+	INFO("BL2: ECC init end\n");
 }
 
 static void program_mc1_ecc_en(void)
 {
-	uint32_t tmp;
+	uint32_t tmp = 0;
 	uint16_t addr_diff[2], cs_size[2], cs_val_lower[2], row_start_val[2];
 	int i, maxrow_cs;
 
-	tmp = read_mc_reg(DDRMC_R051);
+	tmp = read_mc_reg(ECC_ENABLE_ADDR);
 	tmp &= ~(0x3 << 24);
 #if (DDR_ECC_DETECT_CORRECT == 1)
-	tmp |= (0x3 << 24);
+	tmp |= (0x3 << ECC_ENABLE_OFFSET);
 #elif (DDR_ECC_DETECT == 1)
-	tmp |= (0x2 << 24);
+	tmp |= (0x2 << ECC_ENABLE_OFFSET);
 #else
-	tmp |= (1 << 24);
+	tmp |= (1 << ECC_ENABLE_OFFSET);
 #endif
-	write_mc_reg(DDRMC_R051, tmp);
 
-	rmw_mc_reg(DDRMC_R061, ~(1 << 8), (1 << 8));
+	write_mc_reg(ECC_ENABLE_ADDR, tmp);
+	rmw_mc_set_field(ADDR_COLLISION_MPM_DIS_ADDR, ADDR_COLLISION_MPM_DIS_WIDTH, ADDR_COLLISION_MPM_DIS_OFFSET, 1);
+	rmw_mc_set_field(DISABLE_RD_INTERLEAVE_ADDR, DISABLE_RD_INTERLEAVE_WIDTH, DISABLE_RD_INTERLEAVE_OFFSET, 0);
 
-	rmw_mc_reg(DDRMC_R063, ~0x1, 0);
-
-	rmw_mc_reg(DDRMC_R019, ~(1 << 16), (1 << 16));
-
-	rmw_mc_reg(DDRMC_R062, ~(1 << 24), 0);
-
-	tmp = read_mc_reg(DDRMC_R055);
-	addr_diff[0] = (uint16_t)((tmp >> 8) & 0x3);
-	tmp = read_mc_reg(DDRMC_R056);
-	addr_diff[0] += (uint16_t)((tmp >> 8) & 0xf);
-	tmp = read_mc_reg(DDRMC_R055);
-	addr_diff[0] += (uint16_t)((tmp >> 24) & 0x7);
+	rmw_mc_set_field(IN_ORDER_ACCEPT_ADDR, IN_ORDER_ACCEPT_WIDTH, IN_ORDER_ACCEPT_OFFSET, 1);
+	rmw_mc_set_field(SWAP_EN_ADDR, SWAP_EN_WIDTH, SWAP_EN_OFFSET, 0);
 
 
-	tmp = read_mc_reg(DDRMC_R055);
-	addr_diff[1] = (uint16_t)((tmp >> 16) & 0x3);
-	tmp = read_mc_reg(DDRMC_R056);
-	addr_diff[1] += (uint16_t)((tmp >> 16) & 0xf);
-	tmp = read_mc_reg(DDRMC_R056);
-	addr_diff[1] += (uint16_t)(tmp & 0x7);
+	addr_diff[0] = read_mc_field(BANK_DIFF_0_ADDR, BANK_DIFF_0_WIDTH, BANK_DIFF_0_OFFSET);
+	addr_diff[0] += read_mc_field(COL_DIFF_0_ADDR, COL_DIFF_0_WIDTH, COL_DIFF_0_OFFSET);
+	addr_diff[0] += read_mc_field(ROW_DIFF_0_ADDR, ROW_DIFF_0_WIDTH, ROW_DIFF_0_OFFSET);
+
+	addr_diff[1] = read_mc_field(BANK_DIFF_1_ADDR, BANK_DIFF_1_WIDTH, BANK_DIFF_1_OFFSET);
+	addr_diff[1] += read_mc_field(COL_DIFF_1_ADDR, COL_DIFF_1_WIDTH, COL_DIFF_1_OFFSET);
+	addr_diff[1] += read_mc_field(ROW_DIFF_1_ADDR, ROW_DIFF_1_WIDTH, ROW_DIFF_1_OFFSET);
 
 	for (i = 0; i < 2; i++) {
 		cs_size[i] = (0xDFFF >> 1) >> addr_diff[i];
 	}
+
 	if (cs_size[0] >= cs_size[1]) {
 		maxrow_cs = 0;
 	} else {
@@ -496,17 +448,15 @@ static void program_mc1_ecc_en(void)
 	cs_val_lower[maxrow_cs] = 0x0000;
 	cs_val_lower[(maxrow_cs + 1) % 2] = cs_val_lower[maxrow_cs] + cs_size[maxrow_cs] + 1;
 
-	rmw_mc_reg(DDRMC_R057, ~0xffffU, (cs_val_lower[0] & 0xffffU));
+	rmw_mc_set_field(CS_VAL_LOWER_0_ADDR, CS_VAL_LOWER_0_WIDTH, CS_VAL_LOWER_0_OFFSET, cs_val_lower[0]);
+	rmw_mc_set_field(CS_VAL_UPPER_0_ADDR, CS_VAL_UPPER_0_WIDTH, CS_VAL_UPPER_0_OFFSET, (cs_val_lower[0] + cs_size[0]));
 
-	rmw_mc_reg(DDRMC_R057, ~(0xffffU << 16), ((cs_val_lower[0] + cs_size[0]) << 16));
-
-	tmp = read_mc_reg(DDRMC_R063);
-	tmp = (tmp >> 16) & 0x3;
+	tmp = read_mc_field(CS_MAP_ADDR, CS_MAP_WIDTH, CS_MAP_OFFSET);
 	if (tmp == 0x3) {
-		rmw_mc_reg(DDRMC_R059, ~0xffffU, (cs_val_lower[1] & 0xffffU));
-
-		rmw_mc_reg(DDRMC_R059, ~(0xffffU << 16), ((cs_val_lower[1] + cs_size[1]) << 16));
+		rmw_mc_set_field(CS_VAL_LOWER_1_ADDR, CS_VAL_LOWER_1_WIDTH, CS_VAL_LOWER_1_OFFSET, cs_val_lower[1]);
+		rmw_mc_set_field(CS_VAL_UPPER_1_ADDR, CS_VAL_UPPER_1_WIDTH, CS_VAL_UPPER_1_OFFSET, (cs_val_lower[1] + cs_size[1]));
 	}
+
 	row_start_val[maxrow_cs] = 0x0;
 	i = (maxrow_cs + 1) % 2;
 	if (cs_size[i] == cs_size[maxrow_cs]) {
@@ -519,15 +469,14 @@ static void program_mc1_ecc_en(void)
 		row_start_val[i] = 0x0;
 	}
 
-	rmw_mc_reg(DDRMC_R058, ~0x7, (row_start_val[0] & 0x7));
-
-	rmw_mc_reg(DDRMC_R060, ~0x7, (row_start_val[1] & 0x7));
+	rmw_mc_set_field(ROW_START_VAL_0_ADDR, ROW_START_VAL_0_WIDTH, ROW_START_VAL_0_OFFSET, row_start_val[0]);
+	rmw_mc_set_field(ROW_START_VAL_1_ADDR, ROW_START_VAL_1_WIDTH, ROW_START_VAL_1_OFFSET, row_start_val[1]);
 }
-#endif // (DDR_ECC_ENABLE == 1)
+#endif /* (DDR_ECC_ENABLE == 1) */
 
 static void disable_phy_clk(void)
 {
-	// Initialization Step9
+	/* Step 9 */
 	write_phy_reg(DDRPHY_R77, 0x00000200);
 	write_phy_reg(DDRPHY_R78, 0x00010001);
 }
@@ -536,7 +485,7 @@ static void program_mc1(uint8_t *lp_auto_entry_en)
 {
 	int i;
 
-	// Step1
+	/* Step 1 */
 	for (i = 0; i < ARRAY_SIZE(mc_init_tbl); i++) {
 		if (mc_init_tbl[i][0] == DDRMC_R006) {
 			*lp_auto_entry_en = mc_init_tbl[i][1] & 0xF;
@@ -546,331 +495,395 @@ static void program_mc1(uint8_t *lp_auto_entry_en)
 		}
 	}
 
-	// Step2
-	rmw_mc_reg(DDRMC_R025, 0xFCFFFFFF, mc_odt_pins_tbl[0] << 24);
-	rmw_mc_reg(DDRMC_R026, 0xFFFFFCFF, mc_odt_pins_tbl[1] << 8);
-	rmw_mc_reg(DDRMC_R025, 0xFFFCFFFF, mc_odt_pins_tbl[2] << 16);
-	rmw_mc_reg(DDRMC_R026, 0xFFFFFFFC, mc_odt_pins_tbl[3] << 0);
+	/* Step 2 */
+	rmw_mc_set_field(ODT_WR_MAP_CS0_ADDR, ODT_WR_MAP_CS0_WIDTH, ODT_WR_MAP_CS0_OFFSET, mc_odt_pins_tbl[0] << 24);
+	rmw_mc_set_field(ODT_WR_MAP_CS1_ADDR, ODT_WR_MAP_CS1_WIDTH, ODT_WR_MAP_CS1_OFFSET, mc_odt_pins_tbl[1] << 8);
+	rmw_mc_set_field(ODT_RD_MAP_CS0_ADDR, ODT_RD_MAP_CS0_WIDTH, ODT_RD_MAP_CS0_OFFSET, mc_odt_pins_tbl[2] << 16);
+	rmw_mc_set_field(ODT_RD_MAP_CS1_ADDR, ODT_RD_MAP_CS1_WIDTH, ODT_RD_MAP_CS1_OFFSET, mc_odt_pins_tbl[3] << 0);
 
-	// Step3
-	rmw_mc_reg(DDRMC_R009, ~(mc_mr1_tbl[0]), mc_mr1_tbl[1]);
-	rmw_mc_reg(DDRMC_R011, ~(mc_mr1_tbl[0]), mc_mr1_tbl[1]);
+	/* Step 3 */
+	rmw_mc_reg(MR1_DATA_0_ADDR, ~(mc_mr1_tbl[0]), mc_mr1_tbl[1]);
+	rmw_mc_reg(MR1_DATA_1_ADDR, ~(mc_mr1_tbl[0]), mc_mr1_tbl[1]);
 
-	// Step4
-	rmw_mc_reg(DDRMC_R010, ~(mc_mr2_tbl[0]), mc_mr2_tbl[1]);
-	rmw_mc_reg(DDRMC_R012, ~(mc_mr2_tbl[0]), mc_mr2_tbl[1]);
+	/* Step 4 */
+	rmw_mc_reg(MR2_DATA_0_ADDR, ~(mc_mr2_tbl[0]), mc_mr2_tbl[1]);
+	rmw_mc_reg(MR2_DATA_1_ADDR, ~(mc_mr2_tbl[0]), mc_mr2_tbl[1]);
 
-	// Step5
-	rmw_mc_reg(DDRMC_R015, ~(mc_mr5_tbl[0]), mc_mr5_tbl[1]);
-	rmw_mc_reg(DDRMC_R016, ~(mc_mr5_tbl[0]), mc_mr5_tbl[1]);
+	/* Step 5 */
+	rmw_mc_reg(MR5_DATA_0_ADDR, ~(mc_mr5_tbl[0]), mc_mr5_tbl[1]);
+	rmw_mc_reg(MR5_DATA_1_ADDR, ~(mc_mr5_tbl[0]), mc_mr5_tbl[1]);
 
-	// Step6
-	rmw_mc_reg(DDRMC_R017, ~(mc_mr6_tbl[0]), mc_mr6_tbl[1]);
-	rmw_mc_reg(DDRMC_R018, ~(mc_mr6_tbl[0]), mc_mr6_tbl[1]);
+	/* Step 6 */
+	rmw_mc_reg(MR6_DATA_0_ADDR, ~(mc_mr6_tbl[0]), mc_mr6_tbl[1]);
+	rmw_mc_reg(MR6_DATA_1_ADDR, ~(mc_mr6_tbl[0]), mc_mr6_tbl[1]);
 
-	// Step7
+	/* Step 7 */
 	for (i = 0; i < ARRAY_SIZE(mc_phy_settings_tbl); i++) {
 		write_mc_reg(mc_phy_settings_tbl[i][0], mc_phy_settings_tbl[i][1]);
 	}
 
-	// Step8 is skipped because ECC is unused.
+	/* Step 8 */
 #if (DDR_ECC_ENABLE == 1)
 	program_mc1_ecc_en();
 #endif
 }
 
+static void lpddr4_combo_io_cal(void)
+{
+	/* Step 37.1 */
+	uint32_t tmp;
+	uint8_t dram = (read_mc_reg(USER_DEF_REG_10_ADDR) >> 16) & 0xF;
+
+	/* Step 37.2 */
+	rmw_phy_reg(UNIQUIFY_IO_2, 0xFF800000, 0x00000000);
+
+	/* Step 37.3 */
+	switch (dram) {
+	case 0:
+		tmp = 0x00003200;
+		break;
+	case 1:
+		tmp = 0x00005200;
+		break;
+	case 2:
+		tmp = 0x08009200;
+		break;
+	default:
+		tmp = 0x00000000;
+		break;
+	}
+	write_phy_reg(UNIQUIFY_IO_3, tmp);
+	write_phy_reg(UNIQUIFY_IO_1, 0x00000002);
+
+	while ((read_phy_reg(UNIQUIFY_IO_1) & 0x00000008) != 0x00000008)
+		;
+
+	write_phy_reg(UNIQUIFY_IO_1, 0x00000000);
+	udelay(100);
+
+	/* Step 37.4 */
+	switch (dram) {
+	case 0:
+	case 1:
+		tmp = 0x00041200;
+		break;
+	case 2:
+		tmp = 0x08101300;
+		break;
+	default:
+		tmp = 0x00000000;
+		break;
+	}
+	write_phy_reg(UNIQUIFY_IO_3, tmp);
+	write_phy_reg(UNIQUIFY_IO_1, 0x00000001);
+	while ((read_phy_reg(UNIQUIFY_IO_1) & 0x00000004) != 0x00000004)
+		;
+
+	rmw_phy_reg(UNIQUIFY_IO_1, 0xFFFFFFEF, 0x00000010);
+	rmw_phy_reg(UNIQUIFY_IO_1, 0xFFFFFFEF, 0x00000000);
+	udelay(1);
+}
+
 static void program_phy1(uint32_t sl_lanes, uint32_t byte_lanes)
 {
+	uint32_t i;
 	uint16_t dram_clk_period;
+	int8_t extra_addrctrl_dly;
+	int8_t ofs_dlls_trim_1, ofs_dlls_trim_3;
 	uint8_t dram;
 	uint8_t odt_wr_map_cs0, odt_rd_map_cs0;
 	uint8_t CL, CWL, AL, PL, RL, WL;
 	uint32_t mr1, mr1_wl, mr1_wl_mask;
 	uint32_t mr2, mr2_wl, mr2_wl_mask;
-	uint8_t clk_drive, dq_dqs_drive, dq_dqs_term, vref_value, vref_ca_value;
+	uint8_t clk_drive, dq_dqs_drive, dq_dqs_term, vref_value, vref_ca_value, adrctrl_drive;
 	uint8_t read_lat, trim_lat;
-	uint32_t tmp;
-	int i;
 
-	// Step1
-	tmp = read_mc_reg(DDRMC_R039);
-	dram_clk_period = tmp & 0xFFFF;
+	/*
+	 * Unused
+	 * int8_t dll_mas_dly
+	 * uint8_t core_clk_margin_win_a, core_clk_margin_win_b;
+	 * uint8_t incr_winA_val, incr_winB_val;
+	 * uint8_t soc_dq_drive, soc_dq_odt;
+	 * uint8_t dram_dq_drive, dram_dq_odt_wr1, dram_dq_odt_rd2, dram_dq_odt_wr2;
+	 */
+
+	uint8_t swap_phase;
+	uint32_t tmp;
+
+	/* Step 1
+	 *
+	 * Calculated by calling function:
+	 * mem_dp_reduction
+	 * sl_lanes
+	 * byte_lanes
+	 */
+
+	tmp = read_mc_reg(USER_DEF_REG_10_ADDR);
+	dram_clk_period = (tmp >> 0) & 0xFFFF;
 	dram = (tmp >> 16) & 0xF;
 
-	tmp = read_mc_reg(DDRMC_R025);
-	odt_wr_map_cs0 = (tmp >> 24) & 0x3;
-	odt_rd_map_cs0 = (tmp >> 16) & 0x3;
+	odt_wr_map_cs0 = read_mc_field(ODT_WR_MAP_CS0_ADDR, ODT_WR_MAP_CS0_WIDTH, ODT_WR_MAP_CS0_OFFSET);
+	odt_rd_map_cs0 = read_mc_field(ODT_RD_MAP_CS0_ADDR, ODT_RD_MAP_CS0_WIDTH, ODT_RD_MAP_CS0_OFFSET);
 
-	// Step2
-	tmp = read_mc_reg(DDRMC_R002);
-	CL = (tmp >> 17) & 0x1F;
-	CWL = (tmp >> 24) & 0x1F;
+	/* Step 2 */
+	CL = read_mc_field(CASLAT_LIN_ADDR, 0x5, CASLAT_LIN_OFFSET + 1);
+	CWL = read_mc_field(WRLAT_ADDR, WRLAT_WIDTH, WRLAT_OFFSET);
 
-	tmp = read_mc_reg(DDRMC_R003);
-	AL = tmp & 0x1F;
-	PL = (tmp >> 8) & 0xF;
+	AL =  read_mc_field(ADDITIVE_LAT_ADDR, ADDITIVE_LAT_WIDTH, ADDITIVE_LAT_OFFSET);
+	PL =  read_mc_field(CA_PARITY_LAT_ADDR, CA_PARITY_LAT_WIDTH, CA_PARITY_LAT_OFFSET);
 
 	RL = CL + AL + PL;
 	WL = CWL + AL + PL;
 
-	// Step3
-	mr1 = read_mc_reg(DDRMC_R009) & 0xFFFF;
-	mr2 = read_mc_reg(DDRMC_R010) & 0xFFFF;
+	/* Step 3 */
+	mr1 = read_mc_reg(MR1_DATA_0_ADDR) & 0xFFFF;
+	mr2 = read_mc_reg(MR2_DATA_0_ADDR) & 0xFFFF;
+
 	if (dram == 2) {
-		// DDR4
-		mr1_wl_mask = (0x7 << 8) | (0x1 << 7);	// 0x78
-		mr2_wl_mask = 0x7 << 9;					// 0xe0
-		switch ((mr2 & mr2_wl_mask) >> 9) {
+		/* DDR4 */
+		mr1_wl_mask = (0x1 << 7) | (0x7 << 8);
+		tmp = ((mr2 >> 9) & 0x7);
+		switch (tmp) {
 		case 0:
-			mr1_wl = 0x0;
-			mr1_wl_mask = 0x0000;
+			mr1_wl = mr1 | (1<<7);
 			break;
 		case 1:
-			mr1_wl = 0x2 << 8;
+			mr1_wl = (mr1 & (0xFFFF ^ mr1_wl_mask)) | (1 << 7) | (0x2 << 8);
 			break;
 		case 2:
-			mr1_wl = 0x4 << 8;
+			mr1_wl = (mr1 & (0xFFFF ^ mr1_wl_mask)) | (1 << 7) | (0x4 << 8);
 			break;
 		case 4:
-			mr1_wl = 0x6 << 8;
+			mr1_wl = (mr1 & (0xFFFF ^ mr1_wl_mask)) | (1 << 7) | (0x6 << 8);
 			break;
 		default:
 			panic();
 		}
+
+		mr2_wl_mask = 0x7 << 9;
+		mr2_wl = (mr2 & (0xFFFF ^ mr2_wl_mask)) | (0x0 << 9);
 	} else {
-		// DDR3L, DDR3
+		/* DDR3L, DDR3 */
 		mr1_wl_mask = (0x1 << 9) | (0x1 << 7) | (0x1 << 6) | (0x1 << 2);
-		mr2_wl_mask = 0x3 << 9;
-		switch ((mr2 & mr2_wl_mask) >> 9) {
+		tmp = ((mr2>>9) & 0x3);
+		switch (tmp) {
 		case 0:
-			mr1_wl = 0x0;
-			mr1_wl_mask = 0x0000;
+			mr1_wl = mr1 | (1 << 7);
 			break;
 		case 1:
-			mr1_wl = (0x0 << 9) | (0x0 << 6) | (0x1 << 2);
+			mr1_wl = (mr1 & (0xFFFF ^ mr1_wl_mask)) | (1 << 7) | (0 << 9) | (0 << 6) | (1 << 2);
 			break;
 		case 2:
-			mr1_wl = (0x0 << 9) | (0x1 << 6) | (0x0 << 2);
+			mr1_wl = (mr1 & (0xFFFF ^ mr1_wl_mask)) | (1 << 7) | (0 << 9) | (1 << 6) | (0 << 2);
 			break;
 		default:
 			panic();
 		}
-	}
-	mr1_wl |= (mr1 & (0xFFFF ^ mr1_wl_mask)) | (0x1 << 7);
-	mr2_wl = (mr2 & (0xFFFF ^ mr2_wl_mask)) | (0x0 << 9);
 
-	// Step4
-	tmp = read_mc_reg(DDRMC_R040);
+		mr2_wl_mask = 0x3 << 9;
+		mr2_wl = (mr2 & (0xFFFF ^ mr2_wl_mask)) | (0x0 << 9);
+	}
+
+	/* Step 4 */
+	tmp = read_mc_reg(USER_DEF_REG_11_ADDR);
 	clk_drive = tmp & 0xF;
 	dq_dqs_drive = (tmp >> 4) & 0xF;
 	dq_dqs_term = (tmp >> 8) & 0xF;
+	adrctrl_drive = (tmp >> 12) & 0xF;
 	vref_value = (tmp >> 16) & 0xFF;
 	vref_ca_value = (tmp >> 24) & 0xFF;
+
+	/*
+	 * Unused
+	 * tmp = read_mc_reg(USER_DEF_REG_12_ADDR);
+	 * soc_dq_drive = (tmp >> 0) & 0xFF;
+	 * soc_dq_odt = (tmp >> 8) & 0xFF;
+	 *
+	 * tmp = read_mc_reg(USER_DEF_REG_12_ADDR);
+	 *
+	 * dram_dq_drive = (tmp >> 0) & 0xFF;
+	 * dram_dq_odt_wr1 = (tmp >> 8) & 0xFF;
+	 * dram_dq_odt_wr2 = (tmp >> 16) & 0xFF;
+	 * dram_dq_odt_rd2 = (tmp >> 24) & 0xFF;
+	 */
+
+	swap_phase = 1;
+
 	read_lat = (dram == 2 ? 12 : 10) + (CEIL(RL, 2) * 2) - CEIL(WL, 2) + 28;
 	trim_lat = (dram == 2 ? 11 : 9) + CEIL(RL, 2) - CEIL(WL, 2) + 29;
 
-	// Step5
+	/*
+	 * Unused
+	 * core_clk_margin_win_a = 15;
+	 * core_clk_margin_win_b = 17;
+	 * incr_winA_val = 9;
+	 * incr_winB_val = 26;
+	 */
+	extra_addrctrl_dly = 26;
+	ofs_dlls_trim_1 = -9;
+	ofs_dlls_trim_3 = -10;
+
+	/* Step 5 */
 	tmp = ((WL == 5 ? 0x1 : 0x0) << 16) | 0x00100000;
-	write_phy_reg(DDRPHY_R77, tmp);
+	write_phy_reg(PHY_MODE0, tmp);
 
-	// Step6
-	write_phy_reg(DDRPHY_R05, 0x00000006);
+	/* Step 6 */
+	write_phy_reg(DLLM_WINDOW_SIZE, 0x00000006);
 
-	// Step7
+	/* Step 7 */
 	if (dram == 2) {
-		// DDR4
-		write_phy_reg(DDRPHY_R65, 0x00000009);
+		/* DDR4 */
+		write_phy_reg(DDR4_CONFIG_1, 0x00000009);
 	}
 
-	// Step8
-	write_phy_reg(DDRPHY_R67, (dram == 2 ? 1 : 0) << 27);
-	write_phy_reg(DDRPHY_R47, (dram == 2 ? 1 : 0) << 24);
+	/* Step 8 */
+	write_phy_reg(UNIQUIFY_IO_3, (dram == 2 ? 1 : 0) << 27);
+	write_phy_reg(UNIQUIFY_IO_2, (dram == 2 ? 1 : 0) << 24);
 
-	// Step9
+	/* Step 9 */
 	tmp = ((dram == 0 ? 0 : 1) << 15) | ((dram_clk_period < 1000 ? 1 : 0) << 8) | 0x10004000;
-	write_phy_reg(DDRPHY_R26, tmp);
+	write_phy_reg(PHY_PAD_CTRL, tmp);
 
-	// Step10
-	write_phy_reg(DDRPHY_R13,
-		clk_drive | (clk_drive << 4) | (clk_drive << 8) | (clk_drive<<12) |
+	/* Step 10 */
+	write_phy_reg(PHY_PAD_CTRL_1,
+		clk_drive | (clk_drive << 4) | (adrctrl_drive << 8) | (adrctrl_drive<<12) |
 		(dq_dqs_drive << 16) | (dq_dqs_drive << 20));
 
-	// Step11
+	/* Step 11 */
 	tmp = dq_dqs_term | ((dram == 2) ? 0 : (dq_dqs_term << 4));
-	write_phy_reg(DDRPHY_R14, tmp);
+	write_phy_reg(PHY_PAD_CTRL_2, tmp);
 
-	// Step12
-	write_phy_reg(DDRPHY_R10, 0x00000000);
+	/* Step 12 */
+	write_phy_reg(PHY_PAD_CTRL_3, 0x00000000);
 
-	// Step13
+	/* Step 13 */
 	for (i = 0; i < byte_lanes; i++) {
-		write_phy_reg(DDRPHY_R29, 7 * i);
-		write_phy_reg(DDRPHY_R66, (vref_value << 4) | 0x00000004);
+		write_phy_reg(PHY_LANE_SEL, 7 * i);
+		write_phy_reg(VREF_TRAINING, (vref_value << 4) | 0x00000004);
 	}
 
-	// Step14
-	write_phy_reg(DDRPHY_R12, vref_ca_value);
+	/* Step 14 */
+	write_phy_reg(VREF_CA_TRAINING, vref_ca_value);
 
-	// Step15
-	write_phy_reg(DDRPHY_R61, 0x1A09002D);
+	/* Step 15 */
+	write_phy_reg(SCL_WINDOW_TRIM, 0x1A09002D);
 
-	// Step16
-	write_phy_reg(DDRPHY_R41, 0x00000000);
+	/* Step 16 */
+	write_phy_reg(UNQ_ANALOG_DLL_1, 0x00000000);
 
-	// Step17
-	write_phy_reg(DDRPHY_R74, 0x0000001A);
+	/* Step 17 */
+	write_phy_reg(DYNAMIC_IE_TIMER, 0x0000001A);
 
-	// Step18
+	/* Step 18 */
 	tmp = ((dram == 2 ? 0 : 1) << 2) | (CEIL(CL, 2) << 4) | (CEIL(AL, 2) << 8) |
 			(odt_rd_map_cs0 << 16) | (odt_wr_map_cs0 << 24) | 0x00000001;
-	write_phy_reg(DDRPHY_R24, tmp);
+	write_phy_reg(SCL_CONFIG_1, tmp);
 
-	// Step19
+	/* Step 19 */
 	tmp = (CEIL(CWL, 2) << 8) | ((((WL % 2) == 0) ? 0 : 1) << 24) | 0x80000001;
-	write_phy_reg(DDRPHY_R25, tmp);
+	write_phy_reg(SCL_CONFIG_2, tmp);
 
-	// Step20
-	write_phy_reg(DDRPHY_R45, sl_lanes ^ 0x3);
+	/* Step 20 */
+	write_phy_reg(SCL_CONFIG_3, sl_lanes ^ 0x3);
 
-	// Step21
-	write_phy_reg(DDRPHY_R64, (trim_lat << 4) | (read_lat << 12));
+	/* Step 21 */
+	write_phy_reg(DYNAMIC_WRITE_BIT_LVL, (trim_lat << 4) | (read_lat << 12));
 
-	// Step22
-	tmp = ((WL % 2) == 0) & 0x1;
-	write_phy_reg(DDRPHY_R63, tmp);
+	/* Step 22 */
+	tmp = ((WL % 2) == 0) & swap_phase;
+	write_phy_reg(SCL_CONFIG_4, tmp);
 
-	// Step23
-	write_phy_reg(DDRPHY_R72, 0x00000170);
+	/* Step 23 */
+	write_phy_reg(SCL_GATE_TIMING, 0x00000170);
 
-	// Step24
-	write_phy_reg(DDRPHY_R38, mr2_wl | (mr2 << 16));
+	/* Step 24 */
+	write_phy_reg(WRLVL_DYN_ODT, mr2_wl | (mr2 << 16));
 
-	// Step25
-	write_phy_reg(DDRPHY_R39, mr1 | (mr1_wl << 16));
+	/* Step 25 */
+	write_phy_reg(WRLVL_ON_OFF, mr1 | (mr1_wl << 16));
 
-	// Step26
-	write_phy_reg(DDRPHY_R27, 0xAC001000);
+	/* Step 26 */
+	write_phy_reg(PHY_DLL_RECALIB, 0xAC001000);
 
-	// Step27
+	/* Step 27 */
 	udelay(10);
 
-	// Step28 is skipped because dll_mas_dly is unused.
+	/*
+	 * Step 28 is skipped because dll_mas_dly is unused.
+	 * dll_mas_dly = (*PHY_DLL_ADRCTRL>>24) & 0xFF;
+	 */
 
-	// Step29
-	write_phy_reg(DDRPHY_R44, 0x00000000);
+	/* Step 29 */
+	tmp = ((ofs_dlls_trim_3 < 0) ? 0 : sl_lanes);
+	write_phy_reg(PHY_DLL_INCR_TRIM_3, tmp);
 
-	// Step30
-	write_phy_reg(DDRPHY_R43, 0x00000000);
+	/* Step 30 */
+	tmp = ((ofs_dlls_trim_1 < 0) ? 0 : sl_lanes);
+	write_phy_reg(PHY_DLL_INCR_TRIM_1, tmp);
 
-	// Step31
+	/* Step 31 */
 	for (i = 0; i < byte_lanes; i++) {
-		write_phy_reg(DDRPHY_R29, 6 * i);
-		write_phy_reg(DDRPHY_R30, 9);
-		write_phy_reg(DDRPHY_R32, 10);
+		write_phy_reg(PHY_LANE_SEL, 6 * i);
+		tmp = ((ofs_dlls_trim_1 < 0) ? -ofs_dlls_trim_1 : ofs_dlls_trim_1);
+		write_phy_reg(PHY_DLL_TRIM_1, tmp);
+		tmp = ((ofs_dlls_trim_3 < 0) ? -ofs_dlls_trim_3 : ofs_dlls_trim_3);
+		write_phy_reg(PHY_DLL_TRIM_3, tmp);
 	}
 
-	// Step32
-	write_phy_reg(DDRPHY_R28, 26 | 0x00000200);
+	/* Step 32 */
+	write_phy_reg(PHY_DLL_ADRCTRL, ((extra_addrctrl_dly & 0x7F) << 0) | 0x00000200);
 
-	// Step33
-	write_phy_reg(DDRPHY_R29, 0);
-	write_phy_reg(DDRPHY_R57, 26 | 0x00000080);
+	/* Step 33 */
+	write_phy_reg(PHY_LANE_SEL, 0);
+	write_phy_reg(PHY_DLL_TRIM_CLK, (extra_addrctrl_dly << 0) | 0x00000080);
 
-	// Step34
-	write_phy_reg(DDRPHY_R27, 26 | (0x10 << 8) | 0xAC000000);
+	/* Step 34 */
+	write_phy_reg(PHY_DLL_RECALIB, ((extra_addrctrl_dly & 0x7F) << 0) | (0x10 << 8) | 0xAC000000);
 
-	// Step35
-	write_phy_reg(DDRPHY_R21, 0x00035076);
+	/* Step 35 */
+	write_phy_reg(SCL_LATENCY, 0x00035076);
 
-	// Step36
-	write_phy_reg(DDRPHY_R07, 0x00000032);
+	/* Step 36 */
+	write_phy_reg(BIT_LVL_CONFIG, 0x00000032);
 
-	// lpddr4_combo_io_cal
-	{
-		// Step37-2
-		rmw_phy_reg(DDRPHY_R47, 0xFF800000, 0x00000000);
+	/* Step 37 */
+	lpddr4_combo_io_cal();
 
-		// Step37-3
-		switch (dram) {
-		case 0:
-			tmp = 0x00003200;
-			break;
-		case 1:
-			tmp = 0x00005200;
-			break;
-		case 2:
-			tmp = 0x08009200;
-			break;
-		default:
-			tmp = 0x00000000;
-			break;
-		}
-		write_phy_reg(DDRPHY_R67, tmp);
-		write_phy_reg(DDRPHY_R46, 0x00000002);
-		while ((read_phy_reg(DDRPHY_R46) & 0x00000008) != 0x00000008)
-			;
+	/* Step 38 */
+	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x00000000);
 
-		write_phy_reg(DDRPHY_R46, 0x00000000);
-		udelay(100);
-
-		// Step37-4
-		switch (dram) {
-		case 0:
-		case 1:
-			tmp = 0x00041200;
-			break;
-		case 2:
-			tmp = 0x08101300;
-			break;
-		default:
-			tmp = 0x00000000;
-			break;
-		}
-		write_phy_reg(DDRPHY_R67, tmp);
-		write_phy_reg(DDRPHY_R46, 0x00000001);
-		while ((read_phy_reg(DDRPHY_R46) & 0x00000004) != 0x00000004)
-			;
-
-		rmw_phy_reg(DDRPHY_R46, 0xFFFFFFEF, 0x00000010);
-		rmw_phy_reg(DDRPHY_R46, 0xFFFFFFEF, 0x00000000);
-		udelay(1);
-	}
-
-	// Step38
-	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x00000000);
-
-	// Step39
-	rmw_phy_reg(DDRPHY_R78, 0xFFFFF0FE, (sl_lanes << 8));
+	/* Step 39 */
+	rmw_phy_reg(PHY_CTRL0, 0xFFFFF0FE, (sl_lanes << 8));
 }
 
 static void exec_trainingWRLVL(uint32_t sl_lanes)
 {
 	uint32_t tmp;
 
-	// Step2
+	/* Step 2 */
 	tmp = read_phy_reg(DDRPHY_R24);
 	write_phy_reg(DDRPHY_R24, tmp | 0x01000000);
 
-	// Step3
+	/* Step 3 */
 	write_phy_reg(DDRPHY_R37, sl_lanes);
 
-	// Step4
+	/* Step 4 */
 	write_phy_reg(DDRPHY_R31, 0x00010000);
 
-	// Step5
+	/* Step 5 */
 	write_phy_reg(DDRPHY_R18, 0x50200000);
 
-	// Step6
+	/* Step 6 */
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
-	// Step7 - Step8
+	/* Step 7 - Step 8 */
 	if (((read_phy_reg(DDRPHY_R36) & sl_lanes) != sl_lanes) ||
 	   ((read_phy_reg(DDRPHY_R37) & sl_lanes) != 0)) {
 		panic();
 	}
 
-	// Step9
+	/* Step 9 */
 	write_phy_reg(DDRPHY_R24, tmp);
 }
 
@@ -889,26 +902,31 @@ static void exec_trainingVREF(uint32_t sl_lanes, uint32_t byte_lanes)
 	uint32_t tmp;
 	int i, j;
 
-	// Step2
+	/* Step 1 - skipped
+	 * sl_lanes and byte_lanes are calculated in calling function
+	 */
+
+	/* Step 2 */
 	for (i = 0; i < byte_lanes; i++) {
 		write_phy_reg(DDRPHY_R29, i);
 		rmw_phy_reg(DDRPHY_R07, 0xFFFFFFCF, 0x00000010);
 	}
-	// Step3
-	vref_mid_level_code = (read_mc_reg(DDRMC_R040) >> 16) & 0xFF;
-	sweep_range = read_mc_reg(DDRMC_R043) & 0xFF;
 
-	// Step4
+	/* Step 3 */
+	vref_mid_level_code = (read_mc_reg(USER_DEF_REG_11_ADDR) >> 16) & 0xFF;
+	sweep_range = read_mc_reg(USER_DEF_REG_14_ADDR) & 0xFF;
+
+	/* Step 4 */
 	for (i = 0; i < byte_lanes; i++) {
 		best_window_diff_so_far[i] = 255;
 		num_best_vref_matches[i] = 0;
 	}
 
-	// Step5
+	/* Step 5 */
 	for (vref_training_value = 0;
 		 vref_training_value < (sweep_range * 2) + 1;
 		 vref_training_value += VREF_SETP) {
-		// Step5.1
+		/* Step 5.1 */
 		if (vref_training_value < sweep_range + 1) {
 			if (vref_mid_level_code < vref_training_value + 2) {
 				vref_training_value = sweep_range;
@@ -928,40 +946,40 @@ static void exec_trainingVREF(uint32_t sl_lanes, uint32_t byte_lanes)
 			write_phy_reg(DDRPHY_R66, (current_vref << 4) | 0x00000001);
 		}
 
-		// Step5.2
+		/* Step 5.2 */
 		write_phy_reg(DDRPHY_R18, 0x30800000);
 		while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 			;
 
-		// Step5.3
+		/* Step 5.3 */
 		for (i = 0; i < byte_lanes; i++) {
 			if (((read_phy_reg(DDRPHY_R59) >> (14 + i)) & 0x1) == 0x0) {
-				INFO("BL2: PHY side VREF training passed on lane %0d, current_vref = %0d\n", i, current_vref);
+				VERBOSE("BL2: PHY side VREF training passed on lane %0d, current_vref = %0d\n", i, current_vref);
 				write_phy_reg(DDRPHY_R29, i * 6);
 				window_0 = read_phy_reg(DDRPHY_R69) & 0x3F;
 				window_1 = (read_phy_reg(DDRPHY_R69) >> 8) & 0x3F;
 				window_diff = (window_0 > window_1) ?
 								window_0 - window_1 : window_1 - window_0;
-				INFO("BL2: window_0 = %0d, window_1 = %0d, window_diff = %0d\n", window_0, window_1, window_diff);
+				VERBOSE("BL2: window_0 = %0d, window_1 = %0d, window_diff = %0d\n", window_0, window_1, window_diff);
 				if (window_diff < best_window_diff_so_far[i]) {
 					best_window_diff_so_far[i] = window_diff;
 					all_best_vref_matches[i][0] = current_vref;
 					num_best_vref_matches[i] = 1;
-					INFO("BL2: CURRENT BEST VREF PHY side :%d\n", current_vref);
+					VERBOSE("BL2: CURRENT BEST VREF PHY side :%d\n", current_vref);
 				} else if ((window_diff == best_window_diff_so_far[i]) &&
 						(num_best_vref_matches[i] < MAX_BEST_VREF_SAVED)) {
 					all_best_vref_matches[i][num_best_vref_matches[i]] = current_vref;
 					num_best_vref_matches[i] += 1;
 				}
 			} else {
-				INFO("BL2: PHY side VREF training failed lane %d, current_vref = %d\n",
+				ERROR("BL2: PHY side VREF training failed lane %d, current_vref = %d\n",
 					i, current_vref);
 			}
 		}
-		// Step5.4
+		/* Step 5.4 */
 	}
 
-	// Step6
+	/* Step 6 */
 	for (i = 0; i < byte_lanes; i++) {
 		highest_best_vref_val = 0x0;
 		lowest_best_vref_val = 0x7F;
@@ -976,48 +994,48 @@ static void exec_trainingVREF(uint32_t sl_lanes, uint32_t byte_lanes)
 		write_phy_reg(DDRPHY_R66, current_vref << 4);
 	}
 
-	// Step7
+	/* Step 7 */
 	write_phy_reg(DDRPHY_R19, 0xFF00FF00);
 	write_phy_reg(DDRPHY_R20, 0xFF00FF00);
 
-	// Step8
+	/* Step 8 */
 	write_phy_reg(DDRPHY_R18, 0x30800000);
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
-	// Step9
+	/* Step 9 */
 	tmp = (read_phy_reg(DDRPHY_R59) >> 14) & sl_lanes;
 	if ((tmp ^ sl_lanes) != sl_lanes) {
 		panic();
 	}
 
-	// Step10
+	/* Step 10 */
 	rmw_phy_reg(DDRPHY_R54, 0xFFFFFF7F, 0x00000080);
 
-	// Step11
+	/* Step 11 */
 	vref_mid_level_code = (read_mc_reg(DDRMC_R043) >> 8) & 0xFF;
 	sweep_range = (read_mc_reg(DDRMC_R043) >> 16) & 0xFF;
 
-	// Step12
+	/* Step 12 */
 	orig_cs_config = read_phy_reg(DDRPHY_R25) & 0x3;
 
-	// Step13
+	/* Step 13 */
 	setup_vref_training_registers(vref_mid_level_code, sl_lanes, 1);
 
-	// Step14
+	/* Step 14 */
 	rmw_phy_reg(DDRPHY_R66, 0xFFFFFFFE, 0x00000001);
 
-	// Step15
+	/* Step 15 */
 	for (i = 0; i < byte_lanes; i++) {
 		best_window_diff_so_far[i] = 255;
 		num_best_vref_matches[i] = 0;
 	}
 
-	// Step16
+	/* Step 16 */
 	for (vref_training_value = 0;
 		 vref_training_value < (sweep_range * 2) + 1;
 		 vref_training_value += VREF_SETP) {
-		// Step16.1
+		/* Step 16.1 */
 		if (vref_training_value < (sweep_range + 1)) {
 			if (vref_training_value > vref_mid_level_code) {
 				vref_training_value = sweep_range;
@@ -1035,40 +1053,40 @@ static void exec_trainingVREF(uint32_t sl_lanes, uint32_t byte_lanes)
 		}
 		setup_vref_training_registers(current_vref, orig_cs_config, 0);
 
-		// Step16.2
+		/* Step 16.2 */
 		write_phy_reg(DDRPHY_R18, 0x30500000);
 		while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 			;
 
-		// Step16.3
+		/* Step 16.3 */
 		tmp = (read_phy_reg(DDRPHY_R64) >> 20) & sl_lanes;
 		for (i = 0; i < byte_lanes; i++) {
 			if ((tmp ^ sl_lanes) == sl_lanes) {
-				INFO("BL2: VREF training passed during VrefDQ training DRAM side, current_vref = %d\n", current_vref);
+				VERBOSE("BL2: VREF training passed during VrefDQ training DRAM side, current_vref = %d\n", current_vref);
 				write_phy_reg(DDRPHY_R29, i * 6);
 				window_0 = read_phy_reg(DDRPHY_R69) & 0x3F;
 				window_1 = (read_phy_reg(DDRPHY_R69) >> 8) & 0x3F;
 				window_diff = (window_0 > window_1) ?
 								window_0 - window_1 : window_1 - window_0;
-				INFO("BL2: window_0 = %0d, window_1 = %0d, window_diff = %0d\n", window_0, window_1, window_diff);
+				VERBOSE("BL2: window_0 = %0d, window_1 = %0d, window_diff = %0d\n", window_0, window_1, window_diff);
 				if (window_diff < best_window_diff_so_far[i]) {
 					best_window_diff_so_far[i] = window_diff;
 					all_best_vref_matches[i][0] = current_vref;
 					num_best_vref_matches[i] = 1;
-					INFO("BL2: CURRENT BEST VREF DRAM side :%d\n", current_vref);
+					VERBOSE("BL2: CURRENT BEST VREF DRAM side :%d\n", current_vref);
 				} else if ((window_diff == best_window_diff_so_far[i]) &&
 						(num_best_vref_matches[i] < MAX_BEST_VREF_SAVED)) {
 					all_best_vref_matches[i][num_best_vref_matches[i]] = current_vref;
 					num_best_vref_matches[i] += 1;
 				}
 			} else {
-				INFO("BL2: VREF training failed during VrefDQ training DRAM side, current_vref = %d\n", current_vref);
+				ERROR("BL2: VREF training failed during VrefDQ training DRAM side, current_vref = %d\n", current_vref);
 			}
 		}
-		// Step16.4
+		/* Step 16.4 */
 	}
 
-	// Step17
+	/* Step 17 */
 	highest_best_vref_val = 0x0;
 	lowest_best_vref_val = 0x7F;
 	for (i = 0; i < byte_lanes; i++) {
@@ -1081,22 +1099,22 @@ static void exec_trainingVREF(uint32_t sl_lanes, uint32_t byte_lanes)
 	}
 	current_vref = (highest_best_vref_val + lowest_best_vref_val) >> 1;
 
-	// Step18
+	/* Step 18 */
 	setup_vref_training_registers(current_vref, sl_lanes, 0);
 
-	// Step19
+	/* Step 19 */
 	rmw_mc_reg(DDRMC_R044, 0xFFFFFF00, current_vref);
 
-	// Step20
+	/* Step 20 */
 	rmw_phy_reg(DDRPHY_R66, 0xFFFFFFFE, 0x00000000);
 
-	// Step21
+	/* Step 21 */
 	setup_vref_training_registers(current_vref, sl_lanes, 2);
 
-	// Step22
+	/* Step 22 */
 	rmw_phy_reg(DDRPHY_R54, 0xFFFFFF7F, 0x00000000);
 
-	// Step23
+	/* Step 23 */
 	for (i = 0; i < byte_lanes; i++) {
 		write_phy_reg(DDRPHY_R29, i);
 		rmw_phy_reg(DDRPHY_R07, 0xFFFFFFCF, 0x00000030);
@@ -1108,19 +1126,19 @@ static void setup_vref_training_registers(uint8_t vref_value, uint8_t cs, uint8_
 	uint8_t vref_op_code;
 	uint16_t mr;
 
-	// Step1
+	/* Step 1 */
 	if (vref_value > 50) {
 		vref_op_code = vref_value - 23;
 	} else {
 		vref_op_code = vref_value | (1 << 6);
 	}
 
-	// Step2
-	mr = read_mc_reg(DDRMC_R017) & 0xFF00;
+	/* Step 2 */
+	mr = read_mc_reg(MR6_DATA_0_ADDR) & 0xFF00;
 	write_mr(cs, 6,
 		mr | (((turn_on_off_vref_training == 2) ? 0 : 1) << 7) | vref_op_code);
 
-	// Step3
+	/* Step 3 */
 	udelay(1);
 }
 
@@ -1129,201 +1147,222 @@ static void write_mr(uint8_t cs, uint8_t mrw_sel, uint16_t mrw_data)
 	uint8_t mrw_cs;
 	uint8_t mrw_allcs;
 
-	// Step1
+	/* Step 1 */
 	mrw_cs = 0;
 	if (cs & 0x1) {
-		rmw_mc_reg(DDRMC_R013, 0xFFFF0000, mrw_data);
+		rmw_mc_set_field(MRSINGLE_DATA_0_ADDR, 16, MRSINGLE_DATA_0_OFFSET, mrw_data);
 		mrw_cs = 0;
 	}
 	if (cs & 0x2) {
-		rmw_mc_reg(DDRMC_R014, 0xFFFF0000, mrw_data);
+		rmw_mc_set_field(MRSINGLE_DATA_1_ADDR, 16, MRSINGLE_DATA_1_OFFSET, mrw_data);
 		mrw_cs = 1;
 	}
 	mrw_allcs = ((cs & 0x3) == 0x3) ? 1 : 0;
 
-	// Step2
-	rmw_mc_reg(DDRMC_R008, 0xFC000000,
+	/* Step 2 */
+	rmw_mc_set_field(WRITE_MODEREG_ADDR, WRITE_MODEREG_WIDTH - 1, WRITE_MODEREG_OFFSET,
 		0x02800000 | (mrw_allcs << 24) | (mrw_cs << 8) | mrw_sel);
 
-	// Step3
-	while ((read_mc_reg(DDRMC_R022) & (1 << 3)) != (1 << 3))
+	/* Step 3 */
+	while ((read_mc_reg(INT_STATUS_MODE_ADDR) & (1 << 3)) != (1 << 3))
 		;
 
-	// Step4
-	rmw_mc_reg(DDRMC_R024, 0xFFFFFFF7, 0x00000008);
+	/* Step 4 */
+	rmw_mc_set_field(INT_ACK_MODE_ADDR, 0x1, INT_ACK_MODE_OFFSET + 3, 0x01);
 }
 
 static void exec_trainingBITLVL(uint32_t sl_lanes)
 {
 	uint32_t tmp;
 
-	// Step2
+	/* Step 2 */
 	write_phy_reg(DDRPHY_R62, 0x00000000);
 
-	// Step3
+	/* Step 3 */
 	write_phy_reg(DDRPHY_R19, 0xFF00FF00);
 	write_phy_reg(DDRPHY_R20, 0xFF00FF00);
 
-	// Step4
+	/* Step 4 */
 	write_phy_reg(DDRPHY_R18, 0x30A00000);
 
-	// Step5
+	/* Step 5 */
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
-	// Step6
+	/* Step 6 */
 	tmp = (read_phy_reg(DDRPHY_R59) >> 14) & sl_lanes;
 	if ((tmp ^ sl_lanes) != sl_lanes) {
 		panic();
 	}
 
-	// Step7
+	/* Step 7 */
 	rmw_phy_reg(DDRPHY_R54, 0xFFFFFF7F, 0x00000080);
 
-	// Step8
+	/* Step 8 */
 	write_phy_reg(DDRPHY_R18, 0x30700000);
 
-	// Step9
+	/* Step 9 */
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
-	// Step10
+	/* Step 10 */
 	tmp = (read_phy_reg(DDRPHY_R64) >> 20) & sl_lanes;
 	if ((tmp ^ sl_lanes) != sl_lanes) {
 		panic();
 	}
 
-	// Step11
+	/* Step 11 */
 	rmw_phy_reg(DDRPHY_R54, 0xFFFFFF7F, 0x00000000);
 
-	// Step12
+	/* Step 12 */
 	write_phy_reg(DDRPHY_R51, 0x00080000);
 
-	// Step13
+	/* Step 13 */
 	write_phy_reg(DDRPHY_R18, 0x11200000);
 
-	// Step14
+	/* Step 14 */
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
-	// Step15
+	/* Step 15 */
 	write_phy_reg(DDRPHY_R51, 0x00000000);
 
-	// Step16
+	/* Step 16 */
 	write_phy_reg(DDRPHY_R18, 0x30A00000);
 
-	// Step17
+	/* Step 17 */
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 }
 
 static void opt_delay(uint32_t sl_lanes, uint32_t byte_lanes)
 {
-	uint32_t tmp;
 	uint16_t dlls_trim_ca;
 	uint16_t dlls_trim_2[MAX_BYTE_LANES];
 	uint16_t op_dqs_trim[MAX_BYTE_LANES];
-	uint16_t min_WL;
+	uint16_t min_WL = 128;
 	uint16_t min_WD = 128;
-	int i, j;
+	uint32_t val;
+	int lane, bit_sel;
 
-	// Step2
-	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x04000000);
+	/*
+	 * Step 1 - Skipped
+	 * sl_lanes and byte_lanes are calculated by calling function.
+	 */
 
-	// Step3
-	rmw_mc_reg(DDRMC_R004, ~(0x7F << LP_CMD_OFFSET), (0x00000011 << LP_CMD_OFFSET));
-	while (((read_mc_reg(DDRMC_R005) >> 24) & 0x7F) != 0x48)
+	/* Step 2 */
+	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x04000000);
+
+	/* Step 3 */
+	rmw_mc_set_field(LP_CMD_ADDR, LP_CMD_WIDTH, LP_CMD_OFFSET, 0x11);
+
+	while (read_mc_field(LP_STATE_ADDR, LP_STATE_WIDTH, LP_STATE_OFFSET) != 0x48)
 		;
 
-	// Step4
-	write_phy_reg(DDRPHY_R29, 0);
-	dlls_trim_ca = read_phy_reg(DDRPHY_R57) & 0x7F;
+	/* Step 4 */
+	write_phy_reg(PHY_LANE_SEL, 0 * 8);
+	dlls_trim_ca = (read_phy_reg(PHY_DLL_TRIM_CLK) >> 0) & 0x7F;
 	min_WL = dlls_trim_ca;
+	for (lane = 0; lane < byte_lanes; lane++) {
+		write_phy_reg(PHY_LANE_SEL, 6 * lane);
+		dlls_trim_2[lane] = (read_phy_reg(PHY_DLL_TRIM_2) >> 0) & 0x3F;
+		if (dlls_trim_2[lane] < min_WL) {
+			min_WL = dlls_trim_2[lane];
+		}
 
-	for (i = 0; i < byte_lanes; i++) {
-		write_phy_reg(DDRPHY_R29, 6 * i);
-		dlls_trim_2[i] = read_phy_reg(DDRPHY_R31) & 0x3F;
-		min_WL = _MIN(min_WL, dlls_trim_2[i]);
+		write_phy_reg(PHY_LANE_SEL, (lane * 7) | 0x00000900);
+		op_dqs_trim[lane] = (read_phy_reg(OP_DQ_DM_DQS_BITWISE_TRIM) >> 0) & 0x3F;
+		if (op_dqs_trim[lane] < min_WD) {
+			min_WD = op_dqs_trim[lane];
+		}
 
-		write_phy_reg(DDRPHY_R29, (7 * i) | 0x00000900);
-		op_dqs_trim[i] = read_phy_reg(DDRPHY_R56) & 0x3F;
-		min_WD = _MIN(min_WD, op_dqs_trim[i]);
-		for (j = 0; j < 9; j++) {
-			write_phy_reg(DDRPHY_R29, (i * 7) | (j << 8));
-			tmp = read_phy_reg(DDRPHY_R56) & 0x7F;
-			tmp = (tmp & 0x40) ?
-				(op_dqs_trim[i] + (tmp & 0x3F)) : (op_dqs_trim[i] - (tmp & 0x3F));
-			min_WD = _MIN(min_WD, tmp);
+		for (bit_sel = 0; bit_sel < 9; bit_sel++) {
+			write_phy_reg(PHY_LANE_SEL, (lane * 7) | (bit_sel << 8));
+			val = (read_phy_reg(OP_DQ_DM_DQS_BITWISE_TRIM) >> 0) & 0x7F;
+			val = (val & 0x40) ? (op_dqs_trim[lane] + (val & 0x3F)) : (op_dqs_trim[lane] - (val & 0x3F));
+			if (val < min_WD) {
+				min_WD = val;
+			}
 		}
 	}
 
-	// Step5
-	tmp = (dlls_trim_ca - min_WL) & 0x7F;
-	write_phy_reg(DDRPHY_R29, 0);
-	write_phy_reg(DDRPHY_R57, tmp | 0x00000080);
-	write_phy_reg(DDRPHY_R28, tmp | 0x00000200);
-	rmw_phy_reg(DDRPHY_R27, 0xFFFFFF80, tmp);
+	/* Step 5 */
+	val = (dlls_trim_ca - min_WL) & 0x7F;
+	write_phy_reg(PHY_LANE_SEL, 0 * 8);
+	write_phy_reg(PHY_DLL_TRIM_CLK, (val << 0) | 0x00000080);
+	write_phy_reg(PHY_DLL_ADRCTRL, (val << 0) | 0x00000200);
+	rmw_phy_reg(PHY_DLL_RECALIB, 0xFFFFFF80, (val << 0));
 
-	for (i = 0; i < byte_lanes; i++) {
-		tmp = (dlls_trim_2[i] - min_WL) & 0x3F;
-		write_phy_reg(DDRPHY_R29, 6 * i);
-		rmw_phy_reg(DDRPHY_R31, 0xFFFFFFC0, tmp);
-
-		write_phy_reg(DDRPHY_R29, (7 * i) | 0x00000900);
-		tmp = (op_dqs_trim[i] - min_WD) & 0x3F;
-		rmw_phy_reg(DDRPHY_R56, 0xFFFFFF80, tmp);
+	for (lane = 0; lane < byte_lanes; lane++) {
+		val = (dlls_trim_2[lane] - min_WL) & 0x3F;
+		write_phy_reg(PHY_LANE_SEL, 6 * lane);
+		rmw_phy_reg(PHY_DLL_TRIM_2, 0xFFFFFFC0, (val << 0));
+		write_phy_reg(PHY_LANE_SEL, (lane * 7) | 0x00000900);
+		val = (op_dqs_trim[lane] - min_WD) & 0x3F;
+		rmw_phy_reg(OP_DQ_DM_DQS_BITWISE_TRIM, 0xFFFFFF80, (val << 0));
 	}
 
-	// Step6
-	rmw_mc_reg(DDRMC_R004, ~(0x7F << LP_CMD_OFFSET), (0x00000002 << LP_CMD_OFFSET));
-	while (((read_mc_reg(DDRMC_R005) >> 24) & 0x7F) != 0x40)
+	/* Step 6 */
+	rmw_mc_set_field(LPC_SR_ZQ_EN_ADDR, LPC_SR_ZQ_EN_WIDTH, LPC_SR_ZQ_EN_OFFSET, 0x00000000);
+	rmw_mc_set_field(LP_CMD_ADDR, LP_CMD_WIDTH, LP_CMD_OFFSET, 0x00000002);
+
+	while (read_mc_field(LP_STATE_ADDR, LP_STATE_WIDTH, LP_STATE_OFFSET) != 0x40)
 		;
 
-	// Step6
-	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x00000000);
-	while ((read_phy_reg(DDRPHY_R42) & 0x3) != sl_lanes)
+	udelay(1);
+	rmw_mc_set_field(LPC_SR_ZQ_EN_ADDR, LPC_SR_ZQ_EN_WIDTH, LPC_SR_ZQ_EN_OFFSET, 0x00000001);
+
+	/* Step 7 */
+	rmw_mc_set_field(INT_ACK_LOWPOWER_ADDR, INT_ACK_LOWPOWER_WIDTH, INT_ACK_LOWPOWER_OFFSET, 0x0009);
+
+	while (read_mc_field(INT_STATUS_LOWPOWER_ADDR, INT_STATUS_LOWPOWER_WIDTH, INT_STATUS_LOWPOWER_OFFSET) != 0x0000)
+		;
+
+	/* Step 8 */
+	rmw_phy_reg(PHY_DLL_RECALIB, 0xFBFFFFFF, 0x00000000);
+	while ((read_phy_reg(UNQ_ANALOG_DLL_2) & 0x3) != sl_lanes)
 		;
 }
 
 static void exec_trainingSL(uint32_t sl_lanes)
 {
-	// Step2
+	/* Step 2 */
 	write_phy_reg(DDRPHY_R62, 0x00000001);
 
-	// Step3
+	/* Step 3 */
 	write_phy_reg(DDRPHY_R34, 0x00000010);
 
-	// Step4
+	/* Step 4 */
 	write_phy_reg(DDRPHY_R19, 0x789B3DE0);
 	write_phy_reg(DDRPHY_R20, 0xF10E4A56);
 
-	// Step5
+	/* Step 5 */
 	write_phy_reg(DDRPHY_R18, 0x11200000);
 
-	// Step6
+	/* Step 6 */
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
-	// Step7
+	/* Step 7 */
 	write_phy_reg(DDRPHY_R18, 0x11200000);
 
-	// Step8
+	/* Step 8 */
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
-	// Step9
+	/* Step 9 */
 	write_phy_reg(DDRPHY_R18, 0x34200000);
 
-	// Step10
+	/* Step 10 */
 	while ((read_phy_reg(DDRPHY_R18) & 0x10000000) != 0x00000000)
 		;
 
-	// Step11
+	/* Step 11 */
 	if ((read_phy_reg(DDRPHY_R18) & sl_lanes) != sl_lanes) {
 		panic();
 	}
 
-	// Step12
+	/* Step 12 */
 	write_phy_reg(DDRPHY_R62, 0x00000003);
 }
 
@@ -1332,20 +1371,20 @@ static void program_phy2(void)
 	uint16_t dram_clk_period;
 	uint32_t tmp, b21, b22, b23;
 
-	// Step1
-	tmp = read_mc_reg(DDRMC_R039);
+	/* Step 1 */
+	tmp = read_mc_reg(USER_DEF_REG_10_ADDR);
 	dram_clk_period = tmp & 0xFFFF;
 	b21 = (tmp >> 21) & 0x1;
 	b22 = (tmp >> 22) & 0x1;
 	b23 = (tmp >> 23) & 0x1;
 
-	// Step2
+	/* Step 2 */
 	rmw_phy_reg(DDRPHY_R64, 0xFFFFFFFE, b23);
 	rmw_phy_reg(DDRPHY_R59, 0xFFFFFFFE, (b23 == 1 ? 0 : b22));
 	write_phy_reg(DDRPHY_R55, (b21 << 24) |
 		_MIN(1000000000000 / (2 * dram_clk_period * 256), 0xFFFFFF));
 
-	// Step3
+	/* Step 3 */
 	rmw_phy_reg(DDRPHY_R27, 0xFBFFFFFF, 0x04000000);
 	rmw_phy_reg(DDRPHY_R27, 0xFC0000FF,
 		_MIN(1000000000000 / (dram_clk_period * 256), 0x3FFFF) << 8);
@@ -1358,11 +1397,11 @@ static void program_mc2(void)
 	uint8_t tphy_rdlat;
 	uint32_t tmp;
 
-	// Step1
+	/* Step 1 */
 	main_clk_dly = (read_phy_reg(DDRPHY_R21) >> 4) & 0xF;
-	tmp = (read_mc_reg(DDRMC_R028) >> 24) & 0x7F;
+	tmp = read_mc_field(TDFI_RDDATA_EN_ADDR, TDFI_RDDATA_EN_WIDTH, TDFI_RDDATA_EN_OFFSET);
 	tphy_rdlat = ((main_clk_dly + 1 + 1) * 2) + 2 + ((tmp == 1) ? 2 : 0);
 
-	// Step2
-	rmw_mc_reg(DDRMC_R027, 0xFFFFFF80, tphy_rdlat & 0x7F);
+	/* Step 2 */
+	rmw_mc_set_field(TDFI_PHY_RDLAT_ADDR, TDFI_PHY_RDLAT_WIDTH, TDFI_PHY_RDLAT_OFFSET, tphy_rdlat);
 }
