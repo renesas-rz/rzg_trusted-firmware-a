@@ -24,6 +24,14 @@ $(eval $(call add_define,WA_RZG2L_GIC64BIT))
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_1530923				:= 1
 
+# DDR ECC support
+DDR_ECC_ENABLE					:= 0
+DDR_ECC_DETECT					:= 0
+DDR_ECC_DETECT_CORRECT			:= 0
+$(eval $(call add_define,DDR_ECC_ENABLE))
+$(eval $(call add_define,DDR_ECC_DETECT))
+$(eval $(call add_define,DDR_ECC_DETECT_CORRECT))
+
 ifndef SPI_FLASH
   SPI_FLASH = MT25QU512ABB
 endif
