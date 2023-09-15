@@ -45,7 +45,7 @@ static void exec_trainingSL(uint32_t sl_lanes);
 static void program_phy2(void);
 static void program_mc2(void);
 
-#ifdef DDR_ECC_ENABLE
+#if (DDR_ECC_ENABLE == 1)
 #define DDR_BASE_ADDRESS	0x40000000
 #define TEST_BIT_NO			0
 #define USER_WORD_DATA		0x5a5a5a5a5a5a5a5a
@@ -163,7 +163,7 @@ void ddr_setup(void)
 	program_mc2();
 
 	// Step31 is skipped because ECC is unused.
-#ifdef DDR_ECC_ENABLE
+#if (DDR_ECC_ENABLE == 1)
 	printf("NOTICE:  BL2: ECC MODE: ");
 #if(DDR_ECC_DETECT_CORRECT == 1)
 	printf(" Error Detect and Correct\n");
@@ -199,7 +199,7 @@ void ddr_setup(void)
 
 	rmw_mc_reg(DDRMC_R006, 0xFFFFFFF0, lp_auto_entry_en & 0xF);
 
-#ifdef DDR_ECC_ENABLE
+#if (DDR_ECC_ENABLE == 1)
 	// Extra step, test ECC CE function
 	printf("NOTICE:  BL2: ECC CE function testing .... ");
 	if (ecc_force_ce_error())
@@ -209,7 +209,7 @@ void ddr_setup(void)
 #endif
 }
 
-#ifdef DDR_ECC_ENABLE
+#if (DDR_ECC_ENABLE == 1)
 #if (DDR_ECC_DETECT_CORRECT == 1)
 static int ecc_force_ce_error(void)
 {
@@ -580,7 +580,7 @@ static void program_mc1_ecc_en(void)
 	tmp |= (row_start_val[1] & 0x7);
 	write_mc_reg(DENALI_CTL_127, tmp);
 }
-#endif // DDR_ECC_ENABLE
+#endif // (DDR_ECC_ENABLE == 1)
 
 static void disable_phy_clk(void)
 {
@@ -631,7 +631,7 @@ static void program_mc1(uint8_t *lp_auto_entry_en)
 	}
 
 	// Step8 is skipped because ECC is unused.
-#ifdef DDR_ECC_ENABLE
+#if (DDR_ECC_ENABLE == 1)
 	program_mc1_ecc_en();
 #endif
 }
