@@ -34,7 +34,7 @@ PLAT_INCLUDES		+=	-Iinclude/plat/arm/common/${ARCH}
 # v8.0: a53, a57, a72
 # v8.2: a76, n1
 # v8.4: v1
-# v9.0: a710
+# v9.0: a710, n2
 #
 # let treat v9.0 as v8.5 as they share cpu features
 # https://developer.arm.com/documentation/102378/0201/Armv8-x-and-Armv9-x-extensions-and-features
