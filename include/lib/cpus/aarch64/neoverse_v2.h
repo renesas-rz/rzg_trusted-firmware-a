@@ -57,4 +57,12 @@
 #define NEOVERSE_V2_CPUACTLR5_EL1_BIT_56		(ULL(1) << 56)
 #define NEOVERSE_V2_CPUACTLR5_EL1_BIT_55		(ULL(1) << 55)
 
+/*******************************************************************************
+ * CPU Extended Control register 2 specific definitions.
+ ******************************************************************************/
+#define NEOVERSE_V2_CPUECTLR2_EL1			S3_0_C15_C1_5
+#define NEOVERSE_V2_CPUECTLR2_EL1_PF_MODE_CNSRV		ULL(9)
+#define NEOVERSE_V2_CPUECTLR2_EL1_PF_MODE_LSB		U(11)
+#define NEOVERSE_V2_CPUECTLR2_EL1_PF_MODE_WIDTH		U(4)
+
 #endif /* NEOVERSE_V2_H */
