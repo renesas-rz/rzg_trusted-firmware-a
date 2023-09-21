@@ -63,7 +63,7 @@ endif
 bptool: bptool_make
 distclean realclean clean: bptool_clean
 
-BPTOOLPATH		?=	tools/renesas/rz_boot_param/g3s
+BPTOOLPATH		?=	tools/renesas/rz_boot_param
 
 bptool_make:
 	${Q}${MAKE} TRUSTED_BOARD_BOOT=${TRUSTED_BOARD_BOOT} --no-print-directory -C ${BPTOOLPATH}

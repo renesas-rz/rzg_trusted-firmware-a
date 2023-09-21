@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -20,8 +20,10 @@ static EMMC_ERROR_CODE emmc_multiple_block_write(uint32_t *buff_address_virtual,
 	EMMC_ERROR_CODE result;
 
 	/* parameter check */
-	if ((count > EMMC_RW_SECTOR_COUNT_MAX) || (count == 0) ||
-		((transfer_mode != HAL_MEMCARD_DMA) && (transfer_mode != HAL_MEMCARD_NOT_DMA))) {
+	if ((count > EMMC_RW_SECTOR_COUNT_MAX)
+		|| (count == 0)
+		|| ((transfer_mode != HAL_MEMCARD_DMA) && (transfer_mode != HAL_MEMCARD_NOT_DMA))
+		) {
 		emmc_write_error_info(EMMC_FUNCNO_WRITE_SECTOR, EMMC_ERR_PARAM);
 		return EMMC_ERR_PARAM;
 	}
@@ -44,13 +46,13 @@ static EMMC_ERROR_CODE emmc_multiple_block_write(uint32_t *buff_address_virtual,
 	}
 	SETR_32(SD_SECCNT, count);
 	SETR_32(SD_STOP, 0x00000100U);
-	SETR_32(CC_EXT_MODE, (CC_EXT_MODE_CLEAR | CC_EXT_MODE_DMASDRW_ENABLE));     /* SD_BUF Read/Write DMA Transfer enable */
+	SETR_32(CC_EXT_MODE, (CC_EXT_MODE_CLEAR | CC_EXT_MODE_DMASDRW_ENABLE));		/* SD_BUF Read/Write DMA Transfer enable */
 
 	/* CMD25 */
 	emmc_make_trans_cmd(CMD25_WRITE_MULTIPLE_BLOCK, sector_number, buff_address_virtual, count<<EMMC_SECTOR_SIZE_SHIFT, HAL_MEMCARD_WRITE, transfer_mode);
 	result = emmc_exec_cmd(EMMC_R1_ERROR_MASK, mmc_drv_obj.response);
 	if (result != EMMC_SUCCESS) {
-		return result;                  /* CMD18 error code */
+		return result;					/* CMD18 error code */
 	}
 
 	/* CMD13 */
@@ -97,10 +99,11 @@ EMMC_ERROR_CODE emmc_write_sector(uint32_t *buff_address_virtual,
 	}
 
 	/* DMA? */
-	if ((feature_flags & LOADIMAGE_FLAGS_DMA_ENABLE) != 0)
+	if ((feature_flags & LOADIMAGE_FLAGS_DMA_ENABLE) != 0) {
 		transfer_mode = HAL_MEMCARD_DMA;
-	else
+	} else {
 		transfer_mode = HAL_MEMCARD_NOT_DMA;
+	}
 
 	remain = count;
 	while (remain != 0) {

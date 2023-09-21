@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -22,8 +22,17 @@ void plat_gic_pcpu_init(void);
 void plat_gic_save(void);
 void plat_gic_resume(void);
 
+/* plat_security.c */
+void plat_tzc400_setup(uintptr_t tzc_base);
+
 /* plat_storage.c */
 void rz_io_setup(void);
+
+/* plat_ddr_setup.c  */
+void plat_ddr_setup(void);
+
+/* bl31_plat_setup.c */
+void plat_copy_code_to_system_ram(void);
 
 typedef enum boot_kind {
 	RZ_COLD_BOOT,
