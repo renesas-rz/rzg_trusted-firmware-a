@@ -39,6 +39,8 @@ ifeq (${PLAT_SUSPEND_MODE},awo)
 override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 
+PLAT_EMMC_WRITE_ENABLE			:= 1
+
 $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,SECURE_RTC))
 $(eval $(call add_define,PROTECTED_CHIPID))
@@ -47,7 +49,7 @@ $(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
 $(eval $(call add_define,PLAT_M33_BOOT_SUPPORT))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND_${PLAT_SUSPEND_MODE}))
-
+$(eval $(call add_define,PLAT_EMMC_WRITE_ENABLE))
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1
 ERRATA_A55_778703 				:= 1
