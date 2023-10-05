@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,9 +17,16 @@
 #include <tools_share/firmware_image_package.h>
 
 #include <rz_soc_def.h>
-#include <spi_multi.h>
 #include <sys.h>
+#if PLAT_SOC_RZG2L
+#include <spi_multi.h>
+#else
+#include <xspi.h>
+#endif
+#include <emmc_def.h>
+
 #include <sys_regs.h>
+
 
 static uintptr_t fip_dev_handle;
 static uintptr_t memdrv_dev_handle;
@@ -92,23 +99,27 @@ struct plat_io_policy {
 	int32_t (*check)(const uintptr_t spec);
 };
 
-static const struct plat_io_policy emmc_fip_policy = {
-	&emmcdrv_dev_handle,
-	(uintptr_t) &emmc_block_spec,
-	&open_emmcdrv
-};
-static const struct plat_io_policy spirom_fip_policy = {
-	&memdrv_dev_handle,
-	(uintptr_t) &spirom_block_spec,
-	&open_memmap
-};
 static const struct plat_io_policy sd_fip_policy = {
 	&sddrv_dev_handle,
 	(uintptr_t) &sd_block_spec,
 	&open_sddrv
 };
 
-static struct plat_io_policy policies[MAX_NUMBER_IDS] = {
+static const struct plat_io_policy emmc_fip_policy = {
+	&emmcdrv_dev_handle,
+	(uintptr_t) &emmc_block_spec,
+	&open_emmcdrv
+};
+
+static const struct plat_io_policy spirom_fip_policy = {
+	&memdrv_dev_handle,
+	(uintptr_t) &spirom_block_spec,
+	&open_memmap
+};
+
+static struct plat_io_policy policies[] = {
+	/* FIP_IMAGE_ID structure is added to this array on a bootmode basis */
+
 	[BL31_IMAGE_ID] = {
 				&fip_dev_handle,
 				(uintptr_t) &bl31_file_spec,
@@ -187,19 +198,19 @@ static int32_t open_sddrv(const uintptr_t spec)
 	return io_dev_init(sddrv_dev_handle, 0);
 }
 
-static void update_dev_policies(uint16_t boot_dev)
+static void update_dev_policies(uint16_t boot_mode)
 {
-	switch (boot_dev) {
-	case BOOT_MODE_SPI_1_8:
-	case BOOT_MODE_SPI_3_3:
-		policies[FIP_IMAGE_ID]			= spirom_fip_policy;
+	switch (boot_mode) {
+	case SYS_BOOT_MODE_SPI_1_8:
+	case SYS_BOOT_MODE_SPI_3_3:
+		policies[FIP_IMAGE_ID] = spirom_fip_policy;
 		break;
-	case BOOT_MODE_EMMC_1_8:
-	case BOOT_MODE_EMMC_3_3:
-		policies[FIP_IMAGE_ID]			= emmc_fip_policy;
+	case SYS_BOOT_MODE_EMMC_1_8:
+	case SYS_BOOT_MODE_EMMC_3_3:
+		policies[FIP_IMAGE_ID] = emmc_fip_policy;
 		break;
-	case BOOT_MODE_ESD:
-		policies[FIP_IMAGE_ID]			= sd_fip_policy;
+	case SYS_BOOT_MODE_ESD:
+		policies[FIP_IMAGE_ID] = sd_fip_policy;
 		break;
 	default:
 		panic();
@@ -212,7 +223,9 @@ void rz_io_setup(void)
 	const io_dev_connector_t *emmc;
 	const io_dev_connector_t *sd;
 	const io_dev_connector_t *rzsoc;
-	uint16_t boot_dev;
+	boot_mode_t boot_mode;
+
+	boot_mode = sys_get_boot_mode();
 
 	boot_io_drv_id = FIP_IMAGE_ID;
 
@@ -220,24 +233,38 @@ void rz_io_setup(void)
 
 	io_dev_open(rzsoc, 0, &fip_dev_handle);
 
-	boot_dev = mmio_read_32(SYS_LSI_MODE) & MASK_BOOTM_DEVICE;
-	if (boot_dev == BOOT_MODE_SPI_1_8 ||
-		boot_dev == BOOT_MODE_SPI_3_3) {
+	if (boot_mode == SYS_BOOT_MODE_SPI_1_8 ||
+		boot_mode == SYS_BOOT_MODE_SPI_3_3) {
+#if PLAT_SOC_RZG2L
 		spi_multi_setup();
+#else
+		xspi_setup();
+#endif /* PLAT_SOC_RZG2L */
 		register_io_dev_memmap(&memmap);
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
-	} else if (boot_dev == BOOT_MODE_EMMC_1_8 ||
-			   boot_dev == BOOT_MODE_EMMC_3_3) {
+	} else if  (boot_mode == SYS_BOOT_MODE_EMMC_1_8 ||
+				boot_mode == SYS_BOOT_MODE_EMMC_3_3) {
+		if (emmc_init() != EMMC_SUCCESS) {
+			NOTICE("BL2: Failed to eMMC driver initialize.\n");
+			panic();
+		}
+		emmc_memcard_power(EMMC_POWER_ON);
+		if (emmc_mount() != EMMC_SUCCESS) {
+			NOTICE("BL2: Failed to eMMC mount operation.\n");
+			panic();
+		}
+
 		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
-	} else if (boot_dev == BOOT_MODE_ESD) {
+	} else if (boot_mode == SYS_BOOT_MODE_ESD) {
 		register_io_dev_sddrv(&sd);
 		io_dev_open(sd, 0, &sddrv_dev_handle);
 	} else {
-		ERROR("Unsupported IO device %d.\n", boot_dev);
+		ERROR("Unsupported IO device %d.\n", boot_mode);
 		panic();
 	}
-	update_dev_policies(boot_dev);
+
+	update_dev_policies(boot_mode);
 }
 
 int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
@@ -257,3 +284,4 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 
 	return 0;
 }
+

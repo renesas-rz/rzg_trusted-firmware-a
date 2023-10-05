@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
+PLAT_SOC_RZG2L					:= 1
 BL2_AT_EL3						:= 1
 COLD_BOOT_SINGLE_CPU			:= 1
 PROGRAMMABLE_RESET_ADDRESS		:= 1
@@ -14,6 +15,9 @@ USE_COHERENT_MEM				:= 0
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
 DEBUG_FPGA						:= 0
+PLAT_EMMC_WRITE_ENABLE			:= 0
+
+$(eval $(call add_define,PLAT_SOC_RZG2L))
 $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,DEBUG_FPGA))
 
@@ -75,6 +79,7 @@ PLAT_BL_COMMON_SOURCES	:=	${XLAT_TABLES_LIB_SRCS}									\
 							plat/renesas/rz/common/aarch64/plat_helpers.S			\
 							plat/renesas/rz/common/drivers/scifa.S					\
 							plat/renesas/rz/common/drivers/syc.c					\
+							plat/renesas/rz/common/drivers/sys.c					\
 							plat/renesas/rz/common/drivers/cpg.c					\
 							plat/renesas/rz/common/plat_rz_common.c					\
 							plat/renesas/rz/common/plat_security.c

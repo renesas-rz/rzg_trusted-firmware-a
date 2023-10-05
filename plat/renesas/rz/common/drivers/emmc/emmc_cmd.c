@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -95,7 +95,7 @@ static EMMC_ERROR_CODE emmc_response_check(uint32_t *response,
 {
 
 	HAL_MEMCARD_RESPONSE_TYPE response_type =
-	    ((HAL_MEMCARD_RESPONSE_TYPE)mmc_drv_obj.cmd_info.cmd & HAL_MEMCARD_RESPONSE_TYPE_MASK);
+		((HAL_MEMCARD_RESPONSE_TYPE)mmc_drv_obj.cmd_info.cmd & HAL_MEMCARD_RESPONSE_TYPE_MASK);
 
 	if (response == NULL)
 		return EMMC_ERR_PARAM;
@@ -107,8 +107,8 @@ static EMMC_ERROR_CODE emmc_response_check(uint32_t *response,
 	if (response_type <= HAL_MEMCARD_RESPONSE_R1b) {
 		/* R1 or R1b */
 		mmc_drv_obj.current_state =
-		    (EMMC_R1_STATE) ((*response & EMMC_R1_STATE_MASK) >>
-				     EMMC_R1_STATE_SHIFT);
+			(EMMC_R1_STATE) ((*response & EMMC_R1_STATE_MASK) >>
+					 EMMC_R1_STATE_SHIFT);
 		if ((*response & error_mask) != 0) {
 			if ((0x80 & *response) != 0) {
 				ERROR("BL2: emmc SWITCH_ERROR\n");
@@ -221,10 +221,10 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 
 	state = ESTATE_BEGIN;
 	response_type =
-	    ((HAL_MEMCARD_RESPONSE_TYPE)mmc_drv_obj.cmd_info.cmd &
+		((HAL_MEMCARD_RESPONSE_TYPE)mmc_drv_obj.cmd_info.cmd &
 					HAL_MEMCARD_RESPONSE_TYPE_MASK);
 	cmd_type =
-	    ((HAL_MEMCARD_COMMAND_TYPE) mmc_drv_obj.cmd_info.cmd &
+		((HAL_MEMCARD_COMMAND_TYPE) mmc_drv_obj.cmd_info.cmd &
 					HAL_MEMCARD_COMMAND_TYPE_MASK);
 
 	/* state machine */
@@ -241,7 +241,7 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 			/* Busy check */
 			if ((mmc_drv_obj.error_info.info2 & SD_INFO2_CBSY) != 0) {
 				emmc_write_error_info(EMMC_FUNCNO_EXEC_CMD,
-						      EMMC_ERR_CARD_BUSY);
+							  EMMC_ERR_CARD_BUSY);
 				return EMMC_ERR_CARD_BUSY;
 			}
 
@@ -302,8 +302,8 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 			/* check interrupt */
 			if ((mmc_drv_obj.int_event2 & SD_INFO2_ALL_ERR) != 0) {
 				if ((mmc_drv_obj.get_partition_access_flag ==
-				     TRUE)
-				    && ((mmc_drv_obj.int_event2 & SD_INFO2_ERR6)
+					 TRUE)
+					&& ((mmc_drv_obj.int_event2 & SD_INFO2_ERR6)
 					!= 0U)) {
 					err_not_care_flag = TRUE;
 					rtn_code = EMMC_ERR_CMD_TIMEOUT;
@@ -379,7 +379,7 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 				/* PIO */
 				/* interrupt enable (FIFO read/write enable) */
 				if (mmc_drv_obj.cmd_info.dir ==
-				    HAL_MEMCARD_WRITE) {
+					HAL_MEMCARD_WRITE) {
 					SETR_32(SD_INFO2_MASK,
 						(SD_INFO2_BWE | SD_INFO2_ALL_ERR
 						 | SD_INFO2_CLEAR));
@@ -461,7 +461,7 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 			} else {
 				emmc_softreset();
 				emmc_write_error_info(EMMC_FUNCNO_EXEC_CMD,
-						      rtn_code);
+							  rtn_code);
 			}
 			return rtn_code;
 

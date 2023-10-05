@@ -18,7 +18,6 @@
 #include <lib/utils.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 #include <plat/common/platform.h>
-#include <rz_soc_private.h>
 #include <sys.h>
 #include <ddr.h>
 

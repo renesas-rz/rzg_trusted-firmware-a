@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -28,9 +28,9 @@ uint32_t emmc_interrupt(void)
 
 	/* SD_INFO EVENT */
 	mmc_drv_obj.int_event1 =
-	    mmc_drv_obj.error_info.info1 & GETR_32(SD_INFO1_MASK);
+		mmc_drv_obj.error_info.info1 & GETR_32(SD_INFO1_MASK);
 	mmc_drv_obj.int_event2 =
-	    mmc_drv_obj.error_info.info2 & GETR_32(SD_INFO2_MASK);
+		mmc_drv_obj.error_info.info2 & GETR_32(SD_INFO2_MASK);
 
 	/* ERR_STS */
 	mmc_drv_obj.error_info.status1 = GETR_32(SD_ERR_STS1);
@@ -42,9 +42,9 @@ uint32_t emmc_interrupt(void)
 
 	/* DM_CM_INFO EVENT */
 	mmc_drv_obj.dm_event1 =
-	    mmc_drv_obj.error_info.dm_info1 & GETR_32(DM_CM_INFO1_MASK);
+		mmc_drv_obj.error_info.dm_info1 & GETR_32(DM_CM_INFO1_MASK);
 	mmc_drv_obj.dm_event2 =
-	    mmc_drv_obj.error_info.dm_info2 & GETR_32(DM_CM_INFO2_MASK);
+		mmc_drv_obj.error_info.dm_info2 & GETR_32(DM_CM_INFO2_MASK);
 
 	/* ERR SD_INFO2 */
 	if ((SD_INFO2_ALL_ERR & mmc_drv_obj.int_event2) != 0) {
@@ -150,7 +150,7 @@ static EMMC_ERROR_CODE emmc_trans_sector(uint32_t *buff_address_virtual)
 	}
 
 	if ((mmc_drv_obj.during_transfer != TRUE)
-	    || (mmc_drv_obj.remain_size == 0)) {
+		|| (mmc_drv_obj.remain_size == 0)) {
 		return EMMC_ERR_STATE;
 	}
 
@@ -161,6 +161,20 @@ static EMMC_ERROR_CODE emmc_trans_sector(uint32_t *buff_address_virtual)
 	for (i = 0; i < (length >> 3); i++) {
 		/* Write */
 		if (mmc_drv_obj.cmd_info.dir == HAL_MEMCARD_WRITE) {
+#if PLAT_EMMC_WRITE_ENABLE
+			/* Checks when the write data reaches SD_SIZE. */
+			if (((i % (uint32_t) (EMMC_BLOCK_LENGTH >> EMMC_BUF_SIZE_SHIFT)) == 0U) && (i != 0U)) {
+				/* BWE check */
+				while (((GETR_32(SD_INFO2)) & SD_INFO2_BWE) == 0U) {
+					/* ERROR check */
+					if (((GETR_32(SD_INFO2)) & SD_INFO2_ALL_ERR) != 0U) {
+						return EMMC_ERR_TRANSFER;
+					}
+				}
+				/* BWE clear */
+				SETR_32(SD_INFO2, (uint32_t)(GETR_32(SD_INFO2) & ~SD_INFO2_BWE));
+			}
+#endif /* PLAT_EMMC_WRITE_ENABLE */
 			SETR_64(SD_BUF0, *bufPtrLL);	/* buffer --> FIFO */
 		}
 		/* Read */
@@ -168,22 +182,22 @@ static EMMC_ERROR_CODE emmc_trans_sector(uint32_t *buff_address_virtual)
 			/* Checks when the read data reaches SD_SIZE. */
 			/* The BRE bit is cleared at emmc_interrupt function. */
 			if (((i %
-			      (uint32_t) (EMMC_BLOCK_LENGTH >>
+				  (uint32_t) (EMMC_BLOCK_LENGTH >>
 					  EMMC_BUF_SIZE_SHIFT)) == 0U)
-			    && (i != 0U)) {
+				&& (i != 0U)) {
 				/* BRE check */
 				while (((GETR_32(SD_INFO2)) & SD_INFO2_BRE) ==
-				       0U) {
+					   0U) {
 					/* ERROR check */
 					if (((GETR_32(SD_INFO2)) &
-					     SD_INFO2_ALL_ERR) != 0U) {
+						 SD_INFO2_ALL_ERR) != 0U) {
 						return EMMC_ERR_TRANSFER;
 					}
 				}
 				/* BRE clear */
 				SETR_32(SD_INFO2,
 					(uint32_t) (GETR_32(SD_INFO2) &
-						    ~SD_INFO2_BRE));
+							~SD_INFO2_BRE));
 			}
 			*bufPtrLL = GETR_64(SD_BUF0);	/* FIFO --> buffer */
 		}

@@ -455,16 +455,16 @@ typedef struct {
 
 	/* CSD registers (4byte align) */
 	uint8_t csd_data[EMMC_MAX_CSD_LENGTH]			/* CSD */
-	    __attribute__ ((aligned(EMMC_RES_REG_ALIGNED)));
+		__attribute__ ((aligned(EMMC_RES_REG_ALIGNED)));
 	/* CID registers (4byte align) */
 	uint8_t cid_data[EMMC_MAX_CID_LENGTH]			/* CID */
-	    __attribute__ ((aligned(EMMC_RES_REG_ALIGNED)));
+		__attribute__ ((aligned(EMMC_RES_REG_ALIGNED)));
 	/* EXT CSD registers (8byte align) */
-	uint8_t ext_csd_data[EMMC_MAX_EXT_CSD_LENGTH]		/* EXT_CSD */
-	    __attribute__ ((aligned(EMMC_BUF_REG_ALIGNED)));
+	uint8_t ext_csd_data[EMMC_MAX_EXT_CSD_LENGTH]	/* EXT_CSD */
+		__attribute__ ((aligned(EMMC_BUF_REG_ALIGNED)));
 	/* Response registers (4byte align) */
-	uint8_t response_data[EMMC_MAX_RESPONSE_LENGTH]		/* other response */
-	    __attribute__ ((aligned(EMMC_RES_REG_ALIGNED)));
+	uint8_t response_data[EMMC_MAX_RESPONSE_LENGTH]	/* other response */
+		__attribute__ ((aligned(EMMC_RES_REG_ALIGNED)));
 } st_mmc_base;
 
 typedef int (*func) (void);

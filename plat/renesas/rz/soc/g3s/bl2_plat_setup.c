@@ -22,7 +22,6 @@
 #include <pwrc.h>
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
-#include <rz_soc_private.h>
 #include <rz_private.h>
 
 static console_t rzg3s_bl2_console;

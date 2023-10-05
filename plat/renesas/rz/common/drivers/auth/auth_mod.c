@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015-2020, ARM Limited and Contributors. All rights reserved.
- * Copyright (c) 2021, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -53,7 +53,8 @@ static int auth_get_param(const auth_param_type_desc_t *param_type_desc,
 		return 1;
 
 	for (i = 0 ; i < COT_MAX_VERIFIED_PARAMS ; i++) {
-		if (cmp_auth_param_type_desc(param_type_desc, img_desc->authenticated_data[i].type_desc) == 0) {
+		if (cmp_auth_param_type_desc(param_type_desc,
+				img_desc->authenticated_data[i].type_desc) == 0) {
 			*param = img_desc->authenticated_data[i].data.ptr;
 			*len = img_desc->authenticated_data[i].data.len;
 			return 0;

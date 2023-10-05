@@ -27,7 +27,7 @@
 
 #define PLATFORM_SYSTEM_COUNT	U(1)
 #define PLATFORM_CLUSTER_COUNT	U(1)
-#define PLATFORM_CORE_COUNT		U(2)
+#define PLATFORM_CORE_COUNT		U(4)
 
 #define PLAT_MAX_PWR_LVL		MPIDR_AFFLVL2
 #define PLAT_NUM_PWR_DOMAINS	(PLATFORM_CORE_COUNT + \
@@ -46,31 +46,31 @@
  * BL2 specific defines.
  ******************************************************************************/
 #if !TRUSTED_BOARD_BOOT
-#define BL2_BASE				(0x00012000)
-#define BL2_LIMIT				(0x0002F000)
+#define BL2_BASE				UL(0x08103000)
 #else
-#define BL2_BASE				(0x00013000)
-#define BL2_LIMIT				(0x0002F000)
+#define BL2_BASE				UL(0x08102000)
 #endif
+#define BL2_LIMIT				UL(0x08167000)
+
 
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
-#define BL31_BASE				(0x44000000)
-#define BL31_LIMIT				(0x44040000)
+#define BL31_BASE				UL(0x44000000)
+#define BL31_LIMIT				UL(0x44040000)
 
 /*******************************************************************************
  * BL32 specific defines.
  ******************************************************************************/
 #ifndef SPD_none
-#define BL32_BASE				(0x44100000)
+#define BL32_BASE				UL(0x44100000)
 #define BL32_LIMIT				(BL32_BASE + 0x100000)
 #endif
 
 /*******************************************************************************
  * BL33
  ******************************************************************************/
-#define BL33_BASE				(0x50000000)
+#define BL33_BASE				UL(0x50000000)
 #define BL33_LIMIT				(BL33_BASE + 0x08000000)
 
 /*******************************************************************************
@@ -84,8 +84,8 @@
 #define MAX_MMAP_REGIONS		U(9)
 #endif
 
-#define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 32)
-#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 32)
+#define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 36)
+#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 36)		/* Max Physical Address is 0xF_FFFF_FFFF */
 
 /*******************************************************************************
  * Declarations and constants to access the mailboxes safely. Each mailbox is

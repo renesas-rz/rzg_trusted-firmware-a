@@ -15,16 +15,36 @@
 #include <sys_regs.h>
 
 
-static uintptr_t rz_otp_handler_devid(void *handle, u_register_t x1)
+static bool is_rz_sys_pcie_offset(uint32_t offset)
 {
-#if defined(RZ_SOC_OTP_BASE_DEVID)
-	uint32_t devid_1 = mmio_read_32(RZ_SOC_OTP_BASE_DEVID);
-#else
-	uint32_t devid_1 = 0;
-#endif
-	uint32_t devid_2 = mmio_read_32(RZ_SOC_SYSC_BASE_DEVID);
+	if ((offset >= SYS_PCIE_REG_OFFSET_START) && (offset <= SYS_PCIE_REG_OFFSET_END))
+		return true;
+	else
+		return false;
+}
 
-	SMC_RET2(handle, devid_1, devid_2);
+static uintptr_t rz_sys_pcie_get_val(void *handle, u_register_t x1)
+{
+	uint32_t val;
+
+	if (is_rz_sys_pcie_offset((uint32_t) x1)) {
+		val = mmio_read_32(RZV2H_SYSC_BASE + (uintptr_t) x1);
+		SMC_RET1(handle, val);
+	} else {
+		WARN("%s: Offset address out of SYS-PCIe areas\n", __func__);
+		SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
+	}
+}
+
+static uintptr_t rz_sys_pcie_set_val(void *handle, u_register_t x1, u_register_t x2)
+{
+	if (is_rz_sys_pcie_offset((uint32_t) x1)) {
+		mmio_write_32(RZV2H_SYSC_BASE + (uintptr_t) x1, (uint32_t) x2);
+		SMC_RET0(handle);
+	} else {
+		WARN("%s: Offset address out of SYS-PCIe areas\n", __func__);
+		SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
+	}
 }
 
 static uintptr_t rz_otp_handler_chipid(void *handle, u_register_t x1, u_register_t flags)
@@ -48,18 +68,12 @@ static uintptr_t rz_otp_handler_chipid(void *handle, u_register_t x1, u_register
 	SMC_RET4(handle, chipid[0], chipid[1], chipid[2], chipid[3]);
 }
 
-#ifdef RZG3S_SYSC_PCIE_RST_RSM_B_OFFSET
-static uintptr_t rz_otp_handler_set_pcie(void *handle, u_register_t x1, u_register_t x2)
+static uintptr_t rz_otp_handler_productid(void *handle)
 {
-	if ((uintptr_t)x1 == RZG3S_SYSC_PCIE_RST_RSM_B_OFFSET) {
-		mmio_write_32(RZG3S_SYSC_BASE + (uintptr_t)x1, (uint32_t)x2);
-		SMC_RET0(handle);
-	} else {
-		WARN("%s: Invalid SYSC_PCIe address\n", __func__);
-		SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
-	}
+	uint32_t productid = mmio_read_32(RZ_SOC_OTP_BASE_PRODUCTID);
+
+	SMC_RET1(handle, productid);
 }
-#endif
 
 uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 					u_register_t x1,
@@ -71,14 +85,14 @@ uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 					u_register_t flags)
 {
 	switch (smc_fid) {
-	case RZ_SIP_SVC_GET_DEVID:
-		return rz_otp_handler_devid(handle, x1);
 	case RZ_SIP_SVC_GET_CHIPID:
 		return rz_otp_handler_chipid(handle, x1, flags);
-#ifdef RZG3S_SYSC_PCIE_RST_RSM_B_OFFSET
-	case RZ_SIP_SVC_SET_PCIE_RST_RSMB:
-		return rz_otp_handler_set_pcie(handle, x1, x2);
-#endif
+	case RZ_SIP_SVC_GET_PRODUCTID:
+		return rz_otp_handler_productid(handle);
+	case RZ_SIP_SVC_GET_SYSPCIE:
+		return rz_sys_pcie_get_val(handle, x1);
+	case RZ_SIP_SVC_SET_SYSPCIE:
+		return rz_sys_pcie_set_val(handle, x1, x2);
 	default:
 		WARN("%s: Unimplemented RZ SiP Service Call: 0x%x\n", __func__, smc_fid);
 		SMC_RET1(handle, SMC_UNK);
