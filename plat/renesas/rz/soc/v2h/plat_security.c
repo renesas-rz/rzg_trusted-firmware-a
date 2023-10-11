@@ -251,7 +251,7 @@ static void plat_tzc_spi_setup(void)
 		{
 			/* Default Region 0: Aaccess to region required to store  */
 			.base = RZV2H_XSPI_BASE,
-			.end  = (RZV2H_XSPI_BASE + (RZV2H_BL2_SIZE_MAX + RZV2H_FIP_SIZE_MAX)),
+			.end  = (RZV2H_XSPI_BASE + (RZV2H_BL2_END_OFFSET + RZV2H_FIP_SIZE_MAX)),
 			.sec_attr = TZC_REGION_S_NONE,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
