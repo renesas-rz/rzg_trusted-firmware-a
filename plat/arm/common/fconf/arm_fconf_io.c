@@ -61,6 +61,18 @@ static io_block_spec_t bkup_gpt_spec = {
 	.offset         = PLAT_ARM_FLASH_IMAGE_BASE,
 	.length         = 0,
 };
+
+/*
+ * length will be assigned at runtime based on MBR header data.
+ * Backup GPT Header is present in Last LBA-1 and its entries
+ * are last 32 blocks starts at LBA-33, On runtime update these
+ * before device usage. Update offset to beginning LBA-33 and
+ * length to LBA-33.
+ */
+static io_block_spec_t bkup_gpt_spec = {
+	.offset         = PLAT_ARM_FLASH_IMAGE_BASE,
+	.length         = 0,
+};
 #endif /* ARM_GPT_SUPPORT */
 
 const io_uuid_spec_t arm_uuid_spec[MAX_NUMBER_IDS] = {
