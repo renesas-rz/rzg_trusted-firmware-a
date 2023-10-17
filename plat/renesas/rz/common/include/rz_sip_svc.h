@@ -19,6 +19,9 @@
 /* Function ID to set PCIE RST_RSM_B */
 #define RZ_SIP_SVC_SET_PCIE_RST_RSMB	U(0x82000013)
 
+/* Function ID to set USB Power Ready. */
+#define RZ_SIP_SVC_SET_USB_PWRRDY		U(0x82000014)
+
 /* Function ID to get PCIe register values */
 #define RZ_SIP_SVC_GET_SYSPCIE		U(0x82000020)
 
