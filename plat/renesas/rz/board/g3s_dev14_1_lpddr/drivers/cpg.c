@@ -233,7 +233,7 @@ static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
 	{		/* SDHI */
 		(uintptr_t)CPG_CLKON_SDHI,
 		(uintptr_t)CPG_CLKMON_SDHI,
-		0x00FF00FF,
+		0x0FFF0FFF,
 		CPG_T_CLK
 	},
 	{		/* USB */
@@ -308,7 +308,7 @@ static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
 	{		/* SDHI */
 		(uintptr_t)CPG_RST_SDHI,
 		(uintptr_t)CPG_RSTMON_SDHI,
-		0x00030003,
+		0x00070007,
 		CPG_T_RST
 	},
 	{		/* USB */

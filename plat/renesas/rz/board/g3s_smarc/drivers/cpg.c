@@ -360,6 +360,26 @@ static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
 	},
 };
 
+#if defined(PLAT_SYSTEM_SUSPEND_awo)
+static const CPG_SETUP_DATA cpg_scif_clock_tbl[] = {
+	{		/* SCIF */
+		(uintptr_t)CPG_CLKON_SCIF,
+		(uintptr_t)CPG_CLKMON_SCIF,
+		0x003F0009,
+		CPG_T_CLK
+	},
+};
+
+static const CPG_SETUP_DATA cpg_scif_reset_tbl[] = {
+	{		/* SCIF */
+		(uintptr_t)CPG_RST_SCIF,
+		(uintptr_t)CPG_RSTMON_SCIF,
+		0x003F0009,
+		CPG_T_RST
+	},
+};
+#endif
+
 static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 #if PLAT_M33_BOOT_SUPPORT
 	{		/* CM33 */
@@ -439,7 +459,7 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 	{		/* SCIF */
 		(uintptr_t)CPG_CLKON_SCIF,
 		(uintptr_t)CPG_CLKMON_SCIF,
-		0x003F0001,
+		0x003F0009,
 		CPG_T_CLK
 	},
 	{		/* SCI */
@@ -582,7 +602,7 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 	{		/* SCIF */
 		(uintptr_t)CPG_RST_SCIF,
 		(uintptr_t)CPG_RSTMON_SCIF,
-		0x003F0001,
+		0x003F0009,
 		CPG_T_RST
 	},
 	{		/* SCI */
@@ -858,6 +878,8 @@ void cpg_resume_setup(void)
 #if defined(PLAT_SYSTEM_SUSPEND_awo)
 	cpg_clkrst_start(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
 	cpg_clkrst_start(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
+	cpg_clkrst_start(cpg_scif_reset_tbl, ARRAY_SIZE(cpg_scif_reset_tbl));
+	cpg_clkrst_start(cpg_scif_clock_tbl, ARRAY_SIZE(cpg_scif_clock_tbl));
 	cpg_module_start(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
 #endif
 }

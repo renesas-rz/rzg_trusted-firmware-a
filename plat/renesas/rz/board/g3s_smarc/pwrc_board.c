@@ -46,8 +46,9 @@ bool pwrc_board_is_resume(void)
 
 				is_resume = true;
 
-				if (riic_write(GPAK, 0xF4, 0x00) < 0)
+				if (riic_write(GPAK, 0xF4, 0x00) < 0) {
 					panic();
+				}
 
 				break;
 			}
@@ -55,19 +56,13 @@ bool pwrc_board_is_resume(void)
 	}
 	first_call = false;
 #elif defined(PLAT_SYSTEM_SUSPEND_awo)
-	static bool first_call = true;
-
-	if (first_call) {
-		/* Receive transition to resume from CM33 core */
-		if (mmio_read_32(VBATT_BKR0) == 0x000000F0)
-			is_resume = true;
-		else
-			is_resume = false;
-
-		/* Flag clear */
-		mmio_write_32(VBATT_BKR0, 0x00000000);
+	/* Receive transition to resume from CM33 core */
+	if (mmio_read_32(VBATT_BKR0) == 0x000000F0) {
+		is_resume = true;
 	}
-	first_call = false;
+
+	/* Flag clear */
+	mmio_write_32(VBATT_BKR0, 0x00000000);
 #else
 	is_resume = false;
 #endif
