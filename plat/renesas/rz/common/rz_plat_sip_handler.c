@@ -61,6 +61,19 @@ static uintptr_t rz_otp_handler_set_pcie(void *handle, u_register_t x1, u_regist
 }
 #endif
 
+#ifdef RZG3S_SYSC_USB_PWRRDY_OFFSET
+static uintptr_t rz_otp_handler_set_usb(void *handle, u_register_t x1, u_register_t x2)
+{
+	if ((uintptr_t)x1 == RZG3S_SYSC_USB_PWRRDY_OFFSET) {
+		mmio_write_32(RZG3S_SYSC_BASE + (uintptr_t)x1, (uint32_t)x2);
+		SMC_RET0(handle);
+	} else {
+		WARN("%s: Invalid SYSC_USB_PWRRDY address\n", __func__);
+		SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
+	}
+}
+#endif
+
 uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 					u_register_t x1,
 					u_register_t x2,
@@ -78,6 +91,10 @@ uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 #ifdef RZG3S_SYSC_PCIE_RST_RSM_B_OFFSET
 	case RZ_SIP_SVC_SET_PCIE_RST_RSMB:
 		return rz_otp_handler_set_pcie(handle, x1, x2);
+#endif
+#ifdef RZG3S_SYSC_USB_PWRRDY_OFFSET
+	case RZ_SIP_SVC_SET_USB_PWRRDY:
+		return rz_otp_handler_set_usb(handle, x1, x2);
 #endif
 	default:
 		WARN("%s: Unimplemented RZ SiP Service Call: 0x%x\n", __func__, smc_fid);
