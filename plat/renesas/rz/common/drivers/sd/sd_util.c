@@ -73,56 +73,48 @@ static uint8_t _sd_calc_crc(uint8_t *data, int32_t len);
  *****************************************************************************/
 int32_t _sd_set_clock(st_sdhndl_t *p_hndl, int32_t clock, int32_t enable)
 {
-    uint32_t div;
-    int32_t  i;
+	uint32_t div;
+	int32_t  i;
 
-    if (SD_CLOCK_ENABLE == enable)
-    {
-        /* convert clock frequency to clock divide ratio */
-        div = sddev_get_clockdiv(p_hndl->sd_port, clock);
+	if (SD_CLOCK_ENABLE == enable) {
+		/* convert clock frequency to clock divide ratio */
+		div = sddev_get_clockdiv(p_hndl->sd_port, clock);
 
-        if ((div > SD_DIV_512) && (SD_DIV_1 != div))
-        {
-            _sd_set_err(p_hndl, SD_ERR_CPU_IF);
-            return SD_ERR;
-        }
+		if ((div > SD_DIV_512) && (SD_DIV_1 != div)) {
+			_sd_set_err(p_hndl, SD_ERR_CPU_IF);
+			return SD_ERR;
+		}
 
-        /* SCLKEN = 0 */
-        SDMMC.SD_CLK_CTRL.LONGLONG = SDMMC.SD_CLK_CTRL.LONGLONG & (~SD_CLK_CTRL_SCLKEN);
+		/* SCLKEN = 0 */
+		SDMMC.SD_CLK_CTRL.LONGLONG = SDMMC.SD_CLK_CTRL.LONGLONG & (~SD_CLK_CTRL_SCLKEN);
 
-        /* write DIV[7:0] */
-        SDMMC.SD_CLK_CTRL.LONGLONG = ((SDMMC.SD_CLK_CTRL.LONGLONG  & (~0x00FFuL)) | div);
+		/* write DIV[7:0] */
+		SDMMC.SD_CLK_CTRL.LONGLONG = ((SDMMC.SD_CLK_CTRL.LONGLONG  & (~0x00FFuL)) | div);
 
-        /* SCLKEN = 1 */
-        SDMMC.SD_CLK_CTRL.LONGLONG = (SDMMC.SD_CLK_CTRL.LONGLONG | SD_CLK_CTRL_SCLKEN);
-    }
-    else
-    {
-        for (i = 0; i < SCLKDIVEN_LOOP_COUNT; i++)
-        {
+		/* SCLKEN = 1 */
+		SDMMC.SD_CLK_CTRL.LONGLONG = (SDMMC.SD_CLK_CTRL.LONGLONG | SD_CLK_CTRL_SCLKEN);
+	} else {
+		for (i = 0; i < SCLKDIVEN_LOOP_COUNT; i++) {
 #ifdef USE_INFO2_CBSY
-            /* Cast to an appropriate type */
-            if ( (SDMMC.SD_INFO2.LONGLONG & SD_INFO2_MASK_CBSY) == 0 )
-            {
-                break;
-            }
+			/* Cast to an appropriate type */
+			if ((SDMMC.SD_INFO2.LONGLONG & SD_INFO2_MASK_CBSY) == 0) {
+				break;
+			}
 #else
-            /* Cast to an appropriate type */
-            if (SDMMC.SD_INFO2.LONGLONG & SD_INFO2_MASK_SCLKDIVEN)
-            {
-                break;
-            }
+			/* Cast to an appropriate type */
+			if (SDMMC.SD_INFO2.LONGLONG & SD_INFO2_MASK_SCLKDIVEN) {
+				break;
+			}
 #endif
-        }
-        if (SCLKDIVEN_LOOP_COUNT == i)
-        {
-            p_hndl->error = SD_ERR_CBSY_ERROR;
-        }
+		}
+		if (SCLKDIVEN_LOOP_COUNT == i) {
+			p_hndl->error = SD_ERR_CBSY_ERROR;
+		}
 
-        /* SCLKEN = 0  halt */
-        SDMMC.SD_CLK_CTRL.LONGLONG = (SDMMC.SD_CLK_CTRL.LONGLONG & (~SD_CLK_CTRL_SCLKEN));
-    }
-    return SD_OK;
+		/* SCLKEN = 0  halt */
+		SDMMC.SD_CLK_CTRL.LONGLONG = (SDMMC.SD_CLK_CTRL.LONGLONG & (~SD_CLK_CTRL_SCLKEN));
+	}
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_set_clock
@@ -145,66 +137,56 @@ int32_t _sd_set_clock(st_sdhndl_t *p_hndl, int32_t clock, int32_t enable)
  *****************************************************************************/
 int32_t _sd_set_port(st_sdhndl_t *p_hndl, int32_t port)
 {
-    uint64_t reg;
-    uint16_t arg;
+	uint64_t reg;
+	uint16_t arg;
 
-    if (p_hndl->media_type & SD_MEDIA_SD)   /* SD or COMBO */
-    {
-        /* ---- check card state ---- */
-        if ((p_hndl->resp_status & RES_STATE) == STATE_TRAN)  /* transfer state */
-        {
-            if (SD_PORT_SERIAL == port)
-            {
-                arg = ARG_ACMD6_1BIT;
-            }
-            else
-            {
-                arg = ARG_ACMD6_4BIT;
-            }
+	if (p_hndl->media_type & SD_MEDIA_SD) {	/* SD or COMBO */
+		/* ---- check card state ---- */
+		if ((p_hndl->resp_status & RES_STATE) == STATE_TRAN) {	/* transfer state */
+			if (SD_PORT_SERIAL == port) {
+				arg = ARG_ACMD6_1BIT;
+			} else {
+				arg = ARG_ACMD6_4BIT;
+			}
 
-            /* ==== change card bus width (issue ACMD6) ==== */
-            if (_sd_send_acmd(p_hndl, ACMD6, 0, arg) != SD_OK)
-            {
-                return SD_ERR;
-            }
-            if (_sd_get_resp(p_hndl, SD_RSP_R1) != SD_OK)
-            {
-                return SD_ERR;
-            }
-        }
-    }
+			/* ==== change card bus width (issue ACMD6) ==== */
+			if (_sd_send_acmd(p_hndl, ACMD6, 0, arg) != SD_OK) {
+				return SD_ERR;
+			}
+			if (_sd_get_resp(p_hndl, SD_RSP_R1) != SD_OK) {
+				return SD_ERR;
+			}
+		}
+	}
 
-    /* ==== change SDHI bus width ==== */
-    if (SD_PORT_SERIAL == port) /* 1bit */
-    {
-        sddev_set_port(p_hndl->sd_port, port);
+	/* ==== change SDHI bus width ==== */
+	if (SD_PORT_SERIAL == port) {	/* 1bit */
+		sddev_set_port(p_hndl->sd_port, port);
 
-        /* Cast to an appropriate type */
-        reg = SDMMC.SD_OPTION.LONGLONG;
+		/* Cast to an appropriate type */
+		reg = SDMMC.SD_OPTION.LONGLONG;
 
-        /* Cast to an appropriate type */
-        reg |= SD_OPTION_WIDTH;
+		/* Cast to an appropriate type */
+		reg |= SD_OPTION_WIDTH;
 
-        /* Cast to an appropriate type */
-        SDMMC.SD_OPTION.LONGLONG = reg;
-    }
-    else    /* 4bits */
-    {
-        /* Cast to an appropriate type */
-        reg = SDMMC.SD_OPTION.LONGLONG;
+		/* Cast to an appropriate type */
+		SDMMC.SD_OPTION.LONGLONG = reg;
+	} else {	/* 4bits */
+		/* Cast to an appropriate type */
+		reg = SDMMC.SD_OPTION.LONGLONG;
 
-        /* Cast to an appropriate type */
-        reg &= (~SD_OPTION_WIDTH_MASK);
+		/* Cast to an appropriate type */
+		reg &= (~SD_OPTION_WIDTH_MASK);
 
-        /* Cast to an appropriate type */
-        SDMMC.SD_OPTION.LONGLONG = reg;
-        sddev_set_port(p_hndl->sd_port, port);
-    }
+		/* Cast to an appropriate type */
+		SDMMC.SD_OPTION.LONGLONG = reg;
+		sddev_set_port(p_hndl->sd_port, port);
+	}
 
-    /* Cast to an appropriate type */
-    p_hndl->if_mode = (uint8_t)port;
+	/* Cast to an appropriate type */
+	p_hndl->if_mode = (uint8_t)port;
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_set_port
@@ -221,21 +203,19 @@ int32_t _sd_set_port(st_sdhndl_t *p_hndl, int32_t port)
  *****************************************************************************/
 int32_t sd_iswp(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    /* Cast to an appropriate type */
-    return (int32_t)p_hndl->write_protect;
+	/* Cast to an appropriate type */
+	return (int32_t)p_hndl->write_protect;
 }
 /******************************************************************************
  End of function sd_iswp
@@ -253,23 +233,20 @@ int32_t sd_iswp(int32_t sd_port)
  *****************************************************************************/
 int32_t _sd_iswp(st_sdhndl_t *p_hndl)
 {
-    int32_t wp;
-    int32_t layout;
+	int32_t wp;
+	int32_t layout;
 
-    /* Cast to an appropriate type */
-    layout = sddev_wp_layout((int32_t)(p_hndl->sd_port));
+	/* Cast to an appropriate type */
+	layout = sddev_wp_layout((int32_t)(p_hndl->sd_port));
 
-    if (SD_OK == layout)
-    {
-        /* ===== check SD_INFO1 WP bit ==== */
-        wp = (int32_t)(((~SDMMC.SD_INFO1.WORD.LL) & SD_INFO1_MASK_WP) >> 7);
-    }
-    else
-    {
-        /* Cast to an appropriate type */
-        wp = (int32_t)SD_WP_OFF;
-    }
-    return wp;
+	if (SD_OK == layout) {
+		/* ===== check SD_INFO1 WP bit ==== */
+		wp = (int32_t)(((~SDMMC.SD_INFO1.WORD.LL) & SD_INFO1_MASK_WP) >> 7);
+	} else {
+		/* Cast to an appropriate type */
+		wp = (int32_t)SD_WP_OFF;
+	}
+	return wp;
 }
 /******************************************************************************
  End of function _sd_iswp
@@ -288,18 +265,16 @@ int32_t _sd_iswp(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 int32_t _sd_bit_search(uint16_t data)
 {
-    int32_t i;
+	int32_t i;
 
-    for (i = 15; i >= 0 ; i--)
-    {
-        if (data & 1u)
-        {
-            return i;
-        }
-        data >>= 1;
-    }
+	for (i = 15; i >= 0 ; i--) {
+		if (data & 1u) {
+			return i;
+		}
+		data >>= 1;
+	}
 
-    return -1;
+	return -1;
 }
 /******************************************************************************
  End of function _sd_bit_search
@@ -318,12 +293,11 @@ int32_t _sd_bit_search(uint16_t data)
  *****************************************************************************/
 int32_t _sd_set_err(st_sdhndl_t *p_hndl, int32_t error)
 {
-    if (SD_OK == p_hndl->error)
-    {
-        p_hndl->error = error;
-    }
+	if (SD_OK == p_hndl->error) {
+		p_hndl->error = error;
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_set_err
@@ -340,20 +314,18 @@ int32_t _sd_set_err(st_sdhndl_t *p_hndl, int32_t error)
  *****************************************************************************/
 void sd_stop(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return; /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return; /* not initilized */
+	}
 
-    p_hndl->stop = 1;
+	p_hndl->stop = 1;
 }
 /******************************************************************************
  End of function sd_stop
@@ -370,7 +342,7 @@ void sd_stop(int32_t sd_port)
  *              : SD_MEDIA_MMC     : MMC card
  *              : SD_MEDIA_SD      : SD Memory card
  *              : SD_MEDIA_COMBO   : SD COMBO card (IO spec ver1.10)
- *              : SD_MEDIA_EMBEDDED: 
+ *              : SD_MEDIA_EMBEDDED:
  * Arguments    : int32_t  sd_port : channel no (0 or 1)
  *              : uint16_t *type   : mounting card type
  *              : uint16_t *speed  : speed mode
@@ -383,38 +355,32 @@ void sd_stop(int32_t sd_port)
  *****************************************************************************/
 int32_t sd_get_type(int32_t sd_port, uint16_t *type, uint16_t *speed, uint8_t *capa)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (type)
-    {
-        *type = p_hndl->media_type;
-    }
+	if (type) {
+		*type = p_hndl->media_type;
+	}
 
-    if (p_hndl->partition_id > 0)
-    {
-        *type |= SD_MEDIA_EMBEDDED;
-    }
+	if (p_hndl->partition_id > 0) {
+		*type |= SD_MEDIA_EMBEDDED;
+	}
 
-    if (speed)
-    {
-        *speed = p_hndl->speed_mode;
-    }
-    if (capa)
-    {
-        *capa = p_hndl->csd_structure;
-    }
-    return SD_OK;
+	if (speed) {
+		*speed = p_hndl->speed_mode;
+	}
+	if (capa) {
+		*capa = p_hndl->csd_structure;
+	}
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_get_type
@@ -437,28 +403,24 @@ int32_t sd_get_type(int32_t sd_port, uint16_t *type, uint16_t *speed, uint8_t *c
  *****************************************************************************/
 int32_t sd_get_size(int32_t sd_port, uint32_t *user, uint32_t *protect)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (user)
-    {
-        *user = p_hndl->card_sector_size;
-    }
-    if (protect)
-    {
-        *protect = p_hndl->prot_sector_size;
-    }
-    return SD_OK;
+	if (user) {
+		*user = p_hndl->card_sector_size;
+	}
+	if (protect) {
+		*protect = p_hndl->prot_sector_size;
+	}
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_get_size
@@ -476,70 +438,62 @@ int32_t sd_get_size(int32_t sd_port, uint32_t *user, uint32_t *protect)
  *****************************************************************************/
 int32_t _sd_get_size(st_sdhndl_t *p_hndl, uint32_t area)
 {
-    uint32_t c_mult;
-    uint32_t c_size;
-    uint32_t read_bl_len;
+	uint32_t c_mult;
+	uint32_t c_size;
+	uint32_t read_bl_len;
 
-    /* ---- READ BL LEN ---- */
-    read_bl_len = (p_hndl->csd[3] & 0x0f00u) >> 8;
+	/* ---- READ BL LEN ---- */
+	read_bl_len = (p_hndl->csd[3] & 0x0f00u) >> 8;
 
-    /* ---- C_SIZE_MULT ---- */
-    c_mult = ((p_hndl->csd[5] & 0x0380u) >> 7);
+	/* ---- C_SIZE_MULT ---- */
+	c_mult = ((p_hndl->csd[5] & 0x0380u) >> 7);
 
-    if (area & SD_PROT_AREA)
-    {
-        /* calculate the number of all sectors */
-        if ((SD_MODE_VER2X == p_hndl->sup_ver) && (0x01 == p_hndl->csd_structure))
-        {
-            /* Cast to an appropriate type */
-            p_hndl->prot_sector_size = (((uint32_t)p_hndl->sdstatus[2] << 16u) |
+	if (area & SD_PROT_AREA) {
+		/* calculate the number of all sectors */
+		if ((SD_MODE_VER2X == p_hndl->sup_ver) && (0x01 == p_hndl->csd_structure)) {
+			/* Cast to an appropriate type */
+			p_hndl->prot_sector_size = (((uint32_t)p_hndl->sdstatus[2] << 16u) |
 
-                                        /* Cast to an appropriate type */
-                                        ((uint32_t)p_hndl->sdstatus[3])) / 512;
-        }
-        else
-        {
-            /* Cast to an appropriate type */
-            p_hndl->prot_sector_size = (p_hndl->sdstatus[3] *
+										/* Cast to an appropriate type */
+										((uint32_t)p_hndl->sdstatus[3])) / 512;
+		} else {
+			/* Cast to an appropriate type */
+			p_hndl->prot_sector_size = (p_hndl->sdstatus[3] *
 
-                                        /* Cast to an appropriate type */
-                                        ((uint32_t)1 << (c_mult + 2)) *
+										/* Cast to an appropriate type */
+										((uint32_t)1 << (c_mult + 2)) *
 
-                                        /* Cast to an appropriate type */
-                                        ((uint32_t)1 << read_bl_len)) / 512;
-        }
-    }
+										/* Cast to an appropriate type */
+										((uint32_t)1 << read_bl_len)) / 512;
+		}
+	}
 
-    if (area & SD_USER_AREA)
-    {
-        if ((SD_MODE_VER2X == p_hndl->sup_ver) && (0x01 == p_hndl->csd_structure))
-        {
-            /* Cast to an appropriate type */
-            c_size = ((((uint32_t)p_hndl->csd[4] & 0x3fffu) << 8u) |
+	if (area & SD_USER_AREA) {
+		if ((SD_MODE_VER2X == p_hndl->sup_ver) && (0x01 == p_hndl->csd_structure)) {
+			/* Cast to an appropriate type */
+			c_size = ((((uint32_t)p_hndl->csd[4] & 0x3fffu) << 8u) |
 
-                        /* Cast to an appropriate type */
-                        (((uint32_t)p_hndl->csd[5] & 0xff00u) >> 8u));
+						/* Cast to an appropriate type */
+						(((uint32_t)p_hndl->csd[5] & 0xff00u) >> 8u));
 
-            /* memory capacity = C_SIZE*512K byte */
-            /* sector_size = memory capacity/512 */
-            p_hndl->card_sector_size = ((c_size + 1) << 10u);
-        }
-        else
-        {
-            /* ---- C_SIZE ---- */
-            c_size = ((p_hndl->csd[3] & 0x0003u) << 10) |
-                        ((p_hndl->csd[4] & 0xffc0u) >> 6);
+			/* memory capacity = C_SIZE*512K byte */
+			/* sector_size = memory capacity/512 */
+			p_hndl->card_sector_size = ((c_size + 1) << 10u);
+		} else {
+			/* ---- C_SIZE ---- */
+			c_size = ((p_hndl->csd[3] & 0x0003u) << 10) |
+						((p_hndl->csd[4] & 0xffc0u) >> 6);
 
-            /* calculate the number of all sectors */
-            p_hndl->card_sector_size = ((uint32_t)(c_size + 1) *
+			/* calculate the number of all sectors */
+			p_hndl->card_sector_size = ((uint32_t)(c_size + 1) *
 
-                                        /* Cast to an appropriate type */
-                                        ((uint32_t)1 << (c_mult + 2)) * ((uint32_t)1
-                                                << read_bl_len)) / 512;
-        }
-    }
+										/* Cast to an appropriate type */
+										((uint32_t)1 << (c_mult + 2)) * ((uint32_t)1
+												<< read_bl_len)) / 512;
+		}
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_get_size
@@ -554,19 +508,17 @@ int32_t _sd_get_size(st_sdhndl_t *p_hndl, uint32_t area)
  *****************************************************************************/
 int32_t sd_get_error(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
-    return p_hndl->error;
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function sd_get_error
@@ -587,76 +539,65 @@ int32_t sd_get_error(int32_t sd_port)
  * Remark       : if pointer has NULL ,the register value isn't returned
  *****************************************************************************/
 int32_t sd_get_reg(int32_t sd_port, uint8_t *ocr, uint8_t *cid, uint8_t *csd,
-                    uint8_t *dsr, uint8_t *scr)
+					uint8_t *dsr, uint8_t *scr)
 {
-    st_sdhndl_t *p_hndl;
-    uint32_t    i;
+	st_sdhndl_t *p_hndl;
+	uint32_t    i;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (ocr)
-    {
-        for (i = 0; i < 2; ++i)
-        {
-            /* Cast to an appropriate type */
-            *ocr++ = (uint8_t)(p_hndl->ocr[i] >> 8);
+	if (ocr) {
+		for (i = 0; i < 2; ++i) {
+			/* Cast to an appropriate type */
+			*ocr++ = (uint8_t)(p_hndl->ocr[i] >> 8);
 
-            /* Cast to an appropriate type */
-            *ocr++ = (uint8_t)p_hndl->ocr[i];
-        }
-    }
-    if (cid)
-    {
-        for (i = 0; i < 8; ++i)
-        {
-            /* Cast to an appropriate type */
-            *cid++ = (uint8_t)(p_hndl->cid[i] >> 8);
+			/* Cast to an appropriate type */
+			*ocr++ = (uint8_t)p_hndl->ocr[i];
+		}
+	}
+	if (cid) {
+		for (i = 0; i < 8; ++i) {
+			/* Cast to an appropriate type */
+			*cid++ = (uint8_t)(p_hndl->cid[i] >> 8);
 
-            /* Cast to an appropriate type */
-            *cid++ = (uint8_t)p_hndl->cid[i];
-        }
-    }
-    if (csd)
-    {
-        for (i = 0; i < 8; ++i)
-        {
-            /* Cast to an appropriate type */
-            *csd++ = (uint8_t)(p_hndl->csd[i] >> 8);
+			/* Cast to an appropriate type */
+			*cid++ = (uint8_t)p_hndl->cid[i];
+		}
+	}
+	if (csd) {
+		for (i = 0; i < 8; ++i) {
+			/* Cast to an appropriate type */
+			*csd++ = (uint8_t)(p_hndl->csd[i] >> 8);
 
-            /* Cast to an appropriate type */
-            *csd++ = (uint8_t)p_hndl->csd[i];
-        }
-    }
-    if (dsr)
-    {
-        /* Cast to an appropriate type */
-        *dsr++ = (uint8_t)(p_hndl->dsr[0] >> 8);
+			/* Cast to an appropriate type */
+			*csd++ = (uint8_t)p_hndl->csd[i];
+		}
+	}
+	if (dsr) {
+		/* Cast to an appropriate type */
+		*dsr++ = (uint8_t)(p_hndl->dsr[0] >> 8);
 
-        /* Cast to an appropriate type */
-        *dsr++ = (uint8_t)p_hndl->dsr[0];
-    }
-    if (scr)
-    {
-        for (i = 0; i < 4; ++i)
-        {
-            /* Cast to an appropriate type */
-            *scr++ = (uint8_t)(p_hndl->scr[i] >> 8);
+		/* Cast to an appropriate type */
+		*dsr++ = (uint8_t)p_hndl->dsr[0];
+	}
+	if (scr) {
+		for (i = 0; i < 4; ++i) {
+			/* Cast to an appropriate type */
+			*scr++ = (uint8_t)(p_hndl->scr[i] >> 8);
 
-            /* Cast to an appropriate type */
-            *scr++ = (uint8_t)p_hndl->scr[i];
-        }
-    }
+			/* Cast to an appropriate type */
+			*scr++ = (uint8_t)p_hndl->scr[i];
+		}
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_get_reg
@@ -674,29 +615,26 @@ int32_t sd_get_reg(int32_t sd_port, uint8_t *ocr, uint8_t *cid, uint8_t *csd,
  *****************************************************************************/
 int32_t sd_get_rca(int32_t sd_port, uint8_t *rca)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (rca)    /* return high 16bits */
-    {
-        /* Cast to an appropriate type */
-        *rca++ = (uint8_t)(p_hndl->rca[0] >> 8);
+	if (rca) {	/* return high 16bits */
+		/* Cast to an appropriate type */
+		*rca++ = (uint8_t)(p_hndl->rca[0] >> 8);
 
-        /* Cast to an appropriate type */
-        *rca++ = (uint8_t)p_hndl->rca[0];
-    }
+		/* Cast to an appropriate type */
+		*rca++ = (uint8_t)p_hndl->rca[0];
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_get_rca
@@ -713,33 +651,29 @@ int32_t sd_get_rca(int32_t sd_port, uint8_t *rca)
  *****************************************************************************/
 int32_t sd_get_sdstatus(int32_t sd_port, uint8_t *sdstatus)
 {
-    st_sdhndl_t *p_hndl;
-    uint32_t    i;
+	st_sdhndl_t *p_hndl;
+	uint32_t    i;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (sdstatus)
-    {
-        for (i = 0; i < 8; ++i)
-        {
-            /* Cast to an appropriate type */
-            *sdstatus++ = (uint8_t)(p_hndl->sdstatus[i] >> 8);
+	if (sdstatus) {
+		for (i = 0; i < 8; ++i) {
+			/* Cast to an appropriate type */
+			*sdstatus++ = (uint8_t)(p_hndl->sdstatus[i] >> 8);
 
-            /* Cast to an appropriate type */
-            *sdstatus++ = (uint8_t)p_hndl->sdstatus[i];
-        }
-    }
+			/* Cast to an appropriate type */
+			*sdstatus++ = (uint8_t)p_hndl->sdstatus[i];
+		}
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_get_sdstatus
@@ -758,30 +692,26 @@ int32_t sd_get_sdstatus(int32_t sd_port, uint8_t *sdstatus)
  *****************************************************************************/
 int32_t sd_get_speed(int32_t sd_port, uint8_t *clss, uint8_t *move)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (clss)
-    {
-        *clss = p_hndl->speed_class;
-    }
+	if (clss) {
+		*clss = p_hndl->speed_class;
+	}
 
-    if (move)
-    {
-        *move = p_hndl->perform_move;
-    }
+	if (move) {
+		*move = p_hndl->perform_move;
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_get_speed
@@ -798,28 +728,25 @@ int32_t sd_get_speed(int32_t sd_port, uint8_t *clss, uint8_t *move)
  *****************************************************************************/
 int32_t sd_set_seccnt(int32_t sd_port, int16_t sectors)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (sectors <= 2)
-    {
-        /* need more than 3 continuous transfer */
-        return SD_ERR;  /* undefined value */
-    }
+	if (sectors <= 2) {
+		/* need more than 3 continuous transfer */
+		return SD_ERR;  /* undefined value */
+	}
 
-    p_hndl->trans_sectors = sectors;
+	p_hndl->trans_sectors = sectors;
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_set_seccnt
@@ -836,21 +763,19 @@ int32_t sd_set_seccnt(int32_t sd_port, int16_t sectors)
  *****************************************************************************/
 int32_t sd_get_seccnt(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    /* Cast to an appropriate type */
-    return (int32_t)p_hndl->trans_sectors;
+	/* Cast to an appropriate type */
+	return (int32_t)p_hndl->trans_sectors;
 }
 /******************************************************************************
  End of function sd_get_seccnt
@@ -870,38 +795,33 @@ int32_t sd_get_seccnt(int32_t sd_port)
  *****************************************************************************/
 int32_t sd_get_ver(int32_t sd_port, uint16_t *sdhi_ver, char *sddrv_ver)
 {
-    st_sdhndl_t *p_hndl;
-    int32_t     i;
+	st_sdhndl_t *p_hndl;
+	int32_t     i;
 
-    /* Cast to an appropriate type */
-    char *p_name = (char *)DRIVER_NAME;
+	/* Cast to an appropriate type */
+	char *p_name = (char *)DRIVER_NAME;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (sdhi_ver)
-    {
-        /* Cast to an appropriate type */
-        *sdhi_ver = SDMMC.VERSION.WORD.LL;
-    }
+	if (sdhi_ver) {
+		/* Cast to an appropriate type */
+		*sdhi_ver = SDMMC.VERSION.WORD.LL;
+	}
 
-    if (sddrv_ver)
-    {
-        for (i = 0; i < 32; ++i)
-        {
-            *sddrv_ver++ = *p_name++;
-        }
-    }
+	if (sddrv_ver) {
+		for (i = 0; i < 32; ++i) {
+			*sddrv_ver++ = *p_name++;
+		}
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_get_ver
@@ -918,37 +838,34 @@ int32_t sd_get_ver(int32_t sd_port, uint16_t *sdhi_ver, char *sddrv_ver)
  *****************************************************************************/
 int32_t sd_set_cdtime(int32_t sd_port, uint16_t cdtime)
 {
-    st_sdhndl_t *p_hndl;
-    uint64_t    reg;
+	st_sdhndl_t *p_hndl;
+	uint64_t    reg;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (cdtime >= 0x000f)
-    {
-        return SD_ERR;  /* undefined value */
-    }
+	if (cdtime >= 0x000f) {
+		return SD_ERR;  /* undefined value */
+	}
 
-    /* Cast to an appropriate type */
-    reg = SDMMC.SD_OPTION.LONGLONG;
+	/* Cast to an appropriate type */
+	reg = SDMMC.SD_OPTION.LONGLONG;
 
-    /* Cast to an appropriate type */
-    reg &= (~(uint64_t)0x000f);
+	/* Cast to an appropriate type */
+	reg &= (~(uint64_t)0x000f);
 
-    /* Cast to an appropriate type */
-    reg |= (uint64_t)(cdtime & 0x000fu);
+	/* Cast to an appropriate type */
+	reg |= (uint64_t)(cdtime & 0x000fu);
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_OPTION.LONGLONG = reg;
-    return SD_OK;
+	/* Cast to an appropriate type */
+	SDMMC.SD_OPTION.LONGLONG = reg;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_set_cdtime
@@ -965,45 +882,39 @@ int32_t sd_set_cdtime(int32_t sd_port, uint16_t cdtime)
  *****************************************************************************/
 int32_t sd_set_responsetime(int32_t sd_port, uint16_t responsetime)
 {
-    st_sdhndl_t *p_hndl;
-    uint64_t    reg;
+	st_sdhndl_t *p_hndl;
+	uint64_t    reg;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (responsetime >= 0x0010u)
-    {
-        return SD_ERR;  /* undefined value */
-    }
+	if (responsetime >= 0x0010u) {
+		return SD_ERR;  /* undefined value */
+	}
 
-    /* Cast to an appropriate type */
-    reg = SDMMC.SD_OPTION.LONGLONG;
+	/* Cast to an appropriate type */
+	reg = SDMMC.SD_OPTION.LONGLONG;
 
-    /* Cast to an appropriate type */
-    reg &= (~SD_OPTION_TOP_MASK);
+	/* Cast to an appropriate type */
+	reg &= (~SD_OPTION_TOP_MASK);
 
-    if (0x000fu == responsetime)
-    {
-        /* Cast to an appropriate type */
-        reg |= SD_OPTION_TOP_MAX;
-    }
-    else
-    {
-        /* Cast to an appropriate type */
-        reg |= (uint64_t)(((uint64_t)responsetime & 0x000fu) << 4);
-    }
+	if (0x000fu == responsetime) {
+		/* Cast to an appropriate type */
+		reg |= SD_OPTION_TOP_MAX;
+	} else {
+		/* Cast to an appropriate type */
+		reg |= (uint64_t)(((uint64_t)responsetime & 0x000fu) << 4);
+	}
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_OPTION.LONGLONG = reg;
-    return SD_OK;
+	/* Cast to an appropriate type */
+	SDMMC.SD_OPTION.LONGLONG = reg;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_set_responsetime
@@ -1022,32 +933,29 @@ int32_t sd_set_responsetime(int32_t sd_port, uint16_t responsetime)
  *****************************************************************************/
 int32_t sd_set_buffer(int32_t sd_port, void *buff, uint32_t size)
 {
-    st_sdhndl_t  *p_hndl;
+	st_sdhndl_t  *p_hndl;
 
-    /* check buffer boundary (octlet unit) */
-    if ( 0 != ((uintptr_t)buff & 0x00000007u) )
-    {
-        return SD_ERR;
-    }
+	/* check buffer boundary (octlet unit) */
+	if (0 != ((uintptr_t)buff & 0x00000007u)) {
+		return SD_ERR;
+	}
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    /* initialize buffer area */
-    p_hndl->p_rw_buff = (uint8_t*)buff;
+	/* initialize buffer area */
+	p_hndl->p_rw_buff = (uint8_t *)buff;
 
-    /* initialize buffer size */
-    p_hndl->buff_size = size;
+	/* initialize buffer size */
+	p_hndl->buff_size = size;
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_set_buffer
@@ -1063,24 +971,22 @@ int32_t sd_set_buffer(int32_t sd_port, void *buff, uint32_t size)
  *****************************************************************************/
 int32_t sd_standby(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
-    int32_t     ret;
+	st_sdhndl_t *p_hndl;
+	int32_t     ret;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
-    p_hndl->error = SD_OK;
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
+	p_hndl->error = SD_OK;
 
-    ret = _sd_standby(p_hndl);
+	ret = _sd_standby(p_hndl);
 
-    return ret;
+	return ret;
 }
 /******************************************************************************
  End of function sd_standby
@@ -1096,31 +1002,29 @@ int32_t sd_standby(int32_t sd_port)
  *****************************************************************************/
 int32_t _sd_standby(st_sdhndl_t *p_hndl)
 {
-    int32_t  ret;
-    uint16_t de_rca;
+	int32_t  ret;
+	uint16_t de_rca;
 
-    /* ---- supply clock (data-transfer ratio) ---- */
-    if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK)
-    {
-        return _sd_standby_error(p_hndl);
-    }
+	/* ---- supply clock (data-transfer ratio) ---- */
+	if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK) {
+		return _sd_standby_error(p_hndl);
+	}
 
-    /* set deselect RCA */
-    de_rca = 0;
+	/* set deselect RCA */
+	de_rca = 0;
 
-    /* ==== state transfer (transfer to stand-by) ==== */
-    ret = _sd_card_send_cmd_arg(p_hndl, CMD7, SD_RSP_R1B, de_rca, 0x0000);
+	/* ==== state transfer (transfer to stand-by) ==== */
+	ret = _sd_card_send_cmd_arg(p_hndl, CMD7, SD_RSP_R1B, de_rca, 0x0000);
 
-    /* timeout error occured due to no response or response busy */
-    if ((SD_OK != ret) && (SD_ERR_RES_TOE != p_hndl->error))
-    {
-        return _sd_standby_error(p_hndl);
-    }
+	/* timeout error occured due to no response or response busy */
+	if ((SD_OK != ret) && (SD_ERR_RES_TOE != p_hndl->error)) {
+		return _sd_standby_error(p_hndl);
+	}
 
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_standby
@@ -1135,10 +1039,10 @@ int32_t _sd_standby(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 static int32_t _sd_standby_error(st_sdhndl_t *p_hndl)
 {
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return p_hndl->error;
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function _sd_standby_error
@@ -1154,24 +1058,22 @@ static int32_t _sd_standby_error(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 int32_t sd_active(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
-    int32_t     ret;
+	st_sdhndl_t *p_hndl;
+	int32_t     ret;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
-    p_hndl->error = SD_OK;
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
+	p_hndl->error = SD_OK;
 
-    ret = _sd_active(p_hndl);
+	ret = _sd_active(p_hndl);
 
-    return ret;
+	return ret;
 }
 /******************************************************************************
  End of function sd_active
@@ -1187,52 +1089,46 @@ int32_t sd_active(int32_t sd_port)
  *****************************************************************************/
 int32_t _sd_active(st_sdhndl_t *p_hndl)
 {
-    uint64_t reg;
+	uint64_t reg;
 
-    /* ---- supply clock (data-transfer ratio) ---- */
-    if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK)
-    {
-        return _sd_active_error(p_hndl);
-    }
+	/* ---- supply clock (data-transfer ratio) ---- */
+	if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK) {
+		return _sd_active_error(p_hndl);
+	}
 
-    if (SD_PORT_SERIAL == p_hndl->if_mode)    /* 1bit */
-    {
-        sddev_set_port(p_hndl->sd_port, SD_PORT_SERIAL);
+	if (SD_PORT_SERIAL == p_hndl->if_mode) {	/* 1bit */
+		sddev_set_port(p_hndl->sd_port, SD_PORT_SERIAL);
 
-        /* Cast to an appropriate type */
-        reg = SDMMC.SD_OPTION.LONGLONG;
+		/* Cast to an appropriate type */
+		reg = SDMMC.SD_OPTION.LONGLONG;
 
-        /* Cast to an appropriate type */
-        reg |= SD_OPTION_WIDTH;
+		/* Cast to an appropriate type */
+		reg |= SD_OPTION_WIDTH;
 
-        /* Cast to an appropriate type */
-        SDMMC.SD_OPTION.LONGLONG = reg;
-    }
-    else    /* 4bits */
-    {
+		/* Cast to an appropriate type */
+		SDMMC.SD_OPTION.LONGLONG = reg;
+	} else {	/* 4bits */
+		/* Cast to an appropriate type */
+		reg = SDMMC.SD_OPTION.LONGLONG;
 
-        /* Cast to an appropriate type */
-        reg = SDMMC.SD_OPTION.LONGLONG;
+		/* Cast to an appropriate type */
+		reg &= (~SD_OPTION_WIDTH_MASK);
 
-        /* Cast to an appropriate type */
-        reg &= (~SD_OPTION_WIDTH_MASK);
+		/* Cast to an appropriate type */
+		SDMMC.SD_OPTION.LONGLONG = reg;
+		sddev_set_port(p_hndl->sd_port, SD_PORT_PARALLEL);
+	}
 
-        /* Cast to an appropriate type */
-        SDMMC.SD_OPTION.LONGLONG = reg;
-        sddev_set_port(p_hndl->sd_port, SD_PORT_PARALLEL);
-    }
+	/* ==== state transfer (stand-by to transfer) ==== */
+	if (_sd_card_send_cmd_arg(p_hndl, CMD7, SD_RSP_R1B, p_hndl->rca[0], 0x0000)
+			!= SD_OK) {
+		return _sd_active_error(p_hndl);
+	}
 
-    /* ==== state transfer (stand-by to transfer) ==== */
-    if (_sd_card_send_cmd_arg(p_hndl, CMD7, SD_RSP_R1B, p_hndl->rca[0], 0x0000)
-            != SD_OK)
-    {
-        return _sd_active_error(p_hndl);
-    }
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
-
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_active
@@ -1247,10 +1143,10 @@ int32_t _sd_active(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 static int32_t _sd_active_error(st_sdhndl_t *p_hndl)
 {
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return p_hndl->error;
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function _sd_active_error
@@ -1266,24 +1162,22 @@ static int32_t _sd_active_error(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 int32_t sd_inactive(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
-    int32_t     ret;
+	st_sdhndl_t *p_hndl;
+	int32_t     ret;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
-    p_hndl->error = SD_OK;
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
+	p_hndl->error = SD_OK;
 
-    ret = _sd_inactive(p_hndl);
+	ret = _sd_inactive(p_hndl);
 
-    return ret;
+	return ret;
 }
 /******************************************************************************
  End of function sd_inactive
@@ -1299,23 +1193,21 @@ int32_t sd_inactive(int32_t sd_port)
  *****************************************************************************/
 int32_t _sd_inactive(st_sdhndl_t *p_hndl)
 {
-    /* ---- supply clock (data-transfer ratio) ---- */
-    if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK)
-    {
-        return _sd_inactive_error(p_hndl);
-    }
+	/* ---- supply clock (data-transfer ratio) ---- */
+	if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK) {
+		return _sd_inactive_error(p_hndl);
+	}
 
-    /* ==== state transfer (transfer to stand-by) ==== */
-    if (_sd_card_send_cmd_arg(p_hndl, CMD15, SD_RSP_NON, p_hndl->rca[0], 0x0000)
-            != SD_OK)
-    {
-        return _sd_inactive_error(p_hndl);
-    }
+	/* ==== state transfer (transfer to stand-by) ==== */
+	if (_sd_card_send_cmd_arg(p_hndl, CMD15, SD_RSP_NON, p_hndl->rca[0], 0x0000)
+			!= SD_OK) {
+		return _sd_inactive_error(p_hndl);
+	}
 
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_inactive
@@ -1330,10 +1222,10 @@ int32_t _sd_inactive(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 static int32_t _sd_inactive_error(st_sdhndl_t *p_hndl)
 {
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return p_hndl->error;
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function _sd_inactive_error
@@ -1351,72 +1243,62 @@ static int32_t _sd_inactive_error(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 int32_t sd_reget_reg(int32_t sd_port, uint8_t *reg, int32_t is_csd)
 {
-    st_sdhndl_t *p_hndl;
-    int32_t     i;
-    uint16_t    *p_ptr;
-    uint16_t    cmd;
+	st_sdhndl_t *p_hndl;
+	int32_t     i;
+	uint16_t    *p_ptr;
+	uint16_t    cmd;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    p_hndl->error = SD_OK;
+	p_hndl->error = SD_OK;
 
-    /* ---- transfer stand-by state ---- */
-    if (_sd_standby(p_hndl) != SD_OK)
-    {
-        return _sd_reget_reg_error(p_hndl);
-    }
+	/* ---- transfer stand-by state ---- */
+	if (_sd_standby(p_hndl) != SD_OK) {
+		return _sd_reget_reg_error(p_hndl);
+	}
 
-    /* verify CID or CSD */
-    if (0 == is_csd)
-    {
-        p_ptr = p_hndl->cid;
-        cmd = CMD10;
-    }
-    else
-    {
-        p_ptr = p_hndl->csd;
-        cmd = CMD9;
-    }
+	/* verify CID or CSD */
+	if (0 == is_csd) {
+		p_ptr = p_hndl->cid;
+		cmd = CMD10;
+	} else {
+		p_ptr = p_hndl->csd;
+		cmd = CMD9;
+	}
 
-    /* ---- supply clock (data-transfer ratio) ---- */
-    if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK)
-    {
-        return _sd_reget_reg_error(p_hndl);
-    }
+	/* ---- supply clock (data-transfer ratio) ---- */
+	if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK) {
+		return _sd_reget_reg_error(p_hndl);
+	}
 
-    /* ---- reget CID or CSD (issue CMD10 or CMD9) ---- */
-    if (_sd_card_send_cmd_arg(p_hndl, cmd, SD_RSP_R2_CID, p_hndl->rca[0], 0x0000) != SD_OK)
-    {
-        return _sd_reget_reg_error(p_hndl);
-    }
+	/* ---- reget CID or CSD (issue CMD10 or CMD9) ---- */
+	if (_sd_card_send_cmd_arg(p_hndl, cmd, SD_RSP_R2_CID, p_hndl->rca[0], 0x0000) != SD_OK) {
+		return _sd_reget_reg_error(p_hndl);
+	}
 
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    if (_sd_active(p_hndl) != SD_OK)
-    {
-        return _sd_reget_reg_error(p_hndl);
-    }
+	if (_sd_active(p_hndl) != SD_OK) {
+		return _sd_reget_reg_error(p_hndl);
+	}
 
-    for (i = 0; i < 8; ++i)
-    {
-        /* Cast to an appropriate type */
-        *reg++ = (uint8_t)((*p_ptr) >> 8);
+	for (i = 0; i < 8; ++i) {
+		/* Cast to an appropriate type */
+		*reg++ = (uint8_t)((*p_ptr) >> 8);
 
-        /* Cast to an appropriate type */
-        *reg++ = (uint8_t)(*p_ptr++);
-    }
+		/* Cast to an appropriate type */
+		*reg++ = (uint8_t)(*p_ptr++);
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_reget_reg
@@ -1431,10 +1313,10 @@ int32_t sd_reget_reg(int32_t sd_port, uint8_t *reg, int32_t is_csd)
  *****************************************************************************/
 static int32_t _sd_reget_reg_error(st_sdhndl_t *p_hndl)
 {
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return p_hndl->error;
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function _sd_reget_reg_error
@@ -1456,152 +1338,122 @@ static int32_t _sd_reget_reg_error(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 int32_t sd_lock_unlock(int32_t sd_port, uint8_t code, uint8_t *pwd, uint8_t len)
 {
-    st_sdhndl_t *p_hndl;
-    uint16_t    cmd_len;   /* lock/unlock data length */
-    char        data[32];
+	st_sdhndl_t *p_hndl;
+	uint16_t    cmd_len;   /* lock/unlock data length */
+	char        data[32];
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    p_hndl->error = SD_OK;
+	p_hndl->error = SD_OK;
 
-    /* ---- check mount ---- */
-    if ( (p_hndl->mount & (SD_MOUNT_LOCKED_CARD | SD_MOUNT_UNLOCKED_CARD)) == 0 )
-    {
-        _sd_set_err(p_hndl, SD_ERR);
-        return p_hndl->error; /* not mounted yet */
-    }
+	/* ---- check mount ---- */
+	if ((p_hndl->mount & (SD_MOUNT_LOCKED_CARD | SD_MOUNT_UNLOCKED_CARD)) == 0) {
+		_sd_set_err(p_hndl, SD_ERR);
+		return p_hndl->error; /* not mounted yet */
+	}
 
-    /* check suppoted command class */
-    if (!(p_hndl->csd_ccc & 0x0080))  /* don't support lock/unlock */
-    {
-        _sd_set_err(p_hndl, SD_ERR_NOTSUP_CMD);
-        return SD_ERR_NOTSUP_CMD;
-    }
+	/* check suppoted command class */
+	if (!(p_hndl->csd_ccc & 0x0080)) {	/* don't support lock/unlock */
+		_sd_set_err(p_hndl, SD_ERR_NOTSUP_CMD);
+		return SD_ERR_NOTSUP_CMD;
+	}
 
-    /* Cast to an appropriate type */
-    data[0] = (char)code;
+	/* Cast to an appropriate type */
+	data[0] = (char)code;
 
-    if (code & 0x08)    /* forcing erase */
-    {
-        cmd_len = 1;
-    }
-    else
-    {
-        if (code & 0x01)    /* set passward */
-        {
-            if (len > 16)
-            {
-                /* total passward length is not more than 32 bytes      */
-                /* but the library prohibit change password operation   */
-                return SD_ERR;
-            }
-            if (p_hndl->resp_status & 0x02000000)
-            {
-                /* prohibit set passward to lock card */
-                _sd_set_err(p_hndl, SD_ERR_CARD_LOCK);
-                return SD_ERR;
-            }
-        }
-        else if (len > 16)  /* only lock or unlock */
-        {
-            /* one passward length is not more than 16 bytes */
-            return SD_ERR;
-        }
-        else
-        {
-            /* DO NOTHING */
-            ;
-        }
+	if (code & 0x08) {	/* forcing erase */
+		cmd_len = 1;
+	} else {
+		if (code & 0x01) {	/* set passward */
+			if (len > 16) {
+				/* total passward length is not more than 32 bytes      */
+				/* but the library prohibit change password operation   */
+				return SD_ERR;
+			}
+			if (p_hndl->resp_status & 0x02000000) {
+				/* prohibit set passward to lock card */
+				_sd_set_err(p_hndl, SD_ERR_CARD_LOCK);
+				return SD_ERR;
+			}
+		} else if (len > 16) {	/* only lock or unlock */
+			/* one passward length is not more than 16 bytes */
+			return SD_ERR;
+		} else {
+			/* DO NOTHING */
+			;
+		}
 
-        /* include code and total data length */
-        cmd_len = (uint16_t)(len + 2);
+		/* include code and total data length */
+		cmd_len = (uint16_t)(len + 2);
 
-        /* set lock/unlock command data */
-        data[1] = (char)len;
-        while (len)
-        {
-            data[cmd_len - len] = *pwd++;
-            len--;
-        }
-    }
+		/* set lock/unlock command data */
+		data[1] = (char)len;
+		while (len) {
+			data[cmd_len - len] = *pwd++;
+			len--;
+		}
+	}
 
-    /* ---- supply clock (data-transfer ratio) ---- */
-    if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK)
-    {
-        return _sd_lock_unlock_error(p_hndl);
-    }
+	/* ---- supply clock (data-transfer ratio) ---- */
+	if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK) {
+		return _sd_lock_unlock_error(p_hndl);
+	}
 
-    /* ---- set block length (issue CMD16) ---- */
-    if (_sd_card_send_cmd_arg(p_hndl, CMD16, SD_RSP_R1, 0x0000, cmd_len) != SD_OK)
-    {
-        if (SD_ERR_CARD_LOCK == p_hndl->error)
-        {
-            p_hndl->error = SD_OK;
-        }
-        else
-        {
-            return _sd_lock_unlock_error(p_hndl);
-        }
-    }
+	/* ---- set block length (issue CMD16) ---- */
+	if (_sd_card_send_cmd_arg(p_hndl, CMD16, SD_RSP_R1, 0x0000, cmd_len) != SD_OK) {
+		if (SD_ERR_CARD_LOCK == p_hndl->error) {
+			p_hndl->error = SD_OK;
+		} else {
+			return _sd_lock_unlock_error(p_hndl);
+		}
+	}
 
-    /* Cast to an appropriate type */
-    if (_sd_write_byte(p_hndl, CMD42, 0x0000, 0x0000, (uint8_t*)data, cmd_len)
-            != SD_OK)
-    {
-        return _sd_lock_unlock_error(p_hndl);
-    }
+	/* Cast to an appropriate type */
+	if (_sd_write_byte(p_hndl, CMD42, 0x0000, 0x0000, (uint8_t *)data, cmd_len)
+			!= SD_OK) {
+		return _sd_lock_unlock_error(p_hndl);
+	}
 
-    if (_sd_card_send_cmd_arg(p_hndl, CMD13, SD_RSP_R1, p_hndl->rca[0], 0x0000)
-            == SD_OK)
-    {
-        if ((p_hndl->resp_status & RES_STATE) != STATE_TRAN)  /* not transfer state */
-        {
-            p_hndl->error = SD_ERR;
-            return _sd_lock_unlock_error(p_hndl);
-        }
-    }
-    else    /* SDHI error */
-    {
-        return _sd_lock_unlock_error(p_hndl);
-    }
+	if (_sd_card_send_cmd_arg(p_hndl, CMD13, SD_RSP_R1, p_hndl->rca[0], 0x0000)
+			== SD_OK) {
+		if ((p_hndl->resp_status & RES_STATE) != STATE_TRAN) {	/* not transfer state */
+			p_hndl->error = SD_ERR;
+			return _sd_lock_unlock_error(p_hndl);
+		}
+	} else {	/* SDHI error */
+		return _sd_lock_unlock_error(p_hndl);
+	}
 
-    if ( (code & SD_LOCK_CARD) == SD_UNLOCK_CARD )
-    {
-        /* ---- clear locked status ---- */
-        p_hndl->mount &= (~SD_CARD_LOCKED);
+	if ((code & SD_LOCK_CARD) == SD_UNLOCK_CARD) {
+		/* ---- clear locked status ---- */
+		p_hndl->mount &= (~SD_CARD_LOCKED);
 
-        if ( SD_MOUNT_UNLOCKED_CARD == p_hndl->mount )
-        {
-            /* the card is already mounted as unlock card   */
+		if (SD_MOUNT_UNLOCKED_CARD == p_hndl->mount) {
+			/* the card is already mounted as unlock card   */
 
-            /* ---- set block length (issue CMD16) ---- */
-            if (_sd_card_send_cmd_arg(p_hndl, CMD16, SD_RSP_R1, 0x0000, 0x0200) != SD_OK)
-            {
-                /* ---- set locked status ---- */
-                p_hndl->mount |=  SD_CARD_LOCKED;
-                return _sd_lock_unlock_error(p_hndl);
-            }
-        }
-    }
-    else
-    {
-        /* ---- set locked status ---- */
-        p_hndl->mount |=  SD_CARD_LOCKED;
-    }
+			/* ---- set block length (issue CMD16) ---- */
+			if (_sd_card_send_cmd_arg(p_hndl, CMD16, SD_RSP_R1, 0x0000, 0x0200) != SD_OK) {
+				/* ---- set locked status ---- */
+				p_hndl->mount |=  SD_CARD_LOCKED;
+				return _sd_lock_unlock_error(p_hndl);
+			}
+		}
+	} else {
+		/* ---- set locked status ---- */
+		p_hndl->mount |=  SD_CARD_LOCKED;
+	}
 
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_lock_unlock
@@ -1616,27 +1468,25 @@ int32_t sd_lock_unlock(int32_t sd_port, uint8_t code, uint8_t *pwd, uint8_t len)
  *****************************************************************************/
 static int32_t _sd_lock_unlock_error(st_sdhndl_t *p_hndl)
 {
-    int32_t  temp_error;
-    int32_t  loop;
+	int32_t  temp_error;
+	int32_t  loop;
 
-    /* keep error   */
-    temp_error = p_hndl->error;
+	/* keep error   */
+	temp_error = p_hndl->error;
 
-    for ( loop = 0; loop < 3; loop++ )
-    {
-        /* ---- retrive block length ---- */
-        if (_sd_card_send_cmd_arg(p_hndl, CMD16, SD_RSP_R1, 0x0000, 0x0200) == SD_OK)
-        {
-            break;
-        }
-    }
+	for (loop = 0; loop < 3; loop++) {
+		/* ---- retrive block length ---- */
+		if (_sd_card_send_cmd_arg(p_hndl, CMD16, SD_RSP_R1, 0x0000, 0x0200) == SD_OK) {
+			break;
+		}
+	}
 
-    _sd_set_err(p_hndl, temp_error);
+	_sd_set_err(p_hndl, temp_error);
 
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return p_hndl->error;
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function _sd_lock_unlock_error
@@ -1653,101 +1503,84 @@ static int32_t _sd_lock_unlock_error(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 int32_t sd_set_tmpwp(int32_t sd_port, int32_t is_set)
 {
-    st_sdhndl_t *p_hndl;
-    int32_t     i;
-    uint16_t    *p_ptr;     /* got csd */
-    uint8_t     w_csd[16];  /* work csd */
-    uint8_t     crc7;       /* calculated crc7 value */
+	st_sdhndl_t *p_hndl;
+	int32_t     i;
+	uint16_t    *p_ptr;     /* got csd */
+	uint8_t     w_csd[16];  /* work csd */
+	uint8_t     crc7;       /* calculated crc7 value */
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    p_hndl->error = SD_OK;
+	p_hndl->error = SD_OK;
 
-    /* check suppoted command class */
-    if (!(p_hndl->csd_ccc & 0x0010))  /* don't support block write */
-    {
-        _sd_set_err(p_hndl, SD_ERR_NOTSUP_CMD);
-        return SD_ERR;
-    }
+	/* check suppoted command class */
+	if (!(p_hndl->csd_ccc & 0x0010)) {	/* don't support block write */
+		_sd_set_err(p_hndl, SD_ERR_NOTSUP_CMD);
+		return SD_ERR;
+	}
 
-    /* ---- make programing csd value ---- */
-    /* set unprogramable fields */
-    p_ptr = p_hndl->csd;
-    for (i = 0; i < 14; i += 2)
-    {
-        /* Cast to an appropriate type */
-        w_csd[i] = (uint8_t)(*p_ptr++);
+	/* ---- make programing csd value ---- */
+	/* set unprogramable fields */
+	p_ptr = p_hndl->csd;
+	for (i = 0; i < 14; i += 2) {
+		/* Cast to an appropriate type */
+		w_csd[i] = (uint8_t)(*p_ptr++);
 
-        /* Cast to an appropriate type */
-        w_csd[i + 1] = (uint8_t)(((*p_ptr) >> 8u));
-    }
+		/* Cast to an appropriate type */
+		w_csd[i + 1] = (uint8_t)(((*p_ptr) >> 8u));
+	}
 
-    /* set programing fields */
-    w_csd[14] = (uint8_t)(*p_ptr);
-    if (1 == is_set)    /* set write protect */
-    {
-        w_csd[14] |= 0x10;
-    }
-    else    /* clear write protect */
-    {
-        w_csd[14] &= (~0x10);
-    }
+	/* set programing fields */
+	w_csd[14] = (uint8_t)(*p_ptr);
+	if (1 == is_set) {	/* set write protect */
+		w_csd[14] |= 0x10;
+	} else {	/* clear write protect */
+		w_csd[14] &= (~0x10);
+	}
 
-    /* calculate crc7 for CSD */
-    crc7 = _sd_calc_crc(w_csd, 15);
+	/* calculate crc7 for CSD */
+	crc7 = _sd_calc_crc(w_csd, 15);
 
-    /* set crc7 filelds */
-    w_csd[15] = (uint8_t)((crc7 << 1u) | 0x01);
+	/* set crc7 filelds */
+	w_csd[15] = (uint8_t)((crc7 << 1u) | 0x01);
 
-    /* ---- supply clock (data-transfer ratio) ---- */
-    if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK)
-    {
-        return _sd_set_tmpwp_error(p_hndl);
-    }
+	/* ---- supply clock (data-transfer ratio) ---- */
+	if (_sd_set_clock(p_hndl, (int32_t)p_hndl->csd_tran_speed, SD_CLOCK_ENABLE) != SD_OK) {
+		return _sd_set_tmpwp_error(p_hndl);
+	}
 
-    if (_sd_write_byte(p_hndl, CMD27, 0x0000, 0x0000, w_csd, sizeof(w_csd)) != SD_OK)
-    {
-        return _sd_set_tmpwp_error(p_hndl);
-    }
+	if (_sd_write_byte(p_hndl, CMD27, 0x0000, 0x0000, w_csd, sizeof(w_csd)) != SD_OK) {
+		return _sd_set_tmpwp_error(p_hndl);
+	}
 
-    if (_sd_card_send_cmd_arg(p_hndl, CMD13, SD_RSP_R1, p_hndl->rca[0], 0x0000)
-            == SD_OK)
-    {
-        if ((p_hndl->resp_status & RES_STATE) != STATE_TRAN)  /* not transfer state */
-        {
-            p_hndl->error = SD_ERR;
-            return _sd_set_tmpwp_error(p_hndl);
-        }
-    }
-    else    /* SDHI error */
-    {
-        return _sd_set_tmpwp_error(p_hndl);
-    }
+	if (_sd_card_send_cmd_arg(p_hndl, CMD13, SD_RSP_R1, p_hndl->rca[0], 0x0000)	== SD_OK) {
+		if ((p_hndl->resp_status & RES_STATE) != STATE_TRAN) {	/* not transfer state */
+			p_hndl->error = SD_ERR;
+			return _sd_set_tmpwp_error(p_hndl);
+		}
+	} else {	/* SDHI error */
+		return _sd_set_tmpwp_error(p_hndl);
+	}
 
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    if (1 == is_set)    /* set write protect */
-    {
-        /* Cast to an appropriate type */
-        p_hndl->write_protect |= (uint8_t)SD_WP_TEMP;
-    }
-    else    /* clear write protect */
-    {
-        /* Cast to an appropriate type */
-        p_hndl->write_protect &= (uint8_t)~SD_WP_TEMP;
-    }
+	if (1 == is_set) {	/* set write protect */
+		/* Cast to an appropriate type */
+		p_hndl->write_protect |= (uint8_t)SD_WP_TEMP;
+	} else {	/* clear write protect */
+		/* Cast to an appropriate type */
+		p_hndl->write_protect &= (uint8_t)~SD_WP_TEMP;
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_set_tmpwp
@@ -1762,10 +1595,10 @@ int32_t sd_set_tmpwp(int32_t sd_port, int32_t is_set)
  *****************************************************************************/
 static int32_t _sd_set_tmpwp_error(st_sdhndl_t *p_hndl)
 {
-    /* ---- halt clock ---- */
-    _sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
+	/* ---- halt clock ---- */
+	_sd_set_clock(p_hndl, 0, SD_CLOCK_DISABLE);
 
-    return p_hndl->error;
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function _sd_set_tmpwp_error
@@ -1781,50 +1614,45 @@ static int32_t _sd_set_tmpwp_error(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 static uint8_t _sd_calc_crc(uint8_t *data, int32_t len)
 {
-    int32_t i;
-    int32_t j;
-    int32_t k;
-    uint8_t p_crc[7];   /* previous crc value */
-    uint8_t t_crc[7];   /* tentative crc value */
-    uint8_t m_data;     /* input bit mask data */
-    uint8_t crc7 = 0;   /* calculated crc7 */
+	int32_t i;
+	int32_t j;
+	int32_t k;
+	uint8_t p_crc[7];   /* previous crc value */
+	uint8_t t_crc[7];   /* tentative crc value */
+	uint8_t m_data;     /* input bit mask data */
+	uint8_t crc7 = 0;   /* calculated crc7 */
 
-    for (i = 0; i < (sizeof(p_crc)); i++)
-    {
-        p_crc[i] = 0;
-        t_crc[i] = 0;
-    }
+	for (i = 0; i < (sizeof(p_crc)); i++) {
+		p_crc[i] = 0;
+		t_crc[i] = 0;
+	}
 
-    for (i = len; i > 0; i--, data++) /* byte loop */
-    {
-        for (j = 8; j > 0; j--) /* bit loop */
-        {
-            /* Cast to an appropriate type */
-            m_data = (uint8_t)((((*data) >> (j - 1)) & 0x01));
-            t_crc[6] = (p_crc[0] != m_data);
-            t_crc[5] = p_crc[6];
-            t_crc[4] = p_crc[5];
-            t_crc[3] = (p_crc[4] != (p_crc[0] != m_data));
-            t_crc[2] = p_crc[3];
-            t_crc[1] = p_crc[2];
-            t_crc[0] = p_crc[1];
+	for (i = len; i > 0; i--, data++) {	/* byte loop */
+		for (j = 8; j > 0; j--) {	/* bit loop */
+			/* Cast to an appropriate type */
+			m_data = (uint8_t)((((*data) >> (j - 1)) & 0x01));
+			t_crc[6] = (p_crc[0] != m_data);
+			t_crc[5] = p_crc[6];
+			t_crc[4] = p_crc[5];
+			t_crc[3] = (p_crc[4] != (p_crc[0] != m_data));
+			t_crc[2] = p_crc[3];
+			t_crc[1] = p_crc[2];
+			t_crc[0] = p_crc[1];
 
-            /* save tentative crc value */
-            for (k = 0; k < (sizeof(p_crc)); k++)
-            {
-                p_crc[k] = t_crc[k];
-            }
-        }
-    }
+			/* save tentative crc value */
+			for (k = 0; k < (sizeof(p_crc)); k++) {
+				p_crc[k] = t_crc[k];
+			}
+		}
+	}
 
-    /* convert bit to byte form */
-    for (i = 0; i < (sizeof(p_crc)); i++)
-    {
-        /* Cast to an appropriate type */
-        crc7 |= (uint8_t)((p_crc[i] << (6 - i)));
-    }
+	/* convert bit to byte form */
+	for (i = 0; i < (sizeof(p_crc)); i++) {
+		/* Cast to an appropriate type */
+		crc7 |= (uint8_t)((p_crc[i] << (6 - i)));
+	}
 
-    return crc7;
+	return crc7;
 }
 /******************************************************************************
  End of function _sd_calc_crc
@@ -1842,12 +1670,11 @@ static uint8_t _sd_calc_crc(uint8_t *data, int32_t len)
  *****************************************************************************/
 int32_t _sd_memset(uint8_t *p, uint8_t data, uint32_t cnt)
 {
-    while (cnt--)
-    {
-        *p++ = data;
-    }
+	while (cnt--) {
+		*p++ = data;
+	}
 
-    return 0;
+	return 0;
 }
 /******************************************************************************
  End of function _sd_memset
@@ -1865,12 +1692,11 @@ int32_t _sd_memset(uint8_t *p, uint8_t data, uint32_t cnt)
  *****************************************************************************/
 int32_t _sd_memcpy(uint8_t *dst, uint8_t *src, uint32_t cnt)
 {
-    while (cnt--)
-    {
-        *dst++ = *src++;
-    }
+	while (cnt--) {
+		*dst++ = *src++;
+	}
 
-    return 0;
+	return 0;
 }
 /******************************************************************************
  End of function _sd_memcpy
@@ -1887,10 +1713,10 @@ int32_t _sd_memcpy(uint8_t *dst, uint8_t *src, uint32_t cnt)
 uint16_t _sd_rand(void)
 {
 
-    s_next = (s_next * 1103515245L) + 12345;
+	s_next = (s_next * 1103515245L) + 12345;
 
-    /* Cast to an appropriate type */
-    return (uint16_t)s_next;
+	/* Cast to an appropriate type */
+	return (uint16_t)s_next;
 
 }
 /******************************************************************************
@@ -1905,10 +1731,9 @@ uint16_t _sd_rand(void)
  *****************************************************************************/
 void _sd_srand(uint32_t seed)
 {
-    if (0 == s_next)
-    {
-        s_next = seed;
-    }
+	if (0 == s_next) {
+		s_next = seed;
+	}
 }
 /******************************************************************************
  End of function _sd_srand
@@ -1925,34 +1750,28 @@ void _sd_srand(uint32_t seed)
  *****************************************************************************/
 int32_t _sd_wait_rbusy(st_sdhndl_t *p_hndl, int32_t time)
 {
-    int32_t i;
+	int32_t i;
 
 
-    for (i = 0; i < time; ++i)
-    {
-        if (_sd_card_send_cmd_arg(p_hndl, CMD13, SD_RSP_R1, p_hndl->rca[0], 0x0000) == SD_OK)
-        {
-            if ((p_hndl->resp_status & RES_STATE) == STATE_TRAN)  /* transfer state */
-            {
-                return SD_OK;
-            }
-        }
-        else    /* SDHI error */
-        {
-            break;
-        }
+	for (i = 0; i < time; ++i) {
+		if (_sd_card_send_cmd_arg(p_hndl, CMD13, SD_RSP_R1, p_hndl->rca[0], 0x0000) == SD_OK) {
+			if ((p_hndl->resp_status & RES_STATE) == STATE_TRAN) {	/* transfer state */
+				return SD_OK;
+			}
+		} else {	/* SDHI error */
+			break;
+		}
 
-        if (_sd_check_media(p_hndl) != SD_OK)
-        {
-            break;
-        }
+		if (_sd_check_media(p_hndl) != SD_OK) {
+			break;
+		}
 
-        sddev_int_wait(p_hndl->sd_port, 1);
-    }
+		sddev_int_wait(p_hndl->sd_port, 1);
+	}
 
-    _sd_set_err(p_hndl, SD_ERR_HOST_TOE);
+	_sd_set_err(p_hndl, SD_ERR_HOST_TOE);
 
-    return SD_ERR;
+	return SD_ERR;
 
 }
 /******************************************************************************

@@ -107,7 +107,7 @@
 /* Definitions used in common code */
 
 /* Base address where parameters to BL31 are stored */
-#define PARAMS_BASE					(BL2_BASE + RZV2H_BL2_END_OFFSET)
+#define PARAMS_BASE					BL2_LIMIT
 #define PARAMS_SIZE					UL(0x1000)
 #define RZ_SOC_BOOTINFO_BASE		RZV2H_BOOTINFO_BASE
 

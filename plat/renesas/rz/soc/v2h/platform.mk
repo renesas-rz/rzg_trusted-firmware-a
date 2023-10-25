@@ -47,8 +47,8 @@ pkg:
 	./tools/renesas/bptool build/v2h/${BUILD_TYPE}/bl2.bin build/v2h/${BUILD_TYPE}/bp_esd.bin 0x08103000 esd
 	cat build/v2h/${BUILD_TYPE}/bp_esd.bin build/v2h/${BUILD_TYPE}/bl2.bin > build/v2h/${BUILD_TYPE}/bl2_bp_esd.bin
 	objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2h/${BUILD_TYPE}/bl2_bp_esd.bin  build/v2h/${BUILD_TYPE}/bl2_bp_esd.srec
-	./tools/fiptool/fiptool create --align 16 --soc-fw build/v2h/${BUILD_TYPE}/bl31.bin --nt-fw ../u-boot.bin build/v2h/${BUILD_TYPE}/fip.bin
-	objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2h/${BUILD_TYPE}/fip.bin build/v2h/${BUILD_TYPE}/fip.srec
+	#Generate FIP S-Record if FIP binary is present
+	if [ -f build/v2h/${BUILD_TYPE}/fip.bin ]; then  objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2h/${BUILD_TYPE}/fip.bin build/v2h/${BUILD_TYPE}/fip.srec ; fi ;
 	tar zcvf ../tf-a.tar.gz $(shell pwd)
 
 ifneq (${DEBUG}, 0)

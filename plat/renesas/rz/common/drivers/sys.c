@@ -28,24 +28,24 @@ boot_mode_t sys_get_boot_mode(void)
 	boot_mode_t boot_mode;
 
 	switch (stat_md_boot) {
-		case (BOOT_MODE_ESD):
-			boot_mode = SYS_BOOT_MODE_ESD;
-			break;
-		case (BOOT_MODE_EMMC_1_8):
-			boot_mode = SYS_BOOT_MODE_EMMC_1_8;
-			break;
-		case (BOOT_MODE_EMMC_3_3):
-			boot_mode = SYS_BOOT_MODE_EMMC_3_3;
-			break;
-		case (BOOT_MODE_SPI_1_8):
-			boot_mode = SYS_BOOT_MODE_SPI_1_8;
-			break;
-		case (BOOT_MODE_SPI_3_3):
-			boot_mode = SYS_BOOT_MODE_SPI_3_3;
-			break;
+	case (BOOT_MODE_ESD):
+		boot_mode = SYS_BOOT_MODE_ESD;
+		break;
+	case (BOOT_MODE_EMMC_1_8):
+		boot_mode = SYS_BOOT_MODE_EMMC_1_8;
+		break;
+	case (BOOT_MODE_EMMC_3_3):
+		boot_mode = SYS_BOOT_MODE_EMMC_3_3;
+		break;
+	case (BOOT_MODE_SPI_1_8):
+		boot_mode = SYS_BOOT_MODE_SPI_1_8;
+		break;
+	case (BOOT_MODE_SPI_3_3):
+		boot_mode = SYS_BOOT_MODE_SPI_3_3;
+		break;
 
-		default:
-			panic();
+	default:
+		panic();
 	}
 
 	return boot_mode;

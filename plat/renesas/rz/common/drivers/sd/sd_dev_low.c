@@ -60,7 +60,7 @@ Private global variables and functions
 ******************************************************************************/
 int32_t sddev_init(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_init
@@ -74,7 +74,7 @@ int32_t sddev_init(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_power_on(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_power_on
@@ -89,7 +89,7 @@ int32_t sddev_power_on(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_power_off(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_power_off
@@ -107,89 +107,80 @@ int32_t sddev_power_off(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_read_data(int32_t sd_port, uint8_t *buff, uint32_t reg_addr, int32_t num)
 {
-    int32_t  i;
-    int32_t  cnt;
-    uint64_t *p_reg;
-    uint64_t *p_l;
-    uint8_t  *p_c;
-    volatile uint64_t tmp;
+	int32_t  i;
+	int32_t  cnt;
+	uint64_t *p_reg;
+	uint64_t *p_l;
+	uint8_t  *p_c;
+	volatile uint64_t tmp;
 
-    /* Cast to an appropriate type */
-    p_reg = (uint64_t *)((uintptr_t)reg_addr);
+	/* Cast to an appropriate type */
+	p_reg = (uint64_t *)((uintptr_t)reg_addr);
 
-    cnt = (num / 8);
+	cnt = (num / 8);
 
-    /* Cast to an appropriate type */
-    if (0uL != ((uintptr_t)buff & 0x7uL))
-    {
-        /* Cast to an appropriate type */
-        p_c = (uint8_t *)buff;
-        for (i = cnt; i > 0 ; i--)
-        {
-            tmp = *p_reg;
+	/* Cast to an appropriate type */
+	if (0uL != ((uintptr_t)buff & 0x7uL)) {
+		/* Cast to an appropriate type */
+		p_c = (uint8_t *)buff;
+		for (i = cnt; i > 0 ; i--) {
+			tmp = *p_reg;
 
-            /* Cast to an appropriate type */
-            *p_c++ = (uint8_t)(tmp);
+			/* Cast to an appropriate type */
+			*p_c++ = (uint8_t)(tmp);
 
-            /* Cast to an appropriate type */
-            *p_c++ = (uint8_t)(tmp >> 8);
+			/* Cast to an appropriate type */
+			*p_c++ = (uint8_t)(tmp >> 8);
 
-            /* Cast to an appropriate type */
-            *p_c++ = (uint8_t)(tmp >> 16);
+			/* Cast to an appropriate type */
+			*p_c++ = (uint8_t)(tmp >> 16);
 
-            /* Cast to an appropriate type */
-            *p_c++ = (uint8_t)(tmp >> 24);
+			/* Cast to an appropriate type */
+			*p_c++ = (uint8_t)(tmp >> 24);
 
-            /* Cast to an appropriate type */
-            *p_c++ = (uint8_t)(tmp >> 32);
+			/* Cast to an appropriate type */
+			*p_c++ = (uint8_t)(tmp >> 32);
 
-            /* Cast to an appropriate type */
-            *p_c++ = (uint8_t)(tmp >> 40);
+			/* Cast to an appropriate type */
+			*p_c++ = (uint8_t)(tmp >> 40);
 
-            /* Cast to an appropriate type */
-            *p_c++ = (uint8_t)(tmp >> 48);
+			/* Cast to an appropriate type */
+			*p_c++ = (uint8_t)(tmp >> 48);
 
-            /* Cast to an appropriate type */
-            *p_c++ = (uint8_t)(tmp >> 56);
-        }
+			/* Cast to an appropriate type */
+			*p_c++ = (uint8_t)(tmp >> 56);
+		}
 
-        cnt = (num % 8);
-        if (0 != cnt)
-        {
-            tmp = *p_reg;
-            for (i = cnt; i > 0 ; i--)
-            {
-                /* Cast to an appropriate type */
-                *p_c++ = (uint8_t)(tmp);
-                tmp >>= 8;
-            }
-        }
-    }
-    else
-    {
-        /* Cast to an appropriate type */
-        p_l = (uint64_t *)buff;
-        for (i = cnt; i > 0 ; i--)
-        {
-            *p_l++ = *p_reg;
-        }
+		cnt = (num % 8);
+		if (0 != cnt) {
+			tmp = *p_reg;
+			for (i = cnt; i > 0 ; i--) {
+				/* Cast to an appropriate type */
+				*p_c++ = (uint8_t)(tmp);
+				tmp >>= 8;
+			}
+		}
+	} else {
+		/* Cast to an appropriate type */
+		p_l = (uint64_t *)buff;
+		for (i = cnt; i > 0 ; i--) {
+			*p_l++ = *p_reg;
+		}
 
-        cnt = (num % 8);
-        if (0 != cnt)
-        {
-            /* Cast to an appropriate type */
-            p_c = (uint8_t *)p_l;
-            tmp = *p_reg;
-            for (i = cnt; i > 0 ; i--)
-            {
-                /* Cast to an appropriate type */
-                *p_c++ = (uint8_t)(tmp);
-                tmp >>= 8;
-            }
-        }
-    }
+		cnt = (num % 8);
+		if (0 != cnt) {
+			/* Cast to an appropriate type */
+			p_c = (uint8_t *)p_l;
+			tmp = *p_reg;
+			for (i = cnt; i > 0 ; i--) {
+				/* Cast to an appropriate type */
+				*p_c++ = (uint8_t)(tmp);
+				tmp >>= 8;
+			}
+		}
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_read_data
@@ -207,59 +198,54 @@ int32_t sddev_read_data(int32_t sd_port, uint8_t *buff, uint32_t reg_addr, int32
 ******************************************************************************/
 int32_t sddev_write_data(int32_t sd_port, uint8_t *buff, uint32_t reg_addr, int32_t num)
 {
-    int32_t  i;
+	int32_t  i;
 
-    /* Cast to an appropriate type */
-    uint64_t *p_reg = (uint64_t *)((uintptr_t)reg_addr);
+	/* Cast to an appropriate type */
+	uint64_t *p_reg = (uint64_t *)((uintptr_t)reg_addr);
 
-    /* Cast to an appropriate type */
-    uint64_t *p_buff = (uint64_t *)buff;
-    uint64_t tmp;
+	/* Cast to an appropriate type */
+	uint64_t *p_buff = (uint64_t *)buff;
+	uint64_t tmp;
 
-    /* dont care non 8byte alignment data */
-    num += 7;
-    num /= 8;
+	/* dont care non 8byte alignment data */
+	num += 7;
+	num /= 8;
 
-    /* Cast to an appropriate type */
-    if (((uintptr_t)buff & 0x7uL) != 0uL)
-    {
-        for (i = num; i > 0 ; i--)
-        {
-            /* Cast to an appropriate type */
-            tmp  = (uint64_t)(*buff++);
+	/* Cast to an appropriate type */
+	if (((uintptr_t)buff & 0x7uL) != 0uL) {
+		for (i = num; i > 0 ; i--) {
+			/* Cast to an appropriate type */
+			tmp  = (uint64_t)(*buff++);
 
-            /* Cast to an appropriate type */
-            tmp |= ((uint64_t)(*buff++) << 8);
+			/* Cast to an appropriate type */
+			tmp |= ((uint64_t)(*buff++) << 8);
 
-            /* Cast to an appropriate type */
-            tmp |= ((uint64_t)(*buff++) << 16);
+			/* Cast to an appropriate type */
+			tmp |= ((uint64_t)(*buff++) << 16);
 
-            /* Cast to an appropriate type */
-            tmp |= ((uint64_t)(*buff++) << 24);
+			/* Cast to an appropriate type */
+			tmp |= ((uint64_t)(*buff++) << 24);
 
-            /* Cast to an appropriate type */
-            tmp |= ((uint64_t)(*buff++) << 32);
+			/* Cast to an appropriate type */
+			tmp |= ((uint64_t)(*buff++) << 32);
 
-            /* Cast to an appropriate type */
-            tmp |= ((uint64_t)(*buff++) << 40);
+			/* Cast to an appropriate type */
+			tmp |= ((uint64_t)(*buff++) << 40);
 
-            /* Cast to an appropriate type */
-            tmp |= ((uint64_t)(*buff++) << 48);
+			/* Cast to an appropriate type */
+			tmp |= ((uint64_t)(*buff++) << 48);
 
-            /* Cast to an appropriate type */
-            tmp |= ((uint64_t)(*buff++) << 56);
-            *p_reg = tmp;
-        }
-    }
-    else
-    {
-        for (i = num; i > 0 ; i--)
-        {
-            *p_reg = *p_buff++;
-        }
-    }
+			/* Cast to an appropriate type */
+			tmp |= ((uint64_t)(*buff++) << 56);
+			*p_reg = tmp;
+		}
+	} else {
+		for (i = num; i > 0 ; i--) {
+			*p_reg = *p_buff++;
+		}
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_write_data
@@ -287,35 +273,34 @@ int32_t sddev_write_data(int32_t sd_port, uint8_t *buff, uint32_t reg_addr, int3
 ******************************************************************************/
 uint32_t sddev_get_clockdiv(int32_t sd_port, int32_t clock)
 {
-    uint32_t div;
+	uint32_t div;
 
-    switch (clock)
-    {
-        case SD_CLK_50MHZ:
-            div = SD_DIV_4;        /* 133.25MHz/4 = 33.31MHz   */
-            break;
-        case SD_CLK_25MHZ:
-        case SD_CLK_20MHZ:
-            div = SD_DIV_8;        /* 133.25MHz/8 = 16.65MHz   */
-            break;
-        case SD_CLK_10MHZ:
-            div = SD_DIV_16;       /* 133.25MHz/16 = 8.32MHz   */
-            break;
-        case SD_CLK_5MHZ:
-            div = SD_DIV_32;       /* 133.25MHz/32 = 4.16MHz   */
-            break;
-        case SD_CLK_1MHZ:
-            div = SD_DIV_256;      /* 133.25MHz/256 = 520.5kHz */
-            break;
-        case SD_CLK_400KHZ:
-            div = SD_DIV_512;      /* 133.25MHz/512 = 260.2kHz */
-            break;
-        default:
-            div = SD_DIV_512;      /* 133.25MHz/512 = 260.2kHz */
-            break;
-    }
+	switch (clock) {
+	case SD_CLK_50MHZ:
+		div = SD_DIV_4;        /* 133.25MHz/4 = 33.31MHz   */
+		break;
+	case SD_CLK_25MHZ:
+	case SD_CLK_20MHZ:
+		div = SD_DIV_8;        /* 133.25MHz/8 = 16.65MHz   */
+		break;
+	case SD_CLK_10MHZ:
+		div = SD_DIV_16;       /* 133.25MHz/16 = 8.32MHz   */
+		break;
+	case SD_CLK_5MHZ:
+		div = SD_DIV_32;       /* 133.25MHz/32 = 4.16MHz   */
+		break;
+	case SD_CLK_1MHZ:
+		div = SD_DIV_256;      /* 133.25MHz/256 = 520.5kHz */
+		break;
+	case SD_CLK_400KHZ:
+		div = SD_DIV_512;      /* 133.25MHz/512 = 260.2kHz */
+		break;
+	default:
+		div = SD_DIV_512;      /* 133.25MHz/512 = 260.2kHz */
+		break;
+	}
 
-    return div;
+	return div;
 }
 /*******************************************************************************
  End of function sddev_get_clockdiv
@@ -332,7 +317,7 @@ uint32_t sddev_get_clockdiv(int32_t sd_port, int32_t clock)
 ******************************************************************************/
 int32_t sddev_set_port(int32_t sd_port, int32_t mode)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_set_port
@@ -348,23 +333,22 @@ int32_t sddev_set_port(int32_t sd_port, int32_t mode)
 ******************************************************************************/
 int32_t sddev_int_wait(int32_t sd_port, int32_t time)
 {
-    int32_t  ret;
-    uint32_t waittime;
+	int32_t  ret;
+	uint32_t waittime;
 
-    waittime = (uint32_t)time;
+	waittime = (uint32_t)time;
 
-    /* interrupt generated? */
-    ret = sd_check_int(sd_port);
-    while ((SD_ERR == ret) && (waittime > 0uL))
-    {
-        mdelay(1);
-        waittime--;
+	/* interrupt generated? */
+	ret = sd_check_int(sd_port);
+	while ((SD_ERR == ret) && (waittime > 0uL)) {
+		mdelay(1);
+		waittime--;
 
-        /* interrupt generated? */
-        ret = sd_check_int(sd_port);
-    }
+		/* interrupt generated? */
+		ret = sd_check_int(sd_port);
+	}
 
-    return ret;
+	return ret;
 }
 /*******************************************************************************
  End of function sddev_int_wait
@@ -382,7 +366,7 @@ int32_t sddev_int_wait(int32_t sd_port, int32_t time)
 ******************************************************************************/
 int32_t sddev_init_dma(int32_t sd_port, uint32_t buff, int32_t dir)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_init_dma
@@ -397,7 +381,7 @@ int32_t sddev_init_dma(int32_t sd_port, uint32_t buff, int32_t dir)
 ******************************************************************************/
 int32_t sddev_wait_dma_end(int32_t sd_port, int32_t cnt)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_wait_dma_end
@@ -411,7 +395,7 @@ int32_t sddev_wait_dma_end(int32_t sd_port, int32_t cnt)
 ******************************************************************************/
 int32_t sddev_disable_dma(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_disable_dma
@@ -425,7 +409,7 @@ int32_t sddev_disable_dma(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_reset_dma(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_reset_dma
@@ -439,7 +423,7 @@ int32_t sddev_reset_dma(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_finalize_dma(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_finalize_dma
@@ -453,7 +437,7 @@ int32_t sddev_finalize_dma(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_loc_cpu(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_loc_cpu
@@ -467,7 +451,7 @@ int32_t sddev_loc_cpu(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_unl_cpu(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_unl_cpu
@@ -481,7 +465,7 @@ int32_t sddev_unl_cpu(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_finalize(int32_t sd_port)
 {
-    return SD_OK;
+	return SD_OK;
 }
 /*******************************************************************************
  End of function sddev_finalize
@@ -495,7 +479,7 @@ int32_t sddev_finalize(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_cd_layout(int32_t sd_port)
 {
-    return SD_ERR;
+	return SD_ERR;
 }
 /*******************************************************************************
  End of function sddev_cd_layout
@@ -509,7 +493,7 @@ int32_t sddev_cd_layout(int32_t sd_port)
 ******************************************************************************/
 int32_t sddev_wp_layout(int32_t sd_port)
 {
-    return SD_ERR;
+	return SD_ERR;
 }
 /*******************************************************************************
  End of function sddev_wp_layout

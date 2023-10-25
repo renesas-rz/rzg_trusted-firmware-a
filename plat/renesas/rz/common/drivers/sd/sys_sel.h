@@ -41,7 +41,7 @@ Macro definitions
 #if defined(TARGET_RZ_MPU)
 #define DRIVER_NAME             "RENESAS RZ SD Driver Ver1.00"
 #else
-    error!!
+	error"!!"
 #endif
 
 /* ==== number of ports ==== */
