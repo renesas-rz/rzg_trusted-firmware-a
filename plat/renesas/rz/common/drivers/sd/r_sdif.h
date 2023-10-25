@@ -28,7 +28,7 @@
 Includes   <System Includes> , "Project Includes"
 ******************************************************************************/
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif    /* __cplusplus    */
 
@@ -232,19 +232,17 @@ Typedef definitions
 ******************************************************************************/
 /* ---- User Configuration ---- */
 /* SD card detection option */
-typedef enum
-{
-    SD_CD_ENABLED,      /* SD card detection is enabled. */
-    SD_CD_DISABLED      /* When SD card detection is disabled,
-                           the status is always loading. */
+typedef enum {
+	SD_CD_ENABLED,      /* SD card detection is enabled. */
+	SD_CD_DISABLED      /* When SD card detection is disabled,
+						   the status is always loading. */
 } e_sd_cd_layout_t;
 
 /* SD write protection signal detection option */
-typedef enum
-{
-    SD_WP_ENABLED,      /* Write protection signal detection is enabled. */
-    SD_WP_DISABLED      /* When write protection signal detection is disabled,
-                           the status is always write protection signal off. */
+typedef enum {
+	SD_WP_ENABLED,      /* Write protection signal detection is enabled. */
+	SD_WP_DISABLED      /* When write protection signal detection is disabled,
+						   the status is always write protection signal off. */
 } e_sd_wp_layout_t;
 
 typedef int32_t (*p_intCallbackFunc)(int32_t sd_port, int32_t cd);
@@ -1013,7 +1011,7 @@ Exported global variables and functions (to be accessed by other files)
 Private global variables and functions
 ******************************************************************************/
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 }
 #endif    /* __cplusplus    */
 

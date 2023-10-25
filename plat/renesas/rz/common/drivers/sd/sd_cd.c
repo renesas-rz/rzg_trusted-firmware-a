@@ -66,78 +66,64 @@ Private global variables and functions
  *****************************************************************************/
 int32_t sd_cd_int(int32_t sd_port, int32_t enable, int32_t (*callback)(int32_t, int32_t))
 {
-    uint64_t    info1;
-    st_sdhndl_t *p_hndl;
-    int32_t     layout;
+	uint64_t    info1;
+	st_sdhndl_t *p_hndl;
+	int32_t     layout;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
-    if ((SD_CD_INT_ENABLE != enable) && (SD_CD_INT_DISABLE != enable))
-    {
-        return SD_ERR;  /* parameter error */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
+	if ((SD_CD_INT_ENABLE != enable) && (SD_CD_INT_DISABLE != enable)) {
+		return SD_ERR;  /* parameter error */
+	}
 
-    /* is change interrupt disable to enable? */
-    if ((p_hndl->int_info1_mask & (SD_INFO1_MASK_DET_DAT3 | SD_INFO1_MASK_DET_CD)) == 0)
-    {
-        sddev_loc_cpu(sd_port);
+	/* is change interrupt disable to enable? */
+	if ((p_hndl->int_info1_mask & (SD_INFO1_MASK_DET_DAT3 | SD_INFO1_MASK_DET_CD)) == 0) {
+		sddev_loc_cpu(sd_port);
 
-        /* Cast to an appropriate type */
-        info1 = SDMMC.SD_INFO1.LONGLONG;
+		/* Cast to an appropriate type */
+		info1 = SDMMC.SD_INFO1.LONGLONG;
 
-        /* Cast to an appropriate type */
-        info1 &= (uint64_t)~SD_INFO1_MASK_DET_DAT3_CD;
+		/* Cast to an appropriate type */
+		info1 &= (uint64_t)~SD_INFO1_MASK_DET_DAT3_CD;
 
-        /* Cast to an appropriate type */
-        SDMMC.SD_INFO1.LONGLONG = info1; /* clear insert and remove bits */
-        sddev_unl_cpu(sd_port);
-    }
+		/* Cast to an appropriate type */
+		SDMMC.SD_INFO1.LONGLONG = info1; /* clear insert and remove bits */
+		sddev_unl_cpu(sd_port);
+	}
 
-    layout = sddev_cd_layout(sd_port);
-    if (SD_OK == layout)
-    {
-        if (SD_CD_INT_ENABLE == enable)
-        {
-            /* enable insert and remove interrupts */
-            if (SD_CD_SOCKET == p_hndl->cd_port)  /* CD */
-            {
-                /* Cast to an appropriate type */
-                _sd_set_int_mask(p_hndl, SD_INFO1_MASK_DET_CD, 0);
-            }
-            else    /* DAT3 */
-            {
-                /* Cast to an appropriate type */
-                _sd_set_int_mask(p_hndl, SD_INFO1_MASK_DET_DAT3, 0);
-            }
-        }
-        else    /* case SD_CD_INT_DISABLE */
-        {
-            /* disable insert and remove interrupts */
-            if (SD_CD_SOCKET == p_hndl->cd_port)  /* CD */
-            {
-                /* Cast to an appropriate type */
-                _sd_clear_int_mask(p_hndl, SD_INFO1_MASK_DET_CD, 0);
-            }
-            else    /* DAT3 */
-            {
-                /* Cast to an appropriate type */
-                _sd_clear_int_mask(p_hndl, SD_INFO1_MASK_DET_DAT3, 0);
-            }
-        }
-    }
+	layout = sddev_cd_layout(sd_port);
+	if (SD_OK == layout) {
+		if (SD_CD_INT_ENABLE == enable) {
+			/* enable insert and remove interrupts */
+			if (SD_CD_SOCKET == p_hndl->cd_port) {	/* CD */
+				/* Cast to an appropriate type */
+				_sd_set_int_mask(p_hndl, SD_INFO1_MASK_DET_CD, 0);
+			} else {	/* DAT3 */
+				/* Cast to an appropriate type */
+				_sd_set_int_mask(p_hndl, SD_INFO1_MASK_DET_DAT3, 0);
+			}
+		} else {	/* case SD_CD_INT_DISABLE */
+			/* disable insert and remove interrupts */
+			if (SD_CD_SOCKET == p_hndl->cd_port) {	/* CD */
+				/* Cast to an appropriate type */
+				_sd_clear_int_mask(p_hndl, SD_INFO1_MASK_DET_CD, 0);
+			} else {	/* DAT3 */
+				/* Cast to an appropriate type */
+				_sd_clear_int_mask(p_hndl, SD_INFO1_MASK_DET_DAT3, 0);
+			}
+		}
+	}
 
-    /* ---- register callback function ---- */
-    p_hndl->int_cd_callback = callback;
+	/* ---- register callback function ---- */
+	p_hndl->int_cd_callback = callback;
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_cd_int
@@ -155,20 +141,18 @@ int32_t sd_cd_int(int32_t sd_port, int32_t enable, int32_t (*callback)(int32_t, 
  *****************************************************************************/
 int32_t sd_check_media(int32_t sd_port)
 {
-    st_sdhndl_t  *p_hndl;
+	st_sdhndl_t  *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    return _sd_check_media(p_hndl);
+	return _sd_check_media(p_hndl);
 }
 /******************************************************************************
  End of function sd_check_media
@@ -185,37 +169,30 @@ int32_t sd_check_media(int32_t sd_port)
  *****************************************************************************/
 int32_t _sd_check_media(st_sdhndl_t *p_hndl)
 {
-    uint16_t reg;
-    int32_t  layout;
+	uint16_t reg;
+	int32_t  layout;
 
-    /* Cast to an appropriate type */
-    layout = sddev_cd_layout((int32_t)(p_hndl->sd_port));
-    if (SD_OK == layout)
-    {
-        /* Cast to an appropriate type */
-        reg = SDMMC.SD_INFO1.WORD.LL;
-        if (SD_CD_SOCKET == p_hndl->cd_port)
-        {
-            /* Cast to an appropriate type */
-            reg &= (uint16_t)SD_INFO1_MASK_STATE_CD;    /* check CD level   */
-        }
-        else
-        {
-            /* Cast to an appropriate type */
-            reg &= (uint16_t)SD_INFO1_MASK_STATE_DAT3;  /* check DAT3 level */
-        }
-    }
-    else
-    {
-        reg = SD_CD_DETECT;                             /* Always inserted */
-    }
+	/* Cast to an appropriate type */
+	layout = sddev_cd_layout((int32_t)(p_hndl->sd_port));
+	if (SD_OK == layout) {
+		/* Cast to an appropriate type */
+		reg = SDMMC.SD_INFO1.WORD.LL;
+		if (SD_CD_SOCKET == p_hndl->cd_port) {
+			/* Cast to an appropriate type */
+			reg &= (uint16_t)SD_INFO1_MASK_STATE_CD;    /* check CD level   */
+		} else  {
+			/* Cast to an appropriate type */
+			reg &= (uint16_t)SD_INFO1_MASK_STATE_DAT3;  /* check DAT3 level */
+		}
+	} else {
+		reg = SD_CD_DETECT;                             /* Always inserted */
+	}
 
-    if (reg)
-    {
-        return SD_OK;   /* inserted */
-    }
+	if (reg) {
+		return SD_OK;   /* inserted */
+	}
 
-    return SD_ERR;  /* no card */
+	return SD_ERR;  /* no card */
 }
 /******************************************************************************
  End of function _sd_check_media

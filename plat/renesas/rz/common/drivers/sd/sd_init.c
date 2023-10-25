@@ -75,146 +75,137 @@ static int32_t _sd_init_error(int32_t sd_port, int32_t ret);
  *****************************************************************************/
 int32_t sd_init(int32_t sd_port, uint32_t base, void *workarea, int32_t cd_port)
 {
-    int32_t     i;
-    uint64_t    info1;
-    uint8_t     *p_ptr;
-    st_sdhndl_t *p_hndl;
-    int32_t     ret;
+	int32_t     i;
+	uint64_t    info1;
+	uint8_t     *p_ptr;
+	st_sdhndl_t *p_hndl;
+	int32_t     ret;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    if ((SD_SCC_IP0_BASE_ADDR != base) && (SD_SCC_IP1_BASE_ADDR != base))
-    {
-        return SD_ERR;
-    }
+	if ((SD_SCC_IP0_BASE_ADDR != base) && (SD_SCC_IP1_BASE_ADDR != base)) {
+		return SD_ERR;
+	}
 
-    /* ==== initialize work memory  ==== */
-    if ((uintptr_t)workarea == 0)
-    {
-        ret = SD_ERR;
-        return _sd_init_error(sd_port, ret);
-    }
+	/* ==== initialize work memory  ==== */
+	if ((uintptr_t)workarea == 0) {
+		ret = SD_ERR;
+		return _sd_init_error(sd_port, ret);
+	}
 
-    /* ==== work memory boundary check (octlet unit) ==== */
-    if ((uintptr_t)workarea & 0x7u)
-    {
-        ret = SD_ERR;
-        return _sd_init_error(sd_port, ret);
-    }
+	/* ==== work memory boundary check (octlet unit) ==== */
+	if ((uintptr_t)workarea & 0x7u) {
+		ret = SD_ERR;
+		return _sd_init_error(sd_port, ret);
+	}
 
-    /* ==== check card detect port ==== */
-    if ((SD_CD_SOCKET != cd_port) && (SD_CD_DAT3 != cd_port))
-    {
-        ret = SD_ERR;
-        return _sd_init_error(sd_port, ret);
-    }
+	/* ==== check card detect port ==== */
+	if ((SD_CD_SOCKET != cd_port) && (SD_CD_DAT3 != cd_port)) {
+		ret = SD_ERR;
+		return _sd_init_error(sd_port, ret);
+	}
 
-    /* card detect port is fixed at CD pin */
-    cd_port = SD_CD_SOCKET;
+	/* card detect port is fixed at CD pin */
+	cd_port = SD_CD_SOCKET;
 
-    /* ==== initialize peripheral module ==== */
-    if (sddev_init(sd_port) != SD_OK)
-    {
-        ret = SD_ERR_CPU_IF;
-        return _sd_init_error(sd_port, ret);
-    }
+	/* ==== initialize peripheral module ==== */
+	if (sddev_init(sd_port) != SD_OK) {
+		ret = SD_ERR_CPU_IF;
+		return _sd_init_error(sd_port, ret);
+	}
 
-    /* disable all interrupts */
-    sddev_loc_cpu(sd_port);
+	/* disable all interrupts */
+	sddev_loc_cpu(sd_port);
 
-    /* Cast to an appropriate type */
-    p_hndl = (st_sdhndl_t *)workarea;
+	/* Cast to an appropriate type */
+	p_hndl = (st_sdhndl_t *)workarea;
 
-    gp_sdhandle[sd_port] = p_hndl;
+	gp_sdhandle[sd_port] = p_hndl;
 
-    /* ---- clear work memory zero value --- */
-    p_ptr = (uint8_t *)p_hndl;
-    for (i = sizeof(st_sdhndl_t); i > 0 ; i--)
-    {
-        *p_ptr++ = 0;
-    }
+	/* ---- clear work memory zero value --- */
+	p_ptr = (uint8_t *)p_hndl;
+	for (i = sizeof(st_sdhndl_t); i > 0 ; i--) {
+		*p_ptr++ = 0;
+	}
 
-    /* ---- set SDHI register address ---- */
-    p_hndl->reg_base = base;
+	/* ---- set SDHI register address ---- */
+	p_hndl->reg_base = base;
 
-    /* Cast to an appropriate type */
-    p_hndl->cd_port = (uint8_t)cd_port;
+	/* Cast to an appropriate type */
+	p_hndl->cd_port = (uint8_t)cd_port;
 
-    /* ---- initialize maximum block count ---- */
-    p_hndl->trans_sectors = 256;
-    p_hndl->trans_blocks  = 32;
+	/* ---- initialize maximum block count ---- */
+	p_hndl->trans_sectors = 256;
+	p_hndl->trans_blocks  = 32;
 
-    p_hndl->sd_port = sd_port;
+	p_hndl->sd_port = sd_port;
 
-    /* return to select port0 */
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	/* return to select port0 */
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    /* ==== initialize SDHI ==== */
-    SDMMC.SD_INFO1_MASK.LONGLONG = SD_INFO1_MASK_ALL;
+	/* ==== initialize SDHI ==== */
+	SDMMC.SD_INFO1_MASK.LONGLONG = SD_INFO1_MASK_ALL;
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO2_MASK.LONGLONG = SD_INFO2_MASK_ALLP;
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO2_MASK.LONGLONG = SD_INFO2_MASK_ALLP;
 
-    /* Cast to an appropriate type */
-    SDMMC.SDIO_INFO1_MASK.LONGLONG = SDIO_INFO1_MASK_ALLP;
+	/* Cast to an appropriate type */
+	SDMMC.SDIO_INFO1_MASK.LONGLONG = SDIO_INFO1_MASK_ALLP;
 
-    /* Cast to an appropriate type */
-    SDMMC.SDIO_MODE.LONGLONG = 0x0000;
+	/* Cast to an appropriate type */
+	SDMMC.SDIO_MODE.LONGLONG = 0x0000;
 
-    /* Cast to an appropriate type */
-    info1 = SDMMC.SD_INFO1.LONGLONG;
+	/* Cast to an appropriate type */
+	info1 = SDMMC.SD_INFO1.LONGLONG;
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO1.LONGLONG = (uint64_t)(info1 & ~SD_INFO1_MASK_TRNS_RESP);
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO1.LONGLONG = (uint64_t)(info1 & ~SD_INFO1_MASK_TRNS_RESP);
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO2.LONGLONG = 0x0000;
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO2.LONGLONG = 0x0000;
 
-    /* Cast to an appropriate type */
-    SDMMC.SDIO_INFO1.LONGLONG = 0x0000;
+	/* Cast to an appropriate type */
+	SDMMC.SDIO_INFO1.LONGLONG = 0x0000;
 
-    /* Cast to an appropriate type */
-    SDMMC.SOFT_RST.LONGLONG = SOFT_RST_SDRST_RESET;
+	/* Cast to an appropriate type */
+	SDMMC.SOFT_RST.LONGLONG = SOFT_RST_SDRST_RESET;
 
-    /* Cast to an appropriate type */
-    SDMMC.SOFT_RST.LONGLONG = SOFT_RST_SDRST_RELEASED;
+	/* Cast to an appropriate type */
+	SDMMC.SOFT_RST.LONGLONG = SOFT_RST_SDRST_RELEASED;
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO1_MASK.LONGLONG = DM_CM_INFO1_MASK_ALLP;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO1_MASK.LONGLONG = DM_CM_INFO1_MASK_ALLP;
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO2_MASK.LONGLONG = DM_CM_INFO2_MASK_ALLP;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO2_MASK.LONGLONG = DM_CM_INFO2_MASK_ALLP;
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO1.LONGLONG = (uint64_t)0;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO1.LONGLONG = (uint64_t)0;
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO2.LONGLONG = (uint64_t)0;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO2.LONGLONG = (uint64_t)0;
 
-    /* initialize DMAC */
-    ret = sddev_reset_dma(sd_port);
-    if (SD_OK != ret)
-    {
-        return ret;
-    }
+	/* initialize DMAC */
+	ret = sddev_reset_dma(sd_port);
+	if (SD_OK != ret) {
+		return ret;
+	}
 
-    /* Cast to an appropriate type */
-    SDMMC.HOST_MODE.LONGLONG = HOST_MODE_64BIT_ACCESS;
+	/* Cast to an appropriate type */
+	SDMMC.HOST_MODE.LONGLONG = HOST_MODE_64BIT_ACCESS;
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_OPTION.LONGLONG = SD_OPTION_INIT;
+	/* Cast to an appropriate type */
+	SDMMC.SD_OPTION.LONGLONG = SD_OPTION_INIT;
 
-    /* enable all interrupts */
-    sddev_unl_cpu(sd_port);
+	/* enable all interrupts */
+	sddev_unl_cpu(sd_port);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_init
@@ -231,8 +222,8 @@ int32_t sd_init(int32_t sd_port, uint32_t base, void *workarea, int32_t cd_port)
  *****************************************************************************/
 static int32_t _sd_init_error(int32_t sd_port, int32_t ret)
 {
-    gp_sdhandle[sd_port] = 0;  /* relese SD handle */
-    return ret;
+	gp_sdhandle[sd_port] = 0;  /* relese SD handle */
+	return ret;
 }
 /******************************************************************************
  End of function _sd_init_error
@@ -250,78 +241,74 @@ static int32_t _sd_init_error(int32_t sd_port, int32_t ret)
  *****************************************************************************/
 int32_t sd_finalize(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
-    uint64_t    info1;
-    int32_t     ret;
+	st_sdhndl_t *p_hndl;
+	uint64_t    info1;
+	int32_t     ret;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    if (0 == gp_sdhandle[sd_port])
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	if (0 == gp_sdhandle[sd_port]) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    /* reset SDHI */
-    SDMMC.SOFT_RST.LONGLONG = SOFT_RST_SDRST_RESET;
+	/* reset SDHI */
+	SDMMC.SOFT_RST.LONGLONG = SOFT_RST_SDRST_RESET;
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO1_MASK.LONGLONG = SD_INFO1_MASK_ALL;
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO1_MASK.LONGLONG = SD_INFO1_MASK_ALL;
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO2_MASK.LONGLONG = SD_INFO2_MASK_ALLP;
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO2_MASK.LONGLONG = SD_INFO2_MASK_ALLP;
 
-    /* Cast to an appropriate type */
-    SDMMC.SDIO_INFO1_MASK.LONGLONG = SDIO_INFO1_MASK_ALLP;
+	/* Cast to an appropriate type */
+	SDMMC.SDIO_INFO1_MASK.LONGLONG = SDIO_INFO1_MASK_ALLP;
 
-    /* Cast to an appropriate type */
-    SDMMC.SDIO_MODE.LONGLONG = 0x0000;
+	/* Cast to an appropriate type */
+	SDMMC.SDIO_MODE.LONGLONG = 0x0000;
 
-    /* Cast to an appropriate type */
-    info1 = SDMMC.SD_INFO1.LONGLONG;
+	/* Cast to an appropriate type */
+	info1 = SDMMC.SD_INFO1.LONGLONG;
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO1.LONGLONG = (uint64_t)(info1 & ~SD_INFO1_MASK_TRNS_RESP);
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO1.LONGLONG = (uint64_t)(info1 & ~SD_INFO1_MASK_TRNS_RESP);
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO2.LONGLONG = 0x0000;
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO2.LONGLONG = 0x0000;
 
-    /* Cast to an appropriate type */
-    SDMMC.SDIO_INFO1.LONGLONG = 0x0000;
+	/* Cast to an appropriate type */
+	SDMMC.SDIO_INFO1.LONGLONG = 0x0000;
 
-    /* reset DMAC */
-    ret = sddev_finalize_dma(sd_port);
-    if (SD_OK != ret)
-    {
-        return ret;
-    }
+	/* reset DMAC */
+	ret = sddev_finalize_dma(sd_port);
+	if (SD_OK != ret) {
+		return ret;
+	}
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO1_MASK.LONGLONG = DM_CM_INFO1_MASK_ALLP;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO1_MASK.LONGLONG = DM_CM_INFO1_MASK_ALLP;
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO2_MASK.LONGLONG = DM_CM_INFO2_MASK_ALLP;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO2_MASK.LONGLONG = DM_CM_INFO2_MASK_ALLP;
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO1.LONGLONG = (uint64_t)0;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO1.LONGLONG = (uint64_t)0;
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO2.LONGLONG = (uint64_t)0;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO2.LONGLONG = (uint64_t)0;
 
-    /* ==== finish peripheral module ==== */
-    ret = sddev_finalize(sd_port);
+	/* ==== finish peripheral module ==== */
+	ret = sddev_finalize(sd_port);
 
-    gp_sdhandle[sd_port] = 0;  /* destruct SD Handle */
+	gp_sdhandle[sd_port] = 0;  /* destruct SD Handle */
 
-    return ret;
+	return ret;
 }
 /******************************************************************************
  End of function sd_finalize
@@ -348,116 +335,97 @@ int32_t sd_finalize(int32_t sd_port)
  *****************************************************************************/
 int32_t _sd_init_hndl(st_sdhndl_t *p_hndl, uint32_t mode, uint32_t voltage)
 {
-    int32_t i;
-    int32_t j;
+	int32_t i;
+	int32_t j;
 
-    p_hndl->media_type = SD_MEDIA_UNKNOWN;
-    p_hndl->write_protect = 0;
-    p_hndl->resp_status = STATE_IDEL;
-    p_hndl->error = SD_OK;
-    p_hndl->stop = 0;
-    p_hndl->prot_sector_size = 0;
-    p_hndl->voltage = voltage;
-    p_hndl->speed_mode = 0;
+	p_hndl->media_type = SD_MEDIA_UNKNOWN;
+	p_hndl->write_protect = 0;
+	p_hndl->resp_status = STATE_IDEL;
+	p_hndl->error = SD_OK;
+	p_hndl->stop = 0;
+	p_hndl->prot_sector_size = 0;
+	p_hndl->voltage = voltage;
+	p_hndl->speed_mode = 0;
 
-    /* Cast to an appropriate type */
-    p_hndl->int_mode = (uint8_t)(mode & 0x1u);
+	/* Cast to an appropriate type */
+	p_hndl->int_mode = (uint8_t)(mode & 0x1u);
 
-    /* Cast to an appropriate type */
-    p_hndl->trans_mode = (uint8_t)(mode & SD_MODE_DMA);
+	/* Cast to an appropriate type */
+	p_hndl->trans_mode = (uint8_t)(mode & SD_MODE_DMA);
 
-    /* Cast to an appropriate type */
-    p_hndl->sup_card = (uint8_t)(mode & 0x30u);
+	/* Cast to an appropriate type */
+	p_hndl->sup_card = (uint8_t)(mode & 0x30u);
 
-    /* Cast to an appropriate type */
-    p_hndl->sup_speed = (uint16_t)(mode & 0xF040u);
+	/* Cast to an appropriate type */
+	p_hndl->sup_speed = (uint16_t)(mode & 0xF040u);
 
-    /* Cast to an appropriate type */
-    p_hndl->sup_ver = (uint8_t)(mode & 0x80u);
-    if (mode & SD_MODE_1BIT)
-    {
-        p_hndl->sup_if_mode = SD_PORT_SERIAL;
-    }
-    else
-    {
-        p_hndl->sup_if_mode = SD_PORT_PARALLEL;
-    }
+	/* Cast to an appropriate type */
+	p_hndl->sup_ver = (uint8_t)(mode & 0x80u);
+	if (mode & SD_MODE_1BIT) {
+		p_hndl->sup_if_mode = SD_PORT_SERIAL;
+	} else {
+		p_hndl->sup_if_mode = SD_PORT_PARALLEL;
+	}
 
-    /* initialize card registers */
-    for (i = 0; i < (4 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->ocr[i] = 0;
-    }
-    for (i = 0; i < (16 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->cid[i] = 0;
-    }
-    for (i = 0; i < (16 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->csd[i] = 0;
-    }
-    for (i = 0; i < (2 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->dsr[i] = 0;
-    }
-    for (i = 0; i < (4 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->rca[i] = 0;
-    }
-    for (i = 0; i < (8 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->scr[i] = 0;
-    }
-    for (i = 0; i < (14 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->sdstatus[i] = 0;
-    }
-    for (i = 0; i < (18 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->status_data[i] = 0;
-    }
-    for (i = 0; i < (4 / sizeof(uint16_t)); ++i)
-    {
-        p_hndl->if_cond[i] = 0;
-    }
+	/* initialize card registers */
+	for (i = 0; i < (4 / sizeof(uint16_t)); ++i) {
+		p_hndl->ocr[i] = 0;
+	}
+	for (i = 0; i < (16 / sizeof(uint16_t)); ++i) {
+		p_hndl->cid[i] = 0;
+	}
+	for (i = 0; i < (16 / sizeof(uint16_t)); ++i) {
+		p_hndl->csd[i] = 0;
+	}
+	for (i = 0; i < (2 / sizeof(uint16_t)); ++i) {
+		p_hndl->dsr[i] = 0;
+	}
+	for (i = 0; i < (4 / sizeof(uint16_t)); ++i) {
+		p_hndl->rca[i] = 0;
+	}
+	for (i = 0; i < (8 / sizeof(uint16_t)); ++i) {
+		p_hndl->scr[i] = 0;
+	}
+	for (i = 0; i < (14 / sizeof(uint16_t)); ++i) {
+		p_hndl->sdstatus[i] = 0;
+	}
+	for (i = 0; i < (18 / sizeof(uint16_t)); ++i) {
+		p_hndl->status_data[i] = 0;
+	}
+	for (i = 0; i < (4 / sizeof(uint16_t)); ++i) {
+		p_hndl->if_cond[i] = 0;
+	}
 
-    if (p_hndl->sup_card & SD_MODE_IO)
-    {
-        p_hndl->io_flag = 0;
-        p_hndl->io_info = 0;
+	if (p_hndl->sup_card & SD_MODE_IO) {
+		p_hndl->io_flag = 0;
+		p_hndl->io_info = 0;
 
-        for (i = 0; i < (4 / sizeof(uint16_t)); ++i)
-        {
-            p_hndl->io_ocr[i] = 0;
-        }
+		for (i = 0; i < (4 / sizeof(uint16_t)); ++i) {
+			p_hndl->io_ocr[i] = 0;
+		}
 
-        for (i = 0; i < 8; ++i)
-        {
-            for (j = 0; j < (SDIO_INTERNAL_REG_SIZE / sizeof(uint8_t)); ++j)
-            {
-                p_hndl->io_reg[i][j] = 0;
-            }
+		for (i = 0; i < 8; ++i) {
+			for (j = 0; j < (SDIO_INTERNAL_REG_SIZE / sizeof(uint8_t)); ++j) {
+				p_hndl->io_reg[i][j] = 0;
+			}
 
-            p_hndl->io_len[i]   = 0;
-            p_hndl->io_abort[i] = 0;
-        }
-    }
+			p_hndl->io_len[i]   = 0;
+			p_hndl->io_abort[i] = 0;
+		}
+	}
 
-    if (SD_MODE_VER2X == p_hndl->sup_ver)
-    {
-        p_hndl->if_cond[0] = 0;
-        p_hndl->if_cond[1] = 0x00aa;
-        if (p_hndl->voltage & 0x00FF8000)
-        {
-            p_hndl->if_cond[1] |= 0x0100; /* high volatege : 2.7V-3.6V */
-        }
-        if (p_hndl->voltage & 0x00000F00)
-        {
-            p_hndl->if_cond[1] |= 0x0200; /* low volatege : 1.65V-1.95V */
-        }
-    }
+	if (SD_MODE_VER2X == p_hndl->sup_ver) {
+		p_hndl->if_cond[0] = 0;
+		p_hndl->if_cond[1] = 0x00aa;
+		if (p_hndl->voltage & 0x00FF8000) {
+			p_hndl->if_cond[1] |= 0x0100; /* high volatege : 2.7V-3.6V */
+		}
+		if (p_hndl->voltage & 0x00000F00) {
+			p_hndl->if_cond[1] |= 0x0200; /* low volatege : 1.65V-1.95V */
+		}
+	}
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_init_hndl

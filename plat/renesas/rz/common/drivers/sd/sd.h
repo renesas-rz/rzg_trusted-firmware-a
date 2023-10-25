@@ -32,21 +32,18 @@ Includes   <System Includes> , "Project Includes"
 /******************************************************************************
 Typedef definitions
 ******************************************************************************/
-typedef union
-{
-    uint64_t        longlong;
-    struct
-    {
-        uint32_t    l_;
-        uint32_t    h_;
-    } st_long_t;
-    struct
-    {
-        uint16_t    ll_;
-        uint16_t    lh_;
-        uint16_t    hl_;
-        uint16_t    hh_;
-    } st_word_t;
+typedef union {
+	uint64_t        longlong;
+	struct {
+		uint32_t    l_;
+		uint32_t    h_;
+	} st_long_t;
+	struct {
+		uint16_t    ll_;
+		uint16_t    lh_;
+		uint16_t    hl_;
+		uint16_t    hh_;
+	} st_word_t;
 } u_sd_reg_t;
 
 /******************************************************************************
@@ -147,11 +144,11 @@ Macro definitions
 
 /* --- R1 response error bit ---- */
 #define RES_SW_INTERNAL             (0xe8400000ul)              /* Driver illegal process */
-                                                                /* OUT_OF_RANGE */
-                                                                /* ADDRESS_ERROR */
-                                                                /* BLOCK_LEN_ERROR */
-                                                                /* ERASE_PARAM */
-                                                                /* RES_ILLEGAL_COMMAND */
+																/* OUT_OF_RANGE */
+																/* ADDRESS_ERROR */
+																/* BLOCK_LEN_ERROR */
+																/* ERASE_PARAM */
+																/* RES_ILLEGAL_COMMAND */
 #define RES_ERASE_SEQ_ERROR         (0x10008000ul)              /* ERASE_SEQ_ERROR + WP_ERASE_SKIP */
 #define RES_WP_VIOLATION            (0x04000000ul)
 #define RES_CARD_IS_LOCKED          (0x02000000ul)
@@ -187,19 +184,19 @@ Macro definitions
 
 /* ---- SD_OPTION register ---- */
 #define SD_OPTION_INIT              ((uint64_t)(0x00ee))        /* SD_OPTION initial value */
-                                                                /* b7-4 : timeout counter = SD_CLK x 2^27           */
-                                                                /* b3-0 : card detect timer counter = SD_CLK x 2^24 */
+																/* b7-4 : timeout counter = SD_CLK x 2^27           */
+																/* b3-0 : card detect timer counter = SD_CLK x 2^24 */
 #define SD_OPTION_TOP_MAX           ((uint64_t)(0x02e0))        /* SD_OPTION TOP value is max.                      */
 #define SD_OPTION_TOP_MASK          ((uint64_t)(0x02f0))        /* SD_OPTION TOP mask                               */
 #define SD_OPTION_WIDTH_MASK        (SD_OPTION_WIDTH|SD_OPTION_WIDTH8)
-                                                                /* SD_OPTION Bus width mask                         */
+																/* SD_OPTION Bus width mask                         */
 #define SD_OPTION_WIDTH             ((uint64_t)(0x8000))        /* b15 : Bus width(WIDTH)                           */
 #define SD_OPTION_WIDTH8            ((uint64_t)(0x2000))        /* b13 : Bus width(WIDTH8)                          */
-                                                                /* WIDTH,WIDTH8                                     */
-                                                                /*     0,     1 = 8 bits bus width                  */
-                                                                /*     0,     0 = 4 bits bus width                  */
-                                                                /*     1,     0 = 1 bit  bus width                  */
-                                                                /*     1,     1 = 1 bit  bus width                  */
+																/* WIDTH,WIDTH8                                     */
+																/*     0,     1 = 8 bits bus width                  */
+																/*     0,     0 = 4 bits bus width                  */
+																/*     1,     0 = 1 bit  bus width                  */
+																/*     1,     1 = 1 bit  bus width                  */
 
 
 /* ---- SD_INFO1 interrupt mask register ---- */
@@ -263,11 +260,11 @@ Macro definitions
 /* ---- DMAC mode regiter ---- */
 #define DM_CM_DTRAN_MODE_READ       ((uint64_t)(0x10030))       /* SD upstream                              */
 #define DM_CM_DTRAN_MODE_WRITE      ((uint64_t)(0x00030))       /* SD downstream                            */
-                                                                /* b17,b16 : CH_NUM[1:0]                    */
-                                                                /*   0,  0 : SD downstream                  */
-                                                                /*   0,  1 : SD upstream                    */
-                                                                /*  b5, b4 : BUS_WIDTH[1:0]                 */
-                                                                /*   1,  1 : 64bit(fix)                     */
+																/* b17,b16 : CH_NUM[1:0]                    */
+																/*   0,  0 : SD downstream                  */
+																/*   0,  1 : SD upstream                    */
+																/*  b5, b4 : BUS_WIDTH[1:0]                 */
+																/*   1,  1 : 64bit(fix)                     */
 
 /* ---- DMAC control register ---- */
 #define DM_CM_DTRAN_CTRL_DM_START   ((uint64_t)(0x0001))        /* b0 : DM_START                            */
@@ -417,90 +414,90 @@ Macro definitions
 /* ==== SD Driver work buffer (allocated by File system) ==== */
 typedef struct __sdhndl                 /* SD handle */
 {
-    uint32_t    reg_base;               /* SDHI base address */
-    uint32_t    card_sector_size;       /* sector size (user area) */
-    uint32_t    prot_sector_size;       /* sector size (protect area) */
-    uint32_t    erase_sect;             /* erase block size */
-    uint8_t     fat_type;               /* FAT type (FAT12:1 FAT16:2 FAT32:3 unknown:0)  */
-    uint8_t     csd_structure;          /* CSD structure (Standard capacity:0 High capacity:1) */
-    uint8_t     csd_tran_speed;         /* CSD transfer speed */
-    uint16_t    csd_ccc;                /* CSD command class */
-    uint8_t     csd_copy;               /* CSD copy flag (not used) */
-    uint8_t     csd_file_format;        /* CSD file format group */
-    uint8_t     sd_spec;                /* SCR spec version */
-    uint8_t     if_mode;                /* bus width (1bit:0 4bits:1) */
-    uint16_t    speed_mode;             /* card speed mode; */
-    uint8_t     speed_class;            /* card speed class */
-    uint8_t     perform_move;           /* card move performance */
-    uint8_t     media_type;             /* card type */
-    uint8_t     write_protect;          /* write protect:       OFF : 0     */
+	uint32_t    reg_base;               /* SDHI base address */
+	uint32_t    card_sector_size;       /* sector size (user area) */
+	uint32_t    prot_sector_size;       /* sector size (protect area) */
+	uint32_t    erase_sect;             /* erase block size */
+	uint8_t     fat_type;               /* FAT type (FAT12:1 FAT16:2 FAT32:3 unknown:0)  */
+	uint8_t     csd_structure;          /* CSD structure (Standard capacity:0 High capacity:1) */
+	uint8_t     csd_tran_speed;         /* CSD transfer speed */
+	uint16_t    csd_ccc;                /* CSD command class */
+	uint8_t     csd_copy;               /* CSD copy flag (not used) */
+	uint8_t     csd_file_format;        /* CSD file format group */
+	uint8_t     sd_spec;                /* SCR spec version */
+	uint8_t     if_mode;                /* bus width (1bit:0 4bits:1) */
+	uint16_t    speed_mode;             /* card speed mode; */
+	uint8_t     speed_class;            /* card speed class */
+	uint8_t     perform_move;           /* card move performance */
+	uint8_t     media_type;             /* card type */
+	uint8_t     write_protect;          /* write protect:       OFF : 0     */
 
-                                        /*                   H/W WP : 1     */
-                                        /*   CSD  TMP_WRITE_PROTECT : 2     */
-                                        /*   CSD PERM_WRITE_PROTECT : 4     */
-                                        /*   SD ROM                 : 0x10  */
-    uint8_t     io_flag;                /* io initialize flag */
+										/*                   H/W WP : 1     */
+										/*   CSD  TMP_WRITE_PROTECT : 2     */
+										/*   CSD PERM_WRITE_PROTECT : 4     */
+										/*   SD ROM                 : 0x10  */
+	uint8_t     io_flag;                /* io initialize flag */
 
-                                        /*  interrupt enable        : bit4  */
-                                        /*  power on initialized    : bit2  */
-                                        /*  memory initialized      : bit1  */
-                                        /*  io func initialized     : bit0  */
-    uint8_t     io_info;                /* io function's information */
+										/*  interrupt enable        : bit4  */
+										/*  power on initialized    : bit2  */
+										/*  memory initialized      : bit1  */
+										/*  io func initialized     : bit0  */
+	uint8_t     io_info;                /* io function's information */
 
-                                        /*  io ready            : bit7                                  */
-                                        /*  number of io func   : bit6-bit4 memory present      : bit3  */
-                                        /*  reserved            : bit2-bit0                             */
-    uint64_t    int_info1;              /* SD_INFO1 status */
-    uint64_t    int_info2;              /* SD_INFO2 status */
-    uint64_t    int_info1_mask;         /* SD_INFO1_MASK status */
-    uint64_t    int_info2_mask;         /* SD_INFO2_MASK status */
-    uint64_t    int_io_info;            /* SDIO_INFO1 status */
-    uint64_t    int_io_info_mask;       /* SDIO_INFO1_MASK status */
-    uint64_t    int_dm_info1;           /* DM_CM_INFO1 status */
-    uint64_t    int_dm_info2;           /* DM_CM_INFO2 status */
-    uint64_t    int_dm_info1_mask;      /* DM_CM_INFO1_MASK status */
-    uint64_t    int_dm_info2_mask;      /* DM_CM_INFO2_MASK status */
-    uint32_t    voltage;                /* system supplied voltage */
-    int32_t     error;                  /* error detail information */
-    uint16_t    stop;                   /* compulsory stop flag */
-    uint8_t     mount;                  /* mount flag (mount:0 unmount:1) */
-    uint8_t     int_mode;               /* interrupt flag detect method (polling:0 H/W interrupt:1) */
-    uint8_t     trans_mode;             /* data transfer method  PIO : 0    */
+										/*  io ready            : bit7                                  */
+										/*  number of io func   : bit6-bit4 memory present      : bit3  */
+										/*  reserved            : bit2-bit0                             */
+	uint64_t    int_info1;              /* SD_INFO1 status */
+	uint64_t    int_info2;              /* SD_INFO2 status */
+	uint64_t    int_info1_mask;         /* SD_INFO1_MASK status */
+	uint64_t    int_info2_mask;         /* SD_INFO2_MASK status */
+	uint64_t    int_io_info;            /* SDIO_INFO1 status */
+	uint64_t    int_io_info_mask;       /* SDIO_INFO1_MASK status */
+	uint64_t    int_dm_info1;           /* DM_CM_INFO1 status */
+	uint64_t    int_dm_info2;           /* DM_CM_INFO2 status */
+	uint64_t    int_dm_info1_mask;      /* DM_CM_INFO1_MASK status */
+	uint64_t    int_dm_info2_mask;      /* DM_CM_INFO2_MASK status */
+	uint32_t    voltage;                /* system supplied voltage */
+	int32_t     error;                  /* error detail information */
+	uint16_t    stop;                   /* compulsory stop flag */
+	uint8_t     mount;                  /* mount flag (mount:0 unmount:1) */
+	uint8_t     int_mode;               /* interrupt flag detect method (polling:0 H/W interrupt:1) */
+	uint8_t     trans_mode;             /* data transfer method  PIO : 0    */
 
-                                        /*                SD_BUF DMA : 2    */
-    uint8_t     sup_card;               /* support card;                */
+										/*                SD_BUF DMA : 2    */
+	uint8_t     sup_card;               /* support card;                */
 
-                                        /*  Memory (include MMC) : 0    */
-                                        /*                    IO : 1    */
-    uint16_t    sup_speed;              /* support speed */
-    uint8_t     sup_ver;                /* support version (ver1.1:0 ver2.x:1) */
-    uint8_t     cd_port;                /* card detect method (CD pin:0 DAT3:1) */
-    uint8_t     sd_port;                /* card port number */
-    int16_t     trans_sectors;          /* maximum block counts per multiple command */
-    int16_t     trans_blocks;           /* maximum block counts per multiple command */
-    p_intCallbackFunc int_cd_callback;   /* callback function for card detection */
-    p_fmtCallbackFunc int_format_callback;  /* callback function for card format */
-    p_intCallbackFunc int_callback;         /* callback function for interrupt flags */
-    p_intCallbackFunc int_dma_callback;     /* callback function for interrupt flags */
-    p_intIoCallbackFunc int_io_callback;    /* callback function for interrupt flags */
-    uint32_t    resp_status;                            /* R1/R1b response status */
-    uint16_t    ocr[4 / sizeof(uint16_t)];              /* OCR value */
-    uint16_t    io_ocr[4 / sizeof(uint16_t)];           /* IO OCR value */
-    uint16_t    if_cond[4 / sizeof(uint16_t)];          /* IF_COND value */
-    uint16_t    cid[16 / sizeof(uint16_t)];             /* CID value */
-    uint16_t    csd[16 / sizeof(uint16_t)];             /* CSD value */
-    uint16_t    dsr[2 / sizeof(uint16_t)];              /* DSR value */
-    uint16_t    rca[4 / sizeof(uint16_t)];              /* RCA value */
-    uint16_t    scr[8 / sizeof(uint16_t)];              /* SCR value */
-    uint16_t    sdstatus[16 / sizeof(uint16_t)];        /* SD STATUS value */
-    uint16_t    status_data[18 / sizeof(uint16_t)];     /* STATUS DATA value (phys spec ver1.10) */
-    uint16_t    io_len[8];                              /* io block length common:0 func:more than 1 */
-    uint8_t     io_reg[8][SDIO_INTERNAL_REG_SIZE / sizeof(uint8_t)]; /* CCCR(=0) and FBR(1 to 7) value */
-    uint8_t     cis[8][SDIO_INTERNAL_CIS_SIZE / sizeof(uint8_t)];   /* CIS value (to be fixed) */
-    uint16_t    io_abort[8];                            /* compulsory stop flag */
-    uint8_t     *p_rw_buff;                             /* work buffer pointer */
-    uint32_t    buff_size;                              /* work buffer size */
-    int32_t     sup_if_mode;                            /* supported bus width (1bit:0 4bits:1) */
+										/*  Memory (include MMC) : 0    */
+										/*                    IO : 1    */
+	uint16_t    sup_speed;              /* support speed */
+	uint8_t     sup_ver;                /* support version (ver1.1:0 ver2.x:1) */
+	uint8_t     cd_port;                /* card detect method (CD pin:0 DAT3:1) */
+	uint8_t     sd_port;                /* card port number */
+	int16_t     trans_sectors;          /* maximum block counts per multiple command */
+	int16_t     trans_blocks;           /* maximum block counts per multiple command */
+	p_intCallbackFunc int_cd_callback;   /* callback function for card detection */
+	p_fmtCallbackFunc int_format_callback;  /* callback function for card format */
+	p_intCallbackFunc int_callback;         /* callback function for interrupt flags */
+	p_intCallbackFunc int_dma_callback;     /* callback function for interrupt flags */
+	p_intIoCallbackFunc int_io_callback;    /* callback function for interrupt flags */
+	uint32_t    resp_status;                            /* R1/R1b response status */
+	uint16_t    ocr[4 / sizeof(uint16_t)];              /* OCR value */
+	uint16_t    io_ocr[4 / sizeof(uint16_t)];           /* IO OCR value */
+	uint16_t    if_cond[4 / sizeof(uint16_t)];          /* IF_COND value */
+	uint16_t    cid[16 / sizeof(uint16_t)];             /* CID value */
+	uint16_t    csd[16 / sizeof(uint16_t)];             /* CSD value */
+	uint16_t    dsr[2 / sizeof(uint16_t)];              /* DSR value */
+	uint16_t    rca[4 / sizeof(uint16_t)];              /* RCA value */
+	uint16_t    scr[8 / sizeof(uint16_t)];              /* SCR value */
+	uint16_t    sdstatus[16 / sizeof(uint16_t)];        /* SD STATUS value */
+	uint16_t    status_data[18 / sizeof(uint16_t)];     /* STATUS DATA value (phys spec ver1.10) */
+	uint16_t    io_len[8];                              /* io block length common:0 func:more than 1 */
+	uint8_t     io_reg[8][SDIO_INTERNAL_REG_SIZE / sizeof(uint8_t)]; /* CCCR(=0) and FBR(1 to 7) value */
+	uint8_t     cis[8][SDIO_INTERNAL_CIS_SIZE / sizeof(uint8_t)];   /* CIS value (to be fixed) */
+	uint16_t    io_abort[8];                            /* compulsory stop flag */
+	uint8_t     *p_rw_buff;                             /* work buffer pointer */
+	uint32_t    buff_size;                              /* work buffer size */
+	int32_t     sup_if_mode;                            /* supported bus width (1bit:0 4bits:1) */
 	int32_t     partition_id;                           /* Partition ID for eSD */
 } st_sdhndl_t;
 
@@ -599,7 +596,7 @@ int32_t _sd_card_get_scr(st_sdhndl_t *p_hndl);
  * @retval        SD_OK : end of succeed
  *****************************************************************************/
 int32_t _sd_read_byte(st_sdhndl_t *p_hndl, uint16_t cmd, uint16_t h_arg, uint16_t l_arg,
-                        uint8_t *readbuff, uint16_t byte);
+						uint8_t *readbuff, uint16_t byte);
 
 /* Function Name: _sd_write_byte */
 /**************************************************************************//**
@@ -620,7 +617,7 @@ int32_t _sd_read_byte(st_sdhndl_t *p_hndl, uint16_t cmd, uint16_t h_arg, uint16_
  * @retval        SD_ERR : end of error
  *****************************************************************************/
 int32_t _sd_write_byte(st_sdhndl_t *p_hndl, uint16_t cmd, uint16_t h_arg, uint16_t l_arg,
-                        uint8_t *writebuff, uint16_t byte);
+						uint8_t *writebuff, uint16_t byte);
 
 /* Function Name: _sd_calc_erase_sector */
 /**************************************************************************//**
@@ -751,7 +748,7 @@ int32_t _sdio_dma_trans(st_sdhndl_t *p_hndl, int32_t cnt, uint16_t blocklen);
  * @retval        SD_ERR : end of error
  *****************************************************************************/
 int32_t _sd_write_sect(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t psn,
-                        int32_t cnt, int32_t writemode);
+						int32_t cnt, int32_t writemode);
 
 /* ---- sd_io_read.c ---- */
 /* Function Name: _sdio_read */
@@ -775,7 +772,7 @@ int32_t _sd_write_sect(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t psn,
  * @retval        SD_ERR : end of error
  *****************************************************************************/
 int32_t _sdio_read(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
-                    uint32_t adr, int32_t cnt, uint32_t op_code, uint16_t blocklen);
+					uint32_t adr, int32_t cnt, uint32_t op_code, uint16_t blocklen);
 
 /* Function Name: _sdio_read_byte */
 /**************************************************************************//**
@@ -797,7 +794,7 @@ int32_t _sdio_read(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
  * @retval        SD_ERR : end of error
  *****************************************************************************/
 int32_t _sdio_read_byte(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
-                        uint32_t adr, int32_t cnt, uint32_t op_code);
+						uint32_t adr, int32_t cnt, uint32_t op_code);
 
 /* ---- sd_io_write.c ---- */
 /* Function Name: _sdio_write */
@@ -821,7 +818,7 @@ int32_t _sdio_read_byte(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
  * @retval        SD_ERR : end of error
  *****************************************************************************/
 int32_t _sdio_write(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
-                    uint32_t adr, int32_t cnt, uint32_t op_code, uint16_t blocklen);
+					uint32_t adr, int32_t cnt, uint32_t op_code, uint16_t blocklen);
 
 /* Function Name: _sdio_write_byte */
 /**************************************************************************//**
@@ -843,7 +840,7 @@ int32_t _sdio_write(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
  * @retval        SD_ERR : end of error
  *****************************************************************************/
 int32_t _sdio_write_byte(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
-                            uint32_t adr, int32_t cnt, uint32_t op_code);
+							uint32_t adr, int32_t cnt, uint32_t op_code);
 
 /* ---- sd_io_direct.c ---- */
 /* Function Name: _sdio_direct */
@@ -863,7 +860,7 @@ int32_t _sdio_write_byte(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
  * @retval        SD_ERR : end of error
  *****************************************************************************/
 int32_t _sdio_direct(st_sdhndl_t *p_hndl, uint8_t *buff, uint32_t func,
-                        uint32_t adr, uint32_t rw_flag, uint32_t raw_flag);
+						uint32_t adr, uint32_t rw_flag, uint32_t raw_flag);
 
 /* ---- sd_cd.c ---- */
 /* Function Name: _sd_check_media */

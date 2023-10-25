@@ -68,59 +68,49 @@ Private global variables and functions
  *****************************************************************************/
 int32_t _sd_software_trans(st_sdhndl_t *p_hndl, uint8_t *buff, int32_t cnt, int32_t dir)
 {
-    int32_t j;
-    int32_t (*func)(int32_t sd_port, uint8_t *buff, uint32_t reg_addr, int32_t num);
+	int32_t j;
+	int32_t (*func)(int32_t sd_port, uint8_t *buff, uint32_t reg_addr, int32_t num);
 
-    if (SD_TRANS_READ == dir)
-    {
-        func = sddev_read_data;
-    }
-    else
-    {
-        func = sddev_write_data;
-    }
+	if (SD_TRANS_READ == dir) {
+		func = sddev_read_data;
+	} else {
+		func = sddev_write_data;
+	}
 
-    for (j = cnt; j > 0 ; j--)
-    {
-        /* ---- wait BWE/BRE interrupt ---- */
-        if (sddev_int_wait(p_hndl->sd_port, SD_TIMEOUT_MULTIPLE) != SD_OK)
-        {
-            _sd_set_err(p_hndl, SD_ERR_HOST_TOE);
-            break;
-        }
+	for (j = cnt; j > 0 ; j--) {
+		/* ---- wait BWE/BRE interrupt ---- */
+		if (sddev_int_wait(p_hndl->sd_port, SD_TIMEOUT_MULTIPLE) != SD_OK) {
+			_sd_set_err(p_hndl, SD_ERR_HOST_TOE);
+			break;
+		}
 
-        /* Cast to an appropriate type */
-        if (p_hndl->int_info2 & SD_INFO2_MASK_ERR)
-        {
-            _sd_check_info2_err(p_hndl);
-            break;
-        }
+		/* Cast to an appropriate type */
+		if (p_hndl->int_info2 & SD_INFO2_MASK_ERR) {
+			_sd_check_info2_err(p_hndl);
+			break;
+		}
 
-        if (SD_TRANS_READ == dir)
-        {
-            /* Cast to an appropriate type */
-            _sd_clear_info(p_hndl, 0x0000, SD_INFO2_MASK_RE); /* clear BRE and errors bit */
-        }
-        else
-        {
-            /* Cast to an appropriate type */
-            _sd_clear_info(p_hndl, 0x0000, SD_INFO2_MASK_WE); /* clear BWE and errors bit */
-        }
+		if (SD_TRANS_READ == dir) {
+			/* Cast to an appropriate type */
+			_sd_clear_info(p_hndl, 0x0000, SD_INFO2_MASK_RE); /* clear BRE and errors bit */
+		} else {
+			/* Cast to an appropriate type */
+			_sd_clear_info(p_hndl, 0x0000, SD_INFO2_MASK_WE); /* clear BWE and errors bit */
+		}
 
-        /* write/read to/from SD_BUF by 1 sector */
+		/* write/read to/from SD_BUF by 1 sector */
 
-        if ((*func)(p_hndl->sd_port, buff, (uintptr_t)(&SDMMC.SD_BUF0.LONGLONG), 512) != SD_OK)
-        {
-            _sd_set_err(p_hndl, SD_ERR_CPU_IF);
-            break;
-        }
+		if ((*func)(p_hndl->sd_port, buff, (uintptr_t)(&SDMMC.SD_BUF0.LONGLONG), 512) != SD_OK) {
+			_sd_set_err(p_hndl, SD_ERR_CPU_IF);
+			break;
+		}
 
-        /* update buffer */
-        buff += 512;
+		/* update buffer */
+		buff += 512;
 
-    }
+	}
 
-    return p_hndl->error;
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function _sd_software_trans
@@ -140,24 +130,22 @@ int32_t _sd_software_trans(st_sdhndl_t *p_hndl, uint8_t *buff, int32_t cnt, int3
  *****************************************************************************/
 int32_t _sd_dma_trans(st_sdhndl_t *p_hndl, int32_t cnt)
 {
-    /* ---- check DMA transfer end  --- */
-    /* timeout value is depend on transfer size */
-    if (sddev_wait_dma_end((int32_t)(p_hndl->sd_port), cnt * 512) != SD_OK)
-    {
-        /* Cast to an appropriate type */
-        (void)sddev_disable_dma((int32_t)(p_hndl->sd_port));   /* disable DMAC */
-        (void)_sd_set_err(p_hndl, SD_ERR_CPU_IF);
-        return p_hndl->error;
-    }
+	/* ---- check DMA transfer end  --- */
+	/* timeout value is depend on transfer size */
+	if (sddev_wait_dma_end((int32_t)(p_hndl->sd_port), cnt * 512) != SD_OK) {
+		/* Cast to an appropriate type */
+		(void)sddev_disable_dma((int32_t)(p_hndl->sd_port));   /* disable DMAC */
+		(void)_sd_set_err(p_hndl, SD_ERR_CPU_IF);
+		return p_hndl->error;
+	}
 
-    /* ---- disable DMAC ---- */
-    if (sddev_disable_dma((int32_t)(p_hndl->sd_port)) != SD_OK)
-    {
-        /* Cast to an appropriate type */
-        (void)_sd_set_err(p_hndl, SD_ERR_CPU_IF);
-        return p_hndl->error;
-    }
-    return p_hndl->error;
+	/* ---- disable DMAC ---- */
+	if (sddev_disable_dma((int32_t)(p_hndl->sd_port)) != SD_OK) {
+		/* Cast to an appropriate type */
+		(void)_sd_set_err(p_hndl, SD_ERR_CPU_IF);
+		return p_hndl->error;
+	}
+	return p_hndl->error;
 }
 /******************************************************************************
  End of function _sd_dma_trans

@@ -65,21 +65,21 @@ Private global variables and functions
  *****************************************************************************/
 int32_t _sd_set_int_mask(st_sdhndl_t *p_hndl, uint64_t mask1, uint64_t mask2)
 {
-    sddev_loc_cpu(p_hndl->sd_port);
+	sddev_loc_cpu(p_hndl->sd_port);
 
-    /* ---- set int_info1_mask and int_info2_mask ---- */
-    p_hndl->int_info1_mask |= mask1;
-    p_hndl->int_info2_mask |= mask2;
+	/* ---- set int_info1_mask and int_info2_mask ---- */
+	p_hndl->int_info1_mask |= mask1;
+	p_hndl->int_info2_mask |= mask2;
 
-    /* ---- set hardware mask ---- */
-    SDMMC.SD_INFO1_MASK.LONGLONG = (uint64_t)~(p_hndl->int_info1_mask);
+	/* ---- set hardware mask ---- */
+	SDMMC.SD_INFO1_MASK.LONGLONG = (uint64_t)~(p_hndl->int_info1_mask);
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO2_MASK.LONGLONG = (uint64_t)~(p_hndl->int_info2_mask);
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO2_MASK.LONGLONG = (uint64_t)~(p_hndl->int_info2_mask);
 
-    sddev_unl_cpu(p_hndl->sd_port);
+	sddev_unl_cpu(p_hndl->sd_port);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_set_int_mask
@@ -98,23 +98,23 @@ int32_t _sd_set_int_mask(st_sdhndl_t *p_hndl, uint64_t mask1, uint64_t mask2)
  *****************************************************************************/
 int32_t _sd_clear_int_mask(st_sdhndl_t *p_hndl, uint64_t mask1, uint64_t mask2)
 {
-    sddev_loc_cpu(p_hndl->sd_port);
+	sddev_loc_cpu(p_hndl->sd_port);
 
-    /* ---- clear int_info1_mask and int_info2_mask ---- */
-    p_hndl->int_info1_mask &= (uint64_t)~mask1;
+	/* ---- clear int_info1_mask and int_info2_mask ---- */
+	p_hndl->int_info1_mask &= (uint64_t)~mask1;
 
-    /* Cast to an appropriate type */
-    p_hndl->int_info2_mask &= (uint64_t)~mask2;
+	/* Cast to an appropriate type */
+	p_hndl->int_info2_mask &= (uint64_t)~mask2;
 
-    /* ---- clear hardware mask ---- */
-    SDMMC.SD_INFO1_MASK.LONGLONG = (uint64_t)~(p_hndl->int_info1_mask);
+	/* ---- clear hardware mask ---- */
+	SDMMC.SD_INFO1_MASK.LONGLONG = (uint64_t)~(p_hndl->int_info1_mask);
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO2_MASK.LONGLONG = (uint64_t)~(p_hndl->int_info2_mask);
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO2_MASK.LONGLONG = (uint64_t)~(p_hndl->int_info2_mask);
 
-    sddev_unl_cpu(p_hndl->sd_port);
+	sddev_unl_cpu(p_hndl->sd_port);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_clear_int_mask
@@ -133,17 +133,17 @@ int32_t _sd_clear_int_mask(st_sdhndl_t *p_hndl, uint64_t mask1, uint64_t mask2)
  *****************************************************************************/
 int32_t _sd_clear_info(st_sdhndl_t *p_hndl, uint64_t clear_info1, uint64_t clear_info2)
 {
-    sddev_loc_cpu(p_hndl->sd_port);
+	sddev_loc_cpu(p_hndl->sd_port);
 
-    /* ---- clear int_info1 and int_info2 ---- */
-    p_hndl->int_info1 &= (uint64_t)~clear_info1;
+	/* ---- clear int_info1 and int_info2 ---- */
+	p_hndl->int_info1 &= (uint64_t)~clear_info1;
 
-    /* Cast to an appropriate type */
-    p_hndl->int_info2 &= (uint64_t)~clear_info2;
+	/* Cast to an appropriate type */
+	p_hndl->int_info2 &= (uint64_t)~clear_info2;
 
-    sddev_unl_cpu(p_hndl->sd_port);
+	sddev_unl_cpu(p_hndl->sd_port);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_clear_info
@@ -162,30 +162,29 @@ int32_t _sd_clear_info(st_sdhndl_t *p_hndl, uint64_t clear_info1, uint64_t clear
  *****************************************************************************/
 int32_t _sd_get_int(st_sdhndl_t *p_hndl)
 {
-    uint64_t info1;
-    uint64_t info2;
+	uint64_t info1;
+	uint64_t info2;
 
-    /* get SD_INFO1 and SD_INFO2 bits */
-    info1 = (uint64_t)(SDMMC.SD_INFO1.LONGLONG & p_hndl->int_info1_mask);
+	/* get SD_INFO1 and SD_INFO2 bits */
+	info1 = (uint64_t)(SDMMC.SD_INFO1.LONGLONG & p_hndl->int_info1_mask);
 
-    /* Cast to an appropriate type */
-    info2 = (uint64_t)(SDMMC.SD_INFO2.LONGLONG & p_hndl->int_info2_mask);
+	/* Cast to an appropriate type */
+	info2 = (uint64_t)(SDMMC.SD_INFO2.LONGLONG & p_hndl->int_info2_mask);
 
-    /* clear SD_INFO1 and SD_INFO2 bits */
-    SDMMC.SD_INFO1.LONGLONG = (uint64_t)~info1;
+	/* clear SD_INFO1 and SD_INFO2 bits */
+	SDMMC.SD_INFO1.LONGLONG = (uint64_t)~info1;
 
-    /* Cast to an appropriate type */
-    SDMMC.SD_INFO2.LONGLONG = (uint64_t)~info2;
+	/* Cast to an appropriate type */
+	SDMMC.SD_INFO2.LONGLONG = (uint64_t)~info2;
 
-    /* save enabled elements */
-    p_hndl->int_info1 |= info1;
-    p_hndl->int_info2 |= info2;
-    if (info1 || info2)
-    {
-        return SD_OK;   /* any interrupt occured */
-    }
+	/* save enabled elements */
+	p_hndl->int_info1 |= info1;
+	p_hndl->int_info2 |= info2;
+	if (info1 || info2) {
+		return SD_OK;   /* any interrupt occured */
+	}
 
-    return SD_ERR;  /* no interrupt occured */
+	return SD_ERR;  /* no interrupt occured */
 }
 /******************************************************************************
  End of function _sd_get_int
@@ -202,34 +201,28 @@ int32_t _sd_get_int(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 int32_t sd_check_int(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (p_hndl->int_mode)
-    {
-        /* ---- hardware interrupt mode ---- */
-        if (p_hndl->int_info1 || p_hndl->int_info2)
-        {
-            return SD_OK;
-        }
-        else
-        {
-            return SD_ERR;
-        }
-    }
+	if (p_hndl->int_mode) {
+		/* ---- hardware interrupt mode ---- */
+		if (p_hndl->int_info1 || p_hndl->int_info2) {
+			return SD_OK;
+		} else {
+			return SD_ERR;
+		}
+	}
 
-    /* ---- polling mode ---- */
-    return _sd_get_int(p_hndl);
+	/* ---- polling mode ---- */
+	return _sd_get_int(p_hndl);
 }
 /******************************************************************************
  End of function sd_check_int
@@ -246,50 +239,39 @@ int32_t sd_check_int(int32_t sd_port)
  *****************************************************************************/
 void sd_int_handler(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
-    int32_t     cd;
+	st_sdhndl_t *p_hndl;
+	int32_t     cd;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return;
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return;
+	}
 
-    if (_sd_get_int(p_hndl) == SD_OK)
-    {
-        /* is card detect interrupt? */
-        if (p_hndl->int_info1 & (SD_INFO1_MASK_DET_DAT3 | SD_INFO1_MASK_DET_CD))
-        {
-            if (p_hndl->int_cd_callback)
-            {
-                /* Cast to an appropriate type */
-                if (p_hndl->int_info1 & (SD_INFO1_MASK_INS_DAT3 | SD_INFO1_MASK_INS_CD))
-                {
-                    cd = 1; /* insert */
-                }
-                else
-                {
-                    cd = 0; /* remove */
-                }
-                (*p_hndl->int_cd_callback)(sd_port, cd);
-            }
+	if (_sd_get_int(p_hndl) == SD_OK) {
+		/* is card detect interrupt? */
+		if (p_hndl->int_info1 & (SD_INFO1_MASK_DET_DAT3 | SD_INFO1_MASK_DET_CD)) {
+			if (p_hndl->int_cd_callback) {
+				/* Cast to an appropriate type */
+				if (p_hndl->int_info1 & (SD_INFO1_MASK_INS_DAT3 | SD_INFO1_MASK_INS_CD)) {
+					cd = 1; /* insert */
+				} else {
+					cd = 0; /* remove */
+				}
+				(*p_hndl->int_cd_callback)(sd_port, cd);
+			}
 
-            /* Cast to an appropriate type */
-            p_hndl->int_info1 &= (uint64_t)~(SD_INFO1_MASK_DET_DAT3 | SD_INFO1_MASK_DET_CD);
-        }
-        else
-        {
-            if (p_hndl->int_callback)
-            {
-                (*p_hndl->int_callback)(sd_port, 0);  /* arguments to be defined */
-            }
-        }
-    }
+			/* Cast to an appropriate type */
+			p_hndl->int_info1 &= (uint64_t)~(SD_INFO1_MASK_DET_DAT3 | SD_INFO1_MASK_DET_CD);
+		} else {
+			if (p_hndl->int_callback) {
+				(*p_hndl->int_callback)(sd_port, 0);  /* arguments to be defined */
+			}
+		}
+	}
 }
 /******************************************************************************
  End of function sd_int_handler
@@ -308,22 +290,20 @@ void sd_int_handler(int32_t sd_port)
  *****************************************************************************/
 int32_t sd_set_intcallback(int32_t sd_port, int32_t (*callback)(int32_t, int32_t))
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    p_hndl->int_callback = callback;
+	p_hndl->int_callback = callback;
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_set_intcallback
@@ -343,21 +323,21 @@ int32_t sd_set_intcallback(int32_t sd_port, int32_t (*callback)(int32_t, int32_t
  *****************************************************************************/
 int32_t _sd_set_int_dm_mask(st_sdhndl_t *p_hndl, uint64_t mask1, uint64_t mask2)
 {
-    sddev_loc_cpu(p_hndl->sd_port);
+	sddev_loc_cpu(p_hndl->sd_port);
 
-    /* ---- set int_dm_info1_mask and int_dm_info2_mask ---- */
-    p_hndl->int_dm_info1_mask |= mask1;
-    p_hndl->int_dm_info2_mask |= mask2;
+	/* ---- set int_dm_info1_mask and int_dm_info2_mask ---- */
+	p_hndl->int_dm_info1_mask |= mask1;
+	p_hndl->int_dm_info2_mask |= mask2;
 
-    /* ---- set hardware mask ---- */
-    SDMMC.DM_CM_INFO1_MASK.LONGLONG = (uint64_t)~(p_hndl->int_dm_info1_mask);
+	/* ---- set hardware mask ---- */
+	SDMMC.DM_CM_INFO1_MASK.LONGLONG = (uint64_t)~(p_hndl->int_dm_info1_mask);
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO2_MASK.LONGLONG = (uint64_t)~(p_hndl->int_dm_info2_mask);
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO2_MASK.LONGLONG = (uint64_t)~(p_hndl->int_dm_info2_mask);
 
-    sddev_unl_cpu(p_hndl->sd_port);
+	sddev_unl_cpu(p_hndl->sd_port);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_set_int_dm_mask
@@ -376,24 +356,24 @@ int32_t _sd_set_int_dm_mask(st_sdhndl_t *p_hndl, uint64_t mask1, uint64_t mask2)
  *****************************************************************************/
 int32_t _sd_clear_int_dm_mask(st_sdhndl_t *p_hndl, uint64_t mask1, uint64_t mask2)
 {
-    sddev_loc_cpu(p_hndl->sd_port);
+	sddev_loc_cpu(p_hndl->sd_port);
 
-    /* ---- clear int_dm_info1_mask and int_dm_info2_mask ---- */
-    p_hndl->int_dm_info1_mask &= (uint64_t)~mask1;
+	/* ---- clear int_dm_info1_mask and int_dm_info2_mask ---- */
+	p_hndl->int_dm_info1_mask &= (uint64_t)~mask1;
 
-    /* Cast to an appropriate type */
-    p_hndl->int_dm_info2_mask &= (uint64_t)~mask2;
+	/* Cast to an appropriate type */
+	p_hndl->int_dm_info2_mask &= (uint64_t)~mask2;
 
-    /* ---- clear hardware mask ---- */
-    SDMMC.DM_CM_INFO1_MASK.LONGLONG = (uint64_t)~(p_hndl->int_dm_info1_mask);
+	/* ---- clear hardware mask ---- */
+	SDMMC.DM_CM_INFO1_MASK.LONGLONG = (uint64_t)~(p_hndl->int_dm_info1_mask);
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO2_MASK.LONGLONG = (uint64_t)~(p_hndl->int_dm_info2_mask);
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO2_MASK.LONGLONG = (uint64_t)~(p_hndl->int_dm_info2_mask);
 
-    sddev_unl_cpu(p_hndl->sd_port);
+	sddev_unl_cpu(p_hndl->sd_port);
 
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_clear_int_dm_mask
@@ -411,17 +391,17 @@ int32_t _sd_clear_int_dm_mask(st_sdhndl_t *p_hndl, uint64_t mask1, uint64_t mask
  *****************************************************************************/
 int32_t _sd_clear_dm_info(st_sdhndl_t *p_hndl, uint64_t clear_info1, uint64_t clear_info2)
 {
-    sddev_loc_cpu(p_hndl->sd_port);
+	sddev_loc_cpu(p_hndl->sd_port);
 
-    /* ---- clear int_dm_info1 and int_dm_info2 ---- */
-    p_hndl->int_dm_info1 &= (uint64_t)~clear_info1;
+	/* ---- clear int_dm_info1 and int_dm_info2 ---- */
+	p_hndl->int_dm_info1 &= (uint64_t)~clear_info1;
 
-    /* Cast to an appropriate type */
-    p_hndl->int_dm_info2 &= (uint64_t)~clear_info2;
+	/* Cast to an appropriate type */
+	p_hndl->int_dm_info2 &= (uint64_t)~clear_info2;
 
-    sddev_unl_cpu(p_hndl->sd_port);
+	sddev_unl_cpu(p_hndl->sd_port);
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function _sd_clear_dm_info
@@ -440,30 +420,29 @@ int32_t _sd_clear_dm_info(st_sdhndl_t *p_hndl, uint64_t clear_info1, uint64_t cl
  *****************************************************************************/
 int32_t _sd_get_int_dm(st_sdhndl_t *p_hndl)
 {
-    uint64_t info1;
-    uint64_t info2;
+	uint64_t info1;
+	uint64_t info2;
 
-    /* get DM_CM_INFO1 and DM_CM_INFO2 bits */
-    info1 = (uint64_t)(SDMMC.DM_CM_INFO1.LONGLONG & p_hndl->int_dm_info1_mask);
+	/* get DM_CM_INFO1 and DM_CM_INFO2 bits */
+	info1 = (uint64_t)(SDMMC.DM_CM_INFO1.LONGLONG & p_hndl->int_dm_info1_mask);
 
-    /* Cast to an appropriate type */
-    info2 = (uint64_t)(SDMMC.DM_CM_INFO2.LONGLONG & p_hndl->int_dm_info2_mask);
+	/* Cast to an appropriate type */
+	info2 = (uint64_t)(SDMMC.DM_CM_INFO2.LONGLONG & p_hndl->int_dm_info2_mask);
 
-    /* clear DM_CM_INFO1 and DM_CM_INFO2 bits */
-    SDMMC.DM_CM_INFO1.LONGLONG = (uint64_t)~info1;
+	/* clear DM_CM_INFO1 and DM_CM_INFO2 bits */
+	SDMMC.DM_CM_INFO1.LONGLONG = (uint64_t)~info1;
 
-    /* Cast to an appropriate type */
-    SDMMC.DM_CM_INFO2.LONGLONG = (uint64_t)~info2;
+	/* Cast to an appropriate type */
+	SDMMC.DM_CM_INFO2.LONGLONG = (uint64_t)~info2;
 
-    /* save enabled elements */
-    p_hndl->int_dm_info1 |= info1;
-    p_hndl->int_dm_info2 |= info2;
-    if (info1 || info2)
-    {
-        return SD_OK;   /* any interrupt occured */
-    }
+	/* save enabled elements */
+	p_hndl->int_dm_info1 |= info1;
+	p_hndl->int_dm_info2 |= info2;
+	if (info1 || info2) {
+		return SD_OK;   /* any interrupt occured */
+	}
 
-    return SD_ERR;  /* no interrupt occured */
+	return SD_ERR;  /* no interrupt occured */
 }
 /******************************************************************************
  End of function _sd_get_int_dm
@@ -480,34 +459,28 @@ int32_t _sd_get_int_dm(st_sdhndl_t *p_hndl)
  *****************************************************************************/
 int32_t sd_check_int_dm(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    if (p_hndl->int_mode)
-    {
-        /* ---- hardware interrupt mode ---- */
-        if (p_hndl->int_dm_info1 || p_hndl->int_dm_info2)
-        {
-            return SD_OK;
-        }
-        else
-        {
-            return SD_ERR;
-        }
-    }
+	if (p_hndl->int_mode) {
+		/* ---- hardware interrupt mode ---- */
+		if (p_hndl->int_dm_info1 || p_hndl->int_dm_info2) {
+			return SD_OK;
+		} else {
+			return SD_ERR;
+		}
+	}
 
-    /* ---- polling mode ---- */
-    return _sd_get_int_dm(p_hndl);
+	/* ---- polling mode ---- */
+	return _sd_get_int_dm(p_hndl);
 }
 /******************************************************************************
  End of function sd_check_int_dm
@@ -524,26 +497,22 @@ int32_t sd_check_int_dm(int32_t sd_port)
  *****************************************************************************/
 void sd_int_dm_handler(int32_t sd_port)
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return;
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return;
+	}
 
-    if (_sd_get_int_dm(p_hndl) == SD_OK)
-    {
-        if (p_hndl->int_dma_callback)
-        {
-            (*p_hndl->int_dma_callback)(sd_port, 0);  /* arguments to be defined */
-        }
-    }
+	if (_sd_get_int_dm(p_hndl) == SD_OK) {
+		if (p_hndl->int_dma_callback) {
+			(*p_hndl->int_dma_callback)(sd_port, 0);  /* arguments to be defined */
+		}
+	}
 }
 /******************************************************************************
  End of function sd_int_dm_handler
@@ -562,22 +531,20 @@ void sd_int_dm_handler(int32_t sd_port)
  *****************************************************************************/
 int32_t sd_set_dma_intcallback(int32_t sd_port, int32_t (*callback)(int32_t, int32_t))
 {
-    st_sdhndl_t *p_hndl;
+	st_sdhndl_t *p_hndl;
 
-    if ( (0 != sd_port) && (1 != sd_port) )
-    {
-        return SD_ERR;
-    }
+	if ((0 != sd_port) && (1 != sd_port)) {
+		return SD_ERR;
+	}
 
-    p_hndl = SD_GET_HNDLS(sd_port);
-    if (0 == p_hndl)
-    {
-        return SD_ERR;  /* not initilized */
-    }
+	p_hndl = SD_GET_HNDLS(sd_port);
+	if (0 == p_hndl) {
+		return SD_ERR;  /* not initilized */
+	}
 
-    p_hndl->int_dma_callback = callback;
+	p_hndl->int_dma_callback = callback;
 
-    return SD_OK;
+	return SD_OK;
 }
 /******************************************************************************
  End of function sd_set_dma_intcallback
