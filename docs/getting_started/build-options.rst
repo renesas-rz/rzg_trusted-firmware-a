@@ -838,10 +838,6 @@ Common build options
    ``SPMC_AT_EL3`` is enabled. The default value if ``0`` (disabled). This
    option cannot be enabled (``1``) when (``SPMC_AT_EL3``) is disabled.
 
--  ``SPMC_AT_EL3_SEL0_SP`` : Boolean option to enable SEL0 SP load support when
-   ``SPMC_AT_EL3`` is enabled. The default value if ``0`` (disabled). This
-   option cannot be enabled (``1``) when (``SPMC_AT_EL3``) is disabled.
-
 -  ``SPMC_OPTEE`` : This boolean option is used jointly with the SPM
    Dispatcher option (``SPD=spmd``) and with ``SPMD_SPM_AT_SEL2=0`` to
    indicate that the SPMC at S-EL1 is OP-TEE and an OP-TEE specific loading
@@ -1111,12 +1107,6 @@ Common build options
 - ``ERRATA_NON_ARM_INTERCONNECT``: Boolean option to enable support for the
   errata mitigation for platforms with a non-arm interconnect using the errata
   ABI. By default its disabled (``0``).
-
-- ``ENABLE_CONSOLE_GETC``: Boolean option to enable `getc()` feature in console
-  driver(s). By default it is disabled (``0``) because it constitutes an attack
-  vector into TF-A by potentially allowing an attacker to inject arbitrary data.
-  This option should only be enabled on a need basis if there is a use case for
-  reading characters from the console.
 
 - ``ENABLE_CONSOLE_GETC``: Boolean option to enable `getc()` feature in console
   driver(s). By default it is disabled (``0``) because it constitutes an attack
