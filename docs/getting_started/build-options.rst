@@ -611,10 +611,6 @@ Common build options
    invert this behavior. Lower addresses will be printed at the top and higher
    addresses at the bottom.
 
--  ``INIT_UNUSED_NS_EL2``: This build flag guards code that disables EL2
-   safely in scenario where NS-EL2 is present but unused. This flag is set to 0
-   by default. Platforms without NS-EL2 in use must enable this flag.
-
 -  ``KEY_ALG``: This build flag enables the user to select the algorithm to be
    used for generating the PKCS keys and subsequent signing of the certificate.
    It accepts 5 values: ``rsa``, ``rsa_1_5``, ``ecdsa``, ``ecdsa-brainpool-regular``
@@ -836,7 +832,7 @@ Common build options
    Dispatcher option (``SPD=spmd``). When enabled (1) it indicates the SPMC
    component runs at the EL3 exception level. The default value is ``0`` (
    disabled). This configuration supports pre-Armv8.4 platforms (aka not
-   implementing the ``FEAT_SEL2`` extension).
+   implementing the ``FEAT_SEL2`` extension). This is an experimental feature.
 
 -  ``SPMC_AT_EL3_SEL0_SP`` : Boolean option to enable SEL0 SP load support when
    ``SPMC_AT_EL3`` is enabled. The default value if ``0`` (disabled). This
