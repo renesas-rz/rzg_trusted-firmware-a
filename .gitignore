@@ -43,3 +43,4 @@ tags
 
 # Node.js
 node_modules/
+tools/renesas/bptool
