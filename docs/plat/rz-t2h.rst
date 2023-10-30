@@ -61,7 +61,7 @@ SoC_id  r9a09g077m48gbg (Quad A55), r9a09g077m28gbg (Dual A55) or r9a09g077m08gb
 Overview
 --------
 On RZ/T2H SoCs the BOOTROM starts the cpu at EL3; for this port BL2
-will therefore be entered at this exception level. 
+will therefore be entered at this exception level.
 EL1 is entered before exiting BL31.
 
 BL2 initializes DDR before determining the boot reason (cold or warm).

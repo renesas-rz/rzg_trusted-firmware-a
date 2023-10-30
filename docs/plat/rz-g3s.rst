@@ -106,7 +106,7 @@ ENABLE_STACK_PROTECTOR=default
 Sets the stack canary to default.
 The firmware is set to this value automatically.
 This option is thus only required if the option should be set to a value other than default.
-       
+
 System Tested:
 ~~~~~~~~~~~~~~
 * u-boot:
@@ -247,7 +247,7 @@ Flash Procedure for xSPI
   a.	Enter: XLS2
   b.	Program Top Address: 0x23000
   c.	QSPI Save Address: 0x200000
-  d.	Send the CM33 srecord	
+  d.	Send the CM33 srecord
 
 Flash Procedure for SD
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -257,13 +257,13 @@ Flash Procedure for SD
 		Welcome to fdisk (util-linux 2.37.2).
 		Changes will remain in memory only, until you decide to write them.
 		Be careful before using the write command.
-		
+
 2.	Remove the existing partitions
 		Command (m for help): d
 		Partition number (1,2, default 2):
-		
+
 		Partition 2 has been deleted.
-		
+
 		Command (m for help): d
 		Selected partition 1
 		Partition 1 has been deleted.
@@ -274,12 +274,12 @@ Flash Procedure for SD
 		p   primary (0 primary, 0 extended, 4 free)
 		e   extended (container for logical partitions)
 		Select (default p):
-		
+
 		Using default response p.
 		Partition number (1-4, default 1):
 		First sector (2048-30449663, default 2048): 4096
 		Last sector, +/-sectors or +/-size{K,M,G,T,P} (4096-30449663, default 30449663): +512M
-		
+
 		Created a new partition 1 of type 'Linux' and of size 512 MiB.
 
 		Command (m for help): n
@@ -287,19 +287,19 @@ Flash Procedure for SD
 		p   primary (1 primary, 0 extended, 3 free)
 		e   extended (container for logical partitions)
 		Select (default p):
-		
+
 		Using default response p.
 		Partition number (2-4, default 2):
 		First sector (2048-30449663, default 2048): 1052672
 		Last sector, +/-sectors or +/-size{K,M,G,T,P} (1052672-30449663, default 30449663):
-		
+
 		Created a new partition 2 of type 'Linux' and of size 14 GiB.
 
 4.	If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 		Partition #2 contains a ext4 signature.
- 
+
 		Do you want to remove the signature? [Y]es/[N]o: y
-		
+
 		The signature will be removed by a write command.
 
 5.	Write partitions to disk
@@ -317,7 +317,7 @@ Flash Procedure for SD
 		Filesystem UUID: cb9d787a-fb33-43f2-9a81-2b2049fe6f9d
 		Superblock backups stored on blocks:
 				32768, 98304
-		
+
 		Allocating group tables: done
 		Writing inode tables: done
 		Creating journal (4096 blocks): done
@@ -329,7 +329,7 @@ Flash Procedure for SD
 		Filesystem UUID: fbd4caa0-690b-43e8-9e67-43e43edf3fa4
 		Superblock backups stored on blocks:
 				32768, 98304, 163840, 229376, 294912
-		
+
 		Allocating group tables: done
 		Writing inode tables: done
 		Creating journal (8192 blocks): done
@@ -340,7 +340,7 @@ Flash Procedure for SD
 9. Check partitions were created properly.
 		lsblk
 		...
-		sdb      8:16   1  14.5G  0 disk 
+		sdb      8:16   1  14.5G  0 disk
 		├─sdb1   8:17   1   512M  0 part /media/user/79273262-4ff6-424f-9e7e-a
 		└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
 		...
@@ -350,7 +350,7 @@ Flash Procedure for SD
 		269+1 records in
 		269+1 records out
 		137746 bytes (138 kB, 135 KiB) copied, 0.481328 s, 286 kB/s
-		
+
 		sudo dd if=fip.bin of=/dev/sdb seek=800
 		1775+1 records in
 		1775+1 records out

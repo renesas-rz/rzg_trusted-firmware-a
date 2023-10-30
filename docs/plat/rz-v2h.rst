@@ -32,11 +32,11 @@ SoC_id  r9a09g057h4 revision ESx.y.
     Arm® Cortex®-A55 1.8 GHz Quad Core, FPU, Neon™, L1-caches and L3-cache
     Arm® Cortex®-R8 800 MHz Dual Core, FPU, TCM, and L1-cache
     Arm® Cortex®-M33 200MHz, FPU and DSP-extension,
-    DRP-AI, Mali™-G31 (GE3D), Mali™-C55 (ISP), 6 MB of on-chip SRAM, 
-    2ch GbEthernet MAC, 
+    DRP-AI, Mali™-G31 (GE3D), Mali™-C55 (ISP), 6 MB of on-chip SRAM,
+    2ch GbEthernet MAC,
     USB2.0, USB3.2
-    Gen 2x1, 4-MIPI® CSI-2® camera input interface, 
-    1-MIPI® DSI® video output interface, 
+    Gen 2x1, 4-MIPI® CSI-2® camera input interface,
+    1-MIPI® DSI® video output interface,
     PCIe® Gen3 4Lane or 2-2Lane
     (EP/RC), various communication interfaces such as an xSPI, eMMC™, I2S (TDM), I3C®, PDM, and security functions.
 
@@ -44,7 +44,7 @@ SoC_id  r9a09g057h4 revision ESx.y.
 Overview
 --------
 On RZ/V2H SoCs the BOOTROM starts the cpu at EL3; for this port BL2
-will therefore be entered at this exception level. 
+will therefore be entered at this exception level.
 EL1 is entered before exiting BL31.
 
 BL2 initializes DDR before determining the boot reason (cold or warm).
