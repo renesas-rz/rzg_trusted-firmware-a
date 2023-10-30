@@ -5,8 +5,8 @@ export CROSS_COMPILE=~/compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch
 
 #Check the correct number of arguments are passed
 if [ "$#" -ne 2 ]; then
-    echo "Incorrect arguments: The number of arguments is $#. There should be 2 arguments 
-    arg1 = Workspace path to store the BL2 and FIP bin files 
+    echo "Incorrect arguments: The number of arguments is $#. There should be 2 arguments
+    arg1 = Workspace path to store the BL2 and FIP bin files
     arg2 = BL33 file path (U-boot image path)"
     exit -1
 fi
@@ -30,12 +30,12 @@ parameter_check()
         echo "$workspace_path" " :does not exist"
         exit -1
     fi
-    if [ -f "$bl33_file_path" ]; then 
+    if [ -f "$bl33_file_path" ]; then
         :
     else
         echo "$bl33_file_path" " :does not exist"
         exit -1
-    fi 
+    fi
     return
 }
 
