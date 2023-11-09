@@ -160,7 +160,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* ETH */
 		.stby = {
 				.addr = (uintptr_t)CPG_PLLETH_STBY,
-				.val  = 0x00050005,
+				.val  = 0x00010001,
 				},
 
 		.clk1 = {
@@ -1694,8 +1694,8 @@ static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
 	{ (uintptr_t)CPG_CDDIV0,				0x00000000 },
 	{ (uintptr_t)CPG_CDDIV1,				0x00000000 },
 	{ (uintptr_t)CPG_CDDIV2,				0x00000000 },
-	{ (uintptr_t)CPG_CDDIV3,				0x00000000 },
-	{ (uintptr_t)CPG_CDDIV4,				0x00000000 },
+	{ (uintptr_t)CPG_CDDIV3,				0x10001000 },
+	{ (uintptr_t)CPG_CDDIV4,				0x01110111 },
 };
 
 static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
