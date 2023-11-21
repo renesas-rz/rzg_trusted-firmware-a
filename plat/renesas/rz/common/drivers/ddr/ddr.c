@@ -316,11 +316,17 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 	write_mc_reg(DDRMC_R019, val);
 
 	// 3
+#if RZV2L
+	val = read_mc_reg(DDRMC_R045);
+	val |= (1 << 8); // set BIST_DATA_CHECK
+	val &= ~(1 << 16);// unset BIST_ADDR_CHECK
+	write_mc_reg(DDRMC_R045, val);
+#else
 	val = read_mc_reg(DDRMC_R045);
 	val |= (1 << 16); // set BIST_DATA_CHECK
 	val &= ~(1 << 24);// unset BIST_ADDR_CHECK
 	write_mc_reg(DDRMC_R045, val);
-
+#endif
 	val = read_mc_reg(DDRMC_R048);
 	val &= ~0x7;
 	val |= 0x4;
@@ -344,27 +350,46 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 			val = (addr >> 32) & 0x3;
 			write_mc_reg(DDRMC_R047, val);
 
+#if RZV2L
+			val = read_mc_reg(DDRMC_R045);
+			val &= ~(0x3f);
+			val |= (i & 0x3f);
+			write_mc_reg(DDRMC_R045, val);
+#else
 			val = read_mc_reg(DDRMC_R045);
 			val &= ~(0x3f << 8);
 			val |= (i << 8);
 			write_mc_reg(DDRMC_R045, val);
-
+#endif
 			mdelay(10);
 
+#if RZV2L
+			// bit_go=1
+			val = read_mc_reg(DDRMC_R070);
+			val |= (1 << 16);
+			write_mc_reg(DDRMC_R070, val);
+#else
 			// bit_go=1
 			val = read_mc_reg(DDRMC_R018);
 			val |= (1 << 24);
 			write_mc_reg(DDRMC_R018, val);
+#endif
 
 			do {
 				val = read_mc_reg(DDRMC_R065);
 			}while(!(val & (1 << 16)));
 
+#if RZV2L
+			// bit_go=0
+			val = read_mc_reg(DDRMC_R070);
+			val &= ~(1 << 16);
+			write_mc_reg(DDRMC_R070, val);
+#else
 			// bit_go=0
 			val = read_mc_reg(DDRMC_R018);
 			val &= ~(1 << 24);
 			write_mc_reg(DDRMC_R018, val);
-
+#endif
 			val = read_mc_reg(DDRMC_R067);
 			val |= (1 << 16);
 			write_mc_reg(DDRMC_R067, val);
@@ -392,9 +417,15 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 	val &= ~(0xff << 16);
 	write_mc_reg(DDRMC_R069, val);
 
+#if RZV2L
+	val = read_mc_reg(DDRMC_R045);
+	val &= ~(1 << 8); // unset BIST_DATA_CHECK
+	write_mc_reg(DDRMC_R045, val);
+#else
 	val = read_mc_reg(DDRMC_R045);
 	val &= ~(1 << 16); // unset BIST_DATA_CHECK
 	write_mc_reg(DDRMC_R045, val);
+#endif
 
 	// 7
 	val = read_mc_reg(DDRMC_R006);
