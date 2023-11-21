@@ -175,24 +175,18 @@ void ddr_setup(void)
 
 	printf("NOTICE:  BL2: ECC function initializing... ");
 
-	tmp = read_mc_reg(DDRMC_R052);
-	tmp |= (1 << 16);
-	write_mc_reg(DDRMC_R052, tmp);
+	rmw_mc_reg(DDRMC_R052, 0xffffffff, (1 << 16));
 	mdelay(10);
 
 	init_ecc();
 
-	tmp = read_mc_reg(DDRMC_R052);
-	tmp &= ~(1 << 16);
-	write_mc_reg(DDRMC_R052, tmp);
+	rmw_mc_reg(DDRMC_R052, ~(1 << 16), 0);
 	mdelay(10);
 
 	// Step32
 	// let the auto_exit_en to be value|0x8
 	// recommended value for "value" is 0x0
-	tmp = read_mc_reg(DDRMC_R006);
-	tmp |= (0x8 << 8);
-	write_mc_reg(DDRMC_R006, tmp);
+	rmw_mc_reg(DDRMC_R006, 0xffffffff, (0x8 << 8));
 
 	printf("DONE\n");
 #endif
@@ -230,18 +224,13 @@ static int ecc_force_ce_error(void)
 		tmp = read_mc_reg(DDRMC_R020);
 	} while(tmp & 1);
 
-	tmp = read_mc_reg(DDRMC_R052);
-	tmp &= ~((0xff << 8) | 1);
-	tmp |= xor_check_code;
-	write_mc_reg(DDRMC_R052, tmp);
+	rmw_mc_reg(DDRMC_R052, ~((0xff << 8) | 1), xor_check_code);
 
 	*user_word = USER_WORD_DATA;
 	flush_dcache_range((unsigned long)user_word, sizeof(uint64_t));
 	(*(const volatile uint64_t*)user_word);
 
-	tmp = read_mc_reg(DDRMC_R052);
-	tmp &= ~((0xff << 8) | 1);
-	write_mc_reg(DDRMC_R052, tmp);
+	rmw_mc_reg(DDRMC_R052, ~((0xff << 8) | 1), 0);
 
 	do {
 		tmp = read_mc_reg(DDRMC_R064);
@@ -307,39 +296,27 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 	// 2
 	val = read_mc_reg(DDRMC_R006);
 	bak_lp_auto_entry_en = val & 0xf;
-	val &= ~0xf;
-	write_mc_reg(DDRMC_R006, val);
+	rmw_mc_reg(DDRMC_R006, ~0xf, 0);
 
 	val = read_mc_reg(DDRMC_R019);
 	bak_in_order_accept = val & (1 << 16);
-	val |= (1 << 16);
-	write_mc_reg(DDRMC_R019, val);
+	rmw_mc_reg(DDRMC_R019, 0xffffffff, (1 << 16));
 
 	// 3
+	// set BIST_DATA_CHECK, unset BIST_ADDR_CHECK
 #if RZV2L
-	val = read_mc_reg(DDRMC_R045);
-	val |= (1 << 8); // set BIST_DATA_CHECK
-	val &= ~(1 << 16);// unset BIST_ADDR_CHECK
-	write_mc_reg(DDRMC_R045, val);
+	rmw_mc_reg(DDRMC_R045, ~(1 << 16), (1 << 8));
 #else
-	val = read_mc_reg(DDRMC_R045);
-	val |= (1 << 16); // set BIST_DATA_CHECK
-	val &= ~(1 << 24);// unset BIST_ADDR_CHECK
-	write_mc_reg(DDRMC_R045, val);
+	rmw_mc_reg(DDRMC_R045, ~(1 << 24), (1 << 16));
 #endif
-	val = read_mc_reg(DDRMC_R048);
-	val &= ~0x7;
-	val |= 0x4;
-	write_mc_reg(DDRMC_R048, val);
+
+	rmw_mc_reg(DDRMC_R048, ~0x7, 0x4);
 
 	val = 0;
 	write_mc_reg(DDRMC_R049, val);
 	write_mc_reg(DDRMC_R050, val);
 
-	val = read_mc_reg(DDRMC_R069);
-	val &= ~(0xff << 16);
-	val |= (1 << 16);
-	write_mc_reg(DDRMC_R069, val);
+	rmw_mc_reg(DDRMC_R069, ~(0xff << 16), (1 << 16));
 
 	// 4
 	for (i = 0 ; i < 34 ; i++) {
@@ -351,48 +328,30 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 			write_mc_reg(DDRMC_R047, val);
 
 #if RZV2L
-			val = read_mc_reg(DDRMC_R045);
-			val &= ~(0x3f);
-			val |= (i & 0x3f);
-			write_mc_reg(DDRMC_R045, val);
+			rmw_mc_reg(DDRMC_R045, ~(0x3f), (i & 0x3f));
 #else
-			val = read_mc_reg(DDRMC_R045);
-			val &= ~(0x3f << 8);
-			val |= (i << 8);
-			write_mc_reg(DDRMC_R045, val);
+			rmw_mc_reg(DDRMC_R045, ~(0x3f << 8), (i << 8));
 #endif
 			mdelay(10);
 
+			// bit_go=1
 #if RZV2L
-			// bit_go=1
-			val = read_mc_reg(DDRMC_R070);
-			val |= (1 << 16);
-			write_mc_reg(DDRMC_R070, val);
+			rmw_mc_reg(DDRMC_R070, 0xffffffff, (1 << 16));
 #else
-			// bit_go=1
-			val = read_mc_reg(DDRMC_R018);
-			val |= (1 << 24);
-			write_mc_reg(DDRMC_R018, val);
+			rmw_mc_reg(DDRMC_R018, 0xffffffff, (1 << 24));
 #endif
 
 			do {
 				val = read_mc_reg(DDRMC_R065);
 			}while(!(val & (1 << 16)));
 
+			// bit_go=0
 #if RZV2L
-			// bit_go=0
-			val = read_mc_reg(DDRMC_R070);
-			val &= ~(1 << 16);
-			write_mc_reg(DDRMC_R070, val);
+			rmw_mc_reg(DDRMC_R070, ~(1 << 16), 0);
 #else
-			// bit_go=0
-			val = read_mc_reg(DDRMC_R018);
-			val &= ~(1 << 24);
-			write_mc_reg(DDRMC_R018, val);
+			rmw_mc_reg(DDRMC_R018, ~(1 << 24), 0);
 #endif
-			val = read_mc_reg(DDRMC_R067);
-			val |= (1 << 16);
-			write_mc_reg(DDRMC_R067, val);
+			rmw_mc_reg(DDRMC_R067, 0xffffffff, (1 << 16));
 
 			do {
 				val = read_mc_reg(DDRMC_R065);
@@ -413,30 +372,19 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 	}while(val & 0xffffU);
 
 	// 6
-	val = read_mc_reg(DDRMC_R069);
-	val &= ~(0xff << 16);
-	write_mc_reg(DDRMC_R069, val);
+	rmw_mc_reg(DDRMC_R069, ~(0xff << 16), 0);
 
+	// unset BIST_DATA_CHECK
 #if RZV2L
-	val = read_mc_reg(DDRMC_R045);
-	val &= ~(1 << 8); // unset BIST_DATA_CHECK
-	write_mc_reg(DDRMC_R045, val);
+	rmw_mc_reg(DDRMC_R045, ~(1 << 8), 0);
 #else
-	val = read_mc_reg(DDRMC_R045);
-	val &= ~(1 << 16); // unset BIST_DATA_CHECK
-	write_mc_reg(DDRMC_R045, val);
+	rmw_mc_reg(DDRMC_R045, ~(1 << 16), 0);
 #endif
 
 	// 7
-	val = read_mc_reg(DDRMC_R006);
-	val &= ~0xf;
-	val |= bak_lp_auto_entry_en;
-	write_mc_reg(DDRMC_R006, val);
+	rmw_mc_reg(DDRMC_R006, ~0xf, bak_lp_auto_entry_en);
 
-	val = read_mc_reg(DDRMC_R019);
-	val &= ~(1 << 16);
-	val |= bak_in_order_accept;
-	write_mc_reg(DDRMC_R019, val);
+	rmw_mc_reg(DDRMC_R019, ~(1 << 16), bak_in_order_accept);
 }
 
 // follow DDRTOP_ApplicationNote_Rev01.14.excel
@@ -470,15 +418,10 @@ static void init_ecc(void)
 
 	// 3
 	// ECC_DISABLE_W_UC_ERR <= 1
-	val = read_mc_reg(DDRMC_R052);
-	val |= (1 << 16);
-	write_mc_reg(DDRMC_R052, val);
+	rmw_mc_reg(DDRMC_R052, 0xffffffff, (1 << 16));
 
 	// mask ECC interrupt
-	val = read_mc_reg(DDRMC_R068);
-	val &= ~0xffffU;
-	val |= 0x1CF;
-	write_mc_reg(DDRMC_R068, val);
+	rmw_mc_reg(DDRMC_R068, ~0xffffU, 0x1CF);
 
 	// 4. wait for 10 regACLK
 	mdelay(10);
@@ -488,19 +431,13 @@ static void init_ecc(void)
 
 	// 6.
 	// unmask ECC interrupt
-	val = read_mc_reg(DDRMC_R068);
-	val &= ~0xffffU;
-	write_mc_reg(DDRMC_R068, val);
+	rmw_mc_reg(DDRMC_R068, ~0xffffU, 0);
 
 	// ack ECC interrupt
-	val = read_mc_reg(DDRMC_R066);
-	val |= 0x1CF;
-	write_mc_reg(DDRMC_R066, val);
+	rmw_mc_reg(DDRMC_R066, 0xffffffff, 0x1CF);
 
 	// ECC_DISABLE_W_UC_ERR = 0
-	val = read_mc_reg(DDRMC_R052);
-	val &= ~(1 << 16);
-	write_mc_reg(DDRMC_R052, val);
+	rmw_mc_reg(DDRMC_R052, ~(1 << 16), 0);
 	mdelay(10);
 }
 
@@ -521,23 +458,13 @@ static void program_mc1_ecc_en(void)
 #endif
 	write_mc_reg(DDRMC_R051, tmp);
 
-	tmp = read_mc_reg(DDRMC_R061);
-	tmp &= ~(0x1 << 8);
-	tmp |= (0x1 << 8);
-	write_mc_reg(DDRMC_R061, tmp);
+	rmw_mc_reg(DDRMC_R061, ~(1 << 8), (1 << 8));
 
-	tmp = read_mc_reg(DDRMC_R063);
-	tmp &= ~0x1;
-	write_mc_reg(DDRMC_R063, tmp);
+	rmw_mc_reg(DDRMC_R063, ~0x1, 0);
 
-	tmp = read_mc_reg(DDRMC_R019);
-	tmp &= ~(0x1 << 16);
-	tmp |= (0x1 << 16);
-	write_mc_reg(DDRMC_R019, tmp);
+	rmw_mc_reg(DDRMC_R019, ~(1 << 16), (1 << 16));
 
-	tmp = read_mc_reg(DDRMC_R062);
-	tmp &= ~(0x1 << 24);
-	write_mc_reg(DDRMC_R062, tmp);
+	rmw_mc_reg(DDRMC_R062, ~(1 << 24), 0);
 
 	tmp = read_mc_reg(DDRMC_R055);
 	addr_diff[0] = (uint16_t)((tmp >> 8) & 0x3);
@@ -566,28 +493,16 @@ static void program_mc1_ecc_en(void)
 	cs_val_lower[maxrow_cs] = 0x0000;
 	cs_val_lower[(maxrow_cs + 1) % 2] = cs_val_lower[maxrow_cs] + cs_size[maxrow_cs] + 1;
 
-	tmp = read_mc_reg(DDRMC_R057);
-	tmp &= ~0xffffU;
-	tmp |= (cs_val_lower[0] & 0xffffU);
-	write_mc_reg(DDRMC_R057, tmp);
+	rmw_mc_reg(DDRMC_R057, ~0xffffU, (cs_val_lower[0] & 0xffffU));
 
-	tmp = read_mc_reg(DDRMC_R057);
-	tmp &= ~(0xffffU << 16);
-	tmp |= ((cs_val_lower[0] + cs_size[0]) << 16);
-	write_mc_reg(DDRMC_R057, tmp);
+	rmw_mc_reg(DDRMC_R057, ~(0xffffU << 16), ((cs_val_lower[0] + cs_size[0]) << 16));
 
 	tmp = read_mc_reg(DDRMC_R063);
 	tmp = (tmp >> 16) & 0x3;
 	if (tmp == 0x3) {
-		tmp = read_mc_reg(DDRMC_R059);
-		tmp &= ~(0xffffU);
-		tmp |= (cs_val_lower[1] & 0xffffU);
-		write_mc_reg(DDRMC_R059, tmp);
+		rmw_mc_reg(DDRMC_R059, ~0xffffU, (cs_val_lower[1] & 0xffffU));
 
-		tmp = read_mc_reg(DDRMC_R059);
-		tmp &= ~(0xffffU << 16);
-		tmp |= ((cs_val_lower[1] + cs_size[1]) << 16);
-		write_mc_reg(DDRMC_R059, tmp);
+		rmw_mc_reg(DDRMC_R059, ~(0xffffU << 16), ((cs_val_lower[1] + cs_size[1]) << 16));
 	}
 	row_start_val[maxrow_cs] = 0x0;
 	i = (maxrow_cs + 1) % 2;
@@ -601,15 +516,9 @@ static void program_mc1_ecc_en(void)
 		row_start_val[i] = 0x0;
 	}
 
-	tmp = read_mc_reg(DDRMC_R058);
-	tmp &= ~0x7;
-	tmp |= (row_start_val[0] & 0x7);
-	write_mc_reg(DDRMC_R058, tmp);
+	rmw_mc_reg(DDRMC_R058, ~0x7, (row_start_val[0] & 0x7));
 
-	tmp = read_mc_reg(DDRMC_R060);
-	tmp &= ~0x7;
-	tmp |= (row_start_val[1] & 0x7);
-	write_mc_reg(DDRMC_R060, tmp);
+	rmw_mc_reg(DDRMC_R060, ~0x7, (row_start_val[1] & 0x7));
 }
 #endif // (DDR_ECC_ENABLE == 1)
 
