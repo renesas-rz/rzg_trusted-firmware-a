@@ -8,6 +8,7 @@ include plat/renesas/rz/common/rz_common.mk
 include plat/renesas/rz/board/${BOARD}/rz_board.mk
 
 PLAT_INCLUDES			+= -Iplat/renesas/rz/soc/v2l/include
+FIP_ALIGN				:=	16
 
 DDR_SOURCES 			+= plat/renesas/rz/soc/v2l/drivers/ddr/ddr_v2l.c
 
@@ -16,3 +17,29 @@ PLAT_BL_COMMON_SOURCES	+= ${DDR_SOURCES}
 RZV2L					:= 1
 
 $(eval $(call add_define,RZV2L))
+
+.PHONY: bptool_make bptool_clean
+
+bptool: bptool_make
+distclean realclean clean: bptool_clean
+
+BPTOOLPATH		?=	tools/renesas/rz_boot_param
+
+bptool_make:
+	${Q}${MAKE} TRUSTED_BOARD_BOOT=${TRUSTED_BOARD_BOOT} --no-print-directory -C ${BPTOOLPATH}
+
+bptool_clean:
+	${Q}${MAKE} --no-print-directory -C ${BPTOOLPATH} clean
+
+pkg:
+	./tools/renesas/bptool build/v2l/${BUILD_TYPE}/bl2.bin build/v2l/${BUILD_TYPE}/bp_spi.bin 0x00012000 spi
+	cat build/v2l/${BUILD_TYPE}/bp_spi.bin build/v2l/${BUILD_TYPE}/bl2.bin > build/v2l/${BUILD_TYPE}/bl2_bp_spi.bin
+	objcopy -I binary -O srec --adjust-vma=0x11E00 --srec-forceS3 build/v2l/${BUILD_TYPE}/bl2_bp_spi.bin  build/v2l/${BUILD_TYPE}/bl2_bp_spi.srec
+	./tools/renesas/bptool build/v2l/${BUILD_TYPE}/bl2.bin build/v2l/${BUILD_TYPE}/bp_mmc.bin 0x00012000 mmc
+	cat build/v2l/${BUILD_TYPE}/bp_mmc.bin build/v2l/${BUILD_TYPE}/bl2.bin > build/v2l/${BUILD_TYPE}/bl2_bp_mmc.bin
+	objcopy -I binary -O srec --adjust-vma=0x11E00 --srec-forceS3 build/v2l/${BUILD_TYPE}/bl2_bp_mmc.bin  build/v2l/${BUILD_TYPE}/bl2_bp_mmc.srec
+	./tools/renesas/bptool build/v2l/${BUILD_TYPE}/bl2.bin build/v2l/${BUILD_TYPE}/bp_esd.bin 0x00012000 esd
+	cat build/v2l/${BUILD_TYPE}/bp_esd.bin build/v2l/${BUILD_TYPE}/bl2.bin > build/v2l/${BUILD_TYPE}/bl2_bp_esd.bin
+	objcopy -I binary -O srec --adjust-vma=0x11E00 --srec-forceS3 build/v2l/${BUILD_TYPE}/bl2_bp_esd.bin  build/v2l/${BUILD_TYPE}/bl2_bp_esd.srec
+	#Generate FIP S-Record if FIP binary is present
+	if [ -f build/v2l/${BUILD_TYPE}/fip.bin ]; then  objcopy -I binary -O srec --adjust-vma=0x00000 --srec-forceS3 build/v2l/${BUILD_TYPE}/fip.bin build/v2l/${BUILD_TYPE}/fip.srec ; fi ;
