@@ -141,10 +141,6 @@ subsections:
         scope: trf
 
   - title: Platforms
-    scope: platforms
-
-    deprecated:
-      - plat/common
 
     subsections:
       - title: Allwinner
@@ -175,8 +171,8 @@ subsections:
 
             deprecated:
               - arm_fgpa
+              - arm_fpga
               - plat/arm_fpga
-              - arm/fpga
 
           - title: FVP
             scope: fvp
@@ -248,9 +244,6 @@ subsections:
 
       - title: Broadcom
         scope: brcm
-
-      - title: Cadence
-        scope: cadence
 
       - title: HiSilicon
         scope: hisilicon
@@ -497,9 +490,6 @@ subsections:
           - title: SBSA
             scope: qemu-sbsa
 
-            deprecated:
-              - qemu_sbsa
-
       - title: QTI
         scope: qti
 
@@ -698,9 +688,6 @@ subsections:
         scope: spm
 
         subsections:
-          - title: EL3 SPM
-            scope: el3-spm
-
           - title: EL3 SPMC
             scope: el3-spmc
 
@@ -726,7 +713,6 @@ subsections:
           - errata_abi
 
   - title: Libraries
-    scope: lib
 
     subsections:
       - title: CPU Support
