@@ -46,27 +46,7 @@
  * BL2 specific defines.
  ******************************************************************************/
 #define BL2_BASE				UL(0x08103000)
-/*
- * Allow space for a parameter block and full sized BL2 to fit in first 0x40000 of Flash memory if in xSPI mode.
- * So, maximum size of BL2 is 0x40000 - 0x200.
- */
-
-/*
- * TODO: KTG: if the following BL2_LIMIT is used when building with DEBUG=1 flag then BL2 fails to Link due to the combined RO and RAM areas exceeding BL2_LIMIT.
- *		#define BL2_LIMIT				UL(0x08142E00)
- *
- * Link area is:
- *
- * LD      /home/oem/Desktop/Git/rzg_trusted-firmware-a_private-v2h/build/v2h/debug/bl2/bl2.elf
- * /home/oem/tf-a/gcc-arm-8.3-2019.02-x86_64-aarch64-elf/bin/aarch64-elf-ld: /home/oem/Desktop/Git/rzg_trusted-firmware-a_private-v2h/build/v2h/debug/bl2/bl2.elf section `xlat_table' will not fit in region `RAM'
- * /home/oem/tf-a/gcc-arm-8.3-2019.02-x86_64-aarch64-elf/bin/aarch64-elf-ld: BL2 image has exceeded its limit.
- * /home/oem/tf-a/gcc-arm-8.3-2019.02-x86_64-aarch64-elf/bin/aarch64-elf-ld: region `RAM' overflowed by 20992 bytes
- * make: *** [Makefile:1290: /home/oem/Desktop/Git/rzg_trusted-firmware-a_private-v2h/build/v2h/debug/bl2/bl2.elf] Error 1
- *
- * So, some work needs to be done to specify maximum binary file size (code and constants) is separated from RAM used.
- * AS bl2.bin with DEBUG=1 is still less than actual required limit of 256KBytes then we will temporarily just increase size of BL2_LIMIT
- */
-#define BL2_LIMIT				UL(0x08150000)
+#define BL2_LIMIT				UL(0x08163000)
 
 /*******************************************************************************
  * BL31 specific defines.
