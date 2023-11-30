@@ -39,21 +39,27 @@ static void ddr_init(uint64_t ddrbase)
 		set_ddrphy_base_addr(RZV2H_DDR0_PHY_BASE);
 
 		cpg_ddr0_part1();
+
 		setup_mc();
+
 		cpg_ddr0_part2();
 	} else if (ddrbase == RZV2H_DDR1_BASE) {
 		set_ddrtop_mc_base_addr(RZV2H_DDR1_MEMC_BASE);
 		set_ddrphy_base_addr(RZV2H_DDR1_PHY_BASE);
 
 		cpg_ddr1_part1();
+
 		setup_mc();
+
 		cpg_ddr1_part2();
 	} else {
 		panic();
 	}
 
 	phyinit_c();
+
 	phyinit_d2h_1d();
+
 	phyinit_d2h_2d();
 
 	phyinit_mc();
@@ -61,6 +67,7 @@ static void ddr_init(uint64_t ddrbase)
 	save_retcsr();
 
 	phyinit_i();
+
 	phyinit_j();
 
 	prog_all0(ddrbase, 33);
@@ -173,7 +180,7 @@ static void phyinit_mc(void)
 		val = dwc_ddrphy_apb_rd(0x0131d1); x = (val > x) ? val : x;
 	}
 
-	tx_dqs_dly = ((x<<6)&0xf) + (((x>>4)&0x01) + ((x>>3)&0x1));
+	tx_dqs_dly = ((x >> 6) & 0xf) + (((x >> 4) & 0x01) + ((x >> 3) & 0x1));
 	val = tctrl_delay + (6 + (bl / 2)) + tx_dqs_dly;
 	ddrtop_mc_param_wr(TDFI_WRDATA_DELAY_ADDR, TDFI_WRDATA_DELAY_OFFSET, TDFI_WRDATA_DELAY_WIDTH, val);
 
@@ -192,6 +199,7 @@ static void save_retcsr(void)
 
 static void prog_all0(uint64_t start_addr, uint32_t addr_space)
 {
+#if PLAT_DDR_ECC
 	uint32_t bak_lp_auto_entry_en;
 
 	ddrtop_mc_param_wr(ECC_DISABLE_W_UC_ERR_ADDR, ECC_DISABLE_W_UC_ERR_OFFSET, ECC_DISABLE_W_UC_ERR_WIDTH, 1);
@@ -222,4 +230,5 @@ static void prog_all0(uint64_t start_addr, uint32_t addr_space)
 	ddrtop_mc_param_wr(ECC_DISABLE_W_UC_ERR_ADDR, ECC_DISABLE_W_UC_ERR_OFFSET, ECC_DISABLE_W_UC_ERR_WIDTH, 0);
 
 	udelay(1);
+#endif
 }

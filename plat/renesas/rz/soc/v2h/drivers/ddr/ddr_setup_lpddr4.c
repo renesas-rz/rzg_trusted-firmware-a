@@ -54,7 +54,13 @@ void setup_mc(void)
 void update_mc(void)
 {
 	ddrtop_mc_param_wr(INT_MASK_MASTER_ADDR, INT_MASK_MASTER_OFFSET+31, 1, 0);
-	ddrtop_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0x1F);
+	uint32_t val = ddrtop_mc_param_rd(PCPCS_PD_EN_ADDR, PCPCS_PD_EN_OFFSET, PCPCS_PD_EN_WIDTH);
+
+	if (val == 1) {
+		ddrtop_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0x1E);
+	} else {
+		ddrtop_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0x1F);
+	}
 }
 
 void phyinit_configuration(void)

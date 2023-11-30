@@ -1951,94 +1951,75 @@ static void cpg_wdtrst_sel_setup(void)
 
 void cpg_ddr0_part1(void)
 {
-	/* Step 1: Bring up VDDQ, VDDQLP, VDD, and VAA.*/
-
-	/* Step 2: Assert all resets.
-	 * rst_n=0, axiY_ARESETn=0, MC_PRESETn=0, PHY_PRESETN=0, Reset=1
-	 */
 	mmio_write_32(CPG_RST_11, 0x0FF80000);	/* DDR0 */
 
-	/* PwrOkIn = 0 (bit[1]:DDR_1、bit[0]:DDR_0) */
 	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000001);	/* DDR0 */
 
-	/* Step 3: Start the following clocks; DfiClk, axiY_ACLK, PCLK */
 	mmio_write_32(CPG_PLLDDR0_STBY, 0x00010001);	/* PLLDDR0 clock start */
 	while ((mmio_read_32(CPG_PLLDDR0_MON) & 0x00000011) != 0x00000011)
 		;
 
-	mmio_write_32(CPG_CLKON_12, 0x0FC00FC0);	/* DDR0(axiY_ACLK, PCLK) */
+	mmio_write_32(CPG_CLKON_12, 0x0FC00FC0);
 
-	/* Step 4: Wait at least 8 DfiClk cycles */
 	udelay(1);
 
-	/* De-assert the following resets; rst_n = 1, PwrOkIn = 1 */
-	mmio_write_32(CPG_RST_11, 0x00080008);	/* DDR0 */
-	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) | 0x00000001);	/* DDR0 */
+	mmio_write_32(CPG_RST_11, 0x00080008);
+	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) | 0x00000001);
 
-	/* Wait at least the longest cycles of the followings: 1 axiY_ACLK, 1 PCLK */
 	udelay(1);
 
-	/* Step 5: De-assert the following resets; axiY_ARESETn, MC_PRESETn = 1 */
-	mmio_write_32(CPG_RST_11, 0x03F003F0);	/* DDR0 */
+	mmio_write_32(CPG_RST_11, 0x03F003F0);
 
-	/* Step 6: Wait at least the longest cycles of the followings: 2 axiY_ACLK, 2 PCLK */
 	udelay(1);
 }
 
 void cpg_ddr0_part2(void)
 {
-	/* Step 8: De-assert PHY resets; Reset = 0, PHY_PRESETn = 1 */
-	mmio_write_32(CPG_RST_11, 0x0C000C00);	/* DDR0 */
+	mmio_write_32(CPG_RST_11, 0x08000800);
 
-	/* Step 9: Wait at least 2 PCLK cycles. */
+	udelay(10);
+
+	mmio_write_32(CPG_RST_11, 0x04000400);
+
 	udelay(10);
 }
 
 void cpg_ddr1_part1(void)
 {
-	/* Step 1: Bring up VDDQ, VDDQLP, VDD, and VAA.*/
+	mmio_write_32(CPG_RST_11, 0xF0000000);
+	mmio_write_32(CPG_RST_12, 0x001F0000);
 
-	/* Step 2: Assert all resets.
-	 * rst_n=0, axiY_ARESETn=0, MC_PRESETn=0, PHY_PRESETN=0, Reset=1
-	 */
-	mmio_write_32(CPG_RST_11, 0xF0000000);	/* DDR1 */
-	mmio_write_32(CPG_RST_12, 0x001F0000);	/* DDR1 */
+	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000002);
 
-	/* PwrOkIn = 0 (bit[1]:DDR_1、bit[0]:DDR_0) */
-	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000002);	/* DDR1 */
-
-	/* Step 3: Start the following clocks; DfiClk, axiY_ACLK, PCLK */
-	mmio_write_32(CPG_PLLDDR1_STBY, 0x00010001);	/* PLLDDR1 clock start */
+	mmio_write_32(CPG_PLLDDR1_STBY, 0x00010001);
 	while ((mmio_read_32(CPG_PLLDDR1_MON) & 0x00000011) != 0x00000011)
 		;
 
-	mmio_write_32(CPG_CLKON_12, 0xF000F000);	/* DDR1(axiY_ACLK) */
-	mmio_write_32(CPG_CLKON_13, 0x00030003);	/* DDR1(PCLK) */
+	mmio_write_32(CPG_CLKON_12, 0xF000F000);
+	mmio_write_32(CPG_CLKON_13, 0x00030003);
 
-	/* Step 4: Wait at least 8 DfiClk cycles */
 	udelay(1);
 
-	/* De-assert the following resets; rst_n = 1, PwrOkIn = 1 */
-	mmio_write_32(CPG_RST_11, 0x10001000);	/* DDR1 */
-	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) | 0x00000002);	/* DDR1 */
 
-	/* Wait at least the longest cycles of the followings: 1 axiY_ACLK, 1 PCLK */
+	mmio_write_32(CPG_RST_11, 0x10001000);
+	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) | 0x00000002);
+
 	udelay(1);
 
-	/* Step 5: De-assert the following resets; axiY_ARESETn, MC_PRESETn = 1 */
-	mmio_write_32(CPG_RST_11, 0xE000E000);	/* DDR1 */
-	mmio_write_32(CPG_RST_12, 0x00070007);	/* DDR1 */
+	mmio_write_32(CPG_RST_11, 0xE000E000);
+	mmio_write_32(CPG_RST_12, 0x00070007);
 
-	/* Step 6: Wait at least the longest cycles of the followings: 2 axiY_ACLK, 2 PCLK */
 	udelay(1);
 }
 
 void cpg_ddr1_part2(void)
 {
-	/* Step 8: De-assert PHY resets; Reset = 0, PHY_PRESETn = 1 */
-	mmio_write_32(CPG_RST_12, 0x00180018);	/* DDR1 */
+	mmio_write_32(CPG_RST_12, 0x00100010);
 
-	/* Step 9: Wait at least 2 PCLK cycles. */
+	udelay(10);
+
+	mmio_write_32(CPG_RST_12, 0x00080008);
+
 	udelay(10);
 }
 
