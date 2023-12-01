@@ -33,9 +33,6 @@ void ddr_setup(void)
 
 	setup_mc();
 
-	ddrtop_mc_param_wr(PWRUP_SREFRESH_EXIT_ADDR, PWRUP_SREFRESH_EXIT_OFFSET, PWRUP_SREFRESH_EXIT_WIDTH, 0);
-	ddrtop_mc_param_wr(PHY_INDEP_INIT_MODE_ADDR, PHY_INDEP_INIT_MODE_OFFSET, PHY_INDEP_INIT_MODE_WIDTH, 0);
-
 	cpg_ddr_part2();
 
 	phyinit_c();
