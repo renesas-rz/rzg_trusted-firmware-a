@@ -195,6 +195,7 @@ static void plat_tzc_ddr_setup(void)
 		},
 
 		{
+			/* Region 1: */
 			.base = PLAT_FW_TZC_PROT_DRAM01_BASE,
 			.end  = PLAT_FW_TZC_PROT_DRAM01_END,
 			.sec_attr = TZC_REGION_S_RDWR,
@@ -202,6 +203,7 @@ static void plat_tzc_ddr_setup(void)
 		},
 
 		{
+			/* Region 2: */
 			.base = PLAT_TEE_TZC_PROT_DRAM01_BASE,
 			.end  = PLAT_TEE_TZC_PROT_DRAM01_END,
 			.sec_attr = TZC_REGION_S_RDWR,
@@ -249,7 +251,7 @@ static void plat_tzc_spi_setup(void)
 		},
 
 		{
-			/* Default Region 0: Aaccess to region required to store  */
+			/* Region 1: Access to region required to store */
 			.base = RZV2H_XSPI_MEMORY_MAP_BASE,
 			.end = (RZV2H_XSPI_MEMORY_MAP_BASE + RZV2H_XSPI_SIZE - 1ULL),
 			.sec_attr = TZC_REGION_S_NONE,
