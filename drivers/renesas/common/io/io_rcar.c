@@ -59,30 +59,47 @@ typedef struct {
 #define RCAR_ATTR_SET_ISNOLOAD(a)	(((a) & 0x1) << 16U)
 #define RCAR_ATTR_SET_CERTOFF(a)	(((a) & 0xF) << 8U)
 #define RCAR_ATTR_SET_ALL(a, b, c)	((uint32_t)(RCAR_ATTR_SET_CALCADDR(a) |\
-					RCAR_ATTR_SET_ISNOLOAD(b) |\
-					RCAR_ATTR_SET_CERTOFF(c)))
+												RCAR_ATTR_SET_ISNOLOAD(b) |\
+												RCAR_ATTR_SET_CERTOFF(c)))
 
 #define RCAR_ATTR_GET_CALCADDR(a)	((a) & 0xFU)
 #define RCAR_ATTR_GET_ISNOLOAD(a)	(((a) >> 16) & 0x1U)
 #define RCAR_ATTR_GET_CERTOFF(a)	((uint32_t)(((a) >> 8) & 0xFU))
 
-#define RCAR_MAX_BL3X_IMAGE		(8U)
+#define RCAR_MAX_BL3X_IMAGE			(8U)
 #define RCAR_SECTOR6_CERT_OFFSET	(0x400U)
-#define RCAR_SDRAM_certESS		(0x43F00000U)
-#define RCAR_CERT_SIZE			(0x800U)
+#define RCAR_SDRAM_certESS			(0x43F00000U)
+#define RCAR_CERT_SIZE				(0x800U)
 #define RCAR_CERT_INFO_SIZE_OFFSET	(0x264U)
 #define RCAR_CERT_INFO_DST_OFFSET	(0x154U)
 #define RCAR_CERT_INFO_SIZE_OFFSET1	(0x364U)
 #define RCAR_CERT_INFO_DST_OFFSET1	(0x1D4U)
 #define RCAR_CERT_INFO_SIZE_OFFSET2	(0x464U)
 #define RCAR_CERT_INFO_DST_OFFSET2	(0x254U)
-#define RCAR_CERT_LOAD			(1U)
+#define RCAR_CERT_LOAD				(1U)
 
 #define RCAR_FLASH_CERT_HEADER		RCAR_GET_FLASH_ADR(6U, 0U)
 #define RCAR_EMMC_CERT_HEADER		(0x00030000U)
 
 #define RCAR_COUNT_LOAD_BL33		(2U)
 #define RCAR_COUNT_LOAD_BL33X		(3U)
+
+#define CHECK_IMAGE_AREA_CNT		(7U)
+#define BOOT_BL2_ADDR				(0xE6304000U)
+#define BOOT_BL2_LENGTH				(0x19000U)
+
+typedef struct {
+	uintptr_t dest;
+	uintptr_t length;
+} addr_loaded_t;
+
+static addr_loaded_t addr_loaded[CHECK_IMAGE_AREA_CNT] = {
+	[0] = {BOOT_BL2_ADDR, BOOT_BL2_LENGTH},
+	[1] = {BL31_BASE, RCAR_TRUSTED_SRAM_SIZE},
+	[2] = {BL32_BASE, 0x00200000}
+};
+static uint32_t addr_loaded_cnt = 3;
+
 
 static const plat_rcar_name_offset_t name_offset[] = {
 	{BL31_IMAGE_ID, 0U, RCAR_ATTR_SET_ALL(0, 0, 0)},
@@ -244,8 +261,15 @@ void rcar_read_certificate(uint64_t cert, uint32_t *len, uintptr_t *dst)
 			dstl = cert + RCAR_CERT_INFO_DST_OFFSET;
 			break;
 		}
+		*len = mmio_read_32(size);
+		if (*len > (UINT32_MAX / 4)) {
+			ERROR("BL2: uint32 overflow!\n");
+			*dst = 0;
+			*len = 0;
+			return;
+		}
 
-		*len = mmio_read_32(size) * 4U;
+		*len = *len * 4U;
 		dsth = dstl + 4U;
 		*dst = ((uintptr_t) mmio_read_32(dsth) << 32) +
 		    ((uintptr_t) mmio_read_32(dstl));
@@ -253,7 +277,14 @@ void rcar_read_certificate(uint64_t cert, uint32_t *len, uintptr_t *dst)
 	}
 
 	size = cert + RCAR_CERT_INFO_SIZE_OFFSET;
-	*len = mmio_read_32(size) * 4U;
+	*len = mmio_read_32(size);
+	if (*len > (UINT32_MAX / 4)) {
+		ERROR("BL2: uint32 overflow!\n");
+		*dst = 0;
+		*len = 0;
+		return;
+	}
+	*len = *len * 4U;
 	dstl = cert + RCAR_CERT_INFO_DST_OFFSET;
 	dsth = dstl + 4U;
 	*dst = ((uintptr_t) mmio_read_32(dsth) << 32) +
@@ -267,16 +298,16 @@ static int32_t check_load_area(uintptr_t dst, uintptr_t len)
 	uintptr_t prot_start, prot_end;
 	int32_t result = IO_SUCCESS;
 
-	dram_start = legacy ? DRAM1_BASE : DRAM_40BIT_BASE;
+	dram_start = legacy ? DRAM1_NS_BASE : DRAM_40BIT_BASE;
 
-	dram_end = legacy ? DRAM1_BASE + DRAM1_SIZE :
+	dram_end = legacy ? DRAM1_NS_BASE + DRAM1_NS_SIZE :
 	    DRAM_40BIT_BASE + DRAM_40BIT_SIZE;
 
 	prot_start = legacy ? DRAM_PROTECTED_BASE : DRAM_40BIT_PROTECTED_BASE;
 
 	prot_end = prot_start + DRAM_PROTECTED_SIZE;
 
-	if (dst < dram_start || dst > dram_end - len) {
+	if (dst < dram_start || dst > dram_end - len || dram_end < len) {
 		ERROR("BL2: dst address is on the protected area.\n");
 		result = IO_FAIL;
 		goto done;
@@ -286,12 +317,53 @@ static int32_t check_load_area(uintptr_t dst, uintptr_t len)
 	if (dst >= prot_start && dst < prot_end) {
 		ERROR("BL2: dst address is on the protected area.\n");
 		result = IO_FAIL;
+		goto done;
 	}
 
-	if (dst < prot_start && dst > prot_start - len) {
+	if ((dst < prot_start && dst > prot_start - len) || prot_start < len) {
 		ERROR("BL2: loaded data is on the protected area.\n");
 		result = IO_FAIL;
+		goto done;
 	}
+
+	if (addr_loaded_cnt >= CHECK_IMAGE_AREA_CNT) {
+		ERROR("BL2: max loadable non secure images reached\n");
+		result = IO_FAIL;
+		goto done;
+	}
+
+	addr_loaded[addr_loaded_cnt].dest = dst;
+	addr_loaded[addr_loaded_cnt].length = len;
+	for (int n = 0; n < addr_loaded_cnt; n++) {
+		/* Check if next image invades a previous loaded image
+		 *
+		 * IMAGE n: area from previous image:	dest| IMAGE n |length
+		 * IMAGE n+1: area from next image:	dst | IMAGE n |len
+		 *
+		 * 1. check:
+		 *      | IMAGE n |
+		 *           | IMAGE n+1 |
+		 * 2. check:
+		 *      | IMAGE n |
+		 *  | IMAGE n+1 |
+		 * 3. check:
+		 *      | IMAGE n |
+		 *  |    IMAGE n+1    |
+		 *
+		 */
+		if (((dst >= addr_loaded[n].dest) &&
+		     (dst <=  addr_loaded[n].dest + addr_loaded[n].length)) ||
+		    ((dst + len >= addr_loaded[n].dest) &&
+		     (dst + len <= addr_loaded[n].dest + addr_loaded[n].length)) ||
+		    ((dst <= addr_loaded[n].dest) &&
+		     (dst + len >= addr_loaded[n].dest + addr_loaded[n].length))) {
+			ERROR("BL2: next image overlap a previous image area.\n");
+			result = IO_FAIL;
+			goto done;
+		}
+	}
+	addr_loaded_cnt++;
+
 done:
 	if (result == IO_FAIL) {
 		ERROR("BL2: Out of range : dst=0x%lx len=0x%lx\n", dst, len);
@@ -435,15 +507,15 @@ static int32_t rcar_dev_init(io_dev_info_t *dev_info, const uintptr_t name)
 #endif
 
 	rcar_image_number = header[0];
-	for (i = 0; i < rcar_image_number + 2; i++) {
-		rcar_image_header[i] = header[i * 2 + 1];
-		rcar_image_header_prttn[i] = header[i * 2 + 2];
-	}
-
 	if (rcar_image_number == 0 || rcar_image_number > RCAR_MAX_BL3X_IMAGE) {
 		WARN("Firmware Image Package header check failed.\n");
 		rc = IO_FAIL;
 		goto error;
+	}
+
+	for (i = 0; i < rcar_image_number + 2; i++) {
+		rcar_image_header[i] = header[i * 2 + 1];
+		rcar_image_header_prttn[i] = header[i * 2 + 2];
 	}
 
 	rc = io_seek(handle, IO_SEEK_SET, offset + RCAR_SECTOR6_CERT_OFFSET);
@@ -548,7 +620,7 @@ static int32_t rcar_file_read(io_entity_t *entity, uintptr_t buffer,
 			      size_t length, size_t *cnt)
 {
 	file_state_t *fp = (file_state_t *) entity->info;
-	ssize_t offset = fp->offset + fp->position;
+	size_t offset = fp->offset + fp->position;
 	uintptr_t handle;
 	int32_t rc;
 
