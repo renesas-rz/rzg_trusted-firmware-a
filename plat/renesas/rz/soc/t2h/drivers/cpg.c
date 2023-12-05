@@ -413,6 +413,29 @@ static void cpg_mstop_eth(void)
 	sys_base_lock(PRCRx_LOW_POWER);
 }
 
+static void cpg_mstop_ca55(void)
+{
+	volatile uint32_t dummy;
+
+	/* Enable write to Module Stop */
+	sys_safetybase_unlock(PRCRx_LOW_POWER);
+
+	/* Clear bit to release CA55 related modules from Module Stop State */
+	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN_CA55_ALL));
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	/* The below is to avoid compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
+	dummy = dummy;
+
+	/* Disable write to Module Stop Register */
+	sys_safetybase_lock(PRCRx_LOW_POWER);
+}
+
 static void cpg_mstop_setup(void)
 {
 	cpg_mstop_cmtw();
@@ -431,6 +454,7 @@ static void cpg_mstop_setup(void)
 	cpg_mstop_spi0();
 	cpg_mstop_lcdc();
 	cpg_mstop_eth();
+	cpg_mstop_ca55();
 }
 
 static void cpg_pll_setup(void)
@@ -558,11 +582,38 @@ void cpg_early_setup(void)
 	cpg_set_ca55_1200mhz();
 }
 
+void cpg_disable_mpu_protect(void)
+{
+	/* Disable all MPU - TODO: KTG: Confirm if other action is required */
+	sys_safetybase_unlock(PRCRx_SYS_CTRL);
+
+	mmio_write_32(0x81291400, 0);	//MPU 0 - GMAC Unit 1
+	mmio_write_32(0x81291500, 0);	//MPU 1 - GMAC Unit 2
+	mmio_write_32(0x81291600, 0);	//MPU 2 - USB Host
+	mmio_write_32(0x81291700, 0);	//MPU 3 - USB function
+	mmio_write_32(0x81291800, 0);	//MPU 4 - SDHI Unit 0
+	mmio_write_32(0x81291900, 0);	//MPU 5 - SDHI Unit 1
+	mmio_write_32(0x81291a00, 0);	//MPU 6 - LCD Controller
+	mmio_write_32(0x81291b00, 0);	//MPU 7 - PCIE Unit 0
+	mmio_write_32(0x81291c00, 0);	//MPU 8 - PCIE Unit 1
+	mmio_write_32(0x81291d00, 0);	//MPU 9 - PCIE Unit 2
+
+	mmio_write_32(0x81290400, 0);	//MPU 10 - DMAC Unit 0
+	mmio_write_32(0x81290500, 0);	//MPU 11 - DMAC Unit 1
+	mmio_write_32(0x81290600, 0);	//MPU 12 - DMAC Unit 2
+	mmio_write_32(0x81290700, 0);	//MPU 13 - GMAC Unit 0
+	mmio_write_32(0x81290800, 0);	//MPU 14 - SHOSTIF
+	mmio_write_32(0x81290900, 0);	//MPU 15 - CoreSight AXI-AP
+
+	sys_safetybase_lock(PRCRx_SYS_CTRL);
+}
+
 void cpg_setup(void)
 {
 	cpg_pll_setup();
 	cpg_mstop_setup();
 	cpg_reset_setup();
+	cpg_disable_mpu_protect();
 }
 
 void cpg_ddr_part1(void)

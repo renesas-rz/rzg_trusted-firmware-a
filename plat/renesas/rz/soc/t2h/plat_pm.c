@@ -34,6 +34,13 @@ static int rzt2h_pwr_domain_on(u_register_t mpidr)
 		{ CA55_RVBAL3, CA55_RVBAH3 }
 	};
 
+	const uint32_t swrcpu[PLATFORM_CORE_COUNT][1] = {
+		{ SWR550 },
+		{ SWR551 },
+		{ SWR552 },
+		{ SWR553 },
+	};
+
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
 	if (coreid >= PLATFORM_CORE_COUNT)
@@ -46,7 +53,17 @@ static int rzt2h_pwr_domain_on(u_register_t mpidr)
 	mmio_write_32(rval[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
 	mmio_write_32(rval[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
 
-	/* Lock writing to CA55_RVBAxy registers */
+	/* Disable Write Protection */
+	sys_safetybase_unlock(PRCRx_LOW_POWER);
+
+	/* Release the reset state of CA55 cluster */
+	mmio_write_32(SWR55C, 0x00000000);
+
+	/* Release the reset state of each CA55 core */
+	mmio_write_32(swrcpu[coreid][0], 0x00000000);
+
+	/* Re-lock Registers */
+	sys_safetybase_lock(PRCRx_LOW_POWER);
 	sys_safetybase_lock(PRCRx_SYS_CTRL);
 
 	return PSCI_E_SUCCESS;
@@ -85,11 +102,21 @@ static void __dead2 rzt2h_system_off(void)
 	panic();
 }
 
+static void __dead2 rzt2h_system_reset(void)
+{
+	sys_safetybase_unlock(PRCRx_LOW_POWER);
+	mmio_write_32(SWRSYS, 0x4321A501);
+	sys_safetybase_lock(PRCRx_LOW_POWER);
+	wfi();
+	panic();
+}
+
 const plat_psci_ops_t rzt2h_plat_psci_ops = {
-	.pwr_domain_on						= rzt2h_pwr_domain_on,
-	.pwr_domain_on_finish				= rzt2h_pwr_domain_on_finish,
-	.pwr_domain_off						= rzt2h_pwr_domain_off,
-	.system_off							= rzt2h_system_off,
+	.pwr_domain_on			= rzt2h_pwr_domain_on,
+	.pwr_domain_on_finish		= rzt2h_pwr_domain_on_finish,
+	.pwr_domain_off			= rzt2h_pwr_domain_off,
+	.system_off			= rzt2h_system_off,
+	.system_reset			= rzt2h_system_reset,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
