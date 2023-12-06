@@ -6,6 +6,7 @@
 
 #Set the platform and SOC specific header files 1st
 PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/${PLAT}/include
+FIP_ALIGN		:=	16
 
 include plat/renesas/rz/common/t2h_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
