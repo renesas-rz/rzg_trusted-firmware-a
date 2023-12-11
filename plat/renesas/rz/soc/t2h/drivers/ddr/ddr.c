@@ -154,7 +154,7 @@ static void phyinit_mc(void)
 		val = dwc_ddrphy_apb_rd(0x0131d1); x = (val > x) ? val : x;
 	}
 
-	tx_dqs_dly = ((x<<6)&0xf) + (((x>>4)&0x01) + ((x>>3)&0x1));
+	tx_dqs_dly = ((x>>6)&0xf) + (((x>>4)&0x01) + ((x>>3)&0x1));
 	val = tctrl_delay + (6 + (bl / 2)) + tx_dqs_dly;
 	ddrtop_mc_param_wr(TDFI_WRDATA_DELAY_ADDR, TDFI_WRDATA_DELAY_OFFSET, TDFI_WRDATA_DELAY_WIDTH, val);
 
