@@ -10,3 +10,6 @@ DDR_SOURCES +=  plat/renesas/rz/soc/${PLAT}/drivers/ddr/param_mc_C-011_D4-01-2.c
 DDR_PLL4    := 1600
 $(eval $(call add_define,DDR_PLL4))
 
+RZG2LC := 1
+
+$(eval $(call add_define,RZG2LC))
