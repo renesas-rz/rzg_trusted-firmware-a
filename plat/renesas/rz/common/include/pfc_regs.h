@@ -267,6 +267,15 @@
 #define PFC_SR23						(PFC_BASE + 0x1518)	/* Slew-Rate switch register */
 #define PFC_SR36						(PFC_BASE + 0x15B0)	/* Slew-Rate switch register */
 #define PFC_SR37						(PFC_BASE + 0x15B8)	/* Slew-Rate switch register */
+#define PFC_SR38						(PFC_BASE + 0x15C0)	/* Slew-Rate switch register */
+#define PFC_SR39						(PFC_BASE + 0x15C8)	/* Slew-Rate switch register */
+#define PFC_SR3A						(PFC_BASE + 0x15D0)	/* Slew-Rate switch register */
+#define PFC_SR3B						(PFC_BASE + 0x15D8)	/* Slew-Rate switch register */
+#define PFC_SR3C						(PFC_BASE + 0x15E0)	/* Slew-Rate switch register */
+#define PFC_SR3D						(PFC_BASE + 0x15E8)	/* Slew-Rate switch register */
+#define PFC_SR3E						(PFC_BASE + 0x15F0)	/* Slew-Rate switch register */
+#define PFC_SR3F						(PFC_BASE + 0x15F8)	/* Slew-Rate switch register */
+#define PFC_SR40						(PFC_BASE + 0x1600)	/* Slew-Rate switch register */
 #define PFC_IEN06						(PFC_BASE + 0x1830)	/* IEN switch register */
 #define PFC_IEN07						(PFC_BASE + 0x1838)	/* IEN switch register */
 #define PFC_IEN08						(PFC_BASE + 0x1840)	/* IEN switch register */
@@ -292,6 +301,15 @@
 #define PFC_PUPD23						(PFC_BASE + 0x1D18)	/* PU/PD switch register */
 #define PFC_PUPD36						(PFC_BASE + 0x1DB0)	/* PU/PD switch register */
 #define PFC_PUPD37						(PFC_BASE + 0x1DB8)	/* PU/PD switch register */
+#define PFC_PUPD38						(PFC_BASE + 0x1DC0)	/* PU/PD switch register */
+#define PFC_PUPD39						(PFC_BASE + 0x1DC8)	/* PU/PD switch register */
+#define PFC_PUPD3A						(PFC_BASE + 0x1DD0)	/* PU/PD switch register */
+#define PFC_PUPD3B						(PFC_BASE + 0x1DD8)	/* PU/PD switch register */
+#define PFC_PUPD3C						(PFC_BASE + 0x1DE0)	/* PU/PD switch register */
+#define PFC_PUPD3D						(PFC_BASE + 0x1DE8)	/* PU/PD switch register */
+#define PFC_PUPD3E						(PFC_BASE + 0x1DF0)	/* PU/PD switch register */
+#define PFC_PUPD3F						(PFC_BASE + 0x1DF8)	/* PU/PD switch register */
+#define PFC_PUPD40						(PFC_BASE + 0x1DE0)	/* PU/PD switch register */
 #define PFC_SD_ch0						(PFC_BASE + 0x3000)	/* SD ch0 IO voltage control register */
 #define PFC_SD_ch1						(PFC_BASE + 0x3004)	/* SD ch1 IO voltage control register */
 #define PFC_QSPI						(PFC_BASE + 0x3008)	/* QSPI IO voltage control register */
