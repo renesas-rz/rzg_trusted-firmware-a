@@ -25,6 +25,7 @@ The current TF-A port has been tested on the Dev1 RZ/T2H
 SoC_id  r9a09g077m48gbg (Quad A55), r9a09g077m28gbg (Dual A55) or r9a09g077m08gbg (Single A55) revision ESx.y.
 
 ::
+
 	On-chip 64-bit Arm Cortex-A55 processor
  	Quad/Dual/Single MPCore cores
  	Maximum operating frequency:
@@ -82,32 +83,46 @@ How to build
 
 The TF-A build options depend on the target board so you will have to
 refer to those specific instructions. What follows is customized to
-the Dev_1 RZ/T2H development kit used in this port.
+the dev_1 RZ/T2H development kit used in this port.
 
 Base build instruction:
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
        make PLAT=t2h all BOARD=dev_1
 
 Build Options:
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
-PLATFORM_CORE_COUNT=4
+.. code:: bash
+
+    PLATFORM_CORE_COUNT=4
+
 This is used to specify to build for the quad, dual or single core SoC.
-PLATFORM_CORE_COUNT=4 --Quad core
-PLATFORM_CORE_COUNT=2 --Dual core
-PLATFORM_CORE_COUNT=1 --Single core
 
-DEBUG=1 LOG_LEVEL=20
+.. code:: bash
+
+    PLATFORM_CORE_COUNT=4 --Quad core
+    PLATFORM_CORE_COUNT=2 --Dual core
+    PLATFORM_CORE_COUNT=1 --Single core
+
+
+.. code:: bash
+
+    DEBUG=1 LOG_LEVEL=20
+
 If a debug build with logging is required, then use these two build options.
-LOG_LEVEL = 0 = LOG_LEVEL_NONE
-LOG_LEVEL = 10 = LOG_LEVEL_ERROR
-LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
-LOG_LEVEL = 30 = LOG_LEVEL_WARNING
-LOG_LEVEL = 40 = LOG_LEVEL_INFO
-LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
+
+.. code:: bash
+
+    LOG_LEVEL = 0 = LOG_LEVEL_NONE
+    LOG_LEVEL = 10 = LOG_LEVEL_ERROR
+    LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
+    LOG_LEVEL = 30 = LOG_LEVEL_WARNING
+    LOG_LEVEL = 40 = LOG_LEVEL_INFO
+    LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
+
 
 System Tested:
 ~~~~~~~~~~~~~~
@@ -121,15 +136,12 @@ TF-A Build Procedure
 ~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
+
 		cd <tfa project path>
 		export CROSS_COMPILE=<path to installed toolset>/bin/aarch64-elf-
-
 		make PLAT=t2h all BOARD=dev_1 PLATFORM_CORE_COUNT=4 DEBUG=1 LOG_LEVEL=40
-
 		make PLAT=t2h all BOARD=dev_1 PLATFORM_CORE_COUNT=4 DEBUG=1 fip BL33=<path to u boot bin file>/u-boot.bin
-
 		python3 tools/renesas/rzt2h_boot_param/parameter_block_generator.py --output=param_output
-
 		make PLAT=t2h pkg BOARD=dev_1 DEBUG=1
 
 
@@ -158,14 +170,14 @@ Flash Procedure for xSPI
 4.	Send the BL2 image srec file
 5.	Modify the XSPIW parameter using this command: XSPIW 0 0x1FB000 0xAB900
 6.	Set the transmit delay to be 0 msec/char and 1msec/line
-4.	Send the FIP image srec file
+7.	Send the FIP image srec file
 
 
 ----------
 Boot trace
 ----------
-
 ::
+
 	NOTICE:  BL2: v2.7(release):v2.5/rzg2l-1.00-2294-gff6037e88
 	NOTICE:  BL2: Built : 09:42:43, Dec  5 2023
 	ERROR:   Reported Core count (0) is different from PLATFORM_CORE_COUNT (4)
@@ -180,10 +192,8 @@ Boot trace
 	Model: Renesas Development EVK based on r9a09g077m44
 	DRAM:  7.9 GiB
 	<More U-Boot specific trace>
-	
+
 	<Boot Trace of next stage OS such as Linux, RTOS or others>
 
 
-NOTE: For "Reported Core Count (n) is different from PLATFORM_CORE_COUNT", n should be 1, 2, or 4, dependent on the CPU variant. 
-
-
+NOTE: For "Reported Core Count (n) is different from PLATFORM_CORE_COUNT", n should be 1, 2, or 4, dependent on the CPU variant.
