@@ -11,6 +11,18 @@
 #include "rz_soc_def.h"
 #include "cpg.h"
 #include "ddr_private.h"
+#include <ddr.h>
+
+
+#define MCAR_CTL				0x800
+
+
+extern const uint32_t retention_phyreglist_1d[];
+extern const uint32_t retention_phyreglist_2d[];
+extern const uint32_t retention_mcreglist[];
+extern const uint32_t retention_phyreglist_1d_size;
+extern const uint32_t retention_phyreglist_2d_size;
+extern const uint32_t retention_mcreglist_size;
 
 
 static void ddr_init(uint64_t ddraddr);
@@ -189,9 +201,55 @@ static void phyinit_mc(void)
 
 static void save_retcsr(void)
 {
+	static bool saved;
+	uint32_t i, j = 0;
+
 	dwc_ddrphy_apb_wr(0x0d0000, 0);
 	dwc_ddrphy_apb_wr(0x0c0080, 3);
 
+	if (!saved) {
+		/* Clear buffer */
+		for (i = 0; i < ARRAY_SIZE(ddr_csr_table); i++)
+			ddr_csr_table[i] = ~0x0;
+
+		/* Read all the retention registers, and save them to the storage other than DRAM. */
+		for (i = 0; i < retention_phyreglist_1d_size; i++, j++) {
+			ddr_csr_table[j] = dwc_ddrphy_apb_rd(retention_phyreglist_1d[i]);
+		}
+
+		for (i = 0; i < retention_phyreglist_2d_size; i++, j++) {
+			ddr_csr_table[j] = dwc_ddrphy_apb_rd(retention_phyreglist_2d[i]);
+		}
+
+		for (i = 0; i < retention_mcreglist_size; i++, j++) {
+			ddr_csr_table[j] = ddrtop_mc_apb_rd(retention_mcreglist[i]);
+		}
+
+		saved = true;
+	}
+
+	dwc_ddrphy_apb_wr(0x0c0080, 2);
+	dwc_ddrphy_apb_wr(0x0d0000, 1);
+}
+
+static void restore_retcsr(void)
+{
+	uint32_t i, j = 0;
+
+	dwc_ddrphy_apb_wr(0x0d0000, 0);
+	dwc_ddrphy_apb_wr(0x0c0080, 3);
+
+	for (i = 0; i < retention_phyreglist_1d_size; i++, j++) {
+		dwc_ddrphy_apb_wr(retention_phyreglist_1d[i], ddr_csr_table[j]);
+	}
+
+	for (i = 0; i < retention_phyreglist_2d_size; i++, j++) {
+		dwc_ddrphy_apb_wr(retention_phyreglist_2d[i], ddr_csr_table[j]);
+	}
+
+	for (i = 0; i < retention_mcreglist_size; i++, j++) {
+		dwc_ddrphy_apb_wr(retention_mcreglist[i], ddr_csr_table[j]);
+	}
 
 	dwc_ddrphy_apb_wr(0x0c0080, 2);
 	dwc_ddrphy_apb_wr(0x0d0000, 1);
@@ -231,4 +289,165 @@ static void prog_all0(uint64_t start_addr, uint32_t addr_space)
 
 	udelay(1);
 #endif
+}
+
+static void soft_delay(uint64_t usec)
+{
+	/* RZ/V2H: CPU Clock = 1.7G Hz*/
+	const uint32_t cpuclk_freq = 1700000000;
+	/* If the number of nop clock cycles is 4 */
+	const uint32_t nop_clk_cycles = 4;
+	/* Number of NOP instructions required for 1us */
+	const uint32_t num_of_nop_needed = cpuclk_freq / (nop_clk_cycles * 1000000);
+
+	volatile uint64_t timeout = num_of_nop_needed * usec;
+
+	while (timeout--) {
+		__asm__ ("nop");
+		dsb();
+	}
+}
+
+void wait_dficlk(uint32_t cycles)
+{
+	const uint32_t dficlk_freq = 400000000; /* dfiCLK = 400MHz */
+
+	soft_delay((((uint64_t)cycles * 1000000) / dficlk_freq) + 1);
+}
+
+void wait_pclk(uint32_t cycles)
+{
+	const uint32_t pclk_freq = 100000000; /* PCLK = 100MHz */
+
+	soft_delay((((uint64_t)cycles * 1000000) / pclk_freq) + 1);
+}
+
+static void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
+{
+	uint32_t tmp_data;
+
+	tmp_data = dwc_ddrphy_apb_rd(addr);
+	tmp_data &= mask;
+	while (tmp_data != data) {
+		wait_pclk(10);
+		tmp_data = dwc_ddrphy_apb_rd(addr);
+		tmp_data &= mask;
+	}
+}
+
+static void ddr_retention_enter(uint8_t base)
+{
+	uint32_t val, num_rank;
+
+	if (!base) {
+		set_ddrtop_mc_base_addr(RZV2H_DDR0_MEMC_BASE);
+		set_ddrphy_base_addr(RZV2H_DDR0_PHY_BASE);
+	} else if (base == 1) {
+		set_ddrtop_mc_base_addr(RZV2H_DDR1_MEMC_BASE);
+		set_ddrphy_base_addr(RZV2H_DDR1_PHY_BASE);
+	}
+	/* 1. */
+
+	/* 2. */
+	val = ddrtop_mc_param_rd(CS_MAP_ADDR, CS_MAP_OFFSET, CS_MAP_WIDTH);
+	num_rank = (val == 3) ? 2 : 1;
+
+	/* 3. */
+	dwc_ddrphy_apb_wr(0x020010, 0);
+
+	/* 4. */
+	ddrtop_mc_param_poll(CONTROLLER_BUSY_ADDR, CONTROLLER_BUSY_OFFSET, CONTROLLER_BUSY_WIDTH, 0);
+
+	/* 5. */
+	ddrtop_mc_param_wr(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_OFFSET, LP_AUTO_ENTRY_EN_WIDTH, 0);
+	ddrtop_mc_param_wr(LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0);
+
+	/* 6. */
+	ddrtop_mc_param_wr(LP_CMD_ADDR, LP_CMD_OFFSET, LP_CMD_WIDTH, 0b1010001);
+	ddrtop_mc_param_poll(LP_STATE_CS0_ADDR, LP_STATE_CS0_OFFSET, LP_STATE_CS0_WIDTH, 0b1001111);
+	if (num_rank > 1) {
+		ddrtop_mc_param_poll(LP_STATE_CS1_ADDR, LP_STATE_CS1_OFFSET, LP_STATE_CS1_WIDTH, 0b1001111);
+	}
+
+	/* 7. */
+	if (!base) {
+		ddrtop_mc_param_wr(DFIBUS_FREQ_F0_ADDR, DFIBUS_FREQ_F0_OFFSET, DFIBUS_FREQ_F0_WIDTH, 0x1F);
+	} else {
+		ddrtop_mc_param_wr(DFIBUS_FREQ_F0_ADDR, DFIBUS_FREQ_F1_OFFSET, DFIBUS_FREQ_F1_WIDTH, 0x1F);
+	}
+
+	/* 8. */
+	ddrtop_mc_param_wr(MCAR_CTL, 16, 1, 1);
+
+	/* 9. */
+	dwc_ddrphy_apb_poll(0x0D00FA, 0, 1);
+
+	/* 10. */
+	ddrtop_mc_param_wr(MCAR_CTL, 16, 1, 0);
+
+	/* 11. */
+	dwc_ddrphy_apb_poll(0x0D00FA, 1, 1);
+
+	/* 12. */
+	cpg_ddr_pwrokin_off(base);
+
+	/* 13. */
+	wait_dficlk(18);
+}
+
+void ddr_retention_entry(void)
+{
+	ddr_retention_enter(1);
+	ddr_retention_enter(0);
+}
+
+void ddr_retention_exit(uint8_t base)
+{
+	if (!base) {
+		set_ddrtop_mc_base_addr(RZV2H_DDR0_MEMC_BASE);
+		set_ddrphy_base_addr(RZV2H_DDR0_PHY_BASE);
+		/* 1. */
+
+		/* 2. to 8. */
+		cpg_ddr0_part1();
+
+		/* 9. */
+		setup_mc();
+
+		/* 10. */
+
+		/* 11. to 14*/
+		cpg_ddr0_part2();
+
+	} else if (base == 1) {
+		set_ddrtop_mc_base_addr(RZV2H_DDR1_MEMC_BASE);
+		set_ddrphy_base_addr(RZV2H_DDR1_PHY_BASE);
+		/* 1. */
+
+		/* 2. to 8. */
+		cpg_ddr1_part1();
+
+		/* 9. */
+		setup_mc();
+
+		/* 10. */
+
+		/* 11. to 14*/
+		cpg_ddr1_part2();
+	}
+
+	/* 15. */
+	phyinit_c();
+
+	/* 16. */
+	restore_retcsr();
+
+	/* 17. */
+	phyinit_i();
+
+	/* 18. */
+	phyinit_j();
+
+	/* 19. */
+	update_mc();
 }

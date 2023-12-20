@@ -439,7 +439,7 @@
 #define CPG_BUS_12_MSTOP_SRAM11				(1UL << 8)
 #define CPG_BUS_12_MSTOP_MCPU_TO_ACPU		(1UL << 9)
 #define CPG_BUS_12_MSTOP_ACPU_TO_MCPU		(1UL << 10)
-/* Bit11 - Bit15  is reserved */
+/* Bit11 - Bit15 is reserved */
 
 #define CPG_ERRORRST_SELx_ERRRSTSEL0		(1UL << 0)
 #define CPG_ERRORRST_SELx_ERRRSTSEL1		(1UL << 1)

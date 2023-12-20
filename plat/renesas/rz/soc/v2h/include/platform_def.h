@@ -17,8 +17,8 @@
 /*******************************************************************************
  * Platform binary types for linking
  ******************************************************************************/
-#define PLATFORM_LINKER_FORMAT          "elf64-littleaarch64"
-#define PLATFORM_LINKER_ARCH            aarch64
+#define PLATFORM_LINKER_FORMAT	"elf64-littleaarch64"
+#define PLATFORM_LINKER_ARCH	aarch64
 
 /*******************************************************************************
  * Generic platform constants
@@ -38,7 +38,7 @@
 #define PLAT_MAX_OFF_STATE		U(2)
 #define PLAT_MAX_PWR_LVL_STATES	U(2)
 
-#define MAX_IO_DEVICES			U(2)
+#define MAX_IO_DEVICES			U(3)
 #define MAX_IO_HANDLES			U(2)
 #define MAX_IO_BLOCK_DEVICES	U(1)
 
@@ -53,6 +53,11 @@
  ******************************************************************************/
 #define BL31_BASE				UL(0x44000000)
 #define BL31_LIMIT				UL(0x44040000)
+
+#define PLAT_TRUSTED_MAILBOX_BASE		BL31_LIMIT
+
+#define BL31_SRAM_BASE			UL(0x08078000)
+#define BL31_SRAM_LIMIT			UL(0x0807F000)
 
 /*******************************************************************************
  * BL32 specific defines.
@@ -91,7 +96,7 @@
  * get written while being protected by different locks causing corruption of
  * a valid mailbox address.
  ******************************************************************************/
-#define CACHE_WRITEBACK_SHIFT   U(6)
-#define CACHE_WRITEBACK_GRANULE (U(1) << CACHE_WRITEBACK_SHIFT)
+#define CACHE_WRITEBACK_SHIFT		U(6)
+#define CACHE_WRITEBACK_GRANULE		(U(1) << CACHE_WRITEBACK_SHIFT)
 
 #endif /* PLATFORM_DEF_H */

@@ -23,12 +23,37 @@
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
 #include <rz_private.h>
+#include <sys.h>
+#include <pwrc.h>
 
-
+extern void bl2_enter_bl31(const struct entry_point_info *bl_ep_info);
 static console_t rzv2h_bl2_console;
+
+static uint32_t bl2_plat_get_boot_mode(void)
+{
+	if (sys_is_resume_reboot())
+		return RZ_WARM_BOOT;
+
+	return RZ_COLD_BOOT;
+}
 
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
+	if (image_id == BL31_IMAGE_ID) {
+		bl2_to_bl31_params_mem_t *params = (bl2_to_bl31_params_mem_t *)PARAMS_BASE;
+
+		params->boot_kind = bl2_plat_get_boot_mode();
+
+		/* If a warm start is in progress then skip rest of intialisation and jump directly to BL31 */
+		if (params->boot_kind == RZ_WARM_BOOT) {
+			bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+
+			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+			flush_dcache_range((uintptr_t)PARAMS_BASE, sizeof(bl2_to_bl31_params_mem_t));
+			bl2_enter_bl31(&bl_mem_params->ep_info);
+		}
+	}
+
 	return 0;
 }
 
@@ -45,6 +70,10 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	bl_mem_params = get_bl_mem_params_node(image_id);
 
 	switch (image_id) {
+	case BL31_IMAGE_ID:
+		/* This function is only entered for BL31 image if it is the cold boot */
+		params->boot_kind = RZ_COLD_BOOT;
+		break;
 	case BL32_IMAGE_ID:
 		memcpy(&params->bl32_ep_info, &bl_mem_params->ep_info,
 			sizeof(entry_point_info_t));
@@ -58,6 +87,7 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		break;
 	}
 
+	flush_dcache_range((uintptr_t)PARAMS_BASE, sizeof(bl2_to_bl31_params_mem_t));
 	return 0;
 }
 
@@ -92,6 +122,8 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	console_set_scope(&rzv2h_bl2_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
+
+	pwrc_setup();
 }
 
 void bl2_el3_plat_arch_setup(void)
@@ -138,5 +170,5 @@ void bl2_platform_setup(void)
 	rz_io_setup();
 
 	/* initialize DDR */
-	ddr_setup();
+	plat_ddr_setup();
 }
