@@ -896,7 +896,7 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* SPDIF Part 1  */
+	{	/* SPDIF Part 1 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_15,
 				.val  = 0x0000C000,
@@ -1714,7 +1714,7 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 
 		/*
 		 * This generic function needs to handle case where Montitor for clock
-		 * is looking for a HIGH as clock active whereas  Montitoring a reset
+		 * is looking for a HIGH as clock active whereas Montitoring a reset
 		 * it is looking for a LOW to indicate reset release.
 		 */
 		mask = array->mon.val;
@@ -1925,6 +1925,41 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_12_MSTOP_MCPU_TO_ACPU);
 }
 
+static CPG_SETUP_DATA cpg_clk_sr2_tbl[] = {
+	{	/* I2C8 */
+		.reg =  {
+				.addr = (uintptr_t)CPG_CLKON_9,
+				.val  = 0x00000008,
+			},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_CLKMON_4,
+				.val  = 0x00080000,
+			},
+
+			.type = CPG_T_CLK
+	},
+
+	{	/* I2C8 */
+		.reg =  {
+				.addr = (uintptr_t)CPG_RST_10,
+				.val  = 0x00000001,
+			},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_RSTMON_4,
+				.val  = 0x00020000,
+			},
+
+		.type = CPG_T_RST
+	}
+};
+
+void cpg_prepare_suspend(void)
+{
+	cpg_ctrl_clkrst(&cpg_clk_sr2_tbl[0], ARRAY_SIZE(cpg_clk_sr2_tbl));
+}
+
 static void cpg_clk_on_setup(void)
 {
 	cpg_ctrl_clkrst(&cpg_clk_on_tbl[0], ARRAY_SIZE(cpg_clk_on_tbl));
@@ -1943,7 +1978,7 @@ static void cpg_wdtrst_sel_setup(void)
 					| CPG_ERRORRST_SELx_ERRRSTSEL3;
 
 	/* Add in the WEN bits for the selected bits */
-	val =  (val & 0xFFFF) | ((val & 0xFFFF) << 16);
+	val = (val & 0xFFFF) | ((val & 0xFFFF) << 16);
 
 	mmio_write_32(CPG_ERRORRST_SEL2, val);
 }
@@ -1951,25 +1986,32 @@ static void cpg_wdtrst_sel_setup(void)
 
 void cpg_ddr0_part1(void)
 {
-	mmio_write_32(CPG_RST_11, 0x0FF80000);	/* DDR0 */
+	/* 2. */
+	mmio_write_32(CPG_RST_11, 0x0FF80000);
 
-	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000001);	/* DDR0 */
+	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000001);
 
+	/* 3. */
 	mmio_write_32(CPG_PLLDDR0_STBY, 0x00010001);	/* PLLDDR0 clock start */
 	while ((mmio_read_32(CPG_PLLDDR0_MON) & 0x00000011) != 0x00000011)
 		;
 
 	mmio_write_32(CPG_CLKON_12, 0x0FC00FC0);
 
+	/* 4. */
 	udelay(1);
 
+	/* 5. */
 	mmio_write_32(CPG_RST_11, 0x00080008);
 	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) | 0x00000001);
 
+	/* 6. */
 	udelay(1);
 
+	/* 7. */
 	mmio_write_32(CPG_RST_11, 0x03F003F0);
 
+	/* 8. */
 	udelay(1);
 }
 
@@ -2000,7 +2042,6 @@ void cpg_ddr1_part1(void)
 
 	udelay(1);
 
-
 	mmio_write_32(CPG_RST_11, 0x10001000);
 	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) | 0x00000002);
 
@@ -2021,6 +2062,14 @@ void cpg_ddr1_part2(void)
 	mmio_write_32(CPG_RST_12, 0x00080008);
 
 	udelay(10);
+}
+
+void cpg_ddr_pwrokin_off(uint8_t base)
+{
+	if (!base)
+		mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000001);	/* DDR0 */
+	else
+		mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000002);	/* DDR1 */
 }
 
 void cpg_early_setup(void)

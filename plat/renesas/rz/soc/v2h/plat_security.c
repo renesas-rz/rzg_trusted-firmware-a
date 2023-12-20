@@ -244,8 +244,8 @@ static void plat_tzc_spi_setup(void)
 	const arm_tzc_regions_info_t xspi_tzc_regions[] = {
 		{
 			/* Default Region 0: Lock down */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},

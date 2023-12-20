@@ -17,12 +17,6 @@ extern const uint32_t phyinit_1d[];
 extern const uint32_t phyinit_2d[];
 extern const uint32_t param_phyinit_f_1d_0[][2];
 extern const uint32_t param_phyinit_f_2d_0[][2];
-extern const uint32_t retention_phyreglist_1d[];
-extern const uint32_t retention_phyreglist_2d[];
-extern const uint32_t retention_mcreglist[];
-extern uint32_t retention_phyreg_1d_val[];
-extern uint32_t retention_phyreg_2d_val[];
-extern uint32_t retention_mcreg_val[];
 extern const uint32_t param_setup_mc[][2];
 
 extern const uint32_t param_phyinit_swizzle_size;
@@ -32,9 +26,7 @@ extern const uint32_t phyinit_1d_size;
 extern const uint32_t phyinit_2d_size;
 extern const uint32_t param_phyinit_f_1d_0_size;
 extern const uint32_t param_phyinit_f_2d_0_size;
-extern const uint32_t retention_phyreglist_1d_size;
-extern const uint32_t retention_phyreglist_2d_size;
-extern const uint32_t retention_mcreglist_size;
+
 extern const uint32_t param_setup_mc_size;
 
 
@@ -269,5 +261,5 @@ static int8_t dwc_ddrphy_cdd_int(uint8_t val)
 
 static int8_t dwc_ddrphy_cdd_abs(uint8_t val)
 {
-	return (uint8_t)((((val>>7)&0x1) == 1) ?  ((0x7f^((val>>0)&0x7f)) + 1) : ((val>>0)&0x7f));
+	return (uint8_t)((((val>>7)&0x1) == 1) ? ((0x7f^((val>>0)&0x7f)) + 1) : ((val>>0)&0x7f));
 }

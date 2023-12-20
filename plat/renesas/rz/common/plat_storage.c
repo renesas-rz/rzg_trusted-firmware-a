@@ -15,6 +15,10 @@
 #include <io_sddrv.h>
 #include <lib/mmio.h>
 #include <tools_share/firmware_image_package.h>
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+#include <plat_tbbr_img_def.h>
+#include <io_xspidrv.h>
+#endif /* PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H */
 
 #include <rz_soc_def.h>
 #include <sys.h>
@@ -32,6 +36,9 @@ static uintptr_t fip_dev_handle;
 static uintptr_t memdrv_dev_handle;
 static uintptr_t emmcdrv_dev_handle;
 static uintptr_t sddrv_dev_handle;
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+static uintptr_t xspidrv_dev_handle;
+#endif
 
 static uintptr_t boot_io_drv_id;
 
@@ -88,10 +95,20 @@ static const io_uuid_spec_t nt_fw_content_cert_file_spec = {
 };
 #endif
 
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+static const io_block_spec_t spirom_ddr_cfg_spec = {
+	.offset = RZ_SOC_SPIROM_DDR_CFG_BASE,
+	.length = RZ_SOC_SPIROM_DDR_CFG_SIZE,
+};
+#endif /* PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H */
+
 static int32_t open_emmcdrv(const uintptr_t spec);
 static int32_t open_memmap(const uintptr_t spec);
-static int32_t open_sddrv(const uintptr_t spec);
 static int32_t open_fipdrv(const uintptr_t spec);
+static int32_t open_sddrv(const uintptr_t spec);
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+static int32_t open_xspidrv(const uintptr_t spec);
+#endif /* PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H */
 
 struct plat_io_policy {
 	uintptr_t *dev_handle;
@@ -117,7 +134,15 @@ static const struct plat_io_policy spirom_fip_policy = {
 	&open_memmap
 };
 
-static struct plat_io_policy policies[] = {
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+static const struct plat_io_policy spirom_ddr_config_policy = {
+	&xspidrv_dev_handle,
+	(uintptr_t) &spirom_ddr_cfg_spec,
+	&open_xspidrv
+};
+#endif /* PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H */
+
+static struct plat_io_policy policies[MAX_NUMBER_IDS] = {
 	/* FIP_IMAGE_ID structure is added to this array on a bootmode basis */
 
 	[BL31_IMAGE_ID] = {
@@ -198,12 +223,33 @@ static int32_t open_sddrv(const uintptr_t spec)
 	return io_dev_init(sddrv_dev_handle, 0);
 }
 
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+static int32_t open_xspidrv(const uintptr_t spec)
+{
+	uintptr_t handle;
+	int32_t result;
+
+	result = io_dev_init(xspidrv_dev_handle, 0);
+	if (result != 0)
+		return result;
+
+	result = io_open(xspidrv_dev_handle, spec, &handle);
+	if (result == 0)
+		io_close(handle);
+
+	return result;
+}
+#endif /* PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H */
+
 static void update_dev_policies(uint16_t boot_mode)
 {
 	switch (boot_mode) {
 	case SYS_BOOT_MODE_SPI_1_8:
 	case SYS_BOOT_MODE_SPI_3_3:
 		policies[FIP_IMAGE_ID] = spirom_fip_policy;
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+		policies[V2H_DDR_CONFIG_ID] = spirom_ddr_config_policy;
+#endif /* PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H */
 		break;
 	case SYS_BOOT_MODE_EMMC_1_8:
 	case SYS_BOOT_MODE_EMMC_3_3:
@@ -221,8 +267,11 @@ void rz_io_setup(void)
 {
 	const io_dev_connector_t *memmap;
 	const io_dev_connector_t *emmc;
-	const io_dev_connector_t *sd;
 	const io_dev_connector_t *rzsoc;
+	const io_dev_connector_t *sd;
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+	const io_dev_connector_t *xspi;
+#endif /* PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H */
 	boot_mode_t boot_mode;
 
 	boot_mode = sys_get_boot_mode();
@@ -242,6 +291,11 @@ void rz_io_setup(void)
 #endif /* PLAT_SOC_RZG2L */
 		register_io_dev_memmap(&memmap);
 		io_dev_open(memmap, 0, &memdrv_dev_handle);
+
+#if (PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H)
+		register_io_dev_xspidrv(&xspi);
+		io_dev_open(xspi, 0, &xspidrv_dev_handle);
+#endif /* PLAT_SYSTEM_SUSPEND && PLAT_SOC_RZV2H */
 	} else if  (boot_mode == SYS_BOOT_MODE_EMMC_1_8 ||
 				boot_mode == SYS_BOOT_MODE_EMMC_3_3) {
 		if (emmc_init() != EMMC_SUCCESS) {

@@ -11,19 +11,24 @@ FIP_ALIGN		:=	16
 include plat/renesas/rz/common/v2h_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
-PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/v2h/plat_security.c
+DDR_SOURCES	+=				plat/renesas/rz/soc/v2h/drivers/ddr/ddr.c	\
+							plat/renesas/rz/soc/v2h/drivers/ddr/ddr_misc.c	\
+							plat/renesas/rz/soc/v2h/plat_ddr_setup.c
+
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/v2h/plat_security.c		\
+							plat/renesas/rz/soc/v2h/drivers/riic.c		\
+							plat/renesas/rz/soc/v2h/drivers/cpg.c		\
+							plat/renesas/rz/soc/v2h/drivers/pwrc/pwrc.c	\
+							plat/renesas/rz/soc/v2h/drivers/pwrc/pwrc_stack.S	\
+							${DDR_SOURCES}
 
 BL2_SOURCES				+=	plat/renesas/rz/soc/v2h/bl2_plat_setup.c		\
-							plat/renesas/rz/soc/v2h/drivers/cpg.c			\
 							plat/renesas/rz/soc/v2h/drivers/sys.c			\
 							plat/renesas/rz/soc/v2h/drivers/pfc.c
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/v2h/bl31_plat_setup.c		\
 							plat/renesas/rz/soc/v2h/plat_pm.c				\
 							plat/renesas/rz/soc/v2h/rz_plat_sip_handler.c
-
-DDR_SOURCES				+=	plat/renesas/rz/soc/v2h/drivers/ddr/ddr.c		\
-							plat/renesas/rz/soc/v2h/drivers/ddr/ddr_misc.c
 
 .PHONY: bptool_make bptool_clean
 

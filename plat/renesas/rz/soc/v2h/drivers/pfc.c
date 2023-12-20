@@ -27,7 +27,7 @@ static PFC_REGS pfc_sd_reg_tbl[PFC_TBL_LEN] = {
 		{ PFC_ON,  (uintptr_t)PFC_IEN09,  0x0000000000000100 }		/* IEN */
 	},
 
-	/* SD0_DATA  (PA.0 - PA.7*/
+	/* SD0_DATA (PA.0 - PA.7 */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
@@ -38,7 +38,7 @@ static PFC_REGS pfc_sd_reg_tbl[PFC_TBL_LEN] = {
 	},
 };
 
-static PFC_REGS  pfc_qspi_reg_tbl[PFC_TBL_LEN] = {
+static PFC_REGS pfc_qspi_reg_tbl[PFC_TBL_LEN] = {
 	/* QSPI0 CLK (P7.0), CS0 (P7.2) */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
@@ -70,6 +70,24 @@ static PFC_REGS pfc_scif_reg_tbl[PFC_TBL_LEN] = {
 		{ PFC_ON,  (uintptr_t)PFC_PUPD06, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR06,   0x0000000000000003 },		/* SR */
 		{ PFC_ON,  (uintptr_t)NULL,       0x0000000000000000 }		/* IEN */
+	},
+
+	/* Padding to make same length as other pin tables */
+	{
+		{0}
+	},
+};
+
+/* I2C8 */
+static PFC_REGS pfc_i2c_bus8_reg_tbl[PFC_TBL_LEN] = {
+	/* I2C8_SDA (P20.6), I2C8_SCL (P20.7) */
+	{
+		{ PFC_ON,  (uintptr_t)PFC_PMC20,  0xC0 },					/* PMC */
+		{ PFC_ON,  (uintptr_t)PFC_PFC20,  0x11000000 },				/* PFC */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* IOLH */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PUPD */
+		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* SR */
+		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	},
 
 	/* Padding to make same length as other pin tables */
@@ -175,10 +193,33 @@ static void pfc_drive_setup(void)
 	}
 }
 
+static void pfc_riic_pmic_setup(void)
+{
+#if PLAT_SYSTEM_SUSPEND
+	int cnt;
+
+	mmio_write_32(PFC_PWPR, mmio_read_32(PFC_PWPR) | PWPR_REGWE_A);
+
+	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+		/* PFC */
+		if (pfc_i2c_bus8_reg_tbl[cnt].pfc.flg == PFC_ON) {
+			mmio_write_32(pfc_i2c_bus8_reg_tbl[cnt].pfc.reg, pfc_i2c_bus8_reg_tbl[cnt].pfc.val);
+		}
+		/* PMC */
+		if (pfc_i2c_bus8_reg_tbl[cnt].pmc.flg == PFC_ON) {
+			mmio_write_8(pfc_i2c_bus8_reg_tbl[cnt].pmc.reg, pfc_i2c_bus8_reg_tbl[cnt].pmc.val);
+		}
+	}
+
+	mmio_write_32(PFC_PWPR, mmio_read_32(PFC_PWPR) & ~PWPR_REGWE_A);
+#endif /* PLAT_SYSTEM_SUSPEND */
+}
+
 void pfc_setup(void)
 {
 	pfc_sd_setup();
 	pfc_qspi_setup();
 	pfc_scif_setup();
 	pfc_drive_setup();
+	pfc_riic_pmic_setup();
 }
