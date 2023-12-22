@@ -3,7 +3,7 @@ Renesas RZ/V2H
 
 The "RZ/V2H" high-end 64-bit Arm®-based microprocessors (MPUs)
 enables the solutions required for the smart society of the future.
-Through a quad core of Arm Cortex®-A55 and in addation duo CR8 and a M33 core, engineers can
+Through a quad core of Arm Cortex®-A55 and in addition duo CR8 and a M33 core, engineers can
 easily implement real-time control and
 industrial ethernet connectivity.
 
@@ -16,35 +16,50 @@ Renesas RZ/V2H reference platforms:
 +--------------+---------------------------------------------------------------------------------------------------------------------------------------+
 | Board        |      Details                                                                                                                          |
 +==============+===============+=======================================================================================================================+
-| dev1         | Equipped with Renesas RZ/V2H SoC                                                                                                      |
+| dev_1        | Equipped with Renesas RZ/V2H SoC                                                                                                      |
+|              +---------------------------------------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzt-series-mpu                                        |
++--------------+---------------------------------------------------------------------------------------------------------------------------------------+
+| evk_apha     | Equipped with Renesas RZ/V2H SoC                                                                                                      |
 |              +---------------------------------------------------------------------------------------------------------------------------------------+
 |              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update                               |
 +--------------+---------------------------------------------------------------------------------------------------------------------------------------+
 
-`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__ //TODO: Update
+The current TF-A port has been tested on the Development and Evaluation Alpha RZ/V2H platforms.
+SoC_id r9a09g057h4 revision ESx.y.
 
-The current TF-A port has been tested on the Dev1 RZ/V2H
-SoC_id  r9a09g057h4 revision ESx.y.
-
++----------------+------------------+------------------+
+|  Part Number   |  GE3D            |  Security        |
++================+==================+==================+
+| R9A09G057H41GBG|  N/A             |  N/A             |
++                +                  +                  +
+| R9A09G057H42GBG|  GE3D            |  (Mali-G31)      |
++                +                  +                  +
+| R9A09G057H45GBG|  N/A             |  Available       |
++                +                  +                  +
+| R9A09G057H46GBG|  GE3D (Mali-G31) |                  |
++----------------+------------------+------------------+
 
 ::
 
-    Arm® Cortex®-A55 1.8 GHz Quad Core, FPU, Neon™, L1-caches and L3-cache
-    Arm® Cortex®-R8 800 MHz Dual Core, FPU, TCM, and L1-cache
-    Arm® Cortex®-M33 200MHz, FPU and DSP-extension,
-    DRP-AI, Mali™-G31 (GE3D), Mali™-C55 (ISP), 6 MB of on-chip SRAM,
-    2ch GbEthernet MAC,
-    USB2.0, USB3.2
-    Gen 2x1, 4-MIPI® CSI-2® camera input interface,
-    1-MIPI® DSI® video output interface,
-    PCIe® Gen3 4Lane or 2-2Lane
-    (EP/RC), various communication interfaces such as an xSPI, eMMC™, I2S (TDM), I3C®, PDM, and security functions.
+	Arm® Cortex®-A55 1.8 GHz Quad Core, FPU, Neon™, L1-caches and L3-cache
+	Arm® Cortex®-R8 800 MHz Dual Core, FPU, TCM, and L1-cache
+	Arm® Cortex®-M33 200MHz, FPU and DSP-extension,
+	DRP-AI, Mali™-G31 (GE3D), Mali™-C55 (ISP), 6 MB of on-chip SRAM,
+	2ch GbEthernet MAC,
+	USB2.0, USB3.2
+	Gen 2x1, 4-MIPI® CSI-2® camera input interface,
+	1-MIPI® DSI® video output interface,
+	PCIe® Gen3 4Lane or 2-2Lane
+	(EP/RC), various communication interfaces such as an xSPI, eMMC™, I2S (TDM), I3C®, PDM, and security functions.
 
 
+--------
 Overview
 --------
-On RZ/V2H SoCs the BOOTROM starts the cpu at EL3; for this port BL2
+On RZ/V2H SoCs the BOOTROM starts the CPU at EL3; for this port BL2
 will therefore be entered at this exception level.
+
 EL1 is entered before exiting BL31.
 
 BL2 initializes DDR before determining the boot reason (cold or warm).
@@ -54,138 +69,114 @@ memory (BOOT_KIND_BASE) together with the BL31 parameters
 (PARAMS_BASE) and jumps to BL31.
 
 To all effects, BL31 is as if it is being entered in reset mode since
-it still needs to initialize the rest of the cores; this is the reason
-behind using direct shared memory access to  BOOT_KIND_BASE _and_
+it still needs to initialize the rest of the cores, this is the reason
+behind using direct shared memory access to BOOT_KIND_BASE _and_
 PARAMS_BASE instead of using registers to get to those locations (see
 el3_common_macros.S and bl31_entrypoint.S for the RESET_TO_BL31 use
 case).
 
-[1] https://github.com/renesas-rz/meta-rzg2/tree/BSP-1.0.5/recipes-bsp/arm-trusted-firmware/files	//TODO: Update
 
-
+------------
 How to build
 ------------
 
 The TF-A build options depend on the target board so you will have to
-refer to those specific instructions. What follows is customized to
-the Dev_1 RZ/V2H development kit used in this port.
+refer to those specific instructions. 
 
-Build Tested:
-~~~~~~~~~~~~~
+What follows is customized to
+the Development and Evaluation Alpha RZ/V2H development kit used in these ports.
+
+Base build instruction:
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
-       make PLAT=v2h all BOARD=dev_1 ENABLE_STACK_PROTECTOR=all
+	make PLAT=v2h all BOARD=evk_alpha ENABLE_STACK_PROTECTOR=all
+
+Build Options:
+~~~~~~~~~~~~~~
+.. code:: bash
+
+    DEBUG=1 LOG_LEVEL=20
+
+If a debug build with logging is required, then use these two build options.
+
+.. code:: bash
+
+	LOG_LEVEL = 0 = LOG_LEVEL_NONE
+	LOG_LEVEL = 10 = LOG_LEVEL_ERROR
+	LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
+	LOG_LEVEL = 30 = LOG_LEVEL_WARNING
+	LOG_LEVEL = 40 = LOG_LEVEL_INFO
+	LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
 
 System Tested:
 ~~~~~~~~~~~~~~
+
 * u-boot:
-  The port has beent tested using mainline uboot with Dev_1 RZ/V2H board
-  specific patches.
+  The port has been tested using mainline uboot with the appropriate dev_1 or evk_alpha RZ/V2H board specific patches.
+  <URL TBD>
 
-|  commit 46ce9e777c1314ccb78906992b94001194eaa87b		//TODO: Update
-|  Author: Heiko Schocher <hs@denx.de>
-|  Date:   Tue Nov 3 15:22:36 2020 +0100
-
-* linux:
-  The port has beent tested using mainline kernel.
-
-|  commit f8394f232b1eab649ce2df5c5f15b0e528c92091		//TODO: Update
-|  Author: Linus Torvalds <torvalds@linux-foundation.org>
-|  Date:   Sun Nov 8 16:10:16 2020 -0800
-|  Linux 5.10-rc3
 
 TF-A Build Procedure
 ~~~~~~~~~~~~~~~~~~~~
-.. code:: bash
-				//TODO: Update
-	sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping libsdl1.2-dev xterm p7zip-full libyaml-dev
-	cd rzg_bsp_v3.0.0/
-	patch -p1 < ../v300-to-v300update1.patch
-	cp meta-renesas/docs/template/conf/dev1-rzV2H/*.conf ./conf/
-	source poky/oe-init-build-env
-	bitbake core-image-minimal
 
 .. code:: bash
 
-       make PLAT=v2h all BOARD=dev_1 ENABLE_STACK_PROTECTOR=all
+	cd <tfa project path>/tf-a
+	export CROSS_COMPILE=<path to installed toolset>/bin/aarch64-elf-
+	make PLAT=v2h all BOARD=dev_1 ENABLE_STACK_PROTECTOR=all LOG_LEVEL=40
+	make PLAT=v2h all BOARD=dev_1 ENABLE_STACK_PROTECTOR=all DEBUG=1 LOG_LEVEL=40
+	make PLAT=v2h all BOARD=evk_alpha ENABLE_STACK_PROTECTOR=all DEBUG=1 LOG_LEVEL=40
+	make PLAT=v2h all BOARD=evk_alpha ENABLE_STACK_PROTECTOR=default DEBUG=1 PLAT_SYSTEM_SUSPEND=1
+	make PLAT=v2h all BOARD=evk_alpha ENABLE_STACK_PROTECTOR=default DEBUG=1 PLAT_SYSTEM_SUSPEND=1 BL33=u-boot.bin bptool fip pkg
 
 
-Install Procedure
-~~~~~~~~~~~~~~~~~
+----------------
+How to load TF-A
+----------------
 
-- Boot the board in Mini-monitor mode and enable access to the
-  QSPI flash.
+Loading the flash writer
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+1.	Set the device in SCIF mode,
+2.	Connect to the COM port provided by the device via some terminal \ software.
+3.	Set the baudrate to be 115200
+4.	Set the transmit delay to be 0msec/char and 1msec/line
+5.	Hit reset and the device will print a message.
+6.	Send the FlashWriter .mot file[1].
+
+[1] https://github.com/renesas-rz/<TBD>
 
 
-- Use the RZ/V2H flash_writer utility[2] to flash all the SREC files.
+Flash Procedure for xSPI
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-[2] https://github.com/renesas-rz/rzg2_flash_writer/tree/rz_V2H			//TODO: Update
+1.	Use the ‘Loading the flash writer' procedure.
+2.	Modify the XSPIW parameter using this command: XSPIW 0 0x0 0x3c600
+3.	Set the transmit delay to be 0 msec/char and 0msec/line
+4.	Send the BL2 image srec file
+5.	Modify the XSPIW parameter using this command: XSPIW 0 0x1FB000 0xAB900
+6.	Set the transmit delay to be 0 msec/char and 1msec/line
+7.	Send the FIP image srec file
 
-
+----------
 Boot trace
 ----------
+
 ::
-	NOTICE:  BL2: v2.7(debug):V2.7/RZV2H-1.00-BETA-83-gea81b2135
-	NOTICE:  BL2: Built : 21:32:28, Mar 23 2023
-	INFO:    BL2: Doing platform setup
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 2 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    BL2: Loading image id 3
-	INFO:    Loading image id=3 at address 0x44000000
-	INFO:    Image id=3 loaded: 0x44000000 - 0x4400f0c9
-	INFO:    BL2: Loading image id 5
-	INFO:    Loading image id=5 at address 0x50000000
-	INFO:    Image id=5 loaded: 0x50000000 - 0x5009a5d8
+
+	NOTICE:  BL2: v2.7(release):v2.7/rzv2h-1.00-2312-ga552b0f46
+	NOTICE:  BL2: Built : 12:43:11, Dec 17 2023
 	NOTICE:  BL2: Booting BL31
-	INFO:    Entry point address = 0x44000000
-	INFO:    SPSR = 0x3cd
-	NOTICE:  BL31: v2.7(debug):V2.7/RZV2H-1.00-BETA-82-g0af46693b-dirty
-	NOTICE:  BL31: Built : 20:12:16, Mar 23 2023
-	INFO:    GICv3 without legacy support detected.
-	INFO:    ARM GICv3 driver initialized in EL3
-	INFO:    Maximum SPI INTID supported: 991
-	INFO:    BL31: Initializing runtime services
-	INFO:    BL31: cortex_a55: CPU workaround for 1530923 was applied
-	INFO:    BL31: Preparing for EL3 exit to normal world
-	INFO:    Entry point address = 0x50000000
-	INFO:    SPSR = 0x3c5
+	NOTICE:  BL31: v2.7(release):v2.7/rzv2h-1.00-2312-ga552b0f46
+	NOTICE:  BL31: Built : 12:43:16, Dec 17 2023
 
+	U-Boot 2021.10-geba1f3bfcb (Dec 14 2023 - 16:52:50 +0000)
 
-	U-Boot 2021.10-g5502146d18 (Feb 28 2023 - 19:48:45 +0000)
+	CPU:   Renesas Electronics CPU rev 9.0
+	Model: Renesas EVK Alpha based on r9a09g057h4
+	DRAM:  15.9 GiB
+	<More U-Boot specific trace>
 
-	CPU:   Renesas Electronics CPU rev 1.0
-	Model: Renesas Development EVK based on r9a09g057h4
-	DRAM:  1.9 GiB
-	MMC:   mmc@15c00000: 0, mmc@15c20000: 1
-	Loading Environment from MMC... OK
-	In:    serial@11c01400
-	Out:   serial@11c01400
-	Err:   serial@11c01400
-	Net:   No ethernet found.
-	Hit any key to stop autoboot:  0
-	Card did not respond to voltage select! : -110				//TODO: Update
-	Card did not respond to voltage select! : -110
-	Couldn't find partition mmc 1:1
-	Can't set block device
-	Card did not respond to voltage select! : -110
-	Couldn't find partition mmc 1:1
-	Can't set block device
-	Bad Linux ARM64 Image magic!
-	=>
-
-
+	<Boot Trace of next stage OS such as Linux, RTOS or others>
