@@ -242,6 +242,7 @@ ifeq (${LSI}, $(filter ${LSI}, G2E G2N))
   endif
 endif
 
+INIT_UNUSED_NS_EL2 = 1
 include drivers/renesas/common/ddr/ddr.mk
 include drivers/renesas/rzg/qos/qos.mk
 include drivers/renesas/rzg/pfc/pfc.mk
