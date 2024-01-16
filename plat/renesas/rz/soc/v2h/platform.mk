@@ -47,9 +47,11 @@ pkg:
 	./tools/renesas/bptool build/v2h/${BUILD_TYPE}/bl2.bin build/v2h/${BUILD_TYPE}/bp.bin 0x08103000 spi
 	cat build/v2h/${BUILD_TYPE}/bp.bin build/v2h/${BUILD_TYPE}/bl2.bin > build/v2h/${BUILD_TYPE}/bl2_bp.bin
 	objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2h/${BUILD_TYPE}/bl2_bp.bin  build/v2h/${BUILD_TYPE}/bl2_bp.srec
-	./tools/renesas/bptool build/v2h/${BUILD_TYPE}/bl2.bin build/v2h/${BUILD_TYPE}/bp_mmc.bin 0x08103000 mmc
-	cat build/v2h/${BUILD_TYPE}/bp_mmc.bin build/v2h/${BUILD_TYPE}/bl2.bin > build/v2h/${BUILD_TYPE}/bl2_bp_mmc.bin
-	objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2h/${BUILD_TYPE}/bl2_bp_mmc.bin  build/v2h/${BUILD_TYPE}/bl2_bp_mmc.srec
+	if [ ${BOARD} != "evk_1" ]; then \
+	./tools/renesas/bptool build/v2h/${BUILD_TYPE}/bl2.bin build/v2h/${BUILD_TYPE}/bp_mmc.bin 0x08103000 mmc;\
+	cat build/v2h/${BUILD_TYPE}/bp_mmc.bin build/v2h/${BUILD_TYPE}/bl2.bin > build/v2h/${BUILD_TYPE}/bl2_bp_mmc.bin;\
+	objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2h/${BUILD_TYPE}/bl2_bp_mmc.bin  build/v2h/${BUILD_TYPE}/bl2_bp_mmc.srec;\
+	fi
 	./tools/renesas/bptool build/v2h/${BUILD_TYPE}/bl2.bin build/v2h/${BUILD_TYPE}/bp_esd.bin 0x08103000 esd
 	cat build/v2h/${BUILD_TYPE}/bp_esd.bin build/v2h/${BUILD_TYPE}/bl2.bin > build/v2h/${BUILD_TYPE}/bl2_bp_esd.bin
 	objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2h/${BUILD_TYPE}/bl2_bp_esd.bin  build/v2h/${BUILD_TYPE}/bl2_bp_esd.srec
