@@ -78,6 +78,7 @@ static PFC_REGS pfc_scif_reg_tbl[PFC_TBL_LEN] = {
 	},
 };
 
+#if PLAT_SYSTEM_SUSPEND
 /* I2C8 */
 static PFC_REGS pfc_i2c_bus8_reg_tbl[PFC_TBL_LEN] = {
 	/* I2C8_SDA (P20.6), I2C8_SCL (P20.7) */
@@ -95,6 +96,7 @@ static PFC_REGS pfc_i2c_bus8_reg_tbl[PFC_TBL_LEN] = {
 		{0}
 	},
 };
+#endif /* PLAT_SYSTEM_SUSPEND */
 
 static PFC_IO_DRIVE pfc_io_drive[SYS_BOOT_MODE_MAX] = {
 	{SYS_LSI_OTPPOC_EN_SD_DS_MASK,		SYS_LSI_OTPPOC_SD_E_MASK,		SYS_LSI_OTPPOC_SD_E_OFFSET},
