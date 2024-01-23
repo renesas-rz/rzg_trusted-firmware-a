@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,8 +11,8 @@
 
 #include "ddr_regs.h"
 
-#define DDR4_VERSION	"1.02"
-#define LPDDR4_VERSION	"1.02"
+#define DDR4_VERSION	"1.04"
+#define LPDDR4_VERSION	"1.04"
 
 #if !LPDDR4
 #define DDR_VERSION		DDR4_VERSION

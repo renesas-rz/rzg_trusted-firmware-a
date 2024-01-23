@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,6 +17,9 @@
 
 static uint32_t m_mcbase;
 static uint32_t m_phybase;
+
+
+static void decode_streaming_message(void);
 
 
 void ddrtop_mc_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask)
@@ -89,6 +92,8 @@ void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 			mail = get_mail(0);
 			if (mail == 0xff || mail == 0x07) {
 				train_done = 1;
+			} else if (mail == 0x08) {
+				decode_streaming_message();
 			}
 		}
 	} while (train_done == 0);
@@ -121,9 +126,9 @@ uint32_t get_mail(uint8_t mode_32bits)
 			panic();
 		}
 	}
-
 	dwc_ddrphy_apb_wr(0x0d0031, 0x0001);
 
+	VERBOSE("mail = %x\n", mail);
 	return mail;
 }
 
@@ -145,4 +150,18 @@ void set_ddrphy_base_addr(uint32_t base_addr)
 uint32_t get_ddrphy_base_addr(void)
 {
 	return m_phybase;
+}
+
+static void decode_streaming_message(void)
+{
+	uint32_t coded_message_hex;
+	uint16_t num_args;
+	int i;
+
+	coded_message_hex = get_mail(1);
+	/* Get the number of argument need to be read from mailbox */
+	num_args = (uint16_t)(0xffff & coded_message_hex);
+	for (i = 0; i < num_args; i++) {
+		(void)get_mail(1);
+	}
 }
