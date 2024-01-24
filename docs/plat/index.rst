@@ -41,6 +41,7 @@ Platform Ports
    rz-v2h
    rz-g3s
    rz-t2h
+   rz-n2h
    rockchip
    socionext-uniphier
    synquacer

@@ -7,9 +7,9 @@
 #ifndef __PFC_REGS_H__
 #define __PFC_REGS_H__
 
-#define PORT_P(b, n)						((b) + 0x0000UL + (n))
-#define PORT_PM(b, n)						((b) + 0x0200UL + (n))
-#define PORT_PMC(b, n)						((b) + 0x0400UL + (n))
+#define PORT_P(b, n)						((b) + 0x0000UL  + (n))
+#define PORT_PM(b, n)						((b) + 0x0200UL  + (2UL  * ((uint16_t)n)))
+#define PORT_PMC(b, n)						((b) + 0x0400UL  + (n))
 #define PORT_PFC(b, n)						((b) + 0x0600ULL + (8ULL * ((uint64_t)n)))
 #define PORT_DRCTL(b, n)					((b) + 0x0A00ULL + (8ULL * ((uint64_t)n)))
 

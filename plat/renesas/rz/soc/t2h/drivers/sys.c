@@ -112,6 +112,7 @@ uint32_t sys_get_platform_core_count(void)
 	uint32_t part_number = sys_get_platform_part_number();
 
 	switch (part_number) {
+	/* RZT2H Part Numbers*/
 	case OTP_PN_RZT2H_QUAD_SEC_R9A09G077M48GBG:
 	case OTP_PN_RZT2H_QUAD_R9A09G077M44GBG: {
 		core_count = 4U;
@@ -126,6 +127,25 @@ uint32_t sys_get_platform_core_count(void)
 
 	case OTP_PN_RZT2H_SINGLE_SEC_R9A09G077M08GBG:
 	case OTP_PN_RZT2H_SINGLE_R9A09G077M04GBG: {
+		core_count = 1U;
+	}
+	break;
+
+	/* RZN2H Part Numbers*/
+	case OTP_PN_RZN2H_QUAD_SEC_R9A09G087M48GBG:
+	case OTP_PN_RZN2H_QUAD_R9A09G087M44GBG: {
+		core_count = 4U;
+	}
+	break;
+
+	case OTP_PN_RZN2H_DUAL_SEC_R9A09G087M28GBG:
+	case OTP_PN_RZN2H_DUAL_R9A09G087M24GBG: {
+		core_count = 2U;
+	}
+	break;
+
+	case OTP_PN_RZN2H_SINGLE_SEC_R9A09G087M08GBG:
+	case OTP_PN_RZN2H_SINGLE_R9A09G087M04GBG: {
 		core_count = 1U;
 	}
 	break;
