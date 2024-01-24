@@ -5,6 +5,6 @@
 #
 
 
-DDR_SOURCES 		+=  plat/renesas/rz/soc/n2h/drivers/ddr/ddr_setup_lpddr4.c					\
-						plat/renesas/rz/soc/n2h/drivers/ddr/ddr_param_def_lpddr4.c				\
-						plat/renesas/rz/soc/n2h/drivers/ddr/decode_streaming_message_lpddr4.c
+DDR_SOURCES 		+=  plat/renesas/rz/soc/t2h/drivers/ddr/ddr_setup_lpddr4.c					\
+						plat/renesas/rz/soc/t2h/drivers/ddr/ddr_param_def_lpddr4.c				\
+						plat/renesas/rz/soc/t2h/drivers/ddr/decode_streaming_message_lpddr4.c
