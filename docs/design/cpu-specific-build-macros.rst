@@ -804,6 +804,10 @@ For Cortex-X3, the following errata build flags are defined :
   IP. This needs to be applied to revisions r0p0, r1p0 and r1p1. It is fixed
   in r1p2.
 
+- ``ERRATA_X3_2641945``: This applies errata 2641945 workaround to Cortex-X3
+  CPU. This needs to be enabled only for revisions r0p0 and r1p0 of the CPU.
+  It is fixed in r1p1.
+
 - ``ERRATA_X3_2742421``: This applies errata 2742421 workaround to
   Cortex-X3 CPU. This needs to be enabled only for revisions r0p0, r1p0 and
   r1p1. It is fixed in r1p2.
