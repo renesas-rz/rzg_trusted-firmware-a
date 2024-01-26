@@ -639,7 +639,7 @@ void cpg_ddr_part1(void)
 		/* nothing */
 	}
 
-	mmio_write_32(MSTPCRM, 0x00003110);
+	mmio_write_32(MSTPCRM, mmio_read_32(MSTPCRM) & (~BIT_32(MSTPCRM_MSTPCRM00)));
 	dummy = mmio_read_32(MSTPCRM);
 	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
 	(void)dummy;
