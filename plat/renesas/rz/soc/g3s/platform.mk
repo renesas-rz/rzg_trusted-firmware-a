@@ -40,6 +40,7 @@ BL2_SOURCES				+=	plat/renesas/rz/soc/g3s/bl2_plat_setup.c				\
 							plat/renesas/rz/soc/g3s/plat_ddr_setup.c
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/g3s/bl31_plat_setup.c				\
+							plat/renesas/rz/soc/g3s/rz_plat_sip_handler.c			\
 							plat/renesas/rz/soc/g3s/plat_pm.c
 
 ifneq (${ENABLE_STACK_PROTECTOR},0)
@@ -47,7 +48,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/rz_stack_protector.c
 endif
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
-	BL2_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/auth/cip/cip.c
+	PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3s/drivers/auth/cip/cip.c
 
 	# Include the selected chain of trust sources.
 	ifeq (${COT},tbbr)
