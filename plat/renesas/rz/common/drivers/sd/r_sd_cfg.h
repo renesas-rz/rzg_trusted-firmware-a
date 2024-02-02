@@ -24,6 +24,8 @@
 #ifndef R_SD_CFG_H
 #define R_SD_CFG_H
 
+#include <rz_soc_def.h>						/* Get the SDHI Base addresses and SD_CFG_BASE (if default value is overridden)*/
+
 /******************************************************************************
 Includes   <System Includes> , "Project Includes"
 ******************************************************************************/
@@ -38,8 +40,9 @@ Macro definitions
 /* ------------------------------------------------------
 	Set SDHI Base Address
 --------------------------------------------------------*/
-#define SD_CFG_IP0_BASE      (MMC0_SD_BASE)      /* Set the base address of SDHI ch0. */
-#define SD_CFG_IP1_BASE      (MMC1_SD_BASE)      /* Set the base address of SDHI ch1. */
+#ifndef SD_CFG_BASE
+#define SD_CFG_BASE			MMC0_SD_BASE
+#endif
 
 /* ------------------------------------------------------
 	Set the method of check SD Status

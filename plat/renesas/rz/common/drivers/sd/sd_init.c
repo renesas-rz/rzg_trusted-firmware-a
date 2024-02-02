@@ -85,7 +85,7 @@ int32_t sd_init(int32_t sd_port, uint32_t base, void *workarea, int32_t cd_port)
 		return SD_ERR;
 	}
 
-	if ((SD_SCC_IP0_BASE_ADDR != base) && (SD_SCC_IP1_BASE_ADDR != base)) {
+	if ((MMC0_SD_BASE != base) && (MMC1_SD_BASE != base)) {
 		return SD_ERR;
 	}
 

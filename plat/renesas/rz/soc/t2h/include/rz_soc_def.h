@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -152,6 +152,9 @@
 /* eMMC registers */
 #define MMC0_SD_BASE						RZT2H_SDHI0_BASE
 #define MMC1_SD_BASE						RZT2H_SDHI1_BASE
+
+/* Configure non-default eSD Boot mode peripheral base address */
+#define SD_CFG_BASE							MMC1_SD_BASE
 
 #define SYS_PCIE_REG_OFFSET_START			UL(0x1000)					/* Offset corresponds to register SYS_PCIE_INTX_CH0 */	//TODO: KTG: Update value or remove
 #define SYS_PCIE_REG_OFFSET_END				UL(0x1054)					/* Offset corresponds to register SYS_PCIE_MODE_CH1 */	//TODO: KTG: Update value or remove

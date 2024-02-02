@@ -35,9 +35,6 @@ extern "C" {
 /******************************************************************************
 Macro definitions
 ******************************************************************************/
-/* ==== define  ==== */
-#define SD_SCC_IP0_BASE_ADDR      (SD_CFG_IP0_BASE)        /* Set the base address of SDHI ch0. */
-#define SD_SCC_IP1_BASE_ADDR      (SD_CFG_IP1_BASE)        /* Set the base address of SDHI ch1. */
 
 /* ---- SD Driver work buffer ---- */
 #define SD_SIZE_OF_INIT           (856)
