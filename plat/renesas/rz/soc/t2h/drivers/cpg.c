@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -49,7 +49,7 @@ static void cpg_mstop_sdhi0(void)
 	/* Enable write to System Registers */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
 
-	/* Clear bit to release XSPI from Bus Stop Request State */
+	/* Clear bit to release SDHI0 from Bus Stop Request State */
 	mmio_write_32(SSTPCR1, mmio_read_32(SSTPCR1) & (~SSTPCR1_SDHI0_REQ_MSK));
 	while (0U != (mmio_read_32(SSTPCR1) & SSTPCR1_SDHI0_ACK_MSK)) {
 		/* nothing */
@@ -84,7 +84,7 @@ static void cpg_mstop_sdhi1(void)
 	/* Enable write to System Registers */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
 
-	/* Clear bit to release XSPI from Bus Stop Request State */
+	/* Clear bit to release SDHI1 from Bus Stop Request State */
 	mmio_write_32(SSTPCR1, mmio_read_32(SSTPCR1) & (~SSTPCR1_SDHI1_REQ_MSK));
 	while (0U != (mmio_read_32(SSTPCR1) & SSTPCR1_SDHI1_ACK_MSK)) {
 		/* nothing */
@@ -429,8 +429,8 @@ static void cpg_mstop_ca55(void)
 	dummy = mmio_read_32(MSTPCRN);
 	dummy = mmio_read_32(MSTPCRN);
 	dummy = mmio_read_32(MSTPCRN);
-	/* The below is to avoid compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
-	dummy = dummy;
+	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
+	(void)dummy;
 
 	/* Disable write to Module Stop Register */
 	sys_safetybase_lock(PRCRx_LOW_POWER);

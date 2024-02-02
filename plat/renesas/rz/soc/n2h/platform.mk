@@ -50,8 +50,8 @@ pkg:
 	#BL2 with eMMC Boot parameters
 	cat ./build/n2h/$(BUILD_TYPE)/bp_emmc.bin ./build/n2h/$(BUILD_TYPE)/bl2.bin > ./build/n2h/$(BUILD_TYPE)/bl2_bp_emmc.bin
 	objcopy -I binary -O srec --adjust-vma=0x10100000 --srec-forceS3 ./build/n2h/$(BUILD_TYPE)/bl2_bp_emmc.bin ./build/n2h/$(BUILD_TYPE)/bl2_bp_emmc.srec
-	#BL2 with eSD Boot parameters
-	cat ./build/n2h/$(BUILD_TYPE)/bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bl2.bin > ./build/n2h/$(BUILD_TYPE)/bl2_bp_esd.bin
+	#BL2 with seven copies of eSD Boot parameters
+	cat ./build/n2h/$(BUILD_TYPE)/bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bl2.bin > ./build/n2h/$(BUILD_TYPE)/bl2_bp_esd.bin
 	objcopy -I binary -O srec --adjust-vma=0x10100000 --srec-forceS3 ./build/n2h/$(BUILD_TYPE)/bl2_bp_esd.bin ./build/n2h/$(BUILD_TYPE)/bl2_bp_esd.srec
 	#Generate FIP S-Record if FIP binary is present
 	if [ -f build/n2h/${BUILD_TYPE}/fip.bin ]; then  objcopy -I binary -O srec --adjust-vma=0x10100000 --srec-forceS3 ./build/n2h/$(BUILD_TYPE)/fip.bin ./build/n2h/$(BUILD_TYPE)/fip.srec ; fi ;

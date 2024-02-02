@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -252,7 +252,7 @@ static int sddrv_dev_open(const uintptr_t spec __attribute__ ((unused)),
 
 	*dev_info = (io_dev_info_t *) &sddrv_dev_info;
 
-	if (sd_init(sd_port, SD_CFG_IP0_BASE, &sd_work[0], SD_CD_SOCKET) != SD_OK) {
+	if (sd_init(sd_port, SD_CFG_BASE, &sd_work[0], SD_CD_SOCKET) != SD_OK) {
 		ERROR("Failed to sd_init.\n");
 		panic();
 	}

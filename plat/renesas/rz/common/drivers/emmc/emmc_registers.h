@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,14 +7,15 @@
 #ifndef EMMC_REGISTERS_H
 #define EMMC_REGISTERS_H
 
-#include <rz_soc_def.h>						/* Get the SDHI Base addresses */
+#include <rz_soc_def.h>						/* Get the SDHI Base addresses and MMC_CFG_BASE (if default value is overridden) */
 
 
 /* MMC channel select */
-#define MMC_CH0		(0U)	/* SDHI2/MMC0 */
-#define MMC_CH1		(1U)	/* SDHI3/MMC1 */
+#ifndef MMC_CFG_BASE
+#define MMC_CFG_BASE	MMC0_SD_BASE
+#endif
 
-#define USE_MMC_CH	(MMC_CH0)
+#define MMC_SD_BASE		MMC_CFG_BASE
 
 #define BIT0	(0x00000001U)
 #define BIT1	(0x00000002U)
@@ -48,12 +49,6 @@
 #define BIT29	(0x20000000U)
 #define BIT30	(0x40000000U)
 #define BIT31	(0x80000000U)
-
-#if USE_MMC_CH == MMC_CH0
-#define MMC_SD_BASE		(MMC0_SD_BASE)
-#else /* USE_MMC_CH == MMC_CH0 */
-#define MMC_SD_BASE		(MMC1_SD_BASE)
-#endif /* USE_MMC_CH == MMC_CH0 */
 
 #define SD_CMD			(MMC_SD_BASE + 0x0000U)
 #define SD_PORTSEL		(MMC_SD_BASE + 0x0008U)
