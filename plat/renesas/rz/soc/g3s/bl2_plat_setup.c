@@ -83,8 +83,6 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		break;
 	}
 
-	flush_dcache_range((uintptr_t)PARAMS_BASE, sizeof(bl2_to_bl31_params_mem_t));
-
 	return 0;
 }
 
