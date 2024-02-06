@@ -22,9 +22,7 @@ bl_params_t *plat_get_next_bl_params(void)
 
 void plat_flush_next_bl_params(void)
 {
-#ifndef PLAT_SYSTEM_SUSPEND
 	/* Ensure this RAM region is flushed before MMU is turned off otherwise this data will no longer be visible */
 	flush_dcache_range((uintptr_t)PARAMS_BASE, (size_t)PARAMS_SIZE);
-#endif
 }
 
