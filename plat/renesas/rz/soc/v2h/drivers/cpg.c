@@ -2102,9 +2102,9 @@ void cpg_setup(void)
 {
 	cpg_div_sel_static_setup();
 	cpg_pll_setup();
-	cpg_mstop_setup();
 	cpg_clk_on_setup();
 	cpg_reset_setup();
+	cpg_mstop_setup();
 	cpg_div_sel_dynamic_setup();
 	cpg_wdtrst_sel_setup();
 }
