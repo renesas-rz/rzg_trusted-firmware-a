@@ -28,17 +28,17 @@ Renesas RZ/V2H reference platforms:
 The current TF-A port has been tested on the Development and Evaluation Alpha RZ/V2H platforms.
 SoC_id r9a09g057h4 revision ESx.y.
 
-+----------------+------------------+------------------+
-|  Part Number   |  GE3D            |  Security        |
-+================+==================+==================+
-| R9A09G057H41GBG|  N/A             |  N/A             |
-+                +                  +                  +
-| R9A09G057H42GBG|  GE3D            |  (Mali-G31)      |
-+                +                  +                  +
-| R9A09G057H45GBG|  N/A             |  Available       |
-+                +                  +                  +
-| R9A09G057H46GBG|  GE3D (Mali-G31) |                  |
-+----------------+------------------+------------------+
++----------------+-----------------------+------------------+
+|  Part Number   |  GE3D                 |  Security        |
++================+=======================+==================+
+| R9A09G057H41GBG|  N/A                  |  N/A             |
++                +                       +                  +
+| R9A09G057H42GBG|  Available (Mali-G31) |  N/A             |
++                +                       +                  +
+| R9A09G057H45GBG|  N/A                  |  Available       |
++                +                       +                  +
+| R9A09G057H46GBG|  Available (Mali-G31) |  Available       |
++----------------+-----------------------+------------------+
 
 ::
 
