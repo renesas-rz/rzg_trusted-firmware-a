@@ -14,15 +14,15 @@ Plug-ins are available for multiple open-source software tools.
 Renesas RZ/G3S reference platforms:
 -----------------------------------
 
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-| Board             |      Details                                                                                                                     |
-+==============+===============+=======================================================================================================================+
-| smarc             | Equipped with Renesas RZ/G3S SoC                                                                                                 |
-| (g3s_smarc)       | +--------------------------------------------------------------------------------------------------------------------------------+
-|                   | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>                                            |
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
++--------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| Board             |      Details                                                                                                                        |
++==============+===============+==========================================================================================================================+
+| smarc             | Equipped with Renesas RZ/G3S SoC                                                                                                    |
+| (g3s_smarc)       | +-----------------------------------------------------------------------------------------------------------------------------------+
+|                   | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rtk9845s33s01000be-rzg3s-smarc-evaluation-board-kit |                                          |
++--------------+------------------------------------------------------------------------------------------------------------------------------------------+
 
-`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus>`__<TBD>
+`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__
 
 The current TF-A port has been tested on the SMARC Evaluation board for RZ/G3S
 SoC_id  R9A08G045S33GBG revision ESx.y.
