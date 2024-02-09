@@ -44,7 +44,7 @@ void setup_mc(void)
 void update_mc(void)
 {
 	DDRTOP_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0x1F);
-	mmio_write_32(SYS_DDR_CFG, 0x00000000);
+	mmio_write_32(SYS_DDR_CFG, 0x00000001);
 }
 
 void phyinit_configuration(void)

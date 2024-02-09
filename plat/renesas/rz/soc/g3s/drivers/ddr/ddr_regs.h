@@ -42,5 +42,17 @@
 #define DRAM_CLASS_ADDR				(0)
 #define DRAM_CLASS_OFFSET			(8)
 #define DRAM_CLASS_WIDTH			(4)
+#define TDFI_WRDATA_DELAY_ADDR		(579)
+#define TDFI_WRDATA_DELAY_OFFSET	(16)
+#define TDFI_WRDATA_DELAY_WIDTH		(98)
+#define TDFI_PHY_RDLAT_F0_ADDR		(550)
+#define TDFI_PHY_RDLAT_F0_OFFSET	(0)
+#define TDFI_PHY_RDLAT_F0_WIDTH		(8)
+#define MEM_DP_REDUCTION_ADDR		(350)
+#define MEM_DP_REDUCTION_OFFSET		(8)
+#define MEM_DP_REDUCTION_WIDTH		(1)
+#define BSTLEN_ADDR					(67)
+#define BSTLEN_OFFSET				(16)
+#define BSTLEN_WIDTH				(5)
 
 #endif /* __DDR_REGS_H__ */

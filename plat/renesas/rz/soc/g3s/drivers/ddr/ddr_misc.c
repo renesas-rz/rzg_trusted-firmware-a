@@ -113,7 +113,6 @@ void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 	wait_dficlk(10);
 
 	do {
-		/* Wait at least 500 cycles */
 		wait_pclk(500);
 
 		mail = get_mail(0);
@@ -158,11 +157,10 @@ uint32_t get_mail(uint8_t mode_32bits)
 
 static void soft_delay(uint64_t usec)
 {
-	/* RZ/G3S: CPU Clock = 1.2G Hz*/
 	const uint32_t cpuclk_freq = 1200000000;
-	/* If the number of nop clock cycles is 4 */
+
 	const uint32_t nop_clk_cycles = 4;
-	/* Number of NOP instructions required for 1us */
+
 	const uint32_t num_of_nop_needed = cpuclk_freq / (nop_clk_cycles * 1000000);
 
 	volatile uint64_t timeout = num_of_nop_needed * usec;

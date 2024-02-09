@@ -19,6 +19,7 @@
 static void phyinit_c(void);
 static void phyinit_d2h_1d(void);
 static void phyinit_d2h_2d(void);
+static void phyinit_mc(void);
 static void phyinit_i(void);
 static void phyinit_j(void);
 static void	save_retcsr(void);
@@ -35,6 +36,7 @@ void ddr_setup(void)
 	phyinit_c();
 	phyinit_d2h_1d();
 	phyinit_d2h_2d();
+	phyinit_mc();
 	save_retcsr();
 	phyinit_i();
 	phyinit_j();
@@ -99,6 +101,93 @@ static void phyinit_d2h_2d(void)
 {
 	phyinit_load_2d_image();
 	phyinit_exec_2d_image();
+}
+
+static void phyinit_mc(void)
+{
+	uint32_t val, num_rank, num_byte, tctrl_delay, bl, x, tx_dqs_dly;
+
+	dwc_ddrphy_apb_wr(0x6E000, 0x0);
+
+	num_rank = 1;
+	val = DDRTOP_mc_param_rd(MEM_DP_REDUCTION_ADDR, MEM_DP_REDUCTION_OFFSET, MEM_DP_REDUCTION_WIDTH);
+	num_byte = 2;
+	val = dwc_ddrphy_apb_rd(0x05802e);
+	tctrl_delay = ((val >> 1) + (val & 1)) + 8;
+	val = DDRTOP_mc_param_rd(BSTLEN_ADDR, BSTLEN_OFFSET, BSTLEN_WIDTH);
+	bl = (1 << val);
+
+	x = 0;
+	if (num_byte > 0) {
+		val = dwc_ddrphy_apb_rd(0x030020); x = (val > x) ? val : x;
+	}
+
+	if (num_byte > 1) {
+		val = dwc_ddrphy_apb_rd(0x031020); x = (val > x) ? val : x;
+	}
+
+	if (num_byte > 2) {
+		val = dwc_ddrphy_apb_rd(0x032020); x = (val > x) ? val : x;
+	}
+
+	if (num_byte > 3) {
+		val = dwc_ddrphy_apb_rd(0x033020); x = (val > x) ? val : x;
+	}
+
+	val = 16 + tctrl_delay + (2 * x);
+
+	DDRTOP_mc_param_wr(TDFI_PHY_RDLAT_F0_ADDR, TDFI_PHY_RDLAT_F0_OFFSET, TDFI_PHY_RDLAT_F0_WIDTH, val);
+
+	x = 0;
+	if ((num_rank > 0) && (num_byte > 0)) {
+		val = dwc_ddrphy_apb_rd(0x0300d0); x = (val > x) ? val : x;
+		val = dwc_ddrphy_apb_rd(0x0301d0); x = (val > x) ? val : x;
+	}
+
+	if ((num_rank > 0) && (num_byte > 1)) {
+		val = dwc_ddrphy_apb_rd(0x0310d0); x = (val > x) ? val : x;
+		val = dwc_ddrphy_apb_rd(0x0311d0); x = (val > x) ? val : x;
+	}
+
+	if ((num_rank > 0) && (num_byte > 2)) {
+		val = dwc_ddrphy_apb_rd(0x0320d0); x = (val > x) ? val : x;
+		val = dwc_ddrphy_apb_rd(0x0321d0); x = (val > x) ? val : x;
+	}
+
+	if ((num_rank > 0) && (num_byte > 3)) {
+		val = dwc_ddrphy_apb_rd(0x0330d0); x = (val > x) ? val : x;
+		val = dwc_ddrphy_apb_rd(0x0331d0); x = (val > x) ? val : x;
+	}
+
+	if ((num_rank > 1) && (num_byte > 0)) {
+		val = dwc_ddrphy_apb_rd(0x0300d1); x = (val > x) ? val : x;
+		val = dwc_ddrphy_apb_rd(0x0301d1); x = (val > x) ? val : x;
+	}
+
+	if ((num_rank > 1) && (num_byte > 1)) {
+		val = dwc_ddrphy_apb_rd(0x0310d1); x = (val > x) ? val : x;
+		val = dwc_ddrphy_apb_rd(0x0311d1); x = (val > x) ? val : x;
+	}
+
+	if ((num_rank > 1) && (num_byte > 2)) {
+		val = dwc_ddrphy_apb_rd(0x0320d1); x = (val > x) ? val : x;
+		val = dwc_ddrphy_apb_rd(0x0321d1); x = (val > x) ? val : x;
+	}
+
+	if ((num_rank > 1) && (num_byte > 3)) {
+		val = dwc_ddrphy_apb_rd(0x0330d1); x = (val > x) ? val : x;
+		val = dwc_ddrphy_apb_rd(0x0331d1); x = (val > x) ? val : x;
+	}
+
+	tx_dqs_dly = ((x>>6)&0xf) + (((x>>4)&0x01) + ((x>>3)&0x1));
+	val = tctrl_delay + (6 + (bl / 2)) + tx_dqs_dly;
+	DDRTOP_mc_param_wr(TDFI_WRDATA_DELAY_ADDR, TDFI_WRDATA_DELAY_OFFSET, TDFI_WRDATA_DELAY_WIDTH, val);
+
+	dwc_ddrphy_apb_wr(0x58021, 0xff00);
+
+	dwc_ddrphy_apb_wr(0x58019, 0x0005);
+
+	dwc_ddrphy_apb_wr(0x6E000, 0x1);
 }
 
 static void phyinit_i(void)
