@@ -1,0 +1,9 @@
+include:
+  - local: gitlab-ci/yaml-files/templates/checkpatch-templates-gitlab-ci.yml
+
+checkpatch-test-job:
+  variables:
+    REFERENCE_BRANCH: "2.7.0/rz_main"
+    PATCH_FILE: "test.patch"
+  extends:
+    - .overnight_checkpatch_test_job_template

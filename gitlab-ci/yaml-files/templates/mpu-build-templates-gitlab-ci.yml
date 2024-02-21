@@ -1,0 +1,37 @@
+##########################################################
+#..............MPU BUILD JOB TEMPLATES...................#
+##########################################################
+.mpu_build_job_template: &mpu_build_job_template
+  stage: build
+  variables:
+    PLAT: "n2h"
+    BOARD: "eval"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  before_script:
+    - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
+    - make PLAT=$PLAT realclean BOARD=$BOARD
+  artifacts:
+    name: "$CI_JOB_NAME"
+    when: always
+    paths:
+      - ./build/$PLAT/$BUILD_TYPE/*.bin
+      - ./build/$PLAT/$BUILD_TYPE/*.srec
+
+.overnight_mpu_build_job_template:
+  <<: *mpu_build_job_template
+  tags:
+    - overnight_test_runner
+  script:
+    - gitlab-ci/scripts/mpu_build/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $RUN_MPU_BUILD == "true"
+
+.overnight_mpu_build_fail_job_template:
+  <<: *mpu_build_job_template
+  tags:
+    - overnight_test_runner
+  script:
+    - ( ! gitlab-ci/scripts/mpu_build/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}" )
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $RUN_MPU_BUILD == "true"

@@ -1,0 +1,29 @@
+##########################################################
+#.............CHECKPATCH JOB TEMPLATES...................#
+##########################################################
+.checkpatch_test_job_template: &checkpatch_test_job_template
+  stage: build
+  variables:
+    REFERENCE_BRANCH: "rz_main"
+    PATCH_FILE: "test.patch"
+  script:
+    - git fetch origin $REFERENCE_BRANCH
+    - git checkout $REFERENCE_BRANCH
+    - git checkout $CI_COMMIT_BRANCH
+    - if [ -e $PATCH_FILE ]; then
+    - rm $PATCH_FILE
+    - fi
+    - git diff $REFERENCE_BRANCH > $PATCH_FILE
+    - ../scripts/checkpatch/checkpatch.pl $PATCH_FILE --max-line-length=160
+  artifacts:
+    when: always
+    name: "RZ patch file"
+    paths:
+      - ./$PATCH_FILE
+
+.overnight_checkpatch_test_job_template:
+  <<: *checkpatch_test_job_template
+  tags:
+    - overnight_test_runner
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $RUN_CHECKPATCH_TEST == "true"
