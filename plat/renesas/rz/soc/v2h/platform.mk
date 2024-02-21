@@ -23,6 +23,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/v2h/plat_security.c		\
 							${DDR_SOURCES}
 
 BL2_SOURCES				+=	plat/renesas/rz/soc/v2h/bl2_plat_setup.c		\
+							plat/renesas/rz/soc/v2h/plat_storage.c			\
 							plat/renesas/rz/soc/v2h/drivers/sys.c			\
 							plat/renesas/rz/soc/v2h/drivers/pfc.c
 

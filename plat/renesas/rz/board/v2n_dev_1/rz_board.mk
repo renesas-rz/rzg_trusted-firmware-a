@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+# Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -13,4 +13,4 @@ DDR_PLL4	:=1600
 
 $(eval $(call add_define,DDR_PLL4))
 
-BL_COMMON_SOURCES	+=	plat/renesas/rz/board/v2h_evk_alpha/pwrc_board.c
+BL_COMMON_SOURCES	+=	plat/renesas/rz/board/v2n_dev_1/pwrc_board.c
