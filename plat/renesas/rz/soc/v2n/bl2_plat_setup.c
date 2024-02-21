@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -23,11 +23,13 @@
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
 #include <rz_private.h>
+#include <cpg_regs.h>
+#include <pfc_regs.h>
 #include <sys.h>
 #include <pwrc.h>
 
 extern void bl2_enter_bl31(const struct entry_point_info *bl_ep_info);
-static console_t rzv2h_bl2_console;
+static console_t rzv2n_bl2_console;
 
 static uint32_t bl2_plat_get_boot_mode(void)
 {
@@ -99,7 +101,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	cpg_early_setup();
 
 	/* initialize SYC */
-	syc_init(RZV2H_SYC_INCK_HZ);
+	syc_init(RZV2N_SYC_INCK_HZ);
 
 	/* initialize Timer */
 	generic_delay_timer_init();
@@ -112,14 +114,14 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	/* initialize console driver */
 	ret = console_rz_register(
-							RZV2H_SCIF_BASE,
-							RZV2H_UART_INCK_HZ,
-							RZV2H_UART_BARDRATE,
-							&rzv2h_bl2_console);
+							RZV2N_SCIF_BASE,
+							RZV2N_UART_INCK_HZ,
+							RZV2N_UART_BARDRATE,
+							&rzv2n_bl2_console);
 	if (!ret)
 		panic();
 
-	console_set_scope(&rzv2h_bl2_console,
+	console_set_scope(&rzv2n_bl2_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 
 	pwrc_setup();
@@ -132,7 +134,7 @@ void bl2_el3_plat_arch_setup(void)
 				MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(BL_CODE_BASE, BL_CODE_END - BL_CODE_BASE,
 				MT_CODE | MT_SECURE),
-		MAP_REGION_FLAT(RZV2H_BOOTINFO_BASE, RZV2H_BOOTINFO_SIZE,
+		MAP_REGION_FLAT(RZV2N_BOOTINFO_BASE, RZV2N_BOOTINFO_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
 		MAP_REGION_FLAT(PARAMS_BASE, PARAMS_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
@@ -143,21 +145,21 @@ void bl2_el3_plat_arch_setup(void)
 		{0}
 	};
 
-	const mmap_region_t rzv2h_mmap[] = {
+	const mmap_region_t rzv2n_mmap[] = {
 #if TRUSTED_BOARD_BOOT
-		MAP_REGION_FLAT(RZV2H_BOOT_ROM_BASE, RZV2H_BOOT_ROM_SIZE,
+		MAP_REGION_FLAT(RZV2N_BOOT_ROM_BASE, RZV2N_BOOT_ROM_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
 #endif
-		MAP_REGION_FLAT(RZV2H_DEVICE_BASE, RZV2H_DEVICE_SIZE,
+		MAP_REGION_FLAT(RZV2N_DEVICE_BASE, RZV2N_DEVICE_SIZE,
 				MT_DEVICE | MT_RW | MT_SECURE),
-		MAP_REGION_FLAT(RZV2H_XSPI_MEMORY_MAP_BASE, RZV2H_XSPI_SIZE,
+		MAP_REGION_FLAT(RZV2N_XSPI_MEMORY_MAP_BASE, RZV2N_XSPI_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
-		MAP_REGION_FLAT(RZV2H_DDR0_BASE, RZV2H_DDR0_SIZE,
+		MAP_REGION_FLAT(RZV2N_DDR_BASE, RZV2N_DDR_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		{0}
 	};
 
-	setup_page_tables(bl2_regions, rzv2h_mmap);
+	setup_page_tables(bl2_regions, rzv2n_mmap);
 	enable_mmu_el3(0);
 }
 

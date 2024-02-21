@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -102,12 +102,12 @@ void plat_ddr_setup(void)
 	if (!sys_is_resume_reboot()) {
 		ddr_setup();
 
-		if (save_ddr_config(V2H_DDR_CONFIG_ID, &ddr_config_info) != 0) {
+		if (save_ddr_config(V2N_DDR_CONFIG_ID, &ddr_config_info) != 0) {
 			ERROR("Failed to save DDR retention info.\n");
 			panic();
 		}
 	} else {
-		if (load_auth_image(V2H_DDR_CONFIG_ID, &ddr_config_info) != 0) {
+		if (load_auth_image(V2N_DDR_CONFIG_ID, &ddr_config_info) != 0) {
 			ERROR("Failed to load DDR retention info.\n");
 			panic();
 		}

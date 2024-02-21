@@ -14,5 +14,4 @@ DDR_PLL4	:=1600
 $(eval $(call add_define,DDR_PLL4))
 
 #Same power control as used on evk_alpha board so use those files
-PLAT_INCLUDES		+=	-Iplat/renesas/rz/board/v2h_evk_alpha
 BL_COMMON_SOURCES	+=	plat/renesas/rz/board/v2h_evk_alpha/pwrc_board.c

@@ -1,10 +1,10 @@
 #
-# Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+# Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
-PLAT_SOC_RZV2H					:= 1
+PLAT_SOC_RZV2N					:= 1
 BL2_AT_EL3						:= 1
 COLD_BOOT_SINGLE_CPU			:= 1
 PROGRAMMABLE_RESET_ADDRESS		:= 0
@@ -24,7 +24,7 @@ ifneq (${PLAT_SYSTEM_SUSPEND},0)
 override PLAT_SYSTEM_SUSPEND	:= 1
 endif
 
-$(eval $(call add_define,PLAT_SOC_RZV2H))
+$(eval $(call add_define,PLAT_SOC_RZV2N))
 $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PLAT_DDR_ECC))
