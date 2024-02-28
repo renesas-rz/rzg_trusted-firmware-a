@@ -179,13 +179,15 @@ static void phyinit_mc(void)
 		val = dwc_ddrphy_apb_rd(0x0331d1); x = (val > x) ? val : x;
 	}
 
-	tx_dqs_dly = ((x>>6)&0xf) + (((x>>4)&0x01) + ((x>>3)&0x1));
+	tx_dqs_dly = ((x<<6)&0xf) + (((x>>4)&0x01) + ((x>>3)&0x1));
 	val = tctrl_delay + (6 + (bl / 2)) + tx_dqs_dly;
 	DDRTOP_mc_param_wr(TDFI_WRDATA_DELAY_ADDR, TDFI_WRDATA_DELAY_OFFSET, TDFI_WRDATA_DELAY_WIDTH, val);
 
 	dwc_ddrphy_apb_wr(0x58021, 0xff00);
 
+#if !LPDDR4
 	dwc_ddrphy_apb_wr(0x58019, 0x0005);
+#endif
 
 	dwc_ddrphy_apb_wr(0x6E000, 0x1);
 }

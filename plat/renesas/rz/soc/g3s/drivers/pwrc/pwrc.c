@@ -60,6 +60,4 @@ void pwrc_setup(void)
 
 	mmio_write_32(SYS_CA55_CFG_RVAH0, rvah0);
 	mmio_write_32(SYS_CA55_CFG_RVAL0, rval0);
-
-	pwrc_board_setup();
 }

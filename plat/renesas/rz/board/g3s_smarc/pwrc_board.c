@@ -85,7 +85,3 @@ void pwrc_board_suspend_on(void)
 	mmio_write_32(VBATT_BKR0, 0x000000A5);
 #endif
 }
-
-void pwrc_board_setup(void)
-{
-}
