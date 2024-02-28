@@ -107,6 +107,8 @@ Sets the stack canary to default.
 The firmware is set to this value automatically.
 This option is thus only required if the option should be set to a value other than default.
 
+NOTE:	Building with PLAT_SYSTEM_SUSPEND=awo and LOG_LEVEL=40 or above breaks the operation of the resume from suspend function.
+
 System Tested:
 ~~~~~~~~~~~~~~
 * u-boot:
