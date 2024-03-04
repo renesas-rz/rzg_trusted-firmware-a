@@ -184,7 +184,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DSI */
 		.stby = {
 				.addr = (uintptr_t)CPG_PLLDSI_STBY,
-				.val  = 0x00050005,
+				.val  = 0x00010001,
 				},
 
 		.clk1 = {
