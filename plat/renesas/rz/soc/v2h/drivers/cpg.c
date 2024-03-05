@@ -184,7 +184,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DSI */
 		.stby = {
 				.addr = (uintptr_t)CPG_PLLDSI_STBY,
-				.val  = 0x00050005,
+				.val  = 0x00010001,
 				},
 
 		.clk1 = {
@@ -209,7 +209,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* GPU */
 		.stby = {
 				.addr = (uintptr_t)CPG_PLLGPU_STBY,
-				.val  = 0x00010001,
+				.val  = 0x00050001,
 				},
 
 		.clk1 = {
@@ -2005,7 +2005,7 @@ static void cpg_wdtrst_sel_setup(void)
 }
 
 
-void cpg_ddr_part1(void)
+void cpg_ddr0_part1(void)
 {
 	/* 2. */
 	mmio_write_32(CPG_RST_11, 0x0FF80000);
@@ -2036,7 +2036,7 @@ void cpg_ddr_part1(void)
 	udelay(1);
 }
 
-void cpg_ddr_part2(void)
+void cpg_ddr0_part2(void)
 {
 	mmio_write_32(CPG_RST_11, 0x08000800);
 
