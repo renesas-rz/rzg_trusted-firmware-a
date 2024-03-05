@@ -209,7 +209,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* GPU */
 		.stby = {
 				.addr = (uintptr_t)CPG_PLLGPU_STBY,
-				.val  = 0x00010001,
+				.val  = 0x00050001,
 				},
 
 		.clk1 = {
