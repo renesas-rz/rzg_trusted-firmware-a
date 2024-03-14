@@ -21,38 +21,47 @@
 
 stages:
   - pre_test
-  - tag_creation
+  - prep_release_package
+  - prep_testing
   - static_analysis_testing
   - mpu_build_testing
   - klocwork
-  - tag_deployment
+  - deployment
+
+variables:
+  PIPELINE_TYPE: "overnight"
 
 ################################################## workflow ###########################################################
 workflow:
   rules:
+    - if: $OVERNIGHT == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
+      variables:
+        PIPELINE_TYPE: "overnight"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      variables:
+        PIPELINE_TYPE: "merge"
+    - if: ($RELEASE_TYPE == "internal_non_npi" || $RELEASE_TYPE == "internal_npi" || $RELEASE_TYPE == "external") && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
+      variables:
+        PIPELINE_TYPE: "release"
     - if: $CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_PIPELINE_SOURCE == "schedule"
       when: always
 
 ################################################## include ############################################################
-# Different types of testing
-#   1. Merge Gateway for main branch (on main branch)
-#   2. Merge Gateway for dev branch  (on dev branch)
-#   3. Dev Overnight testing         (on dev branch)
-#   4. Tag Overnight testing         (on main branch)
+# Different types of pipelines
+#   1. Overnight pipeline         (can run on any branch)
+#   2. Merge gateway pipeline     (can run for any MR)
+#   3. Release procedure pipeline (on dev branch)
 #######################################################################################################################
 include:
-  - local: gitlab-ci/main-merge-gateway-pipeline.yml
+  - local: gitlab-ci/overnight-pipeline.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_main\b.*$/'
-  - local: gitlab-ci/dev-merge-gateway-pipeline.yml
+      - if: $OVERNIGHT == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
+  - local: gitlab-ci/merge-gateway-pipeline.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_dev\b.*$/' || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_[a-zA-Z0-9]+_dev\b.*$/')
-  - local: gitlab-ci/dev-overnight-pipeline.yml
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - local: gitlab-ci/release-procedure-pipeline.yml
     rules:
-      - if: $DEV_OVERNIGHT == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
-  - local: gitlab-ci/tag-overnight-pipeline.yml
-    rules:
-      - if: $TAG_OVERNIGHT == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
+      - if: ($RELEASE_TYPE == "internal_non_npi" || $RELEASE_TYPE == "internal_npi" || $RELEASE_TYPE == "external") && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
 
 ############################################## RZ MPU Git Automation ##################################################
 RZ MPU Git Automation:
