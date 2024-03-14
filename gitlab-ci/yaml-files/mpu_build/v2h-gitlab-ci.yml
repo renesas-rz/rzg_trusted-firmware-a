@@ -8,7 +8,7 @@ rzv2h-release-evk-alpha:
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzv2h-release-evk-1:
   variables:
@@ -17,7 +17,7 @@ rzv2h-release-evk-1:
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzv2h-release-dev-1:
   variables:
@@ -26,7 +26,7 @@ rzv2h-release-dev-1:
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzv2h-release-evk-alpha-stack-protector-0:
   variables:
@@ -35,7 +35,7 @@ rzv2h-release-evk-alpha-stack-protector-0:
     BUILD_TYPE: "release"
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
   extends:
-    - .overnight_mpu_build_fail_job_template
+    - .linux_mpu_build_failure_job_template
 
 rzv2h-debug-log0-evk-alpha:
   variables:
@@ -44,7 +44,7 @@ rzv2h-debug-log0-evk-alpha:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzv2h-debug-log50-evk-alpha:
   variables:
@@ -53,7 +53,7 @@ rzv2h-debug-log50-evk-alpha:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzv2h-debug-log50-evk-1:
   variables:
@@ -62,7 +62,7 @@ rzv2h-debug-log50-evk-1:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzv2h-debug-log50-dev-1:
   variables:
@@ -71,7 +71,7 @@ rzv2h-debug-log50-dev-1:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzv2h-debug-log50-evk-alpha-stack-protector-0:
   variables:
@@ -80,4 +80,4 @@ rzv2h-debug-log50-evk-alpha-stack-protector-0:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 ENABLE_STACK_PROTECTOR=0"
   extends:
-    - .overnight_mpu_build_fail_job_template
+    - .linux_mpu_build_failure_job_template

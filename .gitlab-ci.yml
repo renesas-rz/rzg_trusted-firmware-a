@@ -1,10 +1,22 @@
-include:
-  - local: gitlab-ci/yaml-files/checkpatch_test/checkpatch-gitlab-ci.yml
-  - local: gitlab-ci/yaml-files/mpu_build/g3s-gitlab-ci.yml
-  - local: gitlab-ci/yaml-files/mpu_build/n2h-gitlab-ci.yml
-  - local: gitlab-ci/yaml-files/mpu_build/t2h-gitlab-ci.yml
-  - local: gitlab-ci/yaml-files/mpu_build/v2h-gitlab-ci.yml
-
 stages:
-  - build
-  - test
+  - pre_test
+  - static_analysis_testing
+  - mpu_build_testing
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_PIPELINE_SOURCE == "schedule"
+      when: always
+
+include:
+  - local: gitlab-ci/yaml-files/merge-gateway-pipeline.yml
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - local: gitlab-ci/yaml-files/overnight-pipeline.yml
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
+
+RZ MPU Git Automation:
+  stage: pre_test
+  script: echo "RZ MPU Git Automation starting..."
+  interruptible: true

@@ -7,7 +7,7 @@ rzg3s-release-no-configs:
     BOARD: "smarc"
     BUILD_TYPE: "release"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-release-vbat:
   variables:
@@ -16,7 +16,7 @@ rzg3s-release-vbat:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-release-awo:
   variables:
@@ -25,7 +25,7 @@ rzg3s-release-awo:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=awo"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-release-vbat-m33:
   variables:
@@ -34,7 +34,7 @@ rzg3s-release-vbat-m33:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=1"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-release-awo-m33:
   variables:
@@ -43,7 +43,7 @@ rzg3s-release-awo-m33:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=awo PLAT_M33_BOOT_SUPPORT=1"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-release-awo-disable-m33:
   variables:
@@ -52,7 +52,7 @@ rzg3s-release-awo-disable-m33:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=awo PLAT_M33_BOOT_SUPPORT=0"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-release-stack-protector-0:
   variables:
@@ -61,7 +61,7 @@ rzg3s-release-stack-protector-0:
     BUILD_TYPE: "release"
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
   extends:
-    - .overnight_mpu_build_fail_job_template
+    - .linux_mpu_build_failure_job_template
 
 rzg3s-debug-log0:
   variables:
@@ -70,7 +70,7 @@ rzg3s-debug-log0:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-debug-log50:
   variables:
@@ -79,7 +79,7 @@ rzg3s-debug-log50:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-debug-log50-vbat:
   variables:
@@ -88,7 +88,7 @@ rzg3s-debug-log50-vbat:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-debug-log50-awo:
   variables:
@@ -97,7 +97,7 @@ rzg3s-debug-log50-awo:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=awo"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-debug-log50-vbat-m33:
   variables:
@@ -106,7 +106,7 @@ rzg3s-debug-log50-vbat-m33:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=1"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-debug-log50-awo-m33:
   variables:
@@ -115,7 +115,7 @@ rzg3s-debug-log50-awo-m33:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=awo PLAT_M33_BOOT_SUPPORT=1"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-debug-log50-awo-disable-m33:
   variables:
@@ -124,7 +124,7 @@ rzg3s-debug-log50-awo-disable-m33:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=awo PLAT_M33_BOOT_SUPPORT=0"
   extends:
-    - .overnight_mpu_build_job_template
+    - .linux_mpu_build_success_job_template
 
 rzg3s-debug-log50-stack-protector-0:
   variables:
@@ -133,4 +133,4 @@ rzg3s-debug-log50-stack-protector-0:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 ENABLE_STACK_PROTECTOR=0"
   extends:
-    - .overnight_mpu_build_fail_job_template
+    - .linux_mpu_build_failure_job_template
