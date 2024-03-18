@@ -67,7 +67,8 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 	{	/* CLN */
 		.stby = {
-				.addr = (uintptr_t)CPG_PLLCLN_STBY,
+				/* Setting prohibited in CA55 cold boot mode */
+				.addr = (uintptr_t)NULL,
 				.val  = 0,
 				},
 
@@ -90,7 +91,8 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 	{	/* DTY */
 		.stby = {
-				.addr = (uintptr_t)CPG_PLLDTY_STBY,
+				/* Setting prohibited in CA55 cold boot mode */
+				.addr = (uintptr_t)NULL,
 				.val  = 0,
 				},
 
@@ -113,6 +115,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 	{	/* CA55 */
 		.stby = {
+				/* Setting prohibited in CA55 cold boot mode */
 				.addr = (uintptr_t)NULL,
 				.val  = 0,
 				},
@@ -135,7 +138,8 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 	{	/* VDO */
 		.stby = {
-				.addr = (uintptr_t)CPG_PLLVDO_STBY,
+				/* Setting prohibited in CA55 cold boot mode */
+				.addr = (uintptr_t)NULL,
 				.val  = 0,
 				},
 
@@ -182,18 +186,18 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DSI0 */
 		.stby = {
 				.addr = (uintptr_t)CPG_PLLDSI0_STBY,
-				.val  = 0x00050005,
+				.val  = 0x00010001,
 				},
 
 		.clk1 = {
-				.addr = (uintptr_t)CPG_PLLDSI0_CLK1,
-				.val  = 0x00003182,
+				.addr = (uintptr_t)NULL,
+				.val  = 0,
 				},
 
 
 		.clk2 = {
-				.addr = (uintptr_t)CPG_PLLDSI0_CLK2,
-				.val  = 0x000C1803,
+				.addr = (uintptr_t)NULL,
+				.val  = 0,
 				},
 
 		.mon =  {
@@ -207,18 +211,18 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	{	/* DSI1 */
 		.stby = {
 				.addr = (uintptr_t)CPG_PLLDSI1_STBY,		/* Auto turn-on */
-				.val  = 0x00050005,
+				.val  = 0x00010001,
 				},
 
 		.clk1 = {
-				.addr = (uintptr_t)CPG_PLLDSI1_CLK1,
-				.val  = 0x00003182,
+				.addr = (uintptr_t)NULL,
+				.val  = 0,
 				},
 
 
 		.clk2 = {
-				.addr = (uintptr_t)CPG_PLLDSI1_CLK2,
-				.val  = 0x000C1803,
+				.addr = (uintptr_t)NULL,
+				.val  = 0,
 				},
 
 		.mon =  {
