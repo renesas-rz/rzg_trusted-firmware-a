@@ -23,7 +23,7 @@ extern const uint32_t retention_mcreglist[];
 extern const uint32_t retention_phyreglist_1d_size;
 extern const uint32_t retention_phyreglist_2d_size;
 extern const uint32_t retention_mcreglist_size;
-
+extern const char ddr_version_str[];
 
 static void ddr_init(uint64_t ddraddr);
 static void phyinit_c(void);
@@ -41,7 +41,7 @@ static void prog_all0(void);
 
 void ddr_setup(void)
 {
-	INFO("DDR: Setup (Rev. %s)\n", DDR_VERSION);
+	INFO("DDR: Setup (Rev. %s)\n", ddr_version_str);
 	ddr_init(RZV2H_DDR0_BASE);
 	ddr_init(RZV2H_DDR1_BASE);
 }
@@ -422,6 +422,7 @@ void ddr_retention_entry(void)
 
 void ddr_retention_exit(uint8_t base)
 {
+	INFO("DDR: Retention Exit (Rev. %s)\n", ddr_version_str);
 	if (!base) {
 		set_ddrtop_mc_base_addr(RZV2H_DDR0_MEMC_BASE);
 		set_ddrphy_base_addr(RZV2H_DDR0_PHY_BASE);

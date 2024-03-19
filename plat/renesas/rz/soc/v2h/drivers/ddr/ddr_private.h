@@ -11,15 +11,6 @@
 
 #include "ddr_regs.h"
 
-#define DDR4_VERSION	"1.06"
-#define LPDDR4_VERSION	"1.06"
-
-#if !LPDDR4
-#define DDR_VERSION		DDR4_VERSION
-#else
-#define DDR_VERSION		LPDDR4_VERSION
-#endif
-
 extern void set_ddrtop_mc_base_addr(uint32_t base_addr);
 extern uint32_t get_ddrtop_mc_base_addr(void);
 
