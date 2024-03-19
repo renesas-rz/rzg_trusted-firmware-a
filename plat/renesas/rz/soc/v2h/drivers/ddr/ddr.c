@@ -342,56 +342,43 @@ static void ddr_retention_enter(uint8_t base)
 	if (!base) {
 		set_ddrtop_mc_base_addr(RZV2H_DDR0_MEMC_BASE);
 		set_ddrphy_base_addr(RZV2H_DDR0_PHY_BASE);
-	} else if (base == 1) {
+	} else {
 		set_ddrtop_mc_base_addr(RZV2H_DDR1_MEMC_BASE);
 		set_ddrphy_base_addr(RZV2H_DDR1_PHY_BASE);
 	}
-	/* 1. */
 
-	/* 2. */
 	val = ddrtop_mc_param_rd(CS_MAP_ADDR, CS_MAP_OFFSET, CS_MAP_WIDTH);
 	num_rank = (val == 3) ? 2 : 1;
 
-	/* 3. */
 	dwc_ddrphy_apb_wr(0x020010, 0);
 
-	/* 4. */
 	ddrtop_mc_param_poll(CONTROLLER_BUSY_ADDR, CONTROLLER_BUSY_OFFSET, CONTROLLER_BUSY_WIDTH, 0);
 
-	/* 5. */
 	ddrtop_mc_param_wr(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_OFFSET, LP_AUTO_ENTRY_EN_WIDTH, 0);
 	ddrtop_mc_param_wr(LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0);
 
-	/* 6. */
 	ddrtop_mc_param_wr(LP_CMD_ADDR, LP_CMD_OFFSET, LP_CMD_WIDTH, 0b1010001);
 	ddrtop_mc_param_poll(LP_STATE_CS0_ADDR, LP_STATE_CS0_OFFSET, LP_STATE_CS0_WIDTH, 0b1001111);
 	if (num_rank > 1) {
 		ddrtop_mc_param_poll(LP_STATE_CS1_ADDR, LP_STATE_CS1_OFFSET, LP_STATE_CS1_WIDTH, 0b1001111);
 	}
 
-	/* 7. */
 	if (!base) {
 		ddrtop_mc_param_wr(DFIBUS_FREQ_F0_ADDR, DFIBUS_FREQ_F0_OFFSET, DFIBUS_FREQ_F0_WIDTH, 0x1F);
 	} else {
 		ddrtop_mc_param_wr(DFIBUS_FREQ_F0_ADDR, DFIBUS_FREQ_F1_OFFSET, DFIBUS_FREQ_F1_WIDTH, 0x1F);
 	}
 
-	/* 8. */
 	ddrtop_mc_param_wr(MCAR_CTL, 16, 1, 1);
 
-	/* 9. */
 	dwc_ddrphy_apb_poll(0x0D00FA, 0, 1);
 
-	/* 10. */
 	ddrtop_mc_param_wr(MCAR_CTL, 16, 1, 0);
 
-	/* 11. */
 	dwc_ddrphy_apb_poll(0x0D00FA, 1, 1);
 
-	/* 12. */
 	cpg_ddr_pwrokin_off(base);
 
-	/* 13. */
 	wait_dficlk(18);
 }
 
@@ -406,48 +393,31 @@ void ddr_retention_exit(uint8_t base)
 	if (!base) {
 		set_ddrtop_mc_base_addr(RZV2H_DDR0_MEMC_BASE);
 		set_ddrphy_base_addr(RZV2H_DDR0_PHY_BASE);
-		/* 1. */
 
-		/* 2. to 8. */
 		cpg_ddr0_part1();
 
-		/* 9. */
 		setup_mc();
 
-		/* 10. */
-
-		/* 11. to 14*/
 		cpg_ddr0_part2();
 
-	} else if (base == 1) {
+	} else {
 		set_ddrtop_mc_base_addr(RZV2H_DDR1_MEMC_BASE);
 		set_ddrphy_base_addr(RZV2H_DDR1_PHY_BASE);
-		/* 1. */
 
-		/* 2. to 8. */
 		cpg_ddr1_part1();
 
-		/* 9. */
 		setup_mc();
 
-		/* 10. */
-
-		/* 11. to 14*/
 		cpg_ddr1_part2();
 	}
 
-	/* 15. */
 	phyinit_c();
 
-	/* 16. */
 	restore_retcsr();
 
-	/* 17. */
 	phyinit_i();
 
-	/* 18. */
 	phyinit_j();
 
-	/* 19. */
 	update_mc();
 }
