@@ -184,12 +184,12 @@ static void pfc_drive_setup(void)
 			uint32_t index = ((sys_lsi_otppoc & pfc_io_drive[boot_mode].drive_mask) >> pfc_io_drive[boot_mode].drive_offset);
 
 			pfc_iolh_drive = pfc_iolh_drive_tbl[index];
-		}
 
-		for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
-			if (p_pins_tbl[cnt].iolh.flg == PFC_ON) {
-				/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
-				mmio_write_64(p_pins_tbl[cnt].iolh.reg, (pfc_iolh_drive & p_pins_tbl[cnt].iolh.val));
+			for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+				if (p_pins_tbl[cnt].iolh.flg == PFC_ON) {
+					/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
+					mmio_write_64(p_pins_tbl[cnt].iolh.reg, (pfc_iolh_drive & p_pins_tbl[cnt].iolh.val));
+				}
 			}
 		}
 	}
