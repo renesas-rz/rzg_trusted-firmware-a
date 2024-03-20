@@ -31,7 +31,7 @@ static PFC_REGS pfc_sd0_reg_tbl[PFC_TBL_LEN] = {
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH0A, 0x0202020202020202 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH0A, 0x0101010101010101 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD0A, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR0A,   0x0000000000000000 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN0A,  0x0101010101010101 }		/* IEN */
