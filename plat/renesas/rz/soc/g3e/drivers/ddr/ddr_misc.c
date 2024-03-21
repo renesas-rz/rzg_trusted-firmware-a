@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -98,7 +98,7 @@ uint32_t get_mail(uint8_t mode_32bits)
 	uint32_t mail = 0;
 	uint32_t wd_timer = 0;
 
-	while ((dwc_ddrphy_apb_rd(0x0d0004) & 0x1) != 0)
+	while (0 != (dwc_ddrphy_apb_rd(0x0d0004) & 0x1))
 		;
 
 	mail = dwc_ddrphy_apb_rd(0x0d0032);
@@ -109,9 +109,9 @@ uint32_t get_mail(uint8_t mode_32bits)
 
 	dwc_ddrphy_apb_wr(0x0d0031, 0x0000);
 
-	while ((dwc_ddrphy_apb_rd(0x0d0004) & 0x1) == 0) {
+	while (0 == (dwc_ddrphy_apb_rd(0x0d0004) & 0x1)) {
 		if (wd_timer++ > 1000) {
-			ERROR("Watchdog timer overflow\n");
+			ERROR("Watchdog timer overflow.\n");
 			panic();
 		}
 	}
