@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -63,7 +63,6 @@
 #define RZG3E_BOOT_ROM_SIZE			UL(0x00020000)
 #define RZG3E_DEVICE_SIZE			(0x20000000 - RZG3E_DEVICE_BASE)
 #define RZG3E_XSPI_SIZE				(0x30000000 - RZG3E_XSPI_MEMORY_MAP_BASE)
-#define RZG3E_DDR_SIZE				(0x240000000 - RZG3E_DDR_BASE)
 
 /* 0x00060000 = 384 KB This value is not checked/enforced anywhere */
 #define RZG3E_BL2_SIZE_MAX			UL(0x00060000)

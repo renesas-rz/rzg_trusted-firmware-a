@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -61,8 +61,6 @@ void bl31_plat_arch_setup(void)
 					MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(RZG3E_DEVICE_BASE, RZG3E_DEVICE_SIZE,
 				MT_DEVICE | MT_RW | MT_SECURE),
-		MAP_REGION_FLAT(RZG3E_DDR_BASE, RZG3E_DDR_SIZE,
-				MT_MEMORY | MT_RW | MT_SECURE),
 		{0}
 	};
 
