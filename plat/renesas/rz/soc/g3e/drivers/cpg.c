@@ -8,6 +8,7 @@
 #include <cpg_regs.h>
 #include <lib/mmio.h>
 #include <drivers/delay_timer.h>
+#include <rz_soc_def.h>
 
 #define	CPG_OFF							(0)
 #define	CPG_ON							(1)
@@ -1726,6 +1727,26 @@ static void cpg_wdtrst_sel_setup(void)
 					| CPG_ERRORRST_SELx_ERRRSTSEL2
 					| CPG_ERRORRST_SELx_ERRRSTSEL3;
 
+	uint32_t ca33_w01, ca33_w23, ca55_w01, ca55_w23;
+
+	ca33_w01 = mmio_read_32(RZG3E_ELC_ERINTM33CTL(0));
+	ca33_w23 = mmio_read_32(RZG3E_ELC_ERINTM33CTL(1));
+	ca55_w01 = mmio_read_32(RZG3E_ELC_ERINTA55CTL(0));
+	ca55_w23 = mmio_read_32(RZG3E_ELC_ERINTA55CTL(1));
+
+	/* Checking ICU interrupt WDT CM33 */
+	if ((ca33_w01 == 0x40000000) || (ca33_w01 == 0x80000000) ||
+			(ca33_w23 == 0x00000001) || (ca33_w23 == 0x00000002)) {
+		/* ERINTM33CLR0 bit for clear 28-31 */
+		mmio_write_32(RZG3E_ELC_ERINTM33CLR(0), 0xF0000000);
+	}
+
+	/* Checking ICU interrupt WDT CA55 */
+	if ((ca55_w01 == 0x40000000) || (ca55_w01 == 0x80000000) ||
+			(ca55_w23 == 0x00000001) || (ca55_w23 == 0x00000002)) {
+		/* ERINTA55CLR0 bit for clear 28-31 */
+		mmio_write_32(RZG3E_ELC_ERINTA55CLR(0), 0xF0000000);
+	}
 	/* Add in the WEN bits for the selected bits */
 	val =  (val & 0xFFFF) | ((val & 0xFFFF) << 16);
 

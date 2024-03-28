@@ -15,6 +15,7 @@
 
 #define RZG3E_DEVICE_BASE			UL(0x10000000)
 
+#define RZG3E_ELC					UL(0x10400000)
 #define RZG3E_PFC_BASE				UL(0x10410000)
 #define RZG3E_CPG_BASE				UL(0x10420000)
 #define RZG3E_SYSC_BASE				UL(0x10430000)
@@ -121,6 +122,19 @@
 #define RZ_SOC_SD_FIP_SIZE			RZG3E_SD_FIP_SIZE
 
 #define RZ_SOC_OTP_BASE_PRODUCTID	SYS_LSI_PRR						/* OTPPRODUCT */
+
+/* Error Interrupt CM33 Status Register k */
+#define RZG3E_ELC_ERINTM33CTL(k)	(RZG3E_ELC + 0x0304 + ((k) * 0x004))
+
+/* Error Interrupt CM33 Status Clear Register k */
+#define RZG3E_ELC_ERINTM33CLR(k)	(RZG3E_ELC + 0x0314 + ((k) * 0x004))
+
+/* Error Interrupt CA55 Status Register k */
+#define RZG3E_ELC_ERINTA55CTL(k)	(RZG3E_ELC + 0x0338 + ((k) * 0x004))
+
+/* Error Interrupt CA55 Status Clear Register k */
+#define RZG3E_ELC_ERINTA55CLR(k)	(RZG3E_ELC + 0x0348 + ((k) * 0x004))
+
 
 /*
  * TODO: check value when manual is updated.
