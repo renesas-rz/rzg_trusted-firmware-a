@@ -15,7 +15,6 @@ HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
-DEBUG_FPGA						:= 0
 PLAT_DDR_ECC					:= 0
 INIT_UNUSED_NS_EL2				:= 1
 
@@ -28,17 +27,13 @@ RESET_TO_BL31					:= 1
 
 ifneq (${PLAT_SYSTEM_SUSPEND},0)
 override PLAT_SYSTEM_SUSPEND	:= 1
+$(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
 endif
 
 $(eval $(call add_define,PLAT_SOC_RZV2H))
 $(eval $(call add_define,PROTECTED_CHIPID))
-$(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PLAT_DDR_ECC))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
-$(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
-ifeq (${BOARD}, evk_1)
-$(eval $(call add_define,BOOT_MODE_eMMC_NOT_SUPPORTED))
-endif
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1
@@ -76,7 +71,7 @@ endif
 
 XSPI_SOURCES			:=	plat/renesas/rz/common/drivers/xspi.c	\
 							plat/renesas/rz/common/drivers/io/io_xspidrv.c
-ifneq (${BOARD}, evk_1)
+
 EMMC_SOURCES			:=	plat/renesas/rz/common/drivers/io/io_emmcdrv.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_interrupt.c	\
 							plat/renesas/rz/common/drivers/emmc/emmc_utility.c	\
@@ -84,7 +79,7 @@ EMMC_SOURCES			:=	plat/renesas/rz/common/drivers/io/io_emmcdrv.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_init.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_read.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_cmd.c
-endif
+
 SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c			\
 							plat/renesas/rz/common/drivers/sd/sd_mount.c		\
 							plat/renesas/rz/common/drivers/sd/sd_util.c			\
@@ -119,6 +114,9 @@ BL31_SOURCES			:=	plat/common/plat_gicv3.c							\
 							${GICV3_SOURCES}
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
+
+	EL3_CPTR_CLEAR_TFP	:= 1
+    $(eval $(call add_define,EL3_CPTR_CLEAR_TFP))
 
 	# Include common TBB sources
 	AUTH_SOURCES		:=	drivers/auth/img_parser_mod.c
