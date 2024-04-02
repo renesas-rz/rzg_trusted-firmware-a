@@ -78,7 +78,7 @@
  ******************************************************************************/
 #if IMAGE_BL2
 #define MAX_XLAT_TABLES			U(8)
-#define MAX_MMAP_REGIONS		U(11)
+#define MAX_MMAP_REGIONS		U(12)
 #elif IMAGE_BL31
 #define MAX_XLAT_TABLES			U(6)
 #define MAX_MMAP_REGIONS		U(9)

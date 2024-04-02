@@ -17,6 +17,10 @@ TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
 DEBUG_FPGA						:= 0
 PLAT_DDR_ECC					:= 0
+# This option gets enabled automatically if the TRUSTED_BOARD_BOOT
+# is set via root Makefile, but Renesas support Trusted-Boot without
+# Crypto module.
+override CRYPTO_SUPPORT			:= 0
 PLAT_SYSTEM_SUSPEND				:= 0
 RESET_TO_BL31					:= 1
 
