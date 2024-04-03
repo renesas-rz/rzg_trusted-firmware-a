@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -208,8 +208,7 @@
 #define	CPG_BUS_10_MSTOP			(CPG_BASE + 0xD24)	/* MSTOP register 10*/
 #define	CPG_BUS_11_MSTOP			(CPG_BASE + 0xD28)	/* MSTOP register 11 */
 #define	CPG_BUS_12_MSTOP			(CPG_BASE + 0xD2C)	/* MSTOP register 12 */
-
-
+#define	CPG_BUS_13_MSTOP			(CPG_BASE + 0xD30)	/* MSTOP register 13 */
 
 #define CPG_PLL_STBY_RESETB					(1UL << 0)
 #define CPG_PLL_STBY_SSC_EN					(1UL << 2)
@@ -336,8 +335,7 @@
 #define CPG_BUS_7_MSTOP_USB30_PHY			(1UL << 14)
 /* Bit 15 is reserved */
 
- #define CPG_BUS_8_MSTOP_PCIE_PHY			(1UL << 0)
- #define CPG_BUS_8_MSTOP_GPV_COM_SUB			(1UL << 1)
+/* Bits 1 and 2 are reserved */
 #define CPG_BUS_8_MSTOP_SD0					(1UL << 2)
 #define CPG_BUS_8_MSTOP_SD1					(1UL << 3)
 #define CPG_BUS_8_MSTOP_SD2					(1UL << 4)
@@ -392,7 +390,7 @@
 #define CPG_BUS_11_MSTOP_GTM6				(1UL << 15)
 
 #define CPG_BUS_12_MSTOP_GTM7				(1UL << 0)
-#define CPG_BUS_12_MSTOP_SRAM4				(1UL << 1)
+#define CPG_BUS_12_MSTOP_SRAM1				(1UL << 1)
 /* Bits 2 to 8 are reserved */
 #define CPG_BUS_12_MSTOP_MCPU_TO_ACPU		(1UL << 9)
 #define CPG_BUS_12_MSTOP_ACPU_TO_MCPU		(1UL << 10)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2024, Renesas Electronics Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -233,91 +233,7 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 	},
 };
 
-/* TODO: A review of this array to determine which IP should be activated. */
 static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
-	{	/* MHU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_3,
-				.val  = 0x00000001,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_1,
-				.val  = 0x00010000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* DMAC Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_0,
-				.val  = 0x0000001F,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_0,
-				.val  = 0x0000001F,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* DMAC Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x00000100,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x01000000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* OSTM */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_4,
-				.val  = 0x000007F8,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_2,
-				.val  = 0x000007F8,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* GPT */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_3,
-				.val  = 0x00000006,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_1,
-				.val  = 0x00060000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* POEG */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_3,
-				.val  = 0x000007F8,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_1,
-				.val  = 0x07F80000,
-				},
-
-		.type = CPG_T_CLK
-	},
 
 	{	/* WDT Part 1 */
 		.reg =  {
@@ -403,105 +319,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* GE3D */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x00000007,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00070000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* Camera Data Receive Unit (CRU) Part 1*/
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_13,
-				.val  = 0x0000001C,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_6,
-				.val  = 0x001C0000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* DSI0 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_14,
-				.val  = 0x00001F00,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00001F00,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* DSI1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_14,
-				.val  = 0x00001F00,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00001F00,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* LCDC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_14,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x0000E000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* Serial Sound Interface (SSI) Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x00000020,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00200000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* Serial Sound Interface (SSI) Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_24,
-				.val  = 0x000007FF,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				/* No monitor for the above clocks */
-				.val  = 0x00000000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* USB2.0 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_11,
@@ -516,48 +333,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* USB3 Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_10,
-				.val  = 0x00008000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_5,
-				.val  = 0x00008000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* USB3 Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_11,
-				.val  = 0x00000001,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_5,
-				.val  = 0x00010000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* I2C (IIC) */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_9,
-				.val  = 0x00000FF8,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_4,
-				.val  = 0x0FF80000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* SCIF */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_8,
@@ -567,160 +342,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_CLKMON_4,
 				.val  = 0x00008000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SCI Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_5,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_2,
-				.val  = 0xE0000000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SCI Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_6,
-				.val  = 0x0000FFFF,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_3,
-				.val  = 0x0000FFFF,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SCI Part 3 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_7,
-				.val  = 0x0000FFFF,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_3,
-				.val  = 0xFFFF0000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SCI Part 4 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_8,
-				.val  = 0x00007FFF,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_4,
-				.val  = 0x00007FFF,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* CAN */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_9,
-				.val  = 0x00007000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_4,
-				.val  = 0x70000000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* ADC Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_16,
-				.val  = 0x00000180,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_8,
-				.val  = 0x00000180,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* CRC*/
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_0,
-				.val  = 0x00000040,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_0,
-				.val  = 0x00000040,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* CMTW Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_3,
-				.val  = 0x0000F800,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_1,
-				.val  = 0xF8000000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* CMTW Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_4,
-				.val  = 0x00000007,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_2,
-				.val  = 0x00000007,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* RTC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_5,
-				.val  = 0x00000008,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_2,
-				.val  = 0x00080000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* I3C */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_9,
-				.val  = 0x00000007,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_4,
-				.val  = 0x00070000,
 				},
 
 		.type = CPG_T_CLK
@@ -755,233 +376,9 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 
 		.type = CPG_T_CLK
 	},
-
-	{	/* PCIE Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_12,
-				.val  = 0x00000030,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_6,
-				.val  = 0x00000030,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* VCD */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x00000018,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00180000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SCU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x000000C0,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00C00000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* ADG */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x00003E00,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x06000000
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SPDIF Part 1  */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x0000C000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0xC0000000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* SPDIF Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_16,
-				.val  = 0x00000001,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_8,
-				.val  = 0x00000001,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* PDM */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_16,
-				.val  = 0x0000007E,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_8,
-				.val  = 0x0000007E,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* TSU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_16,
-				.val  = 0x00000400,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_8,
-				.val  = 0x00000400,
-				},
-
-		.type = CPG_T_CLK
-	}
 };
 
-/* TODO: A review of this array to determine which IP should be activated. */
 static CPG_SETUP_DATA cpg_reset_tbl[] = {
-	{	/* MHU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_5,
-				.val  = 0x00000100,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_2,
-				.val  = 0x00000200,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* DMAC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_3,
-				.val  = 0x0000003E,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_1,
-				.val  = 0x0000007C,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* OSTM Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_6,
-				.val  = 0x00006000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_2,
-				.val  = 0xC0000000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* OSTM Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_6,
-				.val  = 0x00008000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_3,
-				.val  = 0x00000001,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* OSTM Part 3 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_7,
-				.val  = 0x0000001F,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_3,
-				.val  = 0x0000003E,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* GPT */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_5,
-				.val  = 0x00001E00,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_2,
-				.val  = 0x00003C00,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* POEG Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_5,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_2,
-				.val  = 0x0001C000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* POEG Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_6,
-				.val  = 0x0000001F,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_2,
-				.val  = 0x003E0000,
-				},
-
-		.type = CPG_T_RST
-	},
 
 	{	/* WDT */
 		.reg =  {
@@ -1053,76 +450,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.type = CPG_T_RST
 	},
 
-	{	/* GE3D */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x0001C000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* Camera Data Receive Unit (CRU) Part 1*/
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_12,
-				.val  = 0x000000E0,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_5,
-				.val  = 0x01C00000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* DSI */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x00000180,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x00000300,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* LCDC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x00001000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x00002000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* Serial Sound Interface (SSI) */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_14,
-				.val  = 0x00000FFE,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x1FFC0000,
-				},
-
-		.type = CPG_T_RST
-	},
-
 	{	/* USB2.0 Part 1 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_10,
@@ -1151,48 +478,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.type = CPG_T_RST
 	},
 
-	{	/* USB3 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_10,
-				.val  = 0x00000400,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x08000000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* I2C (IIC) Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_9,
-				.val  = 0x0000FF00,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x0001FE00,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* I2C (IIC) Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_10,
-				.val  = 0x00000001,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x00020000,
-				},
-
-		.type = CPG_T_RST
-	},
-
 	{	/* SCIF */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_9,
@@ -1202,146 +487,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_RSTMON_4,
 				.val  = 0x00000040,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SCI Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_8,
-				.val  = 0x00007FFE,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_3,
-				.val  = 0xFFFC0000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SCI Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_8,
-				.val  = 0x00008000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x00000001,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SCI Part 3 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_9,
-				.val  = 0x0000001F,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x0000003E,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* CAN */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_10,
-				.val  = 0x00000006,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x000C0000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* ADC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_15,
-				.val  = 0x00000040,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_7,
-				.val  = 0x00000080,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* ICU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_3,
-				.val  = 0x00000040,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_1,
-				.val  = 0x00000080,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* CRC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_3,
-				.val  = 0x00000080,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_1,
-				.val  = 0x00000100,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* CMTW */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_6,
-				.val  = 0x00001FE0,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_2,
-				.val  = 0x3FC00000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* RTC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_7,
-				.val  = 0x00000600,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_3,
-				.val  = 0x00000C00,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* I3C */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_9,
-				.val  = 0x000000C0,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_4,
-				.val  = 0x00000180,
 				},
 
 		.type = CPG_T_RST
@@ -1360,133 +505,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 
 		.type = CPG_T_RST
 	},
-
-	{	/* PCIE */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_11,
-				.val  = 0x00000004,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_5,
-				.val  = 0x00000008,
-				},
-
-		.type = CPG_T_RST
-	},
-
-
-	{	/* VCD*/
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_14,
-				.val  = 0x00000001,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x00020000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SCU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_14,
-				.val  = 0x00001000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x20000000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* DMAC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_14,
-				.val  = 0x00002000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x40000000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* ADG */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_14,
-				.val  = 0x00004000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x80000000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SDPDIF Part 1*/
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_14,
-				.val  = 0x00008000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_7,
-				.val  = 0x00000001,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* SPDIF Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_15,
-				.val  = 0x00000003,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_7,
-				.val  = 0x00000006,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* PDM */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_15,
-				.val  = 0x0000003C,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_7,
-				.val  = 0x00000078,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* TSU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_15,
-				.val  = 0x00000100,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_7,
-				.val  = 0x00000200,
-				},
-
-		.type = CPG_T_RST
-	}
 };
 
 static CPG_REG_SETTING cpg_static_select_tbl[] = {
@@ -1580,7 +598,6 @@ static void cpg_div_sel_dynamic_setup(void)
 	cpg_div_sel_setup(cpg_dynamic_select_tbl, ARRAY_SIZE(cpg_dynamic_select_tbl));
 }
 
-/* TODO: A review of this method to determine which IP should be activated. */
 static void cpg_mstop_setup(void)
 {
 	/* Remove all MSTOPS apart from reserved and those already removed at TF-A entry */
@@ -1595,8 +612,7 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_1_MSTOP_RIIC7
 										| CPG_BUS_1_MSTOP_SPDIF0
 										| CPG_BUS_1_MSTOP_SPDIF1
-										| CPG_BUS_1_MSTOP_SPDIF2
-										| CPG_BUS_1_MSTOP_PCIE);
+										| CPG_BUS_1_MSTOP_SPDIF2);
 
 	REMOVE_MSTOPS_W(CPG_BUS_2_MSTOP,      CPG_BUS_2_MSTOP_SCU
 										| CPG_BUS_2_MSTOP_SCU_DMAC
@@ -1624,7 +640,6 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_4_MSTOP_CMTW2
 										| CPG_BUS_4_MSTOP_CMTW3
 										| CPG_BUS_4_MSTOP_XSPI
-										| CPG_BUS_4_MSTOP_OTP
 										| CPG_BUS_4_MSTOP_MHU);
 
 	REMOVE_MSTOPS_W(CPG_BUS_5_MSTOP,      CPG_BUS_5_MSTOP_XSPI_REG
@@ -1665,8 +680,7 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_7_MSTOP_USB30_HOST
 										| CPG_BUS_7_MSTOP_USB30_PHY);
 
-	REMOVE_MSTOPS_W(CPG_BUS_8_MSTOP,      CPG_BUS_8_MSTOP_PCIE_PHY
-										| CPG_BUS_8_MSTOP_SD0
+	REMOVE_MSTOPS_W(CPG_BUS_8_MSTOP,      CPG_BUS_8_MSTOP_SD0
 										| CPG_BUS_8_MSTOP_SD1
 										| CPG_BUS_8_MSTOP_SD2
 										| CPG_BUS_8_MSTOP_GBETH0
@@ -1708,6 +722,18 @@ static void cpg_mstop_setup(void)
 
 	REMOVE_MSTOPS_W(CPG_BUS_12_MSTOP,     CPG_BUS_12_MSTOP_GTM7
 										| CPG_BUS_12_MSTOP_MCPU_TO_ACPU);
+
+	REMOVE_MSTOPS_W(CPG_BUS_13_MSTOP,     CPG_BUS_13_MSTOP_LVDS
+										| CPG_BUS_13_MSTOP_VSPI
+										| CPG_BUS_13_MSTOP_VSPI1
+										| CPG_BUS_13_MSTOP_LCDC_1_DU
+										| CPG_BUS_13_MSTOP_LCDC_1_FCPVD
+										| CPG_BUS_13_MSTOP_LCDC_1_VSPD
+										| CPG_BUS_13_MSTOP_NPU
+										| CPG_BUS_13_MSTOP_SHIPG
+										| CPG_BUS_13_MSTOP_SHIP
+										| CPG_BUS_13_MSTOP_FDP1
+										| CPG_BUS_13_MSTOP_FDP1_FCPF);
 }
 
 static void cpg_clk_on_setup(void)
