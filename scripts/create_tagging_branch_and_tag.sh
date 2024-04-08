@@ -21,11 +21,31 @@
 #######################################################################################################################
 
 ################################################## arguments ##########################################################
+manual_rel_prompt() {
+    var_name="$1"
+    prompt_string="$2"
+
+    while [[ -z "${!var_name//[[:space:]]/}" ]]; do
+        read -p "$prompt_string: " input
+        declare -g "$var_name=${input}"
+        release_type="manual"
+    done
+}
+
 bsp_name="$1"
 bsp_release_number="$2"
 workspace_path="$3"
 tag_name="$4"
 tfa_version="$5"
+branch_name="$6"
+release_type="automated"
+
+manual_rel_prompt bsp_name "Enter BSP name (spaces to be replaces with underscores)"
+manual_rel_prompt bsp_release_number "Enter BSP release number"
+manual_rel_prompt workspace_path "Enter workspace path, spaces to be replaces with underscores"
+manual_rel_prompt tag_name "Enter tag name, spaces to be replaces with underscores"
+manual_rel_prompt tfa_version "Enter TF-A version"
+manual_rel_prompt branch_name "Enter the base branch name for the release"
 
 EXIT_PASS=0
 EXIT_FAIL_GIT_ERROR=1
@@ -33,14 +53,11 @@ EXIT_FAIL_INVALID_PATH_ERROR=2
 EXIT_FAIL_DEVICE_REMOVAL=3
 EXIT_FAIL_UNKNOWN_DEVICE_TYPE=4
 
-if [ "$workspace_path" == "" ]; then
-    cd ..
-    workspace_path="$(pwd)/workspace"
-fi
 tfa_project_path="${workspace_path}/tf-a"
 tag_version_number="${tfa_version}"
 tfa_release_branch_name="${tfa_version}/rz_rel_${bsp_name}.${bsp_release_number}"
 tfa_public_repo_location="git@github.com:renesas-rz/rzg_trusted-firmware-a.git"
+tfa_branch_name="${branch_name}"
 
 ################################################## file_exists ########################################################
 # Checks to see if the path provided exists.
@@ -70,26 +87,10 @@ check_branch_status(){
 	fi
 }
 
-# If workspace path is != "", then it is a manual release procedure, setup accordingly.
-if [ "$3" != "" ]; then
-    #Setup Workspace
-    file_exists $workspace_path
-    rm -r -f $workspace_path/*
-    cd $workspace_path
-    git clone http://svc_sp3_ci_etcetc:DC_p5HnJoAsvmocwdYer@global-infra-jp-main.dgn.renesas.com/products/common/bootloader/soc/tf-a.git
-    cd $tfa_project_path
-    #######################################################################################################################
-    # Step 1: Checkout release branch.
-    #######################################################################################################################
-    echo "Getting release branch..."
-    git checkout "${tfa_release_branch_name}"
-else
-    cd $tfa_project_path
-fi
-
 #######################################################################################################################
 # Step 1: Continued.
 #######################################################################################################################
+cd $tfa_project_path
 check_branch_status "On branch ${tfa_release_branch_name} nothing to commit, working tree clean"
 echo ""
 
@@ -97,12 +98,13 @@ echo ""
 # Step 2: Create tagging branch.
 #######################################################################################################################
 echo "Creating tagging branch..."
+base_branch_commit_id=$(git rev-parse ${tfa_branch_name})
 echo $tag_name
 echo $tag_version_number
 tagging_branch_name="$tag_version_number/rz_tagging_$tag_name/$tag_version_number"
 git checkout --orphan "${tagging_branch_name}"
 git add .
-git commit -m "creating tag ${tag_name}"
+git commit -m "Release tag created for ${bsp_name} BSP off branch ${tfa_branch_name} at commit: ${base_branch_commit_id}"
 check_branch_status "On branch ${tagging_branch_name} nothing to commit, working tree clean"
 echo "Tagging branch: ${tagging_branch_name} successfully created"
 echo ""
@@ -111,8 +113,9 @@ echo ""
 # Step 3: Create tag.
 #######################################################################################################################
 echo "Creating tag..."
-git tag -a "${tag_name}" -m "Release tag created for ${bsp_name} BSP"
+git tag -a "${tag_name}" -m "Release tag created for ${bsp_name} BSP off branch ${tfa_branch_name} at commit: ${base_branch_commit_id}"
 git checkout "${tag_name}"
+pwd
 check_branch_status "HEAD detached at ${tag_name} nothing to commit, working tree clean"
 echo "Tag: ${tag_name} successfully created"
 echo ""
@@ -126,18 +129,16 @@ echo ""
 
 #######################################################################################################################
 # Step 4: Finishing off...
-# Only required for manual process
 #######################################################################################################################
-if [ "$3" != "" ]; then
-    git remote add GitHub_Public "${tfa_public_repo_location}"
-    echo ""
-    echo ""
-    echo "**************************"
-    echo "Successfully created tag without commit history"
-    echo "Tag name ${tag_name}"
-    echo ""
-    echo "After testing, push to the relevant repo using these commands:"
-    echo "Command: cd ${tfa_project_path}"
+git remote add GitHub_Public "${tfa_public_repo_location}"
+echo ""
+echo ""
+echo "**************************"
+echo "Successfully created tag without commit history"
+echo "Tag name ${tag_name}"
+echo ""
+
+if [[ ${release_type} == "manual" ]]; then
+    echo "Go to ${tfa_project_path} and test the tag. After testing, push the tag using the following command:"
     echo "Command: git push origin ${tag_name}"
-    echo "Command: git push GitHub_Public ${tag_name}"
 fi

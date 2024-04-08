@@ -21,20 +21,35 @@
 #######################################################################################################################
 
 ################################################## arguments ##########################################################
+manual_rel_prompt() {
+    var_name="$1"
+    prompt_string="$2"
+
+    while [[ -z "${!var_name//[[:space:]]/}" ]]; do
+        read -p "$prompt_string: " input
+        declare -g "$var_name=${input}"
+		release_type="manual"
+    done
+}
+
 bsp_name="$1"
 bsp_release_number="$2"
 workspace_path="$3"
 list_devices_to_keep="$4"
 tfa_version="$5"
+branch_name="$6"
+release_type="automated"
 
-if [ "$workspace_path" == "" ]; then
-	cd ..
-	workspace_path="$(pwd)/workspace"
-fi
-tfa_project_path="${workspace_path}/tf-a"
+manual_rel_prompt bsp_name "Enter BSP name (spaces to be replaced with underscores)"
+manual_rel_prompt bsp_release_number "Enter BSP release number"
+manual_rel_prompt workspace_path "Enter workspace path, spaces to be replaced with underscores"
+manual_rel_prompt list_devices_to_keep "Enter the list of devices, space-separated list"
+manual_rel_prompt tfa_version "Enter TF-A version"
+manual_rel_prompt branch_name "Enter the base branch name for the release"
+
 tfa_release_branch_name="${tfa_version}/rz_rel_${bsp_name}.${bsp_release_number}"
 tfa_rel_feature_branch_name="${tfa_version}/rz_rel_feat_rm_dev_${bsp_name}.${bsp_release_number}"
-tfa_main_branch_name="${tfa_version}/rz_main"
+tfa_branch_name="${branch_name}"
 
 BASEDIR=$(dirname "$(realpath "$0")")
 
@@ -109,13 +124,18 @@ file_exists $workspace_path
 rm -r -f $workspace_path/*
 cd $workspace_path
 git clone http://svc_sp3_ci_etcetc:DC_p5HnJoAsvmocwdYer@global-infra-jp-main.dgn.renesas.com/products/common/bootloader/soc/tf-a.git
-cd $tfa_project_path
+cd tf-a
+tfa_project_path=$(pwd)
 
 #######################################################################################################################
 # Step 1: Creating release and feature branches.
 #######################################################################################################################
-git checkout "${tfa_main_branch_name}"
-check_branch_status "On branch ${tfa_main_branch_name} Your branch is up to date with origin/${tfa_main_branch_name}. nothing to commit, working tree clean"
+git checkout "${tfa_branch_name}"
+if [[ ${release_type} == "manual" ]]; then
+	check_branch_status "On branch ${tfa_branch_name} Your branch is up-to-date with origin/${tfa_branch_name}. nothing to commit, working tree clean"
+else
+	check_branch_status "On branch ${tfa_branch_name} Your branch is up to date with origin/${tfa_branch_name}. nothing to commit, working tree clean"
+fi
 
 create_branch_and_check "${tfa_release_branch_name}"
 create_branch_and_check "${tfa_rel_feature_branch_name}"
@@ -136,7 +156,7 @@ echo "Step 2 Passed - Removed code that should be removed for all releases"
 #######################################################################################################################
 # Step 3: Remove references to devices.
 #######################################################################################################################
-all_unreleased_devices_list="n2h,t2h,g3s,v2h,v2n"
+all_unreleased_devices_list="n2h,t2h,g3s,v2h,v2n,g3e,g2l,g2lc,g2ul,v2l"
 
 IFS=' ' read -ra array_keep <<< "$list_devices_to_keep"
 IFS=',' read -ra array_remove <<< "$all_unreleased_devices_list"
@@ -182,10 +202,22 @@ else
 		"g3s")
 			git rm "${tfa_project_path}/g3s_smarc_build_script.sh"
 			;;
+		"g3e")
+			echo ""
+			;;
 		"v2n")
 			echo ""
 			;;
 		"v2h")
+			echo ""
+			;;
+		"g2l")
+			echo ""
+			;;
+		"g2lc")
+			echo ""
+			;;
+		"g2ul")
 			echo ""
 			;;
 		"v2l")
@@ -292,18 +324,16 @@ echo "Step 6 Passed - Changes committed."
 echo ""
 
 #######################################################################################################################
-# Step 7: Printing final commands that should be done manually.
+# Step 7: Running and printing final commands.
 #######################################################################################################################
-echo ""
-echo ""
-echo "**************************"
-echo "All operations passed"
-echo "1) Release branch created: ${tfa_release_branch_name}"
-echo "2) Release feature branch created: ${tfa_rel_feature_branch_name}"
-echo "3) Devices removed in the feature branch: ${list_devices_for_removal}"
-echo ""
-echo "To push these branches to the repository:"
-echo "Commands: cd ${tfa_project_path}"
-echo "Commands: git push -u origin ${tfa_release_branch_name}"
-echo "Commands: git push -u origin ${tfa_rel_feature_branch_name}"
+git checkout ${tfa_release_branch_name}
+git merge ${tfa_rel_feature_branch_name}
+git branch --delete ${tfa_rel_feature_branch_name}
+cd ../../tf-a
+
+if [[ ${release_type} == "manual" ]]; then
+	echo "Run the following command:"
+	echo "./scripts/create_tagging_branch_and_tag.sh"
+fi
+
 exit $EXIT_PASS

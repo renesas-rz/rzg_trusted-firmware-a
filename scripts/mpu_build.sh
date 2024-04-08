@@ -26,193 +26,382 @@ BOARD="$2"
 BUILD_TYPE="$3"
 TARGET_OS="$4"
 CONFIGS="$5"
-TEST_TYPE="$6"
+PIPELINE_TYPE="$6"
 ERROR_MSG="$7"
-
-if [ "$TARGET_OS" = "" ]; then
-	TARGET_OS="Linux"
-fi
+Bl33="$8"
 
 echo "MPU build configuration:
-PLAT        : $PLAT
-BOARD       : $BOARD
-BUILD_TYPE  : $BUILD_TYPE
-TARGET_OS   : $TARGET_OS
-CONFIGS     : $CONFIGS
-TEST_TYPE   : $TEST_TYPE
-ERROR_MSG   : $ERROR_MSG"
+PLAT        	: $PLAT
+BOARD       	: $BOARD
+BUILD_TYPE  	: $BUILD_TYPE
+TARGET_OS   	: $TARGET_OS
+CONFIGS     	: $CONFIGS
+PIPELINE_TYPE	: $PIPELINE_TYPE
+ERROR_MSG   	: $ERROR_MSG
+BL33			: $BL33"
 
 ################################################## n2h_build ##########################################################
-# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
-#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
-# 2. Build commands for building n2h, these are run via the run_command function.
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building n2h, these are run via the run_command function.
 #######################################################################################################################
 n2h_build()
 {
-	U_BOOT_FILE=""
-	if [ "$BOARD" = "eval" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/n2h-u-boot.bin"
-	elif [ "$BOARD" = "eval" ] ; then
-		U_BOOT_FILE="../u-boot/n2h-u-boot.bin"
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
+		CONFIG_EXT="SCE_LIB_DIR="../../""
 	else
-		echo "Invalid N2H board: Board doesn't exist"
+		BL33_PATH="../"
+		CONFIG_EXT="SCE_LIB_DIR="../""
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "eval" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/n2h-u-boot.bin"
+		else
+			echo "Invalid N2H board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_t2h.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
 		exit 1
 	fi
 
-	if [ ! -f $U_BOOT_FILE ]; then
-		echo "U-boot file doesn't exist, check file path"
-		exit 1
-	fi
+	check_file_exists "$BL33_FILE"
 
-	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
-	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE"" "$ERROR_MSG"
-	python3 tools/renesas/rzt2h_boot_param/parameter_block_generator.py --output=param_output
-	run_command "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" $CONFIG_EXT"" BL33="$BL33_FILE" bl2 fip pkg" "$ERROR_MSG"
 }
 
 ################################################## t2h_build ##########################################################
-# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
-#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
-# 2. Build commands for building t2h, these are run via the run_command function.
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building t2h, these are run via the run_command function.
 #######################################################################################################################
 t2h_build()
 {
-	U_BOOT_FILE=""
-	if [ "$BOARD" = "dev_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/t2h-u-boot.bin"
-	elif [ "$BOARD" = "dev_1" ]; then
-		U_BOOT_FILE="../u-boot/t2h-u-boot.bin"
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
+		CONFIG_EXT="SCE_LIB_DIR="../../""
 	else
-		echo "Invalid T2H board: Board doesn't exist"
+		BL33_PATH="../"
+		CONFIG_EXT="SCE_LIB_DIR="../""
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "dev_1" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/t2h-u-boot.bin"
+		else
+			echo "Invalid T2H board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_t2h.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
 		exit 1
 	fi
 
-	if [ ! -f $U_BOOT_FILE ]; then
-		echo "U-boot file doesn't exist, check file path"
-		exit 1
-	fi
+	check_file_exists "$BL33_FILE"
 
-	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
-	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE"" "$ERROR_MSG"
-	python3 tools/renesas/rzt2h_boot_param/parameter_block_generator.py --output=param_output
-	run_command "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" $CONFIG_EXT"" BL33="$BL33_FILE" bl2 fip pkg" "$ERROR_MSG"
 }
 
 ################################################## g3s_build ##########################################################
-# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
-#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
-# 2. Build commands for building g3s, these are run via the run_command function.
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building g3s, these are run via the run_command function.
 #######################################################################################################################
 g3s_build()
 {
-	U_BOOT_FILE=""
-	if [ "$BOARD" = "smarc" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/g3s-u-boot.bin"
-	elif [ "$BOARD" = "smarc" ]; then
-		U_BOOT_FILE="../u-boot/g3s-u-boot.bin"
-	elif [ "$BOARD" = "dev14_1_lpddr" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/g3s-dev-u-boot.bin"
-	elif [ "$BOARD" = "dev14_1_lpddr" ]; then
-		U_BOOT_FILE="../u-boot/g3s-dev-u-boot.bin"
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
 	else
-		echo "Invalid G3S board: Board doesn't exist"
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "smarc" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g3s-u-boot.bin"
+		elif [[ "$BOARD" = "dev14_1_lpddr" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g3s-dev-u-boot.bin"
+		else
+			echo "Invalid G3S board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_g3s.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
 		exit 1
 	fi
 
-	if [ ! -f $U_BOOT_FILE ]; then
-		echo "U-boot file doesn't exist, check file path"
-		exit 1
-	fi
+	check_file_exists "$BL33_FILE"
 
-	TFA_PATH=$(pwd)
-	FIP_TOOL_PATH="$TFA_PATH/tools/fiptool"
-	BP_TOOL_PATH="$TFA_PATH/tools/renesas/rz_boot_param"
-	BUILD_PATH="$TFA_PATH/build/$PLAT/$BUILD_TYPE"
-
-	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
-
-	cd "$FIP_TOOL_PATH"
-	run_command "make fiptool" "$ERROR_MSG"
-	run_command "./fiptool create --align 16 --soc-fw $BUILD_PATH/bl31.bin --nt-fw ../../$U_BOOT_FILE $BUILD_PATH/fip.bin" "$ERROR_MSG"
-
-	cd "$BP_TOOL_PATH"
-	run_command "make PLAT=$PLAT bptool BOARD=$BOARD" "$ERROR_MSG"
-	run_command "$BP_TOOL_PATH/bptool $BUILD_PATH/bl2.bin $BUILD_PATH/bp_spi.bin 0xA3000 spi" "$ERROR_MSG"
-	run_command "cat $BUILD_PATH/bp_spi.bin $BUILD_PATH/bl2.bin > $BUILD_PATH/bl2_bp_spi.bin" "$ERROR_MSG"
-	run_command "$BP_TOOL_PATH/bptool $BUILD_PATH/bl2.bin $BUILD_PATH/bp_mmc.bin 0xA3000 mmc" "$ERROR_MSG"
-	run_command "cat $BUILD_PATH/bp_mmc.bin $BUILD_PATH/bl2.bin > $BUILD_PATH/bl2_bp_mmc.bin" "$ERROR_MSG"
-	cd "$TFA_PATH"
-	run_command "${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x0000 --srec-forceS3 $BUILD_PATH/fip.bin $BUILD_PATH/fip.srec" "$ERROR_MSG"
-	run_command "${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 $BUILD_PATH/bl2_bp_spi.bin $BUILD_PATH/bl2_bp_spi.srec" \
-				"$ERROR_MSG"
-	run_command "${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 $BUILD_PATH/bl2_bp_mmc.bin $BUILD_PATH/bl2_bp_mmc.srec" \
-				"$ERROR_MSG"
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
 }
 
 ################################################## v2h_build ##########################################################
-# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
-#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
-# 2. Build commands for building v2h, these are run via the run_command function.
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building v2h, these are run via the run_command function.
 #######################################################################################################################
 v2h_build()
 {
-	U_BOOT_FILE=""
-	if [ "$BOARD" = "evk_alpha" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/v2h-evk-al-u-boot.bin"
-	elif [ "$BOARD" = "evk_alpha" ]; then
-		U_BOOT_FILE="../u-boot/v2h-evk-al-u-boot.bin"
-	elif [ "$BOARD" = "evk_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/v2h-evk-1-u-boot.bin"
-	elif [ "$BOARD" = "evk_1" ] ; then
-		U_BOOT_FILE="../u-boot/v2h-evk-1-u-boot.bin"
-	elif [ "$BOARD" = "dev_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/v2h-dev-1-u-boot.bin"
-	elif [ "$BOARD" = "dev_1" ]; then
-		U_BOOT_FILE="../u-boot/v2h-dev-1-u-boot.bin"
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
 	else
-		echo "Invalid V2H board: Board doesn't exist"
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "evk_alpha" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/v2h-evk-al-u-boot.bin"
+		elif [[ "$BOARD" = "evk_1" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/v2h-evk-1-u-boot.bin"
+		elif [[ "$BOARD" = "evk_2" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/v2h-evk-2-u-boot.bin"
+		elif [[ "$BOARD" = "dev_1" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/v2h-dev-1-u-boot.bin"
+		else
+			echo "Invalid V2H board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_v2h.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
 		exit 1
 	fi
 
-	if [ ! -f $U_BOOT_FILE ]; then
-		echo "U-boot file doesn't exist, check file path"
+	check_file_exists "$BL33_FILE"
+
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	if [[ $CONFIGS == *"TRUSTED_BOARD_BOOT=1"* ]]; then
+		run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" bl2 bl31" "$ERROR_MSG"
+	else
+		run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
+	fi
+}
+
+################################################## g3e_build ##########################################################
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building g3e, these are run via the run_command function.
+#######################################################################################################################
+g3e_build()
+{
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
+	else
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "dev_1" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g3e-u-boot.bin"
+		elif [[ "$BOARD" = "smarc" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g3e-smarc-u-boot.bin"
+		else
+			echo "Invalid G3E board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_g3e.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
 		exit 1
 	fi
 
-	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE"" "$ERROR_MSG"
-	run_command "make PLAT=$PLAT bptool BOARD=$BOARD" "$ERROR_MSG"
-	run_command "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
+	check_file_exists "$BL33_FILE"
+
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
 }
 
 ################################################## v2n_build ##########################################################
-# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
-#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
-# 2. Build commands for building v2n, these are run via the run_command function.
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building v2n, these are run via the run_command function.
 #######################################################################################################################
 v2n_build()
 {
-	U_BOOT_FILE=""
-	if [ "$BOARD" = "dev_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/v2n-dev-1-u-boot.bin"
-	elif [ "$BOARD" = "dev_1" ]; then
-		U_BOOT_FILE="../u-boot/v2n-dev-1-u-boot.bin"
-	elif [ "$BOARD" = "evk_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
-		U_BOOT_FILE="../../u-boot/v2n-evk-1-u-boot.bin"
-	elif [ "$BOARD" = "evk_1" ] ; then
-		U_BOOT_FILE="../u-boot/v2n-evk-1-u-boot.bin"
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
 	else
-		echo "Invalid V2N board: Board doesn't exist"
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "evk_1" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/v2n-evk-1-u-boot.bin"
+		elif [[ "$BOARD" = "evk_2" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/v2n-evk-2-u-boot.bin"
+		else
+			echo "Invalid V2N board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_v2n.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
 		exit 1
 	fi
 
-	if [ ! -f $U_BOOT_FILE ]; then
-		echo "U-boot file doesn't exist, check file path"
+	check_file_exists "$BL33_FILE"
+
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	if [[ $CONFIGS == *"TRUSTED_BOARD_BOOT=1"* ]]; then
+		run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" bl2 bl31" "$ERROR_MSG"
+	else
+		run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
+	fi
+}
+
+################################################## g2l_build ##########################################################
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building g2l, these are run via the run_command function.
+#######################################################################################################################
+g2l_build()
+{
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
+	else
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "smarc_pmic_2" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g2l-smarc-pmic-2-u-boot.bin"
+		else
+			echo "Invalid G2L board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_g2l.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
 		exit 1
 	fi
 
-	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE"" "$ERROR_MSG"
-	run_command "make PLAT=$PLAT bptool BOARD=$BOARD" "$ERROR_MSG"
-	run_command "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
+	check_file_exists "$BL33_FILE"
+
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
+}
+
+################################################## g2lc_build ##########################################################
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building g2lc, these are run via the run_command function.
+#######################################################################################################################
+g2lc_build()
+{
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
+	else
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "smarc_1" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g2lc-smarc-1-u-boot.bin"
+		else
+			echo "Invalid G2LC board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_g2l.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
+		exit 1
+	fi
+
+	check_file_exists "$BL33_FILE"
+
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
+
+	cd ./build
+	mkdir -p $PLAT && cd $PLAT
+	cp -r ../g2l/$BUILD_TYPE/ .
+}
+
+################################################## g2ul_build ##########################################################
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building g2ul, these are run via the run_command function.
+#######################################################################################################################
+g2ul_build()
+{
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
+	else
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "g2ul_smarc" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g2ul-smarc-u-boot.bin"
+		else
+			echo "Invalid G2UL board: Board doesn't exist"
+			exit 1
+		fi
+	else
+		echo "Invalid BL33 Type. It should be U-Boot"
+		exit 1
+	fi
+
+	check_file_exists "$BL33_FILE"
+
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
+}
+
+################################################## v2l_build ##########################################################
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building v2l, these are run via the run_command function.
+#######################################################################################################################
+v2l_build()
+{
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
+	else
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "smarc_pmic_2" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/v2l-smarc-pmic-2-u-boot.bin"
+		else
+			echo "Invalid V2L board: Board doesn't exist"
+			exit 1
+		fi
+	else
+		echo "Invalid BL33 Type. It should be U-Boot"
+		exit 1
+	fi
+
+	check_file_exists "$BL33_FILE"
+
+	make PLAT=$PLAT realclean BOARD=$BOARD
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
 }
 
 ################################################ tfa_build_windows ####################################################
@@ -232,6 +421,19 @@ tfa_build_windows()
 	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"
 }
 
+############################################### check_file_exists ################################################
+# 1. Utility function to check if the file path being passed to it as an argument exists.
+# 2. If a file doesn't exist it will immeditately print an appropriate message and exit with an error code 1.
+#######################################################################################################################
+check_file_exists()
+{
+	FILE_PATH="$1"
+	if [ ! -f "$FILE_PATH" ]; then
+		echo "File doesn't exist, check file path: "$FILE_PATH""
+		exit 1
+	fi
+}
+
 ################################################# run command #########################################################
 # 1. Runs the build command passed as an argument, and stores the output in the LOG_FILE.
 # 2. ERR_MSG = "" indicates it is a success test case job. If an error is found in the log in this case, then the
@@ -243,18 +445,18 @@ tfa_build_windows()
 #######################################################################################################################
 run_command()
 {
-	BUILD_COMMAND=$1
-	ERR_MSG=$2
+	BUILD_COMMAND="$1"
+	ERR_MSG="$2"
 
 	LOG_FILE=../mpu_log.txt
-	eval "$BUILD_COMMAND" 2>&1 | tee $LOG_FILE
-	if [ "$ERR_MSG" = "" ] && { grep -q -i "error:" $LOG_FILE || grep -Eq -i "Error [0-9]+" $LOG_FILE; }; then
+	eval "$BUILD_COMMAND" 2>&1 | tee "$LOG_FILE"
+	if [[ "$ERR_MSG" = "" ]] && { grep -qi "error:" "$LOG_FILE" || grep -Eqi "Error [0-9]+" "$LOG_FILE"; }; then
 		echo "ERROR: This should be a success test case, unexpected error caused failure."
 		exit 1
-	elif [ "$ERR_MSG" != "" ] && { grep -q -i "error:" $LOG_FILE || grep -Eq -i "Error [0-9]+" $LOG_FILE; } && grep -q -i "${ERR_MSG}" $LOG_FILE; then
+	elif [[ "$ERR_MSG" != "" ]] && { grep -qi "error:" "$LOG_FILE" || grep -Eqi "Error [0-9]+" "$LOG_FILE"; } && grep -qi "${ERR_MSG}" "$LOG_FILE"; then
 		echo "PASS: This is a failure test case. An expected error caused failure."
 		exit 0
-	elif [ "$ERR_MSG" != "" ] && { grep -q -i "error:" $LOG_FILE || grep -Eq -i "Error [0-9]+" $LOG_FILE; } && ! grep -q -i "${ERR_MSG}" $LOG_FILE; then
+	elif [[ "$ERR_MSG" != "" ]] && { grep -qi "error:" "$LOG_FILE" || grep -Eqi "Error [0-9]+" "$LOG_FILE"; } && ! grep -qi "${ERR_MSG}" "$LOG_FILE"; then
 		echo "ERROR: This is a failure test case, however, an unexpected error caused failure."
 		exit 1
 	fi
@@ -286,8 +488,18 @@ elif [ "$PLAT" = "g3s" ] && [ "$TARGET_OS" != "windows" ]; then
 	g3s_build
 elif [ "$PLAT" = "v2h" ] && [ "$TARGET_OS" != "windows" ]; then
 	v2h_build
+elif [ "$PLAT" = "g3e" ] && [ "$TARGET_OS" != "windows" ]; then
+	g3e_build
 elif [ "$PLAT" = "v2n" ] && [ "$TARGET_OS" != "windows" ]; then
 	v2n_build
+elif [ "$PLAT" = "g2l" ] && [ "$TARGET_OS" != "windows" ]; then
+	g2l_build
+elif [ "$PLAT" = "g2lc" ] && [ "$TARGET_OS" != "windows" ]; then
+	g2lc_build
+elif [ "$PLAT" = "g2ul" ] && [ "$TARGET_OS" != "windows" ]; then
+	g2ul_build
+elif [ "$PLAT" = "v2l" ] && [ "$TARGET_OS" != "windows" ]; then
+	v2l_build
 
 # Windows specific execution
 elif [ "$PLAT" = "n2h" ] && [ "$TARGET_OS" = "windows" ]; then
@@ -298,8 +510,11 @@ elif [ "$PLAT" = "g3s" ] && [ "$TARGET_OS" = "windows" ]; then
 	tfa_build_windows
 elif [ "$PLAT" = "v2h" ] && [ "$TARGET_OS" = "windows" ]; then
 	tfa_build_windows
+elif [ "$PLAT" = "g3e" ] && [ "$TARGET_OS" = "windows" ]; then
+	tfa_build_windows
 elif [ "$PLAT" = "v2n" ] && [ "$TARGET_OS" = "windows" ]; then
 	tfa_build_windows
+
 # Error handling
 else
 	echo "Invalid platform: Platform doesn't exist"
