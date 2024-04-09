@@ -75,7 +75,7 @@ refer to those specific instructions. What follows is customized to
 the SMARC Evaluation RZ/G3S development kit used in this port.
 
 Base build instruction:
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
@@ -159,11 +159,11 @@ Test script for AWO mode
 
 		bp_tool_path="$tfa_project_path/tools/renesas"
 		fip_tool_path="$tfa_project_path/tools/fiptool"
-		bl2_file_path="$tfa_project_path/build/g3s/debug/bl2.bin"
-		bl31_file_path="$tfa_project_path/build/g3s/debug/bl31.bin"
+		bl2_file_path="$tfa_project_path/build/g3s/release/bl2.bin"
+		bl31_file_path="$tfa_project_path/build/g3s/release/bl31.bin"
 
 		cd "$tfa_project_path"
-		make PLAT=g3s BOARD=smarc PLAT_SYSTEM_SUSPEND=awo all fiptool bptool LOG_LEVEL=40 DEBUG=1
+		make PLAT=g3s BOARD=smarc PLAT_SYSTEM_SUSPEND=awo all fiptool bptool
 
 		${fip_tool_path}/fiptool create --align 16 --soc-fw "$bl31_file_path" --nt-fw "$bl33_file_path" "$workspace_path/fip.bin"
 		${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x0000 --srec-forceS3 "$workspace_path/fip.bin" "$workspace_path/fip_awo_cm33_rzg3s_smarc.srec"
@@ -363,7 +363,10 @@ Flash Procedure for SD
 		sudo cp ./Image-smarc-rzg3s.bin /media/user/79273262-4ff6-424f-9e7e-a
 		sudo tar -jxvf core-image-bsp-smarc-rzg3s.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
-
+Note: To boot Linux from SD0, the U-Boot environment variables may require a change.
+setenv bootargs 'rw rootwait earlycon root=/dev/mmcblk0p2'
+setenv bootcmd 'ext4load mmc 0:1 0x48080000 Image-smarc-rzg3s.bin; ext4load mmc 0:1 0x48000000 Image-r9a08g045s33-smarc.dtb; booti 0x48080000 - 0x48000000'
+boot
 ----------
 Boot trace
 ----------
@@ -424,31 +427,9 @@ INFO:    Entry point address = 0x50000000
 INFO:    SPSR = 0x3c5
 
 
-U-Boot 2021.10 (Aug 29 2023 - 03:07:30 +0000)
-
-CPU:   Renesas Electronics CPU rev 1.0
-Model: smarc-rzg3s
-DRAM:  896 MiB
-MMC:   sd@11c00000: 0, sd@11c10000: 1, sd@11c20000: 2
-Loading Environment from MMC... OK
-In:    serial@1004b800
-Out:   serial@1004b800
-Err:   serial@1004b800
-Net:
-Error: ethernet@11c30000 address not set.
-No ethernet found.
-
-Hit any key to stop autoboot:  0
-switch to partitions #0, OK
-mmc1 is current device
-17695232 bytes read in 1174 ms (14.4 MiB/s)
-34365 bytes read in 4 ms (8.2 MiB/s)
-Moving Image from 0x48080000 to 0x48200000, end=49350000
-## Flattened Device Tree blob at 48000000
-   Booting using the fdt blob at 0x48000000
-   Loading Device Tree to 0000000057ff4000, end 0000000057fff63c ... OK
-
-Starting kernel ...
+######
+U-Boot starts up and the Linux Kernel is loaded.
+######
 
 ######
 The kernel starts up and the login prompt is shown.
