@@ -16,7 +16,6 @@
 
 /*
  * TODO: Check which SIP commands are required.
- * It is assumed at this stage that the requirements are the same as for the V2H.
  */
 
 static bool is_rz_sys_pcie_offset(uint32_t offset)
