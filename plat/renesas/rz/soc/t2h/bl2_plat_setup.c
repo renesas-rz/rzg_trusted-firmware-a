@@ -28,10 +28,10 @@
 
 static console_t rzt2h_bl2_console;
 
-int bl2_plat_handle_pre_image_load(unsigned int image_id)
-{
-	return 0;
-}
+/*
+ * Note: no implementation is required for bl2_plat_handle_pre_image_load()
+ * So, use the TF-A core default 'weak' implementation in plat/common/plat_bl_common.c
+ */
 
 int bl2_plat_handle_post_image_load(unsigned int image_id)
 {
