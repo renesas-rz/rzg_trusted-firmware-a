@@ -163,6 +163,7 @@ static void phyinit_mc(void)
 
 static void prog_all0(uint64_t start_addr, uint32_t addr_space)
 {
+#if PLAT_DDR_ECC
 	uint32_t bak_lp_auto_entry_en;
 
 	ddrtop_mc_param_wr(ECC_DISABLE_W_UC_ERR_ADDR, ECC_DISABLE_W_UC_ERR_OFFSET, ECC_DISABLE_W_UC_ERR_WIDTH, 1);
@@ -193,4 +194,5 @@ static void prog_all0(uint64_t start_addr, uint32_t addr_space)
 	ddrtop_mc_param_wr(ECC_DISABLE_W_UC_ERR_ADDR, ECC_DISABLE_W_UC_ERR_OFFSET, ECC_DISABLE_W_UC_ERR_WIDTH, 0);
 
 	udelay(1);
+#endif
 }
