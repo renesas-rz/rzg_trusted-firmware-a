@@ -74,11 +74,11 @@
  * Platform specific page table and MMU setup constants
  ******************************************************************************/
 #if IMAGE_BL2
-#define MAX_XLAT_TABLES			U(10)
+#define MAX_XLAT_TABLES			U(4)
 #define MAX_MMAP_REGIONS		U(12)
 #elif IMAGE_BL31
-#define MAX_XLAT_TABLES			U(14)
-#define MAX_MMAP_REGIONS		U(16)
+#define MAX_XLAT_TABLES			U(4)
+#define MAX_MMAP_REGIONS		U(7)
 #endif
 
 #define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 36)
