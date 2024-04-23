@@ -1979,6 +1979,10 @@ static void cpg_wdtrst_sel_setup(void)
 					| CPG_ERRORRST_SELx_ERRRSTSEL3;
 	uint32_t ca33_w01, ca33_w23, ca55_w01, ca55_w23;
 
+	/* Clear bit 28 interrupt source for both M33 and CA55 */
+	mmio_write_32(RZV2H_ELC_ERINTM33CLR(0), 0x10000000);
+	mmio_write_32(RZV2H_ELC_ERINTA55CLR(0), 0x10000000);
+
 	ca33_w01 = mmio_read_32(RZV2H_ELC_ERINTM33CTL(0));
 	ca33_w23 = mmio_read_32(RZV2H_ELC_ERINTM33CTL(1));
 	ca55_w01 = mmio_read_32(RZV2H_ELC_ERINTA55CTL(0));
