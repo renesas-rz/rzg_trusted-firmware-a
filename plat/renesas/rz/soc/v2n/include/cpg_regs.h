@@ -35,8 +35,6 @@
 #define	CPG_PLLDSI_MON				(CPG_BASE + 0x0D0)	/* PLLDSI monitor register */
 
 #define	CPG_PLLDDR0_STBY			(CPG_BASE + 0x0E0)	/* PLLDDR0 standby control register */
-#define	CPG_PLLDDR0_CLK1			(CPG_BASE + 0x0E4)	/* PLLDDR0 output clock setting register 1 */
-#define	CPG_PLLDDR0_CLK2			(CPG_BASE + 0x0E8)	/* PLLDDR0 output clock setting register 2 */
 #define	CPG_PLLDDR0_MON				(CPG_BASE + 0x0F0)	/* PLLDDR0 monitor register*/
 
 #define	CPG_PLLGPU_STBY				(CPG_BASE + 0x120)	/* PLLGPU standby control register */
