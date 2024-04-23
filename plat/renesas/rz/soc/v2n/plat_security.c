@@ -274,6 +274,23 @@ static void plat_tzc_pci_setup(void)
 	plat_tzc400_setup(RZV2N_TZC400_PCIe_BASE, &pci_tzc_regions[0]);
 }
 
+static void plat_tzc_rcpu_setup(void)
+{
+	const arm_tzc_regions_info_t rcpu_tzc_regions[] = {
+		{
+			/* Default Region 0: Complete access */
+			.base = 0,      /* Not Used by Region 0 */
+			.end  = 0,      /* Not Used by Region 0 */
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
+		},
+
+		{}
+	};
+
+	plat_tzc400_setup(RZV2N_TZC400_RCPU_BASE, &rcpu_tzc_regions[0]);
+}
+
 static void bl2_security_setup(void)
 {
 	/* initialize TZC-400 */
@@ -281,6 +298,7 @@ static void bl2_security_setup(void)
 	plat_tzc_spi_setup();
 	plat_tzc_ddr_setup();
 	plat_tzc_pci_setup();
+	plat_tzc_rcpu_setup();
 
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
