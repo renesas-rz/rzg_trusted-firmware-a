@@ -584,7 +584,7 @@ void cpg_early_setup(void)
 
 void cpg_disable_mpu_protect(void)
 {
-	/* Disable all MPU - TODO: KTG: Confirm if other action is required */
+	/* Disable all MPU */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
 
 	mmio_write_32(0x81291400, 0);	//MPU 0 - GMAC Unit 1

@@ -20,6 +20,7 @@
 
 #define LO_REG							(0U)
 #define HI_REG							(1U)
+#define MAX_PLATFORM_CORE_COUNT			(4U)
 
 
 uintptr_t gp_warm_ep;
@@ -27,14 +28,14 @@ uintptr_t gp_warm_ep;
 
 static int rzt2h_pwr_domain_on(u_register_t mpidr)
 {
-	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
+	const uint32_t rval[MAX_PLATFORM_CORE_COUNT][2] = {
 		{ CA55_RVBAL0, CA55_RVBAH0 },
 		{ CA55_RVBAL1, CA55_RVBAH1 },
 		{ CA55_RVBAL2, CA55_RVBAH2 },
 		{ CA55_RVBAL3, CA55_RVBAH3 }
 	};
 
-	const uint32_t swrcpu[PLATFORM_CORE_COUNT][1] = {
+	const uint32_t swrcpu[MAX_PLATFORM_CORE_COUNT][1] = {
 		{ SWR550 },
 		{ SWR551 },
 		{ SWR552 },
@@ -85,9 +86,6 @@ static void rzt2h_pwr_domain_off(const psci_power_state_t *state)
 
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
-
-	//TODO: KTG: Add code?
-
 	/* Issue Barrier instruction */
 	isb();
 	dsb();

@@ -28,9 +28,6 @@ static void set_port_pins(const PORT_SETTINGS *p_setting, const uint32_t count)
 	uint32_t port_num;
 	uintptr_t base_adrs;
 
-
-	//TODO: KTG: How should SLPSR, SLPORT, RSELPSR, RSELP?
-
 	/* Validate parameters */
 	if ((p_setting != NULL) && (count > 0u)) {
 		/* Enable writing to GPIO registers in Safety Region and Non-Safety Region */
