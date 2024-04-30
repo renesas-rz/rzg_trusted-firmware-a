@@ -15,3 +15,6 @@ include:
   - local: gitlab-ci/dev_mpu_build/g3e-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /g3e/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
+  - local: gitlab-ci/dev_mpu_build/v2n-gitlab-ci.yml
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /v2n/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
