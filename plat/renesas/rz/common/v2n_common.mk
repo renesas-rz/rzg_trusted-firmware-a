@@ -30,9 +30,6 @@ $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PLAT_DDR_ECC))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
 $(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
-ifeq (${BOARD}, evk_1)
-$(eval $(call add_define,BOOT_MODE_eMMC_NOT_SUPPORTED))
-endif
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1
@@ -70,7 +67,6 @@ endif
 
 XSPI_SOURCES			:=	plat/renesas/rz/common/drivers/xspi.c	\
 							plat/renesas/rz/common/drivers/io/io_xspidrv.c
-ifneq (${BOARD}, evk_1)
 EMMC_SOURCES			:=	plat/renesas/rz/common/drivers/io/io_emmcdrv.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_interrupt.c	\
 							plat/renesas/rz/common/drivers/emmc/emmc_utility.c	\
@@ -78,7 +74,6 @@ EMMC_SOURCES			:=	plat/renesas/rz/common/drivers/io/io_emmcdrv.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_init.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_read.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_cmd.c
-endif
 SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c			\
 							plat/renesas/rz/common/drivers/sd/sd_mount.c		\
 							plat/renesas/rz/common/drivers/sd/sd_util.c			\
