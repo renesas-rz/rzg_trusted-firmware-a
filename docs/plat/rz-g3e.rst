@@ -12,13 +12,13 @@ Plug-ins are available for multiple open-source software tools.
 Renesas RZ/G3E reference platforms:
 -----------------------------------
 
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-| Board        |      Details                                                                                                                          |
-+==============+===============+=======================================================================================================================+
-| dev1         | Equipped with Renesas RZ/G3E SoC                                                                                                      |
-|              +---------------------------------------------------------------------------------------------------------------------------------------+
-|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update                               |
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
++--------------+---------------------------------------------------------------------------------------------------------+
+| Board        | Details                                                                                                 |
++==============+===============+=========================================================================================+
+| dev1         | Equipped with Renesas RZ/G3E SoC                                                                        |
+|              +---------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update |
++--------------+---------------------------------------------------------------------------------------------------------+
 
 `boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__ //TODO: Update
 
@@ -77,21 +77,195 @@ TF-A Build Procedure
        ${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/release/bp_spi_bl2.bin build/g3e/release/bp_spi_bl2.srec
        ${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x0000 --srec-forceS3 build/g3e/release/fip.bin build/g3e/release/fip.srec
 
-Install Procedure
-~~~~~~~~~~~~~~~~~
 
-- Boot the board in Mini-monitor mode and enable access to the
-  QSPI flash.
+How to load TF-A
+----------------
 
+Loading the flash writer
+~~~~~~~~~~~~~~~~~~~~~~~~
+Set the device in SCIF mode,
+Connect to the COM port provided by the device via some terminal software.
+Hit reset and the device will print a message.
+The baudrate is 115200
+Then send the device the FlashWriter[1] (e.g. Flash_Writer_SCIF_RZG3E_DEV_LPDDR4X_0117.mot).
+[1] https://github.com/renesas-rz			//TODO: Update
 
-- Use the RZ/G3E flash_writer utility[2] to flash all the SREC files.
+Flash Procedure for xSPI
+~~~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: text
 
-[2] https://github.com/renesas-rz/rzg2_flash_writer/tree/rz_G3E			//TODO: Update
+	1.	Use the ‘Load the flash writer procedure’.
+	2.	Write the BL2 srecord to the device SPI flash
+		a.	Enter: XLS2
+		b.	Program Top Address: 0x8003600
+		c.	QSPI Save Address: 0x00000
+		d.	Send the BL2 srecord
+		e.	The output should show as follows:
+	3.	Write the BL31 srecord to the device SPI flash
+		a.	Enter: XLS2
+		b.	Program Top Address: 0x00000
+		c.	QSPI Save Address: 0x60000
+		d.	Send the BL31 srecord
 
+Flash Procedure for EMMC
+~~~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: text
+
+    1.  Use the ‘Load the flash writer procedure’.
+    2.  Modify the EXT_CSD registers - this step only needs to be performed the first time.
+        a.  Change the First Register
+            i.   Use the Flash Writer's command EM_SECSD.
+            ii.  Enter the EXT_CSD index: B1
+	        iii. Enter the Input Value: 2
+	    b.  Change the Second Register
+	        i.	 Use the Flash Writer's command EM_SECSD.
+	        ii.	 Enter the EXT_CSD index: B3
+	        iii. Enter the Input Value: 8
+	3.	Write the bl2 srecord to the device
+		a.	Use the Flash Writer's command EM_W.
+		b.	Partition Select: 1
+		c.	Input Start Address in sector: 1
+		d.	Input Program Start Address: 8003600
+		e.	Send the bl2 srecord.
+	4.	Write the fip srecord to the device
+		a.	Use the Flash Writer's command EM_W.
+		b.	Partition Select: 1
+		c.	Input Start Address in sector: 300
+		d.	Input Program Start Address: 8003600
+		e.	Send the fip srecord file
+
+Flash Procedure for SD
+~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: text
+
+	Steps 1 to 9 only needs to be performed once.
+	1.	Enter fdisk
+			sudo fdisk /dev/<sd device>
+
+			Welcome to fdisk (util-linux 2.37.2).
+			Changes will remain in memory only, until you decide to write them.
+			Be careful before using the write command.
+
+	2.	Remove the existing partitions
+			Command (m for help): d
+			Partition number (1,2, default 2):
+
+			Partition 2 has been deleted.
+
+			Command (m for help): d
+			Selected partition 1
+			Partition 1 has been deleted.
+
+	3.	Create partitions
+			Command (m for help): n
+			Partition type
+			p   primary (0 primary, 0 extended, 4 free)
+			e   extended (container for logical partitions)
+			Select (default p):
+
+			Using default response p.
+			Partition number (1-4, default 1):
+			First sector (2048-7744511, default 2048): 4096
+			Last sector, +/-sectors or +/-size{K,M,G,T,P} (4096-7744511, default 7744511): +512M
+
+			Created a new partition 1 of type 'Linux' and of size 512 MiB.
+
+			Command (m for help): n
+			Partition type
+			p   primary (1 primary, 0 extended, 3 free)
+			e   extended (container for logical partitions)
+			Select (default p):
+
+			Using default response p.
+			Partition number (2-4, default 2):
+			First sector (1052672-7744511, default 1052672):
+			Last sector, +/-sectors or +/-size{K,M,G,T,P} (1052672-7744511, default 7744511):
+
+			Created a new partition 2 of type 'Linux' and of size 3.2 GiB.
+
+			Command (m for help): p
+			Disk /dev/sdd: 3.71 GiB, 3965190144 bytes, 7744512 sectors
+			Disk model: STORAGE DEVICE
+			Units: sectors of 1 * 512 = 512 bytes
+			Sector size (logical/physical): 512 bytes / 512 bytes
+			I/O size (minimum/optimal): 512 bytes / 512 bytes
+			Disklabel type: dos
+			Disk identifier: 0x00000000
+
+			Device     Boot   Start     End Sectors  Size Id Type
+			/dev/sdd1          4096 1052671 1048576  512M 83 Linux
+			/dev/sdd2       1052672 7744511 6691840  3.2G 83 Linux
+
+	4.	If the signature removal prompt appears after creating either partition, then removed the signature as shown.
+			Partition #2 contains a ext4 signature.
+
+			Do you want to remove the signature? [Y]es/[N]o: y
+
+			The signature will be removed by a write command.
+
+	5.	Write partitions to disk
+			Command (m for help): w
+			The partition table has been altered.
+			Calling ioctl() to re-read partition table.
+			Syncing disks
+
+	6.	Remount the SD card by removing it then, plugging it back in.
+
+	7.	Format the partitions
+			sudo mkfs.ext4 /dev/<Partition of size 512>
+			mke2fs 1.46.5 (30-Dec-2021)
+			Creating filesystem with 131072 4k blocks and 32768 inodes
+			Filesystem UUID: cb9d787a-fb33-43f2-9a81-2b2049fe6f9d
+			Superblock backups stored on blocks:
+					32768, 98304
+
+			Allocating group tables: done
+			Writing inode tables: done
+			Creating journal (4096 blocks): done
+			Writing superblocks and filesystem accounting information: done
+
+			sudo mkfs.ext4 /dev/<the other partition>
+			mke2fs 1.46.5 (30-Dec-2021)
+			Creating filesystem with 364928 4k blocks and 91392 inodes
+			Filesystem UUID: fbd4caa0-690b-43e8-9e67-43e43edf3fa4
+			Superblock backups stored on blocks:
+					32768, 98304, 163840, 229376, 294912
+
+			Allocating group tables: done
+			Writing inode tables: done
+			Creating journal (8192 blocks): done
+			Writing superblocks and filesystem accounting information: done
+
+	8. Remount the SD card by removing it then, plugging it back in.
+
+	9. Check partitions were created properly.
+			lsblk
+			...
+			sdb      8:16   1  14.5G  0 disk
+			├─sdb1   8:17   1   512M  0 part /media/user/79273262-4ff6-424f-9e7e-a
+			└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
+			...
+
+	10. Write TF-A to SD card
+			sudo dd if=bl2_bp_esd.bin of=/dev/sdb seek=1
+			269+1 records in
+			269+1 records out
+			137746 bytes (138 kB, 135 KiB) copied, 0.481328 s, 286 kB/s
+
+			sudo dd if=fip.bin of=/dev/sdb seek=768
+			1775+1 records in
+			1775+1 records out
+			908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s
+
+	11. Write Linux files to the SD card
+			sudo cp ./<g3e device tree>.dtb /media/user/79273262-4ff6-424f-9e7e-a
+			sudo cp ./<g3e kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
+			sudo tar -jxvf <g3e root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
 Boot trace
 ----------
-::
+.. code-block:: text
+
 	NOTICE:  BL2: v2.7(debug):2.7.0/rz_soc_dev-46-g77ba4630a-dirty
 	NOTICE:  BL2: Built : 11:27:10, Mar  6 2024
 	INFO:    BL2: Doing platform setup
@@ -128,10 +302,8 @@ Boot trace
 	INFO:    Entry point address = 0x50000000
 	INFO:    SPSR = 0x3c5
 
-######
-U-Boot starts up and begins to load the Linux kernel.
-######
 
-######
-The kernel starts up and the login prompt is shown.
-######
+	<U-Boot starts up and begins to load the Linux kernel.>
+
+	<The kernel starts up and the login prompt is shown.>
+
