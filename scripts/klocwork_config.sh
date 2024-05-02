@@ -1,6 +1,6 @@
 #! /bin/bash
 #######################################################################################################################
-# Copyright [2024] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+# Copyright [2025] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
 #
 # The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
 # and/or its licensors ("Renesas") and subject to statutory and contractual protections.
@@ -24,7 +24,7 @@
 PLAT="$1"
 
 # Klocwork project name (on portal)
-export PROJECT_NAME="tfa_270_$PLAT"
+export PROJECT_NAME="LDRE_kwtfa2105_rz${PLAT}_c"
 
 # Path to TF-A MPU build script
 export BUILD_BAT="scripts/mpu_build.sh"

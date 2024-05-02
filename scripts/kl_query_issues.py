@@ -1,5 +1,5 @@
 #######################################################################################################################
-# Copyright [2024] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+# Copyright [2025] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
 #
 # The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
 # and/or its licensors ("Renesas") and subject to statutory and contractual protections.
@@ -22,8 +22,8 @@ from urllib import request
 from urllib import parse
 
 # Authorisation parameters
-host = "ree-be0klocwork.ree.adwin.renesas.com"
-port = 8080
+host = "klocwork.global.renesas.com"
+port = 8443
 
 # Error status variable
 error_status = 0
@@ -43,7 +43,7 @@ connected_users = psutil.users()
 
 project = "no_project_name_provided"
 user = "no_user_provided"
-url = "http://%s:%d/review/api" % (host, port)
+url = "https://%s:%d/review/api" % (host, port)
 values = {"project": project, "user": user, "action": "search"}
 
 def get_token(host, port, user):
@@ -55,13 +55,14 @@ def get_token(host, port, user):
     :return rd[3]:
     """
     ltoken = os.path.normpath(os.path.expanduser("~/.klocwork/ltoken"))
-    ltoken_file = open(ltoken, 'r')
+    ltoken_file = open(ltoken, 'r', encoding='utf-8')
     for r in ltoken_file:
         rd = r.strip().split(';')
-        user = get_user(connected_users, rd[2])
-        if rd[0].lower() == host.lower() and rd[1] == str(port) and rd[2] == user:
+
+        user = get_user(connected_users, rd[2]) + "@adwin.renesas.com"
+        if rd[0].lower() == host.lower() and rd[1] == str(port) and rd[2].lower() == user:
             ltoken_file.close()
-            return user, rd[3]
+            return rd[2], rd[3] #error with returning user, as the user that Klocwork is expecting has capitalisation but linux is all lower
 
     ltoken_file.close()
     return user, None
@@ -167,11 +168,11 @@ def dump_issues(rep_project, rep_severity, rep_module, rep_category, rep_status)
         print(debug)
         error_status = 2
     else:
-        subdir = (".\\generated\\issue_report_" + fnname_cat)
+        subdir = ("./generated/issue_report_" + fnname_cat)
         if not os.path.isdir(subdir):
             os.makedirs(subdir)
 
-        with open(subdir + "\\" + fnname_mod + ".txt", "wt") as outfile:
+        with open(subdir + "/" + fnname_mod + ".txt", "wt") as outfile:
             buf_title = "Static Analysis"
             # buf_title = buf_title + "\n------------------"
             buf_title = buf_title + "\nCOMPONENT: \t" + fnname_mod
@@ -246,8 +247,8 @@ class Issue(object):
     # It would be nice to strip to the left of \macro\...
 
     def __str__(self):
-        # Find \modules and trim to the left of this away to make file paths easier to read
-        trimf = self.file[self.file.rfind("\modules"):]
+        # Find file path and trim to the left of the file name to make file paths easier to read
+        trimf = os.path.basename(self.file)
 
         return "%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s(%d)\t%s" % (
             self.id, self.status, self.message, trimf, self.method, self.line, self.code, self.severity,

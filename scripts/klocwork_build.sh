@@ -1,6 +1,6 @@
 #! /bin/bash
 #######################################################################################################################
-# Copyright [2024] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+# Copyright [2025] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
 #
 # The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
 # and/or its licensors ("Renesas") and subject to statutory and contractual protections.
@@ -61,6 +61,11 @@ fi
 # Set a custom Klocwork build string to come from GitLab
 export BUILD_STR="KL-$PROJECT_NAME-$CI_JOB_NAME-$CI_PIPELINE_ID"
 
+if [ ${#BUILD_STR} -gt 64 ]; then
+	echo "Build name too long... Shortening build string to fit."
+	export BUILD_STR="KL-$CI_JOB_NAME-$CI_PIPELINE_ID"
+fi
+
 echo "Running Klocwork analysis...
 CI_BUILDS_DIR  : $CI_BUILDS_DIR
 CI_JOB_NAME    : $CI_JOB_NAME
@@ -69,10 +74,10 @@ CI_PROJECT_DIR : $CI_PROJECT_DIR
 BUILD_STR      : $BUILD_STR"
 
 # Set the Klocwork tool paths as installed on the CI build machine
-export KWADMIN="C:\klocwork\kwbuildtools\bin\kwadmin.exe"
-export KWINJECT="C:\klocwork\kwbuildtools\bin\kwinject.exe"
-export KWBUILDPROJECT="C:\klocwork\kwbuildtools\bin\kwbuildproject.exe"
-export KWDEPLOY="C:\klocwork\kwbuildtools\bin\kwdeploy.exe"
+export KWADMIN="/users/svc_sp3_ci_etcetc/Klocwork/kwbuildtools/bin/kwadmin"
+export KWINJECT="/users/svc_sp3_ci_etcetc/Klocwork/kwbuildtools/bin/kwinject"
+export KWBUILDPROJECT="/users/svc_sp3_ci_etcetc/Klocwork/kwbuildtools/bin/kwbuildproject"
+export KWDEPLOY="/users/svc_sp3_ci_etcetc/Klocwork/kwbuildtools/bin/kwdeploy"
 
 if [ ! -f $KWADMIN ]; then
 	echo "KWADMIN        : $KWADMIN not found"
@@ -81,19 +86,20 @@ fi
 
 echo "KWADMIN        : $KWADMIN"
 
-# Debugging
-export JOB_FOLDER="$CI_BUILDS_DIR\jobs\\$CI_JOB_NAME\builds\\$CI_PIPELINE_ID"
+# Creates a job folder to store the kwInjectOut txt and the kloTables
+export JOB_FOLDER="$CI_BUILDS_DIR/jobs/$CI_JOB_NAME/builds/$CI_PIPELINE_ID"
 echo "JOB_FOLDER     : $JOB_FOLDER"
-# mkdir "$JOB_FOLDER"  # Creates new directory (inside the VM) - NOT WORKING
-export KLOFOLDER="$JOB_FOLDER\kloTables"
-export KWINJECT_OUT="C:\Users\svc_SP3_CI_etcetc\Desktop\Dawid\kwinject_$PLAT.txt"  # Hard coded path temporarily
-# export KWINJECT_OUT="$JOB_FOLDER\kwinject.txt"
-export KWHOST="--host ree-be0klocwork.ree.adwin.renesas.com --port 8080"
-export KW_LICENCE="--license-host dusls3.ree.adwin.renesas.com --license-port 3313"
+mkdir -p $JOB_FOLDER/kwInjectOut
+export KLOFOLDER="$JOB_FOLDER/kloTables"
+export KWINJECT_OUT="$JOB_FOLDER/kwInjectOut/kwinject_$PLAT.txt"
+
+# Sets the Klocwork server url and name of the project for the required PLAT
+export KWURL="--url https://klocwork.global.renesas.com:8443/"
 export KWPROJECT="--project $PROJECT_NAME"
 
 echo "Running KWDEPLOY $KWDEPLOY"
-$KWDEPLOY sync --url http://ree-be0klocwork.ree.adwin.renesas.com:8080/
+
+$KWDEPLOY sync --url https://klocwork.global.renesas.com:8443/
 
 echo "Running KWINJECT $BUILD_STR"
 # The -w option to kwinject _should_ force a complete regeneration of a clean build spec.
@@ -120,16 +126,18 @@ echo "Running KWBUILD"
 
 # If there is a .sconf CONFIG_FILE provided in the config batch file then it will include it in KWBUILDPROJECT
 if [ -z "$CONFIG_FILE" ]; then
-	echo "$KWBUILDPROJECT $KWINJECT_OUT $KWPROJECT $KWHOST $KW_LICENCE --tables-directory $KLOFOLDER --force"
-	$KWBUILDPROJECT $KWINJECT_OUT $KWPROJECT $KWHOST $KW_LICENCE --tables-directory $KLOFOLDER --force
+	echo "$KWBUILDPROJECT $KWINJECT_OUT $KWURL$PROJECT_NAME --tables-directory $KLOFOLDER --force"
+	$KWBUILDPROJECT $KWINJECT_OUT $KWURL$PROJECT_NAME --tables-directory $KLOFOLDER --force
 else
-	echo "$KWBUILDPROJECT $KWINJECT_OUT $KWPROJECT $KWHOST $KW_LICENCE --exclude-issues $CONFIG_FILE --tables-directory $KLOFOLDER --force"
-	$KWBUILDPROJECT $KWINJECT_OUT $KWPROJECT $KWHOST $KW_LICENCE --exclude-issues $CONFIG_FILE --tables-directory $KLOFOLDER --force
+	echo "$KWBUILDPROJECT $KWINJECT_OUT $KWURL$PROJECT_NAME --exclude-issues $CONFIG_FILE --tables-directory $KLOFOLDER --force"
+	$KWBUILDPROJECT $KWINJECT_OUT $KWURL$PROJECT_NAME --exclude-issues $CONFIG_FILE --tables-directory $KLOFOLDER --force
 fi
 
+exit_code=$?
+
 # Checking errorlevel
-if [ $? -ne 0 ]; then
-    echo "Klocwork BAT file failure: $?"
+if [ $exit_code -ne 0 ]; then
+    echo "Klocwork BAT file failure: $exit_code"
 	exit 230
 fi
 
@@ -137,8 +145,8 @@ echo "KWBUILD $BUILD_STR result: $?"
 
 # Uploading build results to Klocwork portal under the name $BUILD_STR
 echo "Running KWADMIN $BUILD_STR"
-echo "$KWADMIN $KWHOST load $PROJECT_NAME $KLOFOLDER --name $BUILD_STR"
-$KWADMIN $KWHOST load $PROJECT_NAME $KLOFOLDER --name $BUILD_STR
+echo "$KWADMIN $KWURL load $PROJECT_NAME $KLOFOLDER --name $BUILD_STR"
+$KWADMIN $KWURL load $PROJECT_NAME $KLOFOLDER --name $BUILD_STR
 
 # Checking errorlevel
 if [ $? -ne 0 ]; then

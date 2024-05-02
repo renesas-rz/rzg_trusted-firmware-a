@@ -4,6 +4,7 @@
     PLAT: "n2h"
     BOARD: "eval"
     BUILD_TYPE: "release"
+    TARGET_OS: ""
     CONFIGS: ""
     TEST_TYPE: "tag"
   interruptible: true
@@ -20,7 +21,7 @@
 .linux_tag_build_success_job_template:
   <<: *linux_tag_build_job_template
   script:
-    - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}" $TEST_TYPE
+    - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}"
     - cd "../../tf-a"
     - pwd
     - mkdir -p build && cd build
@@ -37,4 +38,4 @@
 .linux_tag_build_failure_job_template:
   <<: *linux_tag_build_job_template
   script:
-    - ( ! ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}" $TEST_TYPE )
+    - ( ! ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" )
