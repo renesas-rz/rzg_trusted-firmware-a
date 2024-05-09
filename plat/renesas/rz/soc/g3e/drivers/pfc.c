@@ -113,7 +113,7 @@ static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 		{ PFC_ON,  (uintptr_t)PFC_PFC35,  0x00000000 },				/* PFC */
 		{ PFC_ON,  (uintptr_t)PFC_IOLH35, 0x0303030303030303 },		/* IOLH */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PUPD */
-		{ PFC_OFF, (uintptr_t)PFC_SR35,   0x0000000000000000 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_SR35,   0x0000000000000000 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	},
 
@@ -126,7 +126,7 @@ static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 		{ PFC_ON,  (uintptr_t)PFC_PFC36,  0x00000000 },				/* PFC */
 		{ PFC_ON,  (uintptr_t)PFC_IOLH36, 0x0303030303030303 },		/* IOLH */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PUPD */
-		{ PFC_OFF, (uintptr_t)PFC_SR36,   0x0000000000000000 },		/* SR */
+		{ PFC_ON,  (uintptr_t)PFC_SR36,   0x0000000000000000 },		/* SR */
 		{ PFC_OFF, (uintptr_t)NULL,       0 }						/* IEN */
 	},
 };
