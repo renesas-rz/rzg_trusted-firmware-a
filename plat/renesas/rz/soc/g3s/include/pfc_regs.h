@@ -756,7 +756,6 @@ typedef struct {
 	PFC_REG_UINT32	pfc;
 	PFC_REG_UINT64	iolh;
 	PFC_REG_UINT64	pupd;
-	PFC_REG_UINT64	sr;
 	PFC_REG_UINT64	ien;
 } PFC_REGS;
 

@@ -18,7 +18,6 @@ static PFC_REGS pfc_mux_sd_reg_tbl[PFC_MUX_SD_TBL_NUM] = {
 		{ PFC_ON,	(uintptr_t)PFC_PFC20,	0x00000000 },			/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH20,	0x0000000003030303 },	/* IOLH */
 		{ PFC_ON,	(uintptr_t)PFC_PUPD20,	0x0000000000000000 },	/* PUPD */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	}
 };
@@ -30,7 +29,6 @@ static PFC_REGS pfc_mux_scif_reg_tbl[PFC_MUX_SD_TBL_NUM] = {
 		{ PFC_ON,	(uintptr_t)PFC_PFC22,	0x00000000 },			/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH22,	0x0000000303000000 },	/* IOLH */
 		{ PFC_ON,	(uintptr_t)PFC_PUPD22,	0x0000000000000000 },	/* PUPD */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	}
 };
@@ -42,7 +40,6 @@ static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH04,	0x0000030303030303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	},
 	/* XSPI - IO7 - IO0*/
@@ -51,7 +48,6 @@ static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH05,	0x0303030303030303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	}
 };
@@ -63,7 +59,6 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM_DEV] = {
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH10,	0x0000000000030303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_ON,	(uintptr_t)PFC_IEN10,	0x0000000000000100 }	/* IEN */
 	},
 	/* SD0 DATA7 - DATA0 (eMMC) */
@@ -72,7 +67,6 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM_DEV] = {
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH11,	0x0303030303030303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_ON,	(uintptr_t)PFC_IEN11,	0x0101010101010101 }	/* IEN */
 	},
 	/* SD1 CMD, CLK (SD Card) */
@@ -81,7 +75,6 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM_DEV] = {
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH12,	0x0000000000000303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_ON,	(uintptr_t)PFC_IEN12,	0x0000000000000100 }	/* IEN */
 	},
 	/* SD1 DATA3 - DATA0 (SD Card) */
@@ -90,7 +83,6 @@ static PFC_REGS  pfc_sd_reg_tbl[PFC_SD_TBL_NUM_DEV] = {
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PFC */
 		{ PFC_ON,	(uintptr_t)PFC_IOLH13,	0x0000000003030303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
-		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* SR */
 		{ PFC_ON,	(uintptr_t)PFC_IEN13,	0x0000000001010101 }	/* IEN */
 	}
 };
@@ -113,11 +105,6 @@ static void pfc_write_registers(uint8_t tbl_size, PFC_REGS *pfc_reg_tbl)
 		/* PUPD */
 		if (pfc_reg_tbl[cnt].pupd.flg == PFC_ON) {
 			mmio_write_64(pfc_reg_tbl[cnt].pupd.reg, pfc_reg_tbl[cnt].pupd.val);
-		}
-
-		/* SR */
-		if (pfc_reg_tbl[cnt].sr.flg == PFC_ON) {
-			mmio_write_64(pfc_reg_tbl[cnt].sr.reg, pfc_reg_tbl[cnt].sr.val);
 		}
 
 		/* IEN */
