@@ -138,6 +138,11 @@
 #define SYS_PCIE_REG_OFFSET_START	UL(0x1000)						/* Offset corresponds to register SYS_PCIE_INTX_CH0 */
 #define SYS_PCIE_REG_OFFSET_END		UL(0x1054)						/* Offset corresponds to register SYS_PCIE_MODE_CH1 */
 
+/* Offset corresponds to register SYS_LSI_OTPTSU0TRMVAL0 */
+#define SYS_TSU_REG_OFFSET_START	UL(0x0320)
+/* Offset corresponds to register SYS_LSI_OTPTSU1TRMVAL1 */
+#define SYS_TSU_REG_OFFSET_END		UL(0x0334)
+
 /* Error Interrupt CM33 Status Register k */
 #define RZV2N_ELC_ERINTM33CTL(k)	(RZV2N_ELC + 0x0304 + ((k) * 0x004))
 

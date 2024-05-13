@@ -28,4 +28,7 @@
 /* Function ID to set PCIe register values */
 #define RZ_SIP_SVC_SET_SYSPCIE		U(0x82000021)
 
+/* Function ID to get TSU Trimming values */
+#define RZ_SIP_SVC_GET_SYSTSU		U(0x82000022)
+
 #endif /* __RZ_SIP_SVC_H__ */

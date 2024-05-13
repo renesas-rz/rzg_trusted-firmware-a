@@ -47,6 +47,27 @@ static uintptr_t rz_sys_pcie_set_val(void *handle, u_register_t x1, u_register_t
 	}
 }
 
+static bool is_rz_sys_tsu_offset(uint32_t offset)
+{
+	if ((offset >= SYS_TSU_REG_OFFSET_START) && (offset <= SYS_TSU_REG_OFFSET_END))
+		return true;
+	else
+		return false;
+}
+
+static uintptr_t rz_sys_tsu_get_val(void *handle, u_register_t x1)
+{
+	uint32_t val;
+
+	if (is_rz_sys_tsu_offset((uint32_t) x1)) {
+		val = mmio_read_32(RZV2N_SYSC_BASE + (uintptr_t) x1);
+		SMC_RET1(handle, val);
+	} else {
+		WARN("%s: Offset address out of SYS-TSU areas\n", __func__);
+		SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
+	}
+}
+
 static uintptr_t rz_otp_handler_chipid(void *handle, u_register_t x1, u_register_t flags)
 {
 	uint32_t chipid[4];
@@ -93,6 +114,8 @@ uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 		return rz_sys_pcie_get_val(handle, x1);
 	case RZ_SIP_SVC_SET_SYSPCIE:
 		return rz_sys_pcie_set_val(handle, x1, x2);
+	case RZ_SIP_SVC_GET_SYSTSU:
+		return rz_sys_tsu_get_val(handle, x1);
 	default:
 		WARN("%s: Unimplemented RZ SiP Service Call: 0x%x\n", __func__, smc_fid);
 		SMC_RET1(handle, SMC_UNK);
