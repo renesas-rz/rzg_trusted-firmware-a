@@ -1,0 +1,21 @@
+include:
+  - local: gitlab-ci/win_templates/mpu-build-templates-gitlab-ci.yml
+  - local: gitlab-ci/win_templates/klocwork-build-templates.yml
+
+rzg3e-release-dev-1-windows:
+  variables:
+    PLAT: "g3e"
+    BOARD: "dev_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .windows_mpu_build_job_template
+
+rzg3e-release-dev-1-klocwork:
+  variables:
+    PLAT: "g3e"
+    BOARD: "dev_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .mpu_klocwork_job_template

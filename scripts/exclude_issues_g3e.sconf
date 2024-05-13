@@ -16410,126 +16410,6 @@
 	 "filter": true
 	},
 	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/bl2_plat_mem_params_desc.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/bl2_plat_setup.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/bl31_plat_setup.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/platform.mk",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/plat_pm.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/plat_security.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/plat_storage.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/rz_plat_sip_handler.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/drivers/cpg.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/drivers/pfc.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/drivers/sys.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/drivers/ddr/ddr.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/drivers/ddr/ddr_misc.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/drivers/ddr/ddr_private.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/drivers/ddr/ddr_regs.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/drivers/ddr/ddr_setup_lpddr4.c",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/include/cpg.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/include/cpg_regs.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/include/pfc_regs.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/include/platform_def.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/include/plat_tzc_def.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/include/rz_soc_def.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/include/sys.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
-	 "name": "/plat/renesas/rz/soc/g3e/include/sys_regs.h",
-	 "all_issue_codes": true,
-	 "filter": true
-	},
-	{"kind": "file",
 	 "name": "/plat/renesas/rz/soc/g3s/bl2_plat_mem_params_desc.c",
 	 "all_issue_codes": true,
 	 "filter": true
@@ -17146,6 +17026,176 @@
 	},
 	{"kind": "file",
 	 "name": "/plat/renesas/rz/soc/v2l/include/ddr_phy_regs.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/bl2_plat_setup.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/bl31_plat_setup.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/platform.mk",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/plat_ddr_setup.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/plat_pm.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/plat_security.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/plat_storage.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/rz_plat_sip_handler.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/cpg.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/pfc.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/riic.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/sys.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/ddr/ddr.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/ddr/ddr_misc.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/ddr/ddr_param_def_lpddr4.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/ddr/ddr_private.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/ddr/ddr_regs.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/ddr/ddr_retcsr_lpddr4.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/ddr/ddr_setup_lpddr4.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/pwrc/pwrc.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/drivers/pwrc/pwrc_stack.S",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/cpg.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/cpg_regs.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/ddr.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/pfc_regs.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/plat.ld.S",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/platform_def.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/plat_tbbr_img_def.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/plat_tzc_def.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/pwrc.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/riic_regs.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/rz_soc_def.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/sys.h",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/soc/v2n/include/sys_regs.h",
 	 "all_issue_codes": true,
 	 "filter": true
 	},
