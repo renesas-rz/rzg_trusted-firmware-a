@@ -156,9 +156,6 @@
 /* Configure non-default eSD Boot mode peripheral base address */
 #define SD_CFG_BASE							MMC1_SD_BASE
 
-#define SYS_PCIE_REG_OFFSET_START			UL(0x1000)					/* Offset corresponds to register SYS_PCIE_INTX_CH0 */	//TODO: KTG: Update value or remove
-#define SYS_PCIE_REG_OFFSET_END				UL(0x1054)					/* Offset corresponds to register SYS_PCIE_MODE_CH1 */	//TODO: KTG: Update value or remove
-
 #define SCI_CCR0_OFFSET						UL(0x0008)
 
 #endif /* __RZ_SOC_DEF_H__ */
