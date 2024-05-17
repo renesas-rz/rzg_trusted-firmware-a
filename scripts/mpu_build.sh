@@ -107,6 +107,10 @@ v2n_build()
 		U_BOOT_FILE="../../u-boot/v2n-dev-1-u-boot.bin"
 	elif [ "$BOARD" = "dev_1" ]; then
 		U_BOOT_FILE="../u-boot/v2n-dev-1-u-boot.bin"
+	elif [ "$BOARD" = "evk_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../u-boot/v2n-evk-1-u-boot.bin"
+	elif [ "$BOARD" = "evk_1" ] ; then
+		U_BOOT_FILE="../u-boot/v2n-evk-1-u-boot.bin"
 	else
 		echo "Invalid V2N board: Board doesn't exist"
 	fi
