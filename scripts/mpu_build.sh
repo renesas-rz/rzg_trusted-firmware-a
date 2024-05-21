@@ -110,6 +110,10 @@ g3s_build()
 		U_BOOT_FILE="../../u-boot/g3s-u-boot.bin"
 	elif [ "$BOARD" = "smarc" ]; then
 		U_BOOT_FILE="../u-boot/g3s-u-boot.bin"
+	elif [ "$BOARD" = "dev14_1_lpddr" ] && [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../u-boot/g3s-dev-u-boot.bin"
+	elif [ "$BOARD" = "dev14_1_lpddr" ]; then
+		U_BOOT_FILE="../u-boot/g3s-dev-u-boot.bin"
 	else
 		echo "Invalid G3S board: Board doesn't exist"
 		exit -1

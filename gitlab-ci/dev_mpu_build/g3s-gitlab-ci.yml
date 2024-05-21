@@ -23,8 +23,8 @@
 include:
   - local: gitlab-ci/templates/dev-mpu-build-templates.yml
 
-######################################### G3S dev overnight MPU build jobs ############################################
-rzg3s-release-no-configs:
+######################################### G3S smarc overnight MPU build jobs ############################################
+rzg3s-release-no-configs-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -32,7 +32,7 @@ rzg3s-release-no-configs:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-release-vbat:
+rzg3s-release-vbat-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -41,7 +41,7 @@ rzg3s-release-vbat:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-release-awo:
+rzg3s-release-awo-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -50,7 +50,7 @@ rzg3s-release-awo:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-release-vbat-m33:
+rzg3s-release-vbat-m33-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -59,7 +59,7 @@ rzg3s-release-vbat-m33:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-release-vbat-disable-m33:
+rzg3s-release-vbat-disable-m33-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -68,7 +68,7 @@ rzg3s-release-vbat-disable-m33:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-release-stack-protector-0:
+rzg3s-release-stack-protector-0-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -78,7 +78,7 @@ rzg3s-release-stack-protector-0:
   extends:
     - .linux_dev_build_failure_job_template
 
-rzg3s-debug-log0:
+rzg3s-debug-log0-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -87,7 +87,7 @@ rzg3s-debug-log0:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-debug-log50:
+rzg3s-debug-log50-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -96,7 +96,7 @@ rzg3s-debug-log50:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-debug-log50-vbat:
+rzg3s-debug-log50-vbat-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -105,7 +105,7 @@ rzg3s-debug-log50-vbat:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-debug-log50-awo:
+rzg3s-debug-log50-awo-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -114,7 +114,7 @@ rzg3s-debug-log50-awo:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-debug-log50-vbat-m33:
+rzg3s-debug-log50-vbat-m33-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
@@ -123,10 +123,119 @@ rzg3s-debug-log50-vbat-m33:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3s-debug-log50-vbat-disable-m33:
+rzg3s-debug-log50-vbat-disable-m33-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
+  extends:
+    - .linux_dev_build_success_job_template
+
+######################################### G3S dev14_1_lpddr overnight MPU build jobs ############################################
+rzg3s-release-no-configs-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "release"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-release-vbat-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "release"
+    CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-release-awo-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "release"
+    CONFIGS: "PLAT_SYSTEM_SUSPEND=awo"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-release-vbat-m33-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "release"
+    CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=1"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-release-vbat-disable-m33-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "release"
+    CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-release-stack-protector-0-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "release"
+    CONFIGS: "ENABLE_STACK_PROTECTOR=0"
+    ERROR_MSG: "unrecognized command line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
+  extends:
+    - .linux_dev_build_failure_job_template
+
+rzg3s-debug-log0-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=0"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-debug-log50-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-debug-log50-vbat-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-debug-log50-awo-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=awo"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-debug-log50-vbat-m33-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=1"
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzg3s-debug-log50-vbat-disable-m33-dev:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
   extends:
