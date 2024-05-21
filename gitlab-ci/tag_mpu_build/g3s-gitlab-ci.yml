@@ -240,4 +240,3 @@ rzg3s-debug-log50-vbat-disable-m33-dev:
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
   extends:
     - .linux_tag_build_success_job_template
-  
