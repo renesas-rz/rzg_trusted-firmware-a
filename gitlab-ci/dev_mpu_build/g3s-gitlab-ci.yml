@@ -23,7 +23,7 @@
 include:
   - local: gitlab-ci/templates/dev-mpu-build-templates.yml
 
-######################################### G3S smarc overnight MPU build jobs ############################################
+######################################### G3S smarc MPU build jobs ############################################
 rzg3s-release-no-configs-smarc:
   variables:
     PLAT: "g3s"
@@ -132,7 +132,7 @@ rzg3s-debug-log50-vbat-disable-m33-smarc:
   extends:
     - .linux_dev_build_success_job_template
 
-######################################### G3S dev14_1_lpddr overnight MPU build jobs ############################################
+######################################### G3S dev14_1_lpddr MPU build jobs ############################################
 rzg3s-release-no-configs-dev:
   variables:
     PLAT: "g3s"
