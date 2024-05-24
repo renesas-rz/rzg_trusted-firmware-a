@@ -23,6 +23,7 @@
 include:
   - local: gitlab-ci/templates/main-mpu-build-templates.yml
 
+<<<<<<<< HEAD:gitlab-ci/main_mpu_build/n2h-gitlab-ci.yml
 ################################### Preparation job for main branch N2H build jobs ####################################
 rzn2h-prep-for-main-build-job:
   variables:
@@ -31,6 +32,9 @@ rzn2h-prep-for-main-build-job:
     - .prep_for_main_build_job_template
 
 ######################################## N2H eval MPU build jobs : main branch ########################################
+========
+######################################## N2H eval MPU build jobs : tag ################################################
+>>>>>>>> 1db9ccda3 (Porting Git Automation v4.3: Main branch Merge Gateway):gitlab-ci/tag_mpu_build/n2h-gitlab-ci.yml
 rzn2h-release-core4:
   variables:
     PLAT: "n2h"

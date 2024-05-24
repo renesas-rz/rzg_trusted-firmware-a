@@ -23,7 +23,7 @@
 include:
   - local: gitlab-ci/templates/dev-mpu-build-templates.yml
 
-######################################### G3E dev overnight MPU build jobs ############################################
+######################################## G3E dev_1 MPU build jobs : dev branch ########################################
 rzg3e-release-dev-1:
   variables:
     PLAT: "g3e"

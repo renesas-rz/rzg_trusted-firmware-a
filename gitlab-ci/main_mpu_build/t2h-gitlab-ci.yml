@@ -23,6 +23,7 @@
 include:
   - local: gitlab-ci/templates/main-mpu-build-templates.yml
 
+<<<<<<<< HEAD:gitlab-ci/main_mpu_build/t2h-gitlab-ci.yml
 ################################### Preparation job for main branch T2H build jobs ####################################
 rzt2h-prep-for-main-build-job:
   variables:
@@ -31,6 +32,9 @@ rzt2h-prep-for-main-build-job:
     - .prep_for_main_build_job_template
 
 ######################################## T2H dev_1 MPU build jobs : main branch #######################################
+========
+######################################## T2H dev_1 MPU build jobs : dev branch ########################################
+>>>>>>>> 1db9ccda3 (Porting Git Automation v4.3: Main branch Merge Gateway):gitlab-ci/dev_mpu_build/t2h-gitlab-ci.yml
 rzt2h-release-core4:
   variables:
     PLAT: "t2h"
