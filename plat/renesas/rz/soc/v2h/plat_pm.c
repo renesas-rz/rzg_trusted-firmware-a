@@ -190,6 +190,9 @@ static void rzv2h_get_sys_suspend_power_state(psci_power_state_t *req_state)
 
 static void __dead2 rzv2h_system_off(void)
 {
+	/* Set the CPG_LP_PWC_CTL1.ALL_OFF_TRG bit to allow desired power-off sequencing */
+	mmio_write_32(CPG_LP_PWC_CTL1, CPG_LP_PWC_CTL1_ALL_OFF_TRG);
+
 	wfi();
 	ERROR("RZ/V2H System Off: operation not handled.\n");
 	panic();
