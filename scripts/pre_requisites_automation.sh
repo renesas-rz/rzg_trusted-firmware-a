@@ -128,6 +128,34 @@ add_uboot_files()
     echo "Checked and updated u-boot file permissions"
 }
 
+############################################## add_tftf_files ########################################################
+# 1. Adds the TFTF files, and checks the appropriate permissions are in place for the files.
+# 2. Assumption: the current working directory should be the runner directory before this function is called.
+#######################################################################################################################
+add_tftf_files()
+{
+    cp -r ../../../../../../cicd_prerequisites/tftf .
+
+    if [ -d "./tftf" ]; then
+    	echo "Copied the TFTF files"
+    else
+    	echo "ERROR: Couldn't copy the u-boot files"
+    	exit 1
+    fi
+
+	if [ "$(stat -c "%a" "./tftf")" != "755" ]; then
+        chmod 755 "./tftf"
+    fi
+
+	find "./tftf" -type f | while read -r file; do
+	    if [ "$(stat -c "%a" "$file")" != "664" ]; then
+	    chmod 664 "$file"
+	    fi
+	done
+
+    echo "Checked and updated TFTF file permissions"
+}
+
 ################################################ add_scripts ##########################################################
 # 1. Adds the scripts, and checks the appropriate permissions are in place for the files.
 # 2. Assumption: the current working directory should be the runner directory before this function is called.
@@ -210,6 +238,7 @@ for RUN_DIR in ./*/; do
 		delete_all_files
 		add_compiler_files
 	   	add_uboot_files
+        add_tftf_files
 	   	add_scripts
 		create_workspace
 	fi
