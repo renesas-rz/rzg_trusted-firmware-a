@@ -20,6 +20,25 @@
 # Description: Shell script for updating pre-required files and permissions in the runner directories
 #######################################################################################################################
 
+################################################## variables ##########################################################
+prerequisites_dir_path="/home/gitlab-runner/builds/cicd_prerequisites/"
+build_dir_path="/home/gitlab-runner/builds/"
+
+############################################## ref_folder_setup #######################################################
+# 1. Update the files/folders if they have been updated on SVN
+# 2. Extract the compiler tar file
+# 3. Assumption: the current working directory should be the prerequisites directory before this function is called.
+#######################################################################################################################
+ref_folder_setup()
+{
+	if [ -d "./compiler" ]; then
+    	rm ./compiler
+   	fi
+	svn update
+	pwd
+	tar -xJf compiler.tar.xz
+}
+
 ############################################## delete_all_files #######################################################
 # 1. Delete all the files and folders from the current directory.
 # 2. Assumption: the current working directory should be the runner directory before this function is called.
@@ -30,7 +49,7 @@ delete_all_files()
 
     if [ $(ls -A "$(pwd)") ]; then
     	echo "ERROR: Couldn't delete all the files."
-    	exit -1
+    	exit 1
     else
     	echo "Deleted all the files within the runner directory"
     fi
@@ -42,19 +61,43 @@ delete_all_files()
 #######################################################################################################################
 add_compiler_files()
 {
-    cp -r ../../../../../../File_ref_dir/compiler .
+    cp -r ../../../../../../cicd_prerequisites/compiler .
 
     if [ -d "./compiler" ]; then
     	echo "Copied the compiler files"
     else
     	echo "ERROR: Couldn't copy the compiler files"
-    	exit -1
+    	exit 1
     fi
 
     if [ "$(stat -c "%a" "./compiler")" != "755" ]; then
         chmod 755 "./compiler"
     fi
+
+    cd ./compiler
+
+    for COMP_DIR in ./*/; do
+    	if [ "$(stat -c "%a" "$COMP_DIR")" != "755" ]; then
+    		chmod 755 "$COMP_DIR"
+    	fi
+    done
+
+    cd $COMP_DIR
+
+	for SUB_DIR in ./*/; do
+		if [ "$(stat -c "%a" "$SUB_DIR")" != "755" ]; then
+			chmod 755 "$SUB_DIR"
+		fi
+        find "./$SUB_DIR" -type f | while read -r file; do
+            if [ "$(stat -c "%a" "$file")" != "775" ]; then
+                chmod 775 "$file"
+            fi
+	    done
+	done
+
     echo "Checked and updated compiler file permissions"
+
+    cd ../../
 }
 
 ############################################## add_uboot_files ########################################################
@@ -63,20 +106,25 @@ add_compiler_files()
 #######################################################################################################################
 add_uboot_files()
 {
-    cp -r ../../../../../../File_ref_dir/u-boot .
+    cp -r ../../../../../../cicd_prerequisites/u-boot .
 
     if [ -d "./u-boot" ]; then
     	echo "Copied the u-boot files"
     else
     	echo "ERROR: Couldn't copy the u-boot files"
-    	exit -1
+    	exit 1
     fi
 
-    find "./u-boot" -type f | while read -r file; do
-        if [ "$(stat -c "%a" "$file")" != "664" ]; then
-        chmod 664 "$file"
-        fi
-    done
+	if [ "$(stat -c "%a" "./u-boot")" != "755" ]; then
+        chmod 755 "./u-boot"
+    fi
+
+	find "./u-boot" -type f | while read -r file; do
+	    if [ "$(stat -c "%a" "$file")" != "664" ]; then
+	    chmod 664 "$file"
+	    fi
+	done
+
     echo "Checked and updated u-boot file permissions"
 }
 
@@ -86,19 +134,34 @@ add_uboot_files()
 #######################################################################################################################
 add_scripts()
 {
-    cp -r ../../../../../../File_ref_dir/scripts .
+    cp -r ../../../../../../cicd_prerequisites/scripts .
 
     if [ -d "./scripts" ]; then
     	echo "Copied the scripts"
     else
     	echo "ERROR: Couldn't copy the scripts"
-    	exit -1
+    	exit 1
     fi
 
-    if [ "$(stat -c "%a" "./scripts/checkpatch/checkpatch.pl")" != "775" ]; then
-        chmod 775 "./scripts/checkpatch/checkpatch.pl"
+	if [ "$(stat -c "%a" "./scripts")" != "755" ]; then
+        chmod 755 "./scripts"
     fi
+
+    cd ./scripts || exit
+
+   	if [ "$(stat -c "%a" "./checkpatch")" != "755" ]; then
+    	chmod 755 "./checkpatch"
+    fi
+
+    find "./checkpatch" -type f | while read -r file; do
+		if [ "$(stat -c "%a" "$file")" != "775" ]; then
+			chmod 775 "$file"
+		fi
+	done
+
     echo "Checked and updated the script permissions"
+
+    cd ..
 }
 
 ############################################### add_workspace #########################################################
@@ -113,7 +176,7 @@ create_workspace()
     	echo "Created the workspace directory"
     else
     	echo "ERROR: Couldn't create the workspace directory"
-    	exit -1
+    	exit 1
     fi
 
     if [ "$(stat -c "%a" "./workspace")" != "777" ]; then
@@ -126,23 +189,33 @@ create_workspace()
 # Loops through all the runner directories and updates it
 #######################################################################################################################
 echo "#################### UPDATING ####################"
+
+cd $prerequisites_dir_path
+ref_folder_setup
+cd $build_dir_path
+
 for RUN_DIR in ./*/; do
 	[ -d "$RUN_DIR" ] || continue
+	DIR_NAME=$(basename $RUN_DIR)
     #Reference folder where the updated files should be kept. This folder shouldn't be a part of this loop.
-	if [[ "$(basename $RUN_DIR)" == *"File_ref_dir"* ]]; then
+	if [[ "$DIR_NAME" == *"cicd_prerequisites"* ]]; then
 		continue
 	fi
 
     echo "#################### PROCESSING RUNNER:"${RUN_DIR}" ####################"
-    cd ${RUN_DIR}0/products/common/bootloader/soc/
-    pwd
-    delete_all_files
-	add_compiler_files
-   	add_uboot_files
-   	add_scripts
-    create_workspace
+    runner_dir_path=${RUN_DIR}0/products/common/bootloader/soc/
+    cd $runner_dir_path
+
+    if [[ "$(pwd)" == *"${DIR_NAME}/0/products/common/bootloader/soc" ]]; then
+		delete_all_files
+		add_compiler_files
+	   	add_uboot_files
+	   	add_scripts
+		create_workspace
+	fi
 
     #Return to the "builds" directory, for the next runner directory to be picked next iteration.
-    cd ../../../../../../
+    cd $build_dir_path
 done
+
 echo "#################### FINISHED ####################"
