@@ -63,10 +63,7 @@ static int rzt2h_pwr_domain_on(u_register_t mpidr)
 	/* Release the reset state of each CA55 core */
 	mmio_write_32(swrcpu[coreid][0], 0x00000000);
 
-	/* Re-lock Registers */
-	sys_safetybase_lock(PRCRx_LOW_POWER);
-	sys_safetybase_lock(PRCRx_SYS_CTRL);
-
+	/* Deliberately not Re-locking Registers */
 	return PSCI_E_SUCCESS;
 }
 
@@ -111,9 +108,9 @@ static void __dead2 rzt2h_system_reset(void)
 
 const plat_psci_ops_t rzt2h_plat_psci_ops = {
 	.pwr_domain_on			= rzt2h_pwr_domain_on,
-	.pwr_domain_on_finish		= rzt2h_pwr_domain_on_finish,
+	.pwr_domain_on_finish	= rzt2h_pwr_domain_on_finish,
 	.pwr_domain_off			= rzt2h_pwr_domain_off,
-	.system_off			= rzt2h_system_off,
+	.system_off				= rzt2h_system_off,
 	.system_reset			= rzt2h_system_reset,
 };
 
