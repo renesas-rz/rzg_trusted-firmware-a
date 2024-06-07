@@ -23,6 +23,20 @@
 include:
   - local: gitlab-ci/templates/tag-mpu-build-templates.yml
 
+############################################## G3E tag creation job ###################################################
+rzg3e-tag-creation-job:
+  variables:
+    PLAT: "g3e"
+  extends:
+    - .tag_creation_job_template
+
+############################################## G3E tag deployment job #################################################
+rzg3e-tag-deployment-job:
+  variables:
+    PLAT: "g3e"
+  extends:
+    - .tag_deployment_job_template
+
 ######################################## G3E dev_1 MPU build jobs : tag ###############################################
 rzg3e-release-dev-1:
   variables:

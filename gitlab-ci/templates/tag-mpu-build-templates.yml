@@ -19,6 +19,47 @@
 # Description: Yaml file containing templates for tag MPU build tests.
 #######################################################################################################################
 
+######################################### tag_creation_job_template ###################################################
+# 1. Creates a local tag off the main branch within the workspace directory.
+# 2. The scripts are used from the dev branch. Using cd commands to move from one dir to another.
+#######################################################################################################################
+.tag_creation_job_template:
+  stage: tag_creation
+  variables:
+    PLAT: ""
+  interruptible: true
+  tags:
+    - "${PLAT}_tag_tests"
+  script:
+    - scripts/create_and_setup_release_branch.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$PLATFORM"
+    - cd ../workspace/tf-a
+    - git checkout "2.7.0/rz_rel_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - git merge "2.7.0/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - git branch --delete "2.7.0/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - cd ../../tf-a
+    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$TAG_NAME"
+    - cd ../workspace/tf-a
+
+######################################### tag_deployment_job_template #################################################
+# 1. Tag would be pushed to repository only if PUSH_TAG pipeline variable is set to true and the tag is NOT already
+#    present in the repository.
+# 2. In all other cases, appropriate messages would be printed.
+#######################################################################################################################
+.tag_deployment_job_template:
+  stage: tag_deployment
+  variables:
+    PLAT: ""
+  interruptible: true
+  tags:
+    - "${PLAT}_tag_tests"
+  script:
+    - if [ "$PUSH_TAG" = "true" ]; then
+    - git push origin $TAG_NAME
+    - echo "Tag pushed to GitLab repository."
+    - else
+    - echo "Tag NOT pushed to GitLab repository."
+    - fi
+
 ############################################ tag_build_job_template ###################################################
 # 1. Contains basic template for building MPU code within a tag.
 # 2. All the variables listed are required in the mpu_build.sh script.
@@ -43,7 +84,7 @@
 .linux_tag_build_job_template: &linux_tag_build_job_template
   <<: *tag_build_job_template
   tags:
-    - release_tests
+    - "${PLAT}_tag_tests"
   before_script:
     - cd "../workspace/tf-a"
     - export CROSS_COMPILE=../../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
