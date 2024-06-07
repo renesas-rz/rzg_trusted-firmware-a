@@ -17,14 +17,16 @@
 #include <rz_soc_def.h>
 #include <common/bl_common.h>
 
-
 #define LO_REG							(0U)
 #define HI_REG							(1U)
 #define MAX_PLATFORM_CORE_COUNT			(4U)
 
+#define CORE_ON_STATE					(1U)
+#define CORE_OFF_STATE					(0U)
 
 uintptr_t gp_warm_ep;
 
+static volatile uint8_t cores_state[PLATFORM_CORE_COUNT];
 
 static int rzt2h_pwr_domain_on(u_register_t mpidr)
 {
@@ -46,6 +48,11 @@ static int rzt2h_pwr_domain_on(u_register_t mpidr)
 
 	if (coreid >= PLATFORM_CORE_COUNT)
 		return PSCI_E_INVALID_PARAMS;
+
+	if (cores_state[coreid] == CORE_ON_STATE) {
+		ERROR("BL31: Core %u is already ON.\n", coreid);
+		return PSCI_E_ALREADY_ON;
+	}
 
 	/* Un-lock writing to CA55_RVBAxy registers */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
@@ -75,6 +82,14 @@ static int rzt2h_pwr_domain_on(u_register_t mpidr)
 	sys_safetybase_unlock(PRCRx_CLOCK_GEN);
 	sys_safetybase_unlock(PRCRx_GPIO);
 
+	/* Set the core state to ON */
+	cores_state[coreid] = CORE_ON_STATE;
+	flush_dcache_range((uintptr_t)&cores_state, sizeof(cores_state));
+	dsb();
+	isb();
+
+	sev();
+
 	return PSCI_E_SUCCESS;
 }
 
@@ -94,12 +109,39 @@ static void rzt2h_pwr_domain_off(const psci_power_state_t *state)
 
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
+
+	/* Set the core state to OFF */
+	cores_state[coreid] = CORE_OFF_STATE;
+	flush_dcache_range((uintptr_t)&cores_state[coreid], sizeof(cores_state[coreid]));
+
 	/* Issue Barrier instruction */
 	isb();
 	dsb();
-
-	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
 }
+
+
+static void __dead2 rzt2h_pwr_domain_pwr_down_wfi(const psci_power_state_t *target_state)
+{
+	unsigned long mpidr = read_mpidr_el1();
+	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
+
+	if (coreid >= PLATFORM_CORE_COUNT) {
+		ERROR("Exceeds platform core count.\n");
+		panic();
+	}
+
+	while ((cores_state[coreid] == CORE_OFF_STATE))
+		wfe();
+
+	write_rmr_el3(RMR_EL3_RR_BIT | RMR_EL3_AA64_BIT);
+
+	dsbsy();
+
+	for (;;)
+		wfi();
+}
+
+
 
 static void __dead2 rzt2h_system_off(void)
 {
@@ -118,11 +160,12 @@ static void __dead2 rzt2h_system_reset(void)
 }
 
 const plat_psci_ops_t rzt2h_plat_psci_ops = {
-	.pwr_domain_on			= rzt2h_pwr_domain_on,
-	.pwr_domain_on_finish	= rzt2h_pwr_domain_on_finish,
-	.pwr_domain_off			= rzt2h_pwr_domain_off,
-	.system_off				= rzt2h_system_off,
-	.system_reset			= rzt2h_system_reset,
+	.pwr_domain_on				= rzt2h_pwr_domain_on,
+	.pwr_domain_on_finish		= rzt2h_pwr_domain_on_finish,
+	.pwr_domain_off				= rzt2h_pwr_domain_off,
+	.pwr_domain_pwr_down_wfi	= rzt2h_pwr_domain_pwr_down_wfi,
+	.system_off					= rzt2h_system_off,
+	.system_reset				= rzt2h_system_reset,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
@@ -130,6 +173,33 @@ int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 {
 	gp_warm_ep = sec_entrypoint;
 	*psci_ops = &rzt2h_plat_psci_ops;
+
+	unsigned long mpidr = read_mpidr_el1();
+	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
+
+	if (coreid >= PLATFORM_CORE_COUNT) {
+		ERROR("Exceeds platform core count.\n");
+		panic();
+	}
+
+	cores_state[coreid] = CORE_ON_STATE;
+
+	const uint32_t rval[MAX_PLATFORM_CORE_COUNT][2] = {
+		{ CA55_RVBAL0, CA55_RVBAH0 },
+		{ CA55_RVBAL1, CA55_RVBAH1 },
+		{ CA55_RVBAL2, CA55_RVBAH2 },
+		{ CA55_RVBAL3, CA55_RVBAH3 }
+	};
+
+	/* Un-lock writing to CA55_RVBAxy registers */
+	sys_safetybase_unlock(PRCRx_SYS_CTRL);
+
+	/* Write rebase address */
+	mmio_write_32(rval[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
+	mmio_write_32(rval[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
+
+	/* Disable Write Protection */
+	sys_base_unlock(PRCRx_SYS_CTRL);
 
 	return 0;
 }
