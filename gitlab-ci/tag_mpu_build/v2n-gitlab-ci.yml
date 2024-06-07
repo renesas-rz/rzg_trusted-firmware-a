@@ -23,6 +23,20 @@
 include:
   - local: gitlab-ci/templates/tag-mpu-build-templates.yml
 
+############################################## V2N tag creation job ###################################################
+rzv2n-tag-creation-job:
+  variables:
+    PLAT: "v2n"
+  extends:
+    - .tag_creation_job_template
+
+############################################## V2N tag deployment job #################################################
+rzv2n-tag-deployment-job:
+  variables:
+    PLAT: "v2n"
+  extends:
+    - .tag_deployment_job_template
+
 ######################################## V2N dev_1 MPU build jobs : tag ###############################################
 rzv2n-release-dev-1:
   variables:

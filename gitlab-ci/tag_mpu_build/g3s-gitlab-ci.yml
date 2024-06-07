@@ -23,6 +23,20 @@
 include:
   - local: gitlab-ci/templates/tag-mpu-build-templates.yml
 
+############################################## G3S tag creation job ###################################################
+rzg3s-tag-creation-job:
+  variables:
+    PLAT: "g3s"
+  extends:
+    - .tag_creation_job_template
+
+############################################## G3S tag deployment job #################################################
+rzg3s-tag-deployment-job:
+  variables:
+    PLAT: "g3s"
+  extends:
+    - .tag_deployment_job_template
+
 ######################################## G3S smarc MPU build jobs : tag ###############################################
 rzg3s-release-no-configs-smarc:
   variables:

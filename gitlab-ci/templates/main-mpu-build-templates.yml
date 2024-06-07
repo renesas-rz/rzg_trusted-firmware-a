@@ -28,7 +28,7 @@
   variables:
     PLAT: ""
   tags:
-    - "${PLAT}_tests"
+    - "${PLAT}_main_tests"
   script:
     - cd "../workspace"
     - rm -r -f ./*
@@ -62,7 +62,7 @@
 .linux_main_build_job_template: &linux_main_build_job_template
   <<: *main_build_job_template
   tags:
-    - "${PLAT}_tests"
+    - "${PLAT}_main_tests"
   before_script:
     - cd "../workspace/tf-a"
     - git status

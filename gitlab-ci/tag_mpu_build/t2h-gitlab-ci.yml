@@ -23,6 +23,20 @@
 include:
   - local: gitlab-ci/templates/tag-mpu-build-templates.yml
 
+############################################## T2H tag creation job ###################################################
+rzt2h-tag-creation-job:
+  variables:
+    PLAT: "t2h"
+  extends:
+    - .tag_creation_job_template
+
+############################################## T2H tag deployment job #################################################
+rzt2h-tag-deployment-job:
+  variables:
+    PLAT: "t2h"
+  extends:
+    - .tag_deployment_job_template
+
 ######################################## T2H dev_1 MPU build jobs : tag ###############################################
 rzt2h-release-core4:
   variables:

@@ -25,6 +25,7 @@ stages:
   - static_analysis_testing
   - mpu_build_testing
   - klocwork
+  - tag_deployment
 
 ################################################## workflow ###########################################################
 workflow:
