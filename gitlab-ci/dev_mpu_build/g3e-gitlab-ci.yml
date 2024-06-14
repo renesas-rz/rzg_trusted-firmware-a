@@ -62,7 +62,7 @@ rzg3e-debug-log50-dev-1:
     - .linux_dev_build_success_job_template
 
     ######################################## G3E smarc MPU build jobs : dev branch ########################################
-rzg3e-release-dev-1:
+rzg3e-release-smarc:
   variables:
     PLAT: "g3e"
     BOARD: "smarc"
@@ -71,7 +71,7 @@ rzg3e-release-dev-1:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3e-release-dev-1-stack-protector-0:
+rzg3e-release-smarc-stack-protector-0:
   variables:
     PLAT: "g3e"
     BOARD: "smarc"
@@ -81,7 +81,7 @@ rzg3e-release-dev-1-stack-protector-0:
   extends:
     - .linux_dev_build_failure_job_template
 
-rzg3e-debug-log0-dev-1:
+rzg3e-debug-log0-smarc:
   variables:
     PLAT: "g3e"
     BOARD: "smarc"
@@ -90,7 +90,7 @@ rzg3e-debug-log0-dev-1:
   extends:
     - .linux_dev_build_success_job_template
 
-rzg3e-debug-log50-dev-1:
+rzg3e-debug-log50-smarc:
   variables:
     PLAT: "g3e"
     BOARD: "smarc"
