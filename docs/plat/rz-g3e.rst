@@ -8,24 +8,6 @@ easily implement industrial ethernet connectivity.
 
 Plug-ins are available for multiple open-source software tools.
 
-
-Renesas RZ/G3E reference platforms:
------------------------------------
-
-+--------------+---------------------------------------------------------------------------------------------------------+
-| Board        | Details                                                                                                 |
-+==============+===============+=========================================================================================+
-| dev1         | Equipped with Renesas RZ/G3E SoC                                                                        |
-|              +---------------------------------------------------------------------------------------------------------+
-|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update |
-+--------------+---------------------------------------------------------------------------------------------------------+
-
-`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__ //TODO: Update
-
-The current TF-A port has been tested on the Dev1 RZ/G3E
-SoC_id  R9A09G047E53GBG revision ESx.y.
-
-
 ::
 
 	Arm® Quad/Dual Core Cortex®-A55 1.8 GHz, Neon™, FPU, L1-caches and L3-cache
@@ -39,9 +21,26 @@ SoC_id  R9A09G047E53GBG revision ESx.y.
 		2 of the following: MIPI DSI(1 ch.), Parallel interface (1 ch.), LVDS (2 ch.)
 	General purpose timer (16 ch.), CMTW (8 ch.)
 
+Renesas RZ/G3E reference platforms:
+-----------------------------------
+
++--------------+---------------------------------------------------------------------------------------------------------+
+| Board        | Details                                                                                                 |
++==============+===============+=========================================================================================+
+| dev1         | Equipped with Renesas RZ/G3E SoC                                                                        |
+|              +---------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update |
++--------------+---------------------------------------------------------------------------------------------------------+
+| smarc        | Equipped with Renesas RZ/G3E SoC                                                                        |
+|              +---------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update |
++--------------+---------------------------------------------------------------------------------------------------------+
+
+`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__
 
 Overview
 --------
+
 On RZ/G3E SoCs the BOOTROM starts the cpu at EL3; for this port BL2
 will therefore be entered at this exception level.
 EL1 is entered before exiting BL31.
@@ -52,6 +51,18 @@ Once BL2 boots, parameters for the subsequent images to be loaded are
 stored in shared memory (PARAMS_BASE) and after which BL2 switches to
 BL31.
 
+System Tested:
+--------------
+
+The current TF-A port has been tested on the dev_1 and smarc RZ/G3E boards.
+SoC_id  R9A09G047E53GBG revision ESx.y.
+
+* u-boot:
+  The port has been tested using mainline uboot with the G3E Board added.
+
+* linux:
+  The port has been tested using mainline kernel with the G3E Board added.
+
 How to build
 ------------
 
@@ -59,23 +70,39 @@ The TF-A build options depend on the target board so you will have to
 refer to those specific instructions. What follows is customized to
 the Dev_1 RZ/G3E development kit used in this port.
 
-Build Tested:
-~~~~~~~~~~~~~
+Base build instruction:
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
-       make PLAT=g3e all BOARD=dev_1 ENABLE_STACK_PROTECTOR=default
-       make PLAT=g3e BOARD=dev_1 bptool all ENABLE_STACK_PROTECTOR=default DEBUG=1 LOG_LEVEL=40
+    make PLAT=g3e all BOARD=dev_1
+    make PLAT=g3e all BOARD=smarc
+
+Build Options:
+~~~~~~~~~~~~~~
+
+If a debug build with logging is required, then use these two build options.
+
+.. code:: bash
+
+    DEBUG=1 LOG_LEVEL=20
+
+    LOG_LEVEL = 0 = LOG_LEVEL_NONE
+    LOG_LEVEL = 10 = LOG_LEVEL_ERROR
+    LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
+    LOG_LEVEL = 30 = LOG_LEVEL_WARNING
+    LOG_LEVEL = 40 = LOG_LEVEL_INFO
+    LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
 
 TF-A Build Procedure
 ~~~~~~~~~~~~~~~~~~~~
+
 .. code:: bash
 
-       make PLAT=g3e BOARD=dev_1 BL33=${path_to_u-boot_file}/u-boot.bin bl2 fip bptool
-       ./tools/renesas/bptool build/g3e/release/bl2.bin build/g3e/release/bp_spi.bin 0x08004000 spi
-       cat build/g3e/release/bp_spi.bin build/g3e/release/bl2.bin > build/g3e/release/bp_spi_bl2.bin
-       ${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/release/bp_spi_bl2.bin build/g3e/release/bp_spi_bl2.srec
-       ${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x0000 --srec-forceS3 build/g3e/release/fip.bin build/g3e/release/fip.srec
+	cd <tfa project path>
+	export CROSS_COMPILE=<path to installed toolset>/bin/aarch64-elf-
+	make PLAT=g3e BOARD=dev_1 BL33=${path_to_u-boot_file}/u-boot.bin bl2 fip bptool pkg
+	make PLAT=g3e BOARD=smarc BL33=${path_to_u-boot_file}/u-boot.bin bl2 fip bptool pkg
 
 
 How to load TF-A
@@ -83,70 +110,76 @@ How to load TF-A
 
 Loading the flash writer
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Set the device in SCIF mode,
-Connect to the COM port provided by the device via some terminal software.
-Hit reset and the device will print a message.
-The baudrate is 115200
-Then send the device the FlashWriter[1] (e.g. Flash_Writer_SCIF_RZG3E_DEV_LPDDR4X_0117.mot).
-[1] https://github.com/renesas-rz			//TODO: Update
+
+.. code-block:: text
+
+	1. Set the device in scif mode.
+	2. Connect to the COM port provided by the device via some terminal software.
+	3. Hit reset and the device will print a message.
+	4. The baudrate is 115200
+	5. Then send the device the FlashWriter[1] (e.g. Flash_Writer_SCIF_RZG3E_DEV_LPDDR4X_0117.mot).
+	[1] https://github.com/renesas-rz			//TODO: Update
 
 Flash Procedure for xSPI
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-	1.	Use the ‘Load the flash writer procedure’.
-	2.	Write the BL2 srecord to the device SPI flash
-		a.	Enter: XLS2
-		b.	Program Top Address: 0x8003600
-		c.	QSPI Save Address: 0x00000
-		d.	Send the BL2 srecord
-		e.	The output should show as follows:
-	3.	Write the BL31 srecord to the device SPI flash
-		a.	Enter: XLS2
-		b.	Program Top Address: 0x00000
-		c.	QSPI Save Address: 0x60000
-		d.	Send the BL31 srecord
+	1. Use the ‘Load the flash writer procedure’.
+	2. Write the BL2 srecord to the device SPI flash
+		a. Enter: XLS2
+		b. Program Top Address: 0x8003600
+		c. QSPI Save Address: 0x00000
+		d. Send the BL2 srecord
+		e. The output should show as follows:
+	3. Write the FIP srecord to the device SPI flash
+		a. Enter: XLS2
+		b. Program Top Address: 0x00000
+		c. QSPI Save Address: 0x60000
+		d. Send the FIP srecord
 
 Flash Procedure for EMMC
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-    1.  Use the ‘Load the flash writer procedure’.
-    2.  Modify the EXT_CSD registers - this step only needs to be performed the first time.
-        a.  Change the First Register
-            i.   Use the Flash Writer's command EM_SECSD.
-            ii.  Enter the EXT_CSD index: B1
-	        iii. Enter the Input Value: 2
-	    b.  Change the Second Register
-	        i.	 Use the Flash Writer's command EM_SECSD.
-	        ii.	 Enter the EXT_CSD index: B3
-	        iii. Enter the Input Value: 8
-	3.	Write the bl2 srecord to the device
-		a.	Use the Flash Writer's command EM_W.
-		b.	Partition Select: 1
-		c.	Input Start Address in sector: 1
-		d.	Input Program Start Address: 8003600
-		e.	Send the bl2 srecord.
-	4.	Write the fip srecord to the device
-		a.	Use the Flash Writer's command EM_W.
-		b.	Partition Select: 1
-		c.	Input Start Address in sector: 300
-		d.	Input Program Start Address: 8003600
-		e.	Send the fip srecord file
+	1.  Use the ‘Load the flash writer procedure’.
+	2.  Modify the EXT_CSD registers - this step only needs to be performed the first time.
+		a.  Change the First Register
+			i.   Use the Flash Writer's command EM_SECSD.
+			ii.  Enter the EXT_CSD index: B1
+			iii. Enter the Input Value: 2
+		b.  Change the Second Register
+			i.  Use the Flash Writer's command EM_SECSD.
+			ii.  Enter the EXT_CSD index: B3
+			iii. Enter the Input Value: 8
+	3. Write the BL2 srecord to the device
+		a. Use the Flash Writer's command EM_W.
+		b. Partition Select: 1
+		c. Input Start Address in sector: 1
+		d. Input Program Start Address: 8003600
+		e. Send the BL2 srecord.
+	4. Write the FIP srecord to the device
+		a. Use the Flash Writer's command EM_W.
+		b. Partition Select: 1
+		c. Input Start Address in sector: 300
+		d. Input Program Start Address: 8003600
+		e. Send the FIP srecord file
 
 Flash Procedure for SD
 ~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
 	Steps 1 to 9 only needs to be performed once.
-	1.	Enter fdisk
+	1. Enter fdisk
 			sudo fdisk /dev/<sd device>
 
 			Welcome to fdisk (util-linux 2.37.2).
 			Changes will remain in memory only, until you decide to write them.
 			Be careful before using the write command.
 
-	2.	Remove the existing partitions
+	2. Remove the existing partitions
 			Command (m for help): d
 			Partition number (1,2, default 2):
 
@@ -156,7 +189,7 @@ Flash Procedure for SD
 			Selected partition 1
 			Partition 1 has been deleted.
 
-	3.	Create partitions
+	3. Create partitions
 			Command (m for help): n
 			Partition type
 			p   primary (0 primary, 0 extended, 4 free)
@@ -196,22 +229,22 @@ Flash Procedure for SD
 			/dev/sdd1          4096 1052671 1048576  512M 83 Linux
 			/dev/sdd2       1052672 7744511 6691840  3.2G 83 Linux
 
-	4.	If the signature removal prompt appears after creating either partition, then removed the signature as shown.
+	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 			Partition #2 contains a ext4 signature.
 
 			Do you want to remove the signature? [Y]es/[N]o: y
 
 			The signature will be removed by a write command.
 
-	5.	Write partitions to disk
+	5. Write partitions to disk
 			Command (m for help): w
 			The partition table has been altered.
 			Calling ioctl() to re-read partition table.
 			Syncing disks
 
-	6.	Remount the SD card by removing it then, plugging it back in.
+	6. Remount the SD card by removing it then, plugging it back in.
 
-	7.	Format the partitions
+	7. Format the partitions
 			sudo mkfs.ext4 /dev/<Partition of size 512>
 			mke2fs 1.46.5 (30-Dec-2021)
 			Creating filesystem with 131072 4k blocks and 32768 inodes
@@ -262,48 +295,24 @@ Flash Procedure for SD
 			sudo cp ./<g3e kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
 			sudo tar -jxvf <g3e root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
+
 Boot trace
 ----------
+
 .. code-block:: text
 
-	NOTICE:  BL2: v2.7(debug):2.7.0/rz_soc_dev-46-g77ba4630a-dirty
-	NOTICE:  BL2: Built : 11:27:10, Mar  6 2024
-	INFO:    BL2: Doing platform setup
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 2 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    DDR: Setup (Rev. 1.20)
-	INFO:    BL2: Loading image id 3
-	INFO:    Loading image id=3 at address 0x44000000
-	INFO:    Image id=3 loaded: 0x44000000 - 0x4400f0c9
-	INFO:    BL2: Loading image id 5
-	INFO:    Loading image id=5 at address 0x50000000
-	INFO:    Image id=5 loaded: 0x50000000 - 0x500a40d0
+	NOTICE:  BL2: v2.7(release): <git describe description>
+	NOTICE:  BL2: Built :  <build time and date>
 	NOTICE:  BL2: Booting BL31
-	INFO:    Entry point address = 0x44000000
-	INFO:    SPSR = 0x3cd
-	NOTICE:  BL31: v2.7(debug):2.7.0/rz_soc_dev-46-g77ba4630a-dirty
-	NOTICE:  BL31: Built : 11:27:11, Mar  6 2024
-	INFO:    GICv3 without legacy support detected.
-	INFO:    ARM GICv3 driver initialized in EL3
-	INFO:    Maximum SPI INTID supported: 991
-	INFO:    BL31: Initializing runtime services
-	INFO:    BL31: cortex_a55: CPU workaround for 1530923 was applied
-	INFO:    BL31: Preparing for EL3 exit to normal world
-	INFO:    Entry point address = 0x50000000
-	INFO:    SPSR = 0x3c5
+	NOTICE:  BL31: v2.7(release):<git describe description>
+	NOTICE:  BL31: Built : <build time and date>
 
 
-	<U-Boot starts up and begins to load the Linux kernel.>
+	######
+	U-Boot starts up and the Linux Kernel is loaded.
+	######
 
-	<The kernel starts up and the login prompt is shown.>
+	######
+	The kernel starts up and the login prompt is shown.
+	######
 
