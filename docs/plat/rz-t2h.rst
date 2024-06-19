@@ -8,22 +8,6 @@ easily implement real-time control solutions.
 
 Plug-ins are available for multiple open-source software tools.
 
-
------------------------------------
-Renesas RZ/T2H reference platforms:
------------------------------------
-
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-| Board        |      Details                                                                                                                          |
-+==============+===============+=======================================================================================================================+
-| dev1         | Equipped with Renesas RZ/T2H SoC                                                                                                      |
-|              +---------------------------------------------------------------------------------------------------------------------------------------+
-|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzt-series-mpu                                        |
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-
-The current TF-A port has been tested on the Dev1 RZ/T2H
-SoC_id  r9a09g077m48gbg (Quad A55), r9a09g077m28gbg (Dual A55) or r9a09g077m08gbg (Single A55) revision ESx.y.
-
 ::
 
 	On-chip 64-bit Arm Cortex-A55 processor
@@ -57,8 +41,19 @@ SoC_id  r9a09g077m48gbg (Quad A55), r9a09g077m28gbg (Dual A55) or r9a09g077m08gb
 	through JTAG and SWD interfaces.
  	No DCLS (Dual Core Lock Step) support
 
+Renesas RZ/T2H reference platforms:
+-----------------------------------
 
---------
++--------------+---------------------------------------------------------------------------------------------------------------------------------------+
+| Board        |      Details                                                                                                                          |
++==============+===============+=======================================================================================================================+
+| dev1         | Equipped with Renesas RZ/T2H SoC                                                                                                      |
+|              +---------------------------------------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzt-series-mpu   //TODO: Update                       |
++--------------+---------------------------------------------------------------------------------------------------------------------------------------+
+
+`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzt-series-mpu>`__   //TODO: Update
+
 Overview
 --------
 
@@ -76,8 +71,19 @@ This LSI is intended for booting up from external flash memory, you can
 choose to boot from one of the following devices: eSD, eMMC, 
 Serial Flash Memory, USB or SCIF download boot.
 
+System Tested:
+--------------
 
-------------
+The current TF-A port has been tested on the Dev1 RZ/T2H
+SoC_id  r9a09g077m48gbg (Quad A55), r9a09g077m28gbg (Dual A55) or r9a09g077m08gbg (Single A55) revision ESx.y.
+
+* u-boot:
+  The port has been tested using mainline uboot with RZ/T2H Dev board specific patches.
+
+* linux:
+  The port has been tested using mainline kernel with the RZ/T2H Dev board added.
+
+
 How to build
 ------------
 
@@ -107,14 +113,11 @@ This is used to specify to build for the quad, dual or single core SoC.
     PLATFORM_CORE_COUNT=2 --Dual core
     PLATFORM_CORE_COUNT=1 --Single core
 
+If a debug build with logging is required, then use these two build options.
 
 .. code:: bash
 
     DEBUG=1 LOG_LEVEL=20
-
-If a debug build with logging is required, then use these two build options.
-
-.. code:: bash
 
     LOG_LEVEL = 0 = LOG_LEVEL_NONE
     LOG_LEVEL = 10 = LOG_LEVEL_ERROR
@@ -123,15 +126,6 @@ If a debug build with logging is required, then use these two build options.
     LOG_LEVEL = 40 = LOG_LEVEL_INFO
     LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
 
-
-System Tested:
-~~~~~~~~~~~~~~
-
-* u-boot:
-  The port has been tested using mainline uboot with Dev_1 RZ/T2H board
-  specific patches.
-  <URL TBD>
-
 TF-A Build Procedure
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -139,72 +133,87 @@ TF-A Build Procedure
 
 		cd <tfa project path>
 		export CROSS_COMPILE=<path to installed toolset>/bin/aarch64-elf-
-		make PLAT=t2h all BOARD=dev_1 PLATFORM_CORE_COUNT=4 DEBUG=1 LOG_LEVEL=40
-		make PLAT=t2h all BOARD=dev_1 PLATFORM_CORE_COUNT=4 DEBUG=1 fip BL33=<path to u boot bin file>/u-boot.bin
-		python3 tools/renesas/rzt2h_boot_param/parameter_block_generator.py --output=param_output
-		make PLAT=t2h pkg BOARD=dev_1 DEBUG=1
+		make PLAT=t2h BOARD=dev_1 PLATFORM_CORE_COUNT=4 BL33=${path_to_u-boot_file}/u-boot.bin bl2 fip pkg
 
 
-----------------
 How to load TF-A
 ----------------
 
 Loading the flash writer
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-1.	Set the device in SCIF mode,
-2.	Connect to the COM port provided by the device via some terminal software.
-3.	Set the baudrate to be 115200
-4.	Set the transmit delay to be 0msec/char and 1msec/line
-5.	Hit reset and the device will print a message.
-6.	Send the FlashWriter mot file[1].
+.. code-block:: text
 
-[1] https://github.com/renesas-rz/<TBD>
+	1. Set the device in scif mode.
+	2. Connect to the COM port provided by the device via some terminal software.
+	3. Set the baudrate to be 115200
+	4. Set the transmit delay to be 0msec/char and 1msec/line
+	5. Hit reset and the device will print a message.
+	6. Send the FlashWriter mot file[1].
 
-Flash Procedure for xSPI
-~~~~~~~~~~~~~~~~~~~~~~~~
+	[1] https://github.com/renesas-rz/<TBD>
 
-1.	Use the ‘Loading the flash writer' procedure.
-2.	Modify the XSPIW parameter using this command: XSPIW 0 0x0 0
-3.	Set the transmit delay to be 0 msec/char and 0msec/line
-4.	Send the BL2 image srec file
-5.	Modify the XSPIW parameter using this command: XSPIW 0 0x60000 0
-6.	Set the transmit delay to be 0 msec/char and 1msec/line
-7.	Send the FIP image srec file
+Flash Procedure for xSPI0
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: text
+
+	1. Use the ‘Loading the flash writer' procedure.
+	2. Modify the XSPIW parameter using this command: XSPIW 0 0x0 0
+	3. Set the transmit delay to be 0 msec/char and 0msec/line
+	4. Send the BL2 image srec file
+	5. Modify the XSPIW parameter using this command: XSPIW 0 0x60000 0
+	6. Set the transmit delay to be 0 msec/char and 1msec/line
+	7. Send the FIP image srec file
+
+Flash Procedure for xSPI1
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: text
+
+	1. Use the ‘Loading the flash writer' procedure.
+	2. Modify the XSPIW parameter using this command: XSPIW 1 0x0 0
+	3. Set the transmit delay to be 0 msec/char and 0msec/line
+	4. Send the BL2 image srec file
+	5. Modify the XSPIW parameter using this command: XSPIW 1 0x60000 0
+	6. Set the transmit delay to be 0 msec/char and 1msec/line
+	7. Send the FIP image srec file
 
 Flash Procedure for EMMC
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-	1.	Use the ‘Loading the flash writer’.
-	2.	Modify the EXT_CSD registers - this step only needs to be performed the first time.
-		a.	Change the First Register: emmcwecsd 177 2
-		b.	Change the Second Register: emmcwecsd 179 8
-		c.	Print the values: emmcrecsd
-	3.	Write the bl2 srecord to the device
-		a.	Change the emmc register: emmcwecsd 179 9
-		b.	Use the emmc write command: emmcw 1 0
-		c.	Send the bl2 srecord.
-		d.	Change the emmc register: emmcwecsd 179 8
-	4.	Write the fip srecord to the device
-		a.	Change the emmc register: emmcwecsd 179 9
-		b.	Use the emmc write command: emmcw 0x300 0
-		c.	Send the fip srecord.
-		d.	Change the emmc register: emmcwecsd 179 8
+	1. Use the ‘Loading the flash writer’.
+	2. Modify the EXT_CSD registers - this step only needs to be performed the first time.
+		a. Change the First Register: emmcwecsd 177 2
+		b. Change the Second Register: emmcwecsd 179 8
+		c. Print the values: emmcrecsd
+	3. Write the BL2 srecord to the device
+		a. Change the emmc register: emmcwecsd 179 9
+		b. Use the emmc write command: emmcw 1 0
+		c. Send the BL2 srecord.
+		d. Change the emmc register: emmcwecsd 179 8
+	4. Write the FIP srecord to the device
+		a. Change the emmc register: emmcwecsd 179 9
+		b. Use the emmc write command: emmcw 0x300 0
+		c. Send the FIP srecord.
+		d. Change the emmc register: emmcwecsd 179 8
 
 Flash Procedure for SD
 ~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
 	Steps 1 to 9 only needs to be performed once.
-	1.	Enter fdisk
+	1. Enter fdisk
 			sudo fdisk /dev/<sd device>
 
 			Welcome to fdisk (util-linux 2.37.2).
 			Changes will remain in memory only, until you decide to write them.
 			Be careful before using the write command.
 
-	2.	Remove the existing partitions
+	2. Remove the existing partitions
 			Command (m for help): d
 			Partition number (1,2, default 2):
 
@@ -214,7 +223,7 @@ Flash Procedure for SD
 			Selected partition 1
 			Partition 1 has been deleted.
 
-	3.	Create partitions
+	3. Create partitions
 			Command (m for help): n
 			Partition type
 			p   primary (0 primary, 0 extended, 4 free)
@@ -254,22 +263,22 @@ Flash Procedure for SD
 			/dev/sdd1          4096 1052671 1048576  512M 83 Linux
 			/dev/sdd2       1052672 7744511 6691840  3.2G 83 Linux
 
-	4.	If the signature removal prompt appears after creating either partition, then removed the signature as shown.
+	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 			Partition #2 contains a ext4 signature.
 
 			Do you want to remove the signature? [Y]es/[N]o: y
 
 			The signature will be removed by a write command.
 
-	5.	Write partitions to disk
+	5. Write partitions to disk
 			Command (m for help): w
 			The partition table has been altered.
 			Calling ioctl() to re-read partition table.
 			Syncing disks
 
-	6.	Remount the SD card by removing it then, plugging it back in.
+	6. Remount the SD card by removing it then, plugging it back in.
 
-	7.	Format the partitions
+	7. Format the partitions
 			sudo mkfs.ext4 /dev/<Partition of size 512>
 			mke2fs 1.46.5 (30-Dec-2021)
 			Creating filesystem with 131072 4k blocks and 32768 inodes
@@ -320,27 +329,23 @@ Flash Procedure for SD
 			sudo cp ./<t2h kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
 			sudo tar -jxvf <t2h root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
-----------
 Boot trace
 ----------
+
 .. code-block:: text
 
-	NOTICE:  BL2: v2.7(release):v2.5/rzg2l-1.00-2294-gff6037e88
-	NOTICE:  BL2: Built : 09:42:43, Dec  5 2023
-	ERROR:   Reported Core count (0) is different from PLATFORM_CORE_COUNT (4)
+	NOTICE:  BL2: v2.7(release): <git describe description>
+	NOTICE:  BL2: Built :  <build time and date>
 	NOTICE:  BL2: Booting BL31
-	NOTICE:  BL31: v2.7(release):v2.5/rzg2l-1.00-2294-gff6037e88
-	NOTICE:  BL31: Built : 09:42:47, Dec  5 2023
+	NOTICE:  BL31: v2.7(release):<git describe description>
+	NOTICE:  BL31: Built : <build time and date>
 
+	######
+	U-Boot starts up and the Linux Kernel is loaded.
+	######
 
-	U-Boot 2021.10-g6874bf85f1 (Nov 30 2023 - 11:20:11 +0000)
+	######
+	The kernel starts up and the login prompt is shown.
+	######
 
-	CPU: Renesas Electronics RZ/T2H
-	Model: Renesas Development EVK based on r9a09g077m44
-	DRAM:  7.9 GiB
-	<More U-Boot specific trace>
-
-	<Boot Trace of next stage OS such as Linux, RTOS or others>
-
-
-NOTE: For "Reported Core Count (n) is different from PLATFORM_CORE_COUNT", n should be 1, 2, or 4, dependent on the CPU variant.
+	NOTE: For "Reported Core Count (n) is different from PLATFORM_CORE_COUNT", n should be 1, 2, or 4, dependent on the CPU variant.

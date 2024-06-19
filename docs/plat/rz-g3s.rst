@@ -8,24 +8,6 @@ easily implement various solutions.
 
 Plug-ins are available for multiple open-source software tools.
 
------------------------------------
-Renesas RZ/G3S reference platforms:
------------------------------------
-
-+--------------+-------------------------------------------------------------------------------------------------------------------------------------+
-| Board        | Details                                                                                                                             |
-+==============+===============+=====================================================================================================================+
-| smarc        | Equipped with Renesas RZ/G3S SoC                                                                                                    |
-|              |                                                                                                                                     |
-|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rtk9845s33s01000be-rzg3s-smarc-evaluation-board-kit |
-+--------------+-------------------------------------------------------------------------------------------------------------------------------------+
-
-`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__
-
-The current TF-A port has been tested on the SMARC Evaluation board for RZ/G3S
-SoC_id  R9A08G045S33GBG revision ESx.y.
-
-
 ::
 
     ARM CA55 r2p0 (ARMv8-A) 1.1 GHz Single Core, with NEON/FPU, L1$ I/D 32K, L2$ 0MB, L3$ 256K
@@ -43,11 +25,22 @@ SoC_id  R9A08G045S33GBG revision ESx.y.
         EMMC: 64 GB
         MICROSD-CARD SLOT: 2 Slots on the Smarc module. 1 Slot on the Carrier Board.
 
+Renesas RZ/G3S reference platforms:
+-----------------------------------
 
++--------------+-------------------------------------------------------------------------------------------------------------------------------------+
+| Board        | Details                                                                                                                             |
++==============+===============+=====================================================================================================================+
+| smarc        | Equipped with Renesas RZ/G3S SoC                                                                                                    |
+|              +-------------------------------------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rtk9845s33s01000be-rzg3s-smarc-evaluation-board-kit |
++--------------+-------------------------------------------------------------------------------------------------------------------------------------+
 
---------
+`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__
+
 Overview
 --------
+
 On RZ/G3S SoCs the BOOTROM starts the cpu at EL3; for this port BL2
 will therefore be entered at this exception level.
 
@@ -62,9 +55,18 @@ During the Cortex-A55 cold boot, you can choose to boot from one of the
 following devices: eSD, eMMC, Serial Flash Memory, or SCIF download
 boot.
 
+System Tested:
+--------------
 
+The current TF-A port has been tested on the SMARC Evaluation board for RZ/G3S
+SoC_id  R9A08G045S33GBG revision ESx.y.
 
-------------
+* u-boot:
+  The port has been tested using mainline uboot with the G3S Board added.
+
+* linux:
+  The port has been tested using mainline kernel with the G3S Board added.
+
 How to build
 ------------
 
@@ -81,39 +83,51 @@ Base build instruction:
 
 Build Options:
 ~~~~~~~~~~~~~~
-PLAT_SYSTEM_SUSPEND=vbat
+
+If a debug build with logging is required, then use these two build options.
+
+.. code:: bash
+
+    DEBUG=1 LOG_LEVEL=20
+
+    LOG_LEVEL = 0 = LOG_LEVEL_NONE
+    LOG_LEVEL = 10 = LOG_LEVEL_ERROR
+    LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
+    LOG_LEVEL = 30 = LOG_LEVEL_WARNING
+    LOG_LEVEL = 40 = LOG_LEVEL_INFO
+    LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
+
 This enables platform suspend in the 'VBat mode'.
 
-PLAT_SYSTEM_SUSPEND=awo
-This enables platform suspend in the 'AWO mode'.
-This will also enable the CM33 core.
+.. code:: bash
 
-DEBUG=1 LOG_LEVEL=20
-If a debug build with logging is required, then use these two build options.
-LOG_LEVEL = 0 = LOG_LEVEL_NONE
-LOG_LEVEL = 10 = LOG_LEVEL_ERROR
-LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
-LOG_LEVEL = 30 = LOG_LEVEL_WARNING
-LOG_LEVEL = 40 = LOG_LEVEL_INFO
-LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
+	PLAT_SYSTEM_SUSPEND=vbat
 
-PLAT_M33_BOOT_SUPPORT=1
+This enables platform suspend in the 'AWO mode'. This will also enable the CM33 core.
+
+.. code:: bash
+
+	PLAT_SYSTEM_SUSPEND=awo
+
 This enables the CM33 core.
 
-ENABLE_STACK_PROTECTOR=default
+.. code:: bash
+
+	PLAT_M33_BOOT_SUPPORT=1
+
 Sets the stack canary to default.
 The firmware is set to this value automatically.
 This option is thus only required if the option should be set to a value other than default.
 
-NOTE:	Building with PLAT_SYSTEM_SUSPEND=awo and LOG_LEVEL=40 or above breaks the operation of the resume from suspend function.
+.. code:: bash
 
-System Tested:
-~~~~~~~~~~~~~~
-* u-boot:
-  The port has beent tested using mainline uboot with <TBD>
+	ENABLE_STACK_PROTECTOR=default
+
+NOTE:	Building with PLAT_SYSTEM_SUSPEND=awo and LOG_LEVEL=40 or above breaks the operation of the resume from suspend function.
 
 Test script for VBAT mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code:: bash
 
 		tfa_project_path="$1"
@@ -143,15 +157,19 @@ Test script for VBAT mode
 		${bp_tool_path}/bptool "$bl2_file_path" "$workspace_path/bp_esd.bin" 0xA3000 esd
 		cat "$workspace_path/bp_esd.bin" "$bl2_file_path" > "$workspace_path/bl2_bp_esd.bin"
 
-Script argument descriptions
-	tfa_project_path: This is where the tfa project is located.
-	bl33_file_path: This is where the u-boot binary used is located
-	workspace_path: This is the output folder of the script.
+Script argument descriptions:
+
+* tfa_project_path: This is where the tfa project is located.
+
+* bl33_file_path: This is where the u-boot binary used is located
+
+* workspace_path: This is the output folder of the script.
 
 
 Test script for AWO mode
 ~~~~~~~~~~~~~~~~~~~~~~~~
-.. code:: bash
+
+.. code-block:: text
 
 		tfa_project_path="$1"
 		bl33_file_path="$2"
@@ -177,96 +195,103 @@ Test script for AWO mode
 		cat "$workspace_path/bp_spi.bin" "$bl2_file_path" > "$workspace_path/bl2_bp_spi.bin"
 		${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 "$workspace_path/bl2_bp_spi.bin" "$workspace_path/bl2_bp_spi_awo_rzg3s_smarc.srec"
 
-Script argument descriptions
-	tfa_project_path: This is where the tfa project is located.
-	bl33_file_path: This is where the u-boot binary used is located
-	workspace_path: This is the output folder of the script.
+Script argument descriptions:
 
+* tfa_project_path: This is where the tfa project is located.
 
+* bl33_file_path: This is where the u-boot binary used is located
 
-----------------
+* workspace_path: This is the output folder of the script.
+
 How to load TF-A
 ----------------
 
 Loading the flash writer
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Set the device in SCIF mode,
-Connect to the COM port provided by the device via some terminal software.
-Hit reset and the device will print a message.
-The baudrate is 115200
-Then it is time to send the device the FlashWriter[1] (e.g. Flash_Writer_SCIF_RZG3S_DEV_INTERNAL_MEMORY_0127.mot).
-[1] https://github.com/renesas-rz			//TODO: Update
+
+.. code-block:: text
+
+	1. Set the device in scif mode.
+	2. Connect to the COM port provided by the device via some terminal software.
+	3. Hit reset and the device will print a message.
+	4. The baudrate is 115200
+	5. Then it is time to send the device the FlashWriter[1] (e.g. Flash_Writer_SCIF_RZG3S_DEV_INTERNAL_MEMORY_0127.mot).
+
+	[1] https://github.com/renesas-rz			//TODO: Update
 
 Flash Procedure for EMMC
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-	1.	Use the ‘Load the flash writer procedure’.
-	2.	Modify the EXT_CSD registers - this step only needs to be performed the first time.
-		a.	Change the First Register
-			i.		Use the Flash Writer's command EM_SECSD.
-			ii.		Enter the EXT_CSD index: B1
-			iii.	Enter the Input Value: 2
-		b.	Change the Second Register
-			i.		Use the Flash Writer's command EM_SECSD.
-			ii.		Enter the EXT_CSD index: B3
-			iii.	Enter the Input Value: 8
-		c.	The output should show as follows:
-	3.	Write the bl2 srecord to the device
-		a.	Use the Flash Writer's command EM_W.
-		b.	Partition Select: 1
-		c.	Input Start Address in sector: 1
-		d.	Input Program Start Address: a1e00
-		e.	Send the bl2 srecord.
-	4.	Write the fip srecord to the device
-		a.	Use the Flash Writer's command EM_W.
-		b.	Partition Select: 1
-		c.	Input Start Address in sector: 320
-		d.	Input Program Start Address: 00000
-		e.	Send the fip srecord file
-	5.	Write the CM33 srecord file to device eMMC
-		a.	Use the Flash Writer's command EM_W.
-		b.	Partition Select: 1
-		c.	Input Start Address in sector: 1000
-		d.	Input Program Start Address: 23000
-		e.	Send the CM33 srecord file
+	1. Use the ‘Load the flash writer procedure’.
+	2. Modify the EXT_CSD registers - this step only needs to be performed the first time.
+		a. Change the First Register
+			i.    Use the Flash Writer's command EM_SECSD.
+			ii.   Enter the EXT_CSD index: B1
+			iii.  Enter the Input Value: 2
+		b. Change the Second Register
+			i.    Use the Flash Writer's command EM_SECSD.
+			ii.   Enter the EXT_CSD index: B3
+			iii.  Enter the Input Value: 8
+		c. The output should show as follows:
+	3. Write the BL2 srecord to the device
+		a. Use the Flash Writer's command EM_W.
+		b. Partition Select: 1
+		c. Input Start Address in sector: 1
+		d. Input Program Start Address: a1e00
+		e. Send the BL2 srecord.
+	4. Write the FIP srecord to the device
+		a. Use the Flash Writer's command EM_W.
+		b. Partition Select: 1
+		c. Input Start Address in sector: 320
+		d. Input Program Start Address: 00000
+		e. Send the FIP srecord file
+	5. Write the CM33 srecord file to device eMMC
+		a. Use the Flash Writer's command EM_W.
+		b. Partition Select: 1
+		c. Input Start Address in sector: 1000
+		d. Input Program Start Address: 23000
+		e. Send the CM33 srecord file
 
 Flash Procedure for xSPI
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
 	Steps 1 to 9 only needs to be performed once.
-	1.	Use the ‘Load the flash writer procedure’.
-	2.	Write the BL2 srecord to the device SPI flash
-	a.	Enter: XLS2
-	b.	Program Top Address: 0xA1E00
-	c.	QSPI Save Address: 0x00000
-	d.	Send the BL2 srecord
-	e.	The output should show as follows:
-	3.	Write the BL31 srecord to the device SPI flash
-	a.	Enter: XLS2
-	b.	Program Top Address: 0x00000
-	c.	QSPI Save Address: 0x64000
-	d.	Send the BL31 srecord
-	4.	Write the CM33 srecord file to device SPI flash
-	a.	Enter: XLS2
-	b.	Program Top Address: 0x23000
-	c.	QSPI Save Address: 0x200000
-	d.	Send the CM33 srecord
+	1. Use the ‘Load the flash writer procedure’.
+	2. Write the BL2 srecord to the device SPI flash
+		a. Enter: XLS2
+		b. Program Top Address: 0xA1E00
+		c. QSPI Save Address: 0x00000
+		d. Send the BL2 srecord
+		e. The output should show as follows:
+	3. Write the FIP srecord to the device SPI flash
+		a. Enter: XLS2
+		b. Program Top Address: 0x00000
+		c. QSPI Save Address: 0x64000
+		d. Send the FIP srecord
+	4. Write the CM33 srecord file to device SPI flash
+		a. Enter: XLS2
+		b. Program Top Address: 0x23000
+		c. QSPI Save Address: 0x200000
+		d. Send the CM33 srecord
 
 Flash Procedure for SD
 ~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
 	Steps 1 to 9 only needs to be performed once.
-	1.	Enter fdisk
+	1. Enter fdisk
 			sudo fdisk /dev/sdb
 
 			Welcome to fdisk (util-linux 2.37.2).
 			Changes will remain in memory only, until you decide to write them.
 			Be careful before using the write command.
 
-	2.	Remove the existing partitions
+	2. Remove the existing partitions
 			Command (m for help): d
 			Partition number (1,2, default 2):
 
@@ -276,7 +301,7 @@ Flash Procedure for SD
 			Selected partition 1
 			Partition 1 has been deleted.
 
-	3.	Create partitions
+	3. Create partitions
 			Command (m for help): n
 			Partition type
 			p   primary (0 primary, 0 extended, 4 free)
@@ -303,22 +328,22 @@ Flash Procedure for SD
 
 			Created a new partition 2 of type 'Linux' and of size 14 GiB.
 
-	4.	If the signature removal prompt appears after creating either partition, then removed the signature as shown.
+	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 			Partition #2 contains a ext4 signature.
 
 			Do you want to remove the signature? [Y]es/[N]o: y
 
 			The signature will be removed by a write command.
 
-	5.	Write partitions to disk
+	5. Write partitions to disk
 			Command (m for help): w
 			The partition table has been altered.
 			Calling ioctl() to re-read partition table.
 			Syncing disks
 
-	6.	Remount the SD card by removing it then, plugging it back in.
+	6. Remount the SD card by removing it then, plugging it back in.
 
-	7.	Format the partitions
+	7. Format the partitions
 			sudo mkfs.ext4 /dev/sdb1
 			mke2fs 1.46.5 (30-Dec-2021)
 			Creating filesystem with 131072 4k blocks and 32768 inodes
@@ -374,66 +399,16 @@ Flash Procedure for SD
 	setenv bootcmd 'ext4load mmc 0:1 0x48080000 Image-smarc-rzg3s.bin; ext4load mmc 0:1 0x48000000 Image-r9a08g045s33-smarc.dtb; booti 0x48080000 - 0x48000000'
 	boot
 
-----------
 Boot trace
 ----------
+
 .. code-block:: text
 
-	NOTICE:  BL2: v2.7(debug):v2.5/rzg2l-1.00-2269-g0f3063027-dirty
-	NOTICE:  BL2: Built : 15:20:23, Oct 26 2023
-	INFO:    BL2: Doing platform setup
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 4 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    DDR: Setup (Rev. 5.21)
-	INFO:    eMMC boot from partition 1
-	INFO:    Saving DDR retention info.
-	INFO:    emmcdrv_block_len: len: 0x00001000
-	INFO:    DDR Retention Info saved.
-	INFO:    BL2: Loading image id 3
-	INFO:    eMMC boot from partition 1
-	INFO:    Load dst=0xc3b20 src=(p:1)0x64000(800) len=0x10(1)
-	INFO:    eMMC boot from partition 1
-	INFO:    Load dst=0xc3e50 src=(p:1)0x64010(800) len=0x28(1)
-	INFO:    Loading image id=3 at address 0x44000000
-	INFO:    eMMC boot from partition 1
-	INFO:    Load dst=0x44000000 src=(p:1)0x64090(800) len=0x3a000(465)
-	INFO:    Image id=3 loaded: 0x44000000 - 0x4403a000
-	INFO:    BL2: Loading image id 5
-	INFO:    eMMC boot from partition 1
-	INFO:    Load dst=0xc3b20 src=(p:1)0x64000(800) len=0x10(1)
-	INFO:    eMMC boot from partition 1
-	INFO:    Load dst=0xc3e50 src=(p:1)0x64010(800) len=0x28(1)
-	INFO:    Load dst=0xc3e50 src=(p:1)0x64038(800) len=0x28(1)
-	INFO:    Loading image id=5 at address 0x50000000
-	INFO:    eMMC boot from partition 1
-	INFO:    Load dst=0x50000000 src=(p:1)0x9e090(1264) len=0xa3c48(1311)
-	INFO:    Image id=5 loaded: 0x50000000 - 0x500a3c48
-	INFO:    BL2: Loading image id 36
-	INFO:    eMMC boot from partition 1
-	INFO:    Loading image id=36 at address 0x23000
-	INFO:    emmcdrv_block_len: len: 0x00030000
-	INFO:    Load dst=0x23000 src=(p:1)0x200000(4096) len=0x30000(384)
-	INFO:    Image id=36 loaded: 0x23000 - 0x53000
+	NOTICE:  BL2: v2.7(release): <git describe description>
+	NOTICE:  BL2: Built :  <build time and date>
 	NOTICE:  BL2: Booting BL31
-	INFO:    Entry point address = 0x44000000
-	INFO:    SPSR = 0x3cd
-	NOTICE:  BL31: v2.7(debug):v2.5/rzg2l-1.00-2269-g0f3063027-dirty
-	NOTICE:  BL31: Built : 15:20:26, Oct 26 2023
-	INFO:    GICv3 without legacy support detected.
-	INFO:    ARM GICv3 driver initialized in EL3
-	INFO:    Maximum SPI INTID supported: 511
-	INFO:    BL31: Initializing runtime services
-	INFO:    BL31: cortex_a55: CPU workaround for 1530923 was applied
-	INFO:    BL31: Preparing for EL3 exit to normal world
-	INFO:    Entry point address = 0x50000000
-	INFO:    SPSR = 0x3c5
-
+	NOTICE:  BL31: v2.7(release):<git describe description>
+	NOTICE:  BL31: Built : <build time and date>
 
 	######
 	U-Boot starts up and the Linux Kernel is loaded.

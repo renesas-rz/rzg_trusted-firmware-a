@@ -8,24 +8,6 @@ easily implement industrial ethernet connectivity.
 
 Plug-ins are available for multiple open-source software tools.
 
-
-Renesas RZ/N2H reference platforms:
------------------------------------
-
-+--------------+-------------------------------------------------------------------------------------------------------------------------------------+
-| Board        | Details                                                                                                                             |
-+==============+===============+=====================================================================================================================+
-| eval         | Equipped with Renesas RZ/N2H SoC                                                                                                    |
-|              |                                                                                                                                     |
-|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzn     /TODO: Update                               |
-+--------------+-------------------------------------------------------------------------------------------------------------------------------------+
-
-
-`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzn#related_boards__kits>`__ //TODO: Update
-
-The current TF-A port has been tested on the RZ/N2H Evaluation kit
-SoC_id  r9a09g087m48gbg (Quad A55), r9a09g087m28gbg (Dual A55) or r9a09g087m08gbg (Single A55) revision ESx.y.
-
 .. code-block:: text
 
 	On-chip 64-bit Arm Cortex-A55 processor
@@ -59,9 +41,22 @@ SoC_id  r9a09g087m48gbg (Quad A55), r9a09g087m28gbg (Dual A55) or r9a09g087m08gb
 	through JTAG and SWD interfaces.
  	No DCLS (Dual Core Lock Step) support
 
+Renesas RZ/N2H reference platforms:
+-----------------------------------
+
++--------------+-------------------------------------------------------------------------------------------------------------------------------------+
+| Board        | Details                                                                                                                             |
++==============+===============+=====================================================================================================================+
+| eval         | Equipped with Renesas RZ/N2H SoC                                                                                                    |
+|              +-------------------------------------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzn     //TODO: Update                              |
++--------------+-------------------------------------------------------------------------------------------------------------------------------------+
+
+`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzn#related_boards__kits>`__ //TODO: Update
 
 Overview
 --------
+
 On RZ/N2H SoCs the BOOTROM starts the cpu at EL3; for this port BL2
 will therefore be entered at this exception level.
 EL1 is entered before exiting BL31.
@@ -81,6 +76,17 @@ case).
 
 [1] https://github.com/renesas-rz/meta-rzg2/tree/BSP-1.0.5/recipes-bsp/arm-trusted-firmware/files	//TODO: Update
 
+System Tested:
+--------------
+
+The current TF-A port has been tested on the RZ/N2H Evaluation kit
+SoC_id  r9a09g087m48gbg (Quad A55), r9a09g087m28gbg (Dual A55) or r9a09g087m08gbg (Single A55) revision ESx.y.
+
+* u-boot:
+  The port has been tested using mainline uboot with RZ/N2H Evaluation board specific patches.
+
+* linux:
+  The port has been tested using mainline kernel with the RZ/N2H Evaluation board added.
 
 How to build
 ------------
@@ -89,46 +95,50 @@ The TF-A build options depend on the target board so you will have to
 refer to those specific instructions. What follows is customized to
 the RZ/N2H Evaluation kit used in this port.
 
-Build Tested:
-~~~~~~~~~~~~~
+Base build instruction:
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
-       make PLAT=n2h all BOARD=eval PLATFORM_CORE_COUNT=4 DEBUG=1 LOG_LEVEL=40
+       make PLAT=n2h all BOARD=eval
 
-System Tested:
+Build Options:
 ~~~~~~~~~~~~~~
-* u-boot:
-  The port has beent tested using mainline uboot with RZ/N2H Evaluation board
-  specific patches.
 
-|  commit 46ce9e777c1314ccb78906992b94001194eaa87b		//TODO: Update
-|  Author: Heiko Schocher <hs@denx.de>
-|  Date:   Tue Nov 3 15:22:36 2020 +0100
+.. code:: bash
 
-* linux:
-  The port has beent tested using mainline kernel.
+    PLATFORM_CORE_COUNT=4
 
-|  commit f8394f232b1eab649ce2df5c5f15b0e528c92091		//TODO: Update
-|  Author: Linus Torvalds <torvalds@linux-foundation.org>
-|  Date:   Sun Nov 8 16:10:16 2020 -0800
-|  Linux 5.10-rc3
+This is used to specify to build for the quad, dual or single core SoC.
+
+.. code:: bash
+
+    PLATFORM_CORE_COUNT=4 --Quad core
+    PLATFORM_CORE_COUNT=2 --Dual core
+    PLATFORM_CORE_COUNT=1 --Single core
+
+
+If a debug build with logging is required, then use these two build options.
+
+.. code:: bash
+
+    DEBUG=1 LOG_LEVEL=20
+
+    LOG_LEVEL = 0 = LOG_LEVEL_NONE
+    LOG_LEVEL = 10 = LOG_LEVEL_ERROR
+    LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
+    LOG_LEVEL = 30 = LOG_LEVEL_WARNING
+    LOG_LEVEL = 40 = LOG_LEVEL_INFO
+    LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
 
 TF-A Build Procedure
 ~~~~~~~~~~~~~~~~~~~~
-.. code:: bash
-
-				//TODO: Update
-	sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping libsdl1.2-dev xterm p7zip-full libyaml-dev
-	cd rzg_bsp_v3.0.0/
-	patch -p1 < ../v300-to-v300update1.patch
-	cp meta-renesas/docs/template/conf/eval-rzN2H/*.conf ./conf/
-	source poky/oe-init-build-env
-	bitbake core-image-minimal
 
 .. code:: bash
 
-       make PLAT=n2h all BOARD=eval PLATFORM_CORE_COUNT=4 DEBUG=1 LOG_LEVEL=40
+	cd <tfa project path>
+	export CROSS_COMPILE=<path to installed toolset>/bin/aarch64-elf-
+	make PLAT=n2h BOARD=eval PLATFORM_CORE_COUNT=4 BL33=${path_to_u-boot_file}/u-boot.bin bl2 fip pkg
 
 
 How to load TF-A
@@ -137,60 +147,78 @@ How to load TF-A
 Loading the flash writer
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-1.	Set the device in SCIF mode,
-2.	Connect to the COM port provided by the device via some terminal software.
-3.	Set the baudrate to be 115200
-4.	Set the transmit delay to be 0msec/char and 1msec/line
-5.	Hit reset and the device will print a message.
-6.	Send the FlashWriter mot file[2].
-
-[2] https://github.com/renesas-rz/rzg2_flash_writer/tree/rz_T2H			//TODO: Update
-
-Flash Procedure for xSPI
-~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
-	1.	Use the ‘Loading the flash writer' procedure.
-	2.	Modify the XSPIW parameter using this command: XSPIW 0 0x0 0
-	3.	Set the transmit delay to be 0 msec/char and 0msec/line
-	4.	Send the BL2 image srec file
-	5.	Modify the XSPIW parameter using this command: XSPIW 0 0x60000 0
-	6.	Set the transmit delay to be 0 msec/char and 1msec/line
-	7.	Send the FIP image srec file
+	1. Set the device in scif mode.
+	2. Connect to the COM port provided by the device via some terminal software.
+	3. Set the baudrate to be 115200
+	4. Set the transmit delay to be 0msec/char and 1msec/line
+	5. Hit reset and the device will print a message.
+	6. Send the FlashWriter mot file[2].
+
+	[2] https://github.com/renesas-rz/rzg2_flash_writer/tree/rz_T2H			//TODO: Update
+
+Flash Procedure for xSPI0
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: text
+
+	1. Use the ‘Loading the flash writer' procedure.
+	2. Modify the XSPIW parameter using this command: XSPIW 0 0x0 0
+	3. Set the transmit delay to be 0 msec/char and 0msec/line
+	4. Send the BL2 image srec file
+	5. Modify the XSPIW parameter using this command: XSPIW 0 0x60000 0
+	6. Set the transmit delay to be 0 msec/char and 1msec/line
+	7. Send the FIP image srec file
+
+Flash Procedure for xSPI1
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: text
+
+	1. Use the ‘Loading the flash writer' procedure.
+	2. Modify the XSPIW parameter using this command: XSPIW 1 0x0 0
+	3. Set the transmit delay to be 0 msec/char and 0msec/line
+	4. Send the BL2 image srec file
+	5. Modify the XSPIW parameter using this command: XSPIW 1 0x60000 0
+	6. Set the transmit delay to be 0 msec/char and 1msec/line
+	7. Send the FIP image srec file
 
 Flash Procedure for EMMC
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-	1.	Use the ‘Loading the flash writer’.
-	2.	Modify the EXT_CSD registers - this step only needs to be performed the first time.
-		a.	Change the First Register: emmcwecsd 177 2
-		b.	Change the Second Register: emmcwecsd 179 8
-		c.	Print the values: emmcrecsd
-	3.	Write the bl2 srecord to the device
-		a.	Change the emmc register: emmcwecsd 179 9
-		b.	Use the emmc write command: emmcw 1 0
-		c.	Send the bl2 srecord.
-		d.	Change the emmc register: emmcwecsd 179 8
-	4.	Write the fip srecord to the device
-		a.	Change the emmc register: emmcwecsd 179 9
-		b.	Use the emmc write command: emmcw 0x300 0
-		c.	Send the fip srecord.
-		d.	Change the emmc register: emmcwecsd 179 8
+	1. Use the ‘Loading the flash writer’.
+	2. Modify the EXT_CSD registers - this step only needs to be performed the first time.
+		a. Change the First Register: emmcwecsd 177 2
+		b. Change the Second Register: emmcwecsd 179 8
+		c. Print the values: emmcrecsd
+	3. Write the BL2 srecord to the device
+		a. Change the emmc register: emmcwecsd 179 9
+		b. Use the emmc write command: emmcw 1 0
+		c. Send the BL2 srecord.
+		d. Change the emmc register: emmcwecsd 179 8
+	4. Write the FIP srecord to the device
+		a. Change the emmc register: emmcwecsd 179 9
+		b. Use the emmc write command: emmcw 0x300 0
+		c. Send the FIP srecord.
+		d. Change the emmc register: emmcwecsd 179 8
 
 Flash Procedure for SD
 ~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
 	Steps 1 to 9 only needs to be performed once.
-	1.	Enter fdisk
+	1. Enter fdisk
 			sudo fdisk /dev/<sd device>
 
 			Welcome to fdisk (util-linux 2.37.2).
 			Changes will remain in memory only, until you decide to write them.
 			Be careful before using the write command.
 
-	2.	Remove the existing partitions
+	2. Remove the existing partitions
 			Command (m for help): d
 			Partition number (1,2, default 2):
 
@@ -200,7 +228,7 @@ Flash Procedure for SD
 			Selected partition 1
 			Partition 1 has been deleted.
 
-	3.	Create partitions
+	3. Create partitions
 			Command (m for help): n
 			Partition type
 			p   primary (0 primary, 0 extended, 4 free)
@@ -240,22 +268,22 @@ Flash Procedure for SD
 			/dev/sdd1          4096 1052671 1048576  512M 83 Linux
 			/dev/sdd2       1052672 7744511 6691840  3.2G 83 Linux
 
-	4.	If the signature removal prompt appears after creating either partition, then removed the signature as shown.
+	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 			Partition #2 contains a ext4 signature.
 
 			Do you want to remove the signature? [Y]es/[N]o: y
 
 			The signature will be removed by a write command.
 
-	5.	Write partitions to disk
+	5. Write partitions to disk
 			Command (m for help): w
 			The partition table has been altered.
 			Calling ioctl() to re-read partition table.
 			Syncing disks
 
-	6.	Remount the SD card by removing it then, plugging it back in.
+	6. Remount the SD card by removing it then, plugging it back in.
 
-	7.	Format the partitions
+	7. Format the partitions
 			sudo mkfs.ext4 /dev/<Partition of size 512>
 			mke2fs 1.46.5 (30-Dec-2021)
 			Creating filesystem with 131072 4k blocks and 32768 inodes
@@ -306,70 +334,21 @@ Flash Procedure for SD
 			sudo cp ./<n2h kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
 			sudo tar -jxvf <n2h root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
-	Boot trace
-	----------
+Boot trace
+----------
+
 .. code-block:: text
 
-	NOTICE:  BL2: v2.7(debug):V2.7/RZT2H-1.00-BETA-83-gea81b2135
-	NOTICE:  BL2: Built : 21:32:28, Mar 23 2023
-	INFO:    BL2: Doing platform setup
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 2 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    Configuring TrustZone Controller
-	INFO:    Total 1 regions set.
-	INFO:    BL2: Loading image id 3
-	INFO:    Loading image id=3 at address 0x44000000
-	INFO:    Image id=3 loaded: 0x44000000 - 0x4400f0c9
-	INFO:    BL2: Loading image id 5
-	INFO:    Loading image id=5 at address 0x50000000
-	INFO:    Image id=5 loaded: 0x50000000 - 0x5009a5d8
+	NOTICE:  BL2: v2.7(release): <git describe description>
+	NOTICE:  BL2: Built :  <build time and date>
 	NOTICE:  BL2: Booting BL31
-	INFO:    Entry point address = 0x44000000
-	INFO:    SPSR = 0x3cd
-	NOTICE:  BL31: v2.7(debug):V2.7/RZT2H-1.00-BETA-82-g0af46693b-dirty
-	NOTICE:  BL31: Built : 20:12:16, Mar 23 2023
-	INFO:    GICv3 without legacy support detected.
-	INFO:    ARM GICv3 driver initialized in EL3
-	INFO:    Maximum SPI INTID supported: 991
-	INFO:    BL31: Initializing runtime services
-	INFO:    BL31: cortex_a55: CPU workaround for 1530923 was applied
-	INFO:    BL31: Preparing for EL3 exit to normal world
-	INFO:    Entry point address = 0x50000000
-	INFO:    SPSR = 0x3c5
+	NOTICE:  BL31: v2.7(release):<git describe description>
+	NOTICE:  BL31: Built : <build time and date>
 
+	######
+	U-Boot starts up and the Linux Kernel is loaded.
+	######
 
-	U-Boot 2021.10-g5502146d18 (Feb 28 2023 - 19:48:45 +0000)
-
-	CPU:   Renesas Electronics CPU rev 1.0
-	Model: Renesas Development EVK based on r9a09g057h4
-	DRAM:  1.9 GiB
-	MMC:   mmc@15c00000: 0, mmc@15c20000: 1
-	Loading Environment from MMC... OK
-	In:    serial@11c01400
-	Out:   serial@11c01400
-	Err:   serial@11c01400
-	Net:   No ethernet found.
-	Hit any key to stop autoboot:  0
-	Card did not respond to voltage select! : -110				//TODO: Update
-	Card did not respond to voltage select! : -110
-	Couldn't find partition mmc 1:1
-	Can't set block device
-	Card did not respond to voltage select! : -110
-	Couldn't find partition mmc 1:1
-	Can't set block device
-	Bad Linux ARM64 Image magic!
-	=>
-
-
+	######
+	The kernel starts up and the login prompt is shown.
+	######

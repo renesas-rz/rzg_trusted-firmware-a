@@ -9,25 +9,6 @@ industrial ethernet connectivity.
 
 Plug-ins are available for multiple open-source software tools.
 
-
-Renesas RZ/V2H reference platforms:
------------------------------------
-
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-| Board        |      Details                                                                                                                          |
-+==============+===============+=======================================================================================================================+
-| dev_1        | Equipped with Renesas RZ/V2H SoC                                                                                                      |
-|              +---------------------------------------------------------------------------------------------------------------------------------------+
-|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzt-series-mpu                                        |
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-| evk_apha     | Equipped with Renesas RZ/V2H SoC                                                                                                      |
-|              +---------------------------------------------------------------------------------------------------------------------------------------+
-|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update                               |
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-
-The current TF-A port has been tested on the Development and Evaluation Alpha RZ/V2H platforms.
-SoC_id r9a09g057h4 revision ESx.y.
-
 +----------------+-----------------------+------------------+
 |  Part Number   |  GE3D                 |  Security        |
 +================+=======================+==================+
@@ -53,8 +34,19 @@ SoC_id r9a09g057h4 revision ESx.y.
 	PCIe® Gen3 4Lane or 2-2Lane
 	(EP/RC), various communication interfaces such as an xSPI, eMMC™, I2S (TDM), I3C®, PDM, and security functions.
 
+Renesas RZ/V2H reference platforms:
+-----------------------------------
 
---------
++--------------+----------------------------------------------------------------------------------------------------------------------------------------+
+| Board        |      Details                                                                                                                           |
++==============+===============+========================================================================================================================+
+| evk_1        | Equipped with Renesas RZ/V2H SoC                                                                                                       |
+|              +----------------------------------------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzv2h-evk-rzv2h-quad-core-vision-ai-mpu-evaluation-kit |
++--------------+----------------------------------------------------------------------------------------------------------------------------------------+
+
+`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzv-embedded-ai-mpus>`__
+
 Overview
 --------
 On RZ/V2H SoCs the BOOTROM starts the CPU at EL3; for this port BL2
@@ -75,33 +67,40 @@ PARAMS_BASE instead of using registers to get to those locations (see
 el3_common_macros.S and bl31_entrypoint.S for the RESET_TO_BL31 use
 case).
 
+System Tested:
+--------------
 
-------------
+The current TF-A port has been tested on the Development and Evaluation Alpha RZ/V2H platforms.
+SoC_id r9a09g057h4 revision ESx.y.
+
+* u-boot:
+  The port has been tested using mainline uboot with the appropriate dev_1 or evk_1 RZ/V2H board specific patches.
+
+* linux:
+  The port has been tested using mainline kernel with the RZ/V2H board specific changes added.
+
 How to build
 ------------
 
-The TF-A build options depend on the target board so you will have to
-refer to those specific instructions. 
+The TF-A build options depend on the target board so you will have to refer to those specific instructions.
 
-What follows is customized to
-the Development and Evaluation Alpha RZ/V2H development kit used in these ports.
+What follows is customized to the Evaluation 1 RZ/V2H development kit.
 
 Base build instruction:
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
-	make PLAT=v2h all BOARD=evk_alpha ENABLE_STACK_PROTECTOR=all
+	make PLAT=v2h all BOARD=evk_1 ENABLE_STACK_PROTECTOR=all
 
 Build Options:
 ~~~~~~~~~~~~~~
-.. code:: bash
-
-    DEBUG=1 LOG_LEVEL=20
 
 If a debug build with logging is required, then use these two build options.
 
 .. code:: bash
+
+	DEBUG=1 LOG_LEVEL=20
 
 	LOG_LEVEL = 0 = LOG_LEVEL_NONE
 	LOG_LEVEL = 10 = LOG_LEVEL_ERROR
@@ -110,14 +109,6 @@ If a debug build with logging is required, then use these two build options.
 	LOG_LEVEL = 40 = LOG_LEVEL_INFO
 	LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
 
-System Tested:
-~~~~~~~~~~~~~~
-
-* u-boot:
-  The port has been tested using mainline uboot with the appropriate dev_1 or evk_alpha RZ/V2H board specific patches.
-  <URL TBD>
-
-
 TF-A Build Procedure
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -125,88 +116,88 @@ TF-A Build Procedure
 
 	cd <tfa project path>/tf-a
 	export CROSS_COMPILE=<path to installed toolset>/bin/aarch64-elf-
-	make PLAT=v2h all BOARD=dev_1 ENABLE_STACK_PROTECTOR=all LOG_LEVEL=40
-	make PLAT=v2h all BOARD=dev_1 ENABLE_STACK_PROTECTOR=all DEBUG=1 LOG_LEVEL=40
-	make PLAT=v2h all BOARD=evk_alpha ENABLE_STACK_PROTECTOR=all DEBUG=1 LOG_LEVEL=40
-	make PLAT=v2h all BOARD=evk_alpha ENABLE_STACK_PROTECTOR=default DEBUG=1 PLAT_SYSTEM_SUSPEND=1
-	make PLAT=v2h all BOARD=evk_alpha ENABLE_STACK_PROTECTOR=default DEBUG=1 PLAT_SYSTEM_SUSPEND=1 BL33=u-boot.bin bptool fip pkg
+	make PLAT=v2h BOARD=evk_1 ENABLE_STACK_PROTECTOR=all BL33=${path_to_u-boot_file}/u-boot.bin bl2 fip bptool pkg
 
 
-----------------
 How to load TF-A
 ----------------
 
 Loading the flash writer
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-1.	Set the device in SCIF mode,
-2.	Connect to the COM port provided by the device via some terminal \ software.
-3.	Set the baudrate to be 115200
-4.	Set the transmit delay to be 0msec/char and 1msec/line
-5.	Hit reset and the device will print a message.
-6.	Send the FlashWriter .mot file[1].
+.. code-block:: text
 
-[1] https://github.com/renesas-rz/<TBD>
+	1. Set the device in scif mode.
+	2. Connect to the COM port provided by the device via some terminal \ software.
+	3. Set the baudrate to be 115200
+	4. Set the transmit delay to be 0msec/char and 1msec/line
+	5. Hit reset and the device will print a message.
+	6. Send the FlashWriter .mot file[1].
+
+	[1] https://github.com/renesas-rz/<TBD>
 
 
 Flash Procedure for xSPI
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-	1.	Use the ‘Load the flash writer procedure’.
-	2.	Write the BL2 srecord to the device SPI flash
-	a.	Enter: XLS2
-	b.	Program Top Address: 8101e00
-	c.	QSPI Save Address: 00000
-	d.	Send the BL2 srecord
-	e.	The output should show as follows:
-	3.	Write the BL31 srecord to the device SPI flash
-	a.	Enter: XLS2
-	b.	Program Top Address: 8101e00
-	c.	QSPI Save Address: 60000
-	d.	Send the BL31 srecord
+	1. Use the ‘Load the flash writer procedure’.
+	2. Write the BL2 srecord to the device SPI flash
+		a. Enter: XLS2
+		b. Program Top Address: 8101e00
+		c. QSPI Save Address: 00000
+		d. Send the BL2 srecord
+		e. The output should show as follows:
+	3. Write the FIP srecord to the device SPI flash
+		a. Enter: XLS2
+		b. Program Top Address: 8101e00
+		c. QSPI Save Address: 60000
+		d. Send the FIP srecord
 
 Flash Procedure for EMMC
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-	1.	Use the ‘Load the flash writer procedure’.
-	2.	Modify the EXT_CSD registers - this step only needs to be performed the first time.
-		a.	Change the First Register
-			i.	Use the Flash Writer's command EM_SECSD.
-			ii.	Enter the EXT_CSD index: B1
-			iii.	Enter the Input Value: 2
-		b.	Change the Second Register
-			i.	Use the Flash Writer's command EM_SECSD.
-			ii.	Enter the EXT_CSD index: B3
-			iii.	Enter the Input Value: 8
-		c.	The output should show as follows:
-	3.	Write the bl2 srecord to the device
-		a.	Use the Flash Writer's command EM_W.
-		b.	Partition Select: 1
-		c.	Input Start Address in sector: 1
-		d.	Input Program Start Address: 8101e00
-		e.	Send the bl2 srecord.
-	4.	Write the fip srecord to the device
-		a.	Use the Flash Writer's command EM_W.
-		b.	Partition Select: 1
-		c.	Input Start Address in sector: 300
-		d.	Input Program Start Address: 8101e00
-		e.	Send the fip srecord file
+	1. Use the ‘Load the flash writer procedure’.
+	2. Modify the EXT_CSD registers - this step only needs to be performed the first time.
+		a. Change the First Register
+			i. Use the Flash Writer's command EM_SECSD.
+			ii. Enter the EXT_CSD index: B1
+			iii.  Enter the Input Value: 2
+		b. Change the Second Register
+			i. Use the Flash Writer's command EM_SECSD.
+			ii. Enter the EXT_CSD index: B3
+			iii.  Enter the Input Value: 8
+		c. The output should show as follows:
+	3. Write the BL2 srecord to the device
+		a. Use the Flash Writer's command EM_W.
+		b. Partition Select: 1
+		c. Input Start Address in sector: 1
+		d. Input Program Start Address: 8101e00
+		e. Send the BL2 srecord.
+	4. Write the FIP srecord to the device
+		a. Use the Flash Writer's command EM_W.
+		b. Partition Select: 1
+		c. Input Start Address in sector: 300
+		d. Input Program Start Address: 8101e00
+		e. Send the FIP srecord file
 
 Flash Procedure for SD
 ~~~~~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
 	Steps 1 to 9 only needs to be performed once.
-	1.	Enter fdisk
+	1. Enter fdisk
 			sudo fdisk /dev/<sd device>
 
 			Welcome to fdisk (util-linux 2.37.2).
 			Changes will remain in memory only, until you decide to write them.
 			Be careful before using the write command.
 
-	2.	Remove the existing partitions
+	2. Remove the existing partitions
 			Command (m for help): d
 			Partition number (1,2, default 2):
 
@@ -216,7 +207,7 @@ Flash Procedure for SD
 			Selected partition 1
 			Partition 1 has been deleted.
 
-	3.	Create partitions
+	3. Create partitions
 			Command (m for help): n
 			Partition type
 			p   primary (0 primary, 0 extended, 4 free)
@@ -256,22 +247,22 @@ Flash Procedure for SD
 			/dev/sdd1          4096 1052671 1048576  512M 83 Linux
 			/dev/sdd2       1052672 7744511 6691840  3.2G 83 Linux
 
-	4.	If the signature removal prompt appears after creating either partition, then removed the signature as shown.
+	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 			Partition #2 contains a ext4 signature.
 
 			Do you want to remove the signature? [Y]es/[N]o: y
 
 			The signature will be removed by a write command.
 
-	5.	Write partitions to disk
+	5. Write partitions to disk
 			Command (m for help): w
 			The partition table has been altered.
 			Calling ioctl() to re-read partition table.
 			Syncing disks
 
-	6.	Remount the SD card by removing it then, plugging it back in.
+	6. Remount the SD card by removing it then, plugging it back in.
 
-	7.	Format the partitions
+	7. Format the partitions
 			sudo mkfs.ext4 /dev/<Partition of size 512>
 			mke2fs 1.46.5 (30-Dec-2021)
 			Creating filesystem with 131072 4k blocks and 32768 inodes
@@ -322,23 +313,22 @@ Flash Procedure for SD
 			sudo cp ./<v2h kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
 			sudo tar -jxvf <v2h root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
-----------
 Boot trace
 ----------
 
 .. code-block:: text
 
-	NOTICE:  BL2: v2.7(release):v2.7/rzv2h-1.00-2312-ga552b0f46
-	NOTICE:  BL2: Built : 12:43:11, Dec 17 2023
+	NOTICE:  BL2: v2.7(release): <git describe description>
+	NOTICE:  BL2: Built :  <build time and date>
 	NOTICE:  BL2: Booting BL31
-	NOTICE:  BL31: v2.7(release):v2.7/rzv2h-1.00-2312-ga552b0f46
-	NOTICE:  BL31: Built : 12:43:16, Dec 17 2023
+	NOTICE:  BL31: v2.7(release):<git describe description>
+	NOTICE:  BL31: Built : <build time and date>
 
-	U-Boot 2021.10-geba1f3bfcb (Dec 14 2023 - 16:52:50 +0000)
+	######
+	U-Boot starts up and the Linux Kernel is loaded.
+	######
 
-	CPU:   Renesas Electronics CPU rev 9.0
-	Model: Renesas EVK Alpha based on r9a09g057h4
-	DRAM:  15.9 GiB
-	<More U-Boot specific trace>
+	######
+	The kernel starts up and the login prompt is shown.
+	######
 
-	<Boot Trace of next stage OS such as Linux, RTOS or others>
