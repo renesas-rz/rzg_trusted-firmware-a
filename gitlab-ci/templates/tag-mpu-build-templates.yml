@@ -52,6 +52,8 @@
   interruptible: true
   tags:
     - "${PLAT}_tag_tests"
+  before_script:
+    - cd "../workspace/tf-a"
   script:
     - if [ "$PUSH_TAG" = "true" ]; then
     - git push origin $TAG_NAME
