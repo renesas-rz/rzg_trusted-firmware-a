@@ -89,8 +89,6 @@
 #define	SYS_SLVACCCTL93						(SYS_BASE + 0x00000274)
 #define	SYS_LSI_MODE						(SYS_BASE + 0x00000300)
 #define	SYS_LSI_PRR							(SYS_BASE + 0x00000308)
-#define	SYS_LSI_OTPPOC						(SYS_BASE + 0x0000031C)
-
 #define	SYS_AOF0							(SYS_BASE + 0x00000500)
 #define	SYS_AOF1							(SYS_BASE + 0x00000504)
 #define	SYS_AOF2							(SYS_BASE + 0x00000508)
