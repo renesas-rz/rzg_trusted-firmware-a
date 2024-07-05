@@ -64,6 +64,17 @@ static int rzt2h_pwr_domain_on(u_register_t mpidr)
 	mmio_write_32(swrcpu[coreid][0], 0x00000000);
 
 	/* Deliberately not Re-locking Registers */
+
+	/* Disable Write Protection of PRCRN register*/
+	sys_base_unlock(PRCRx_CLOCK_GEN);
+	sys_base_unlock(PRCRx_LOW_POWER);
+	sys_base_unlock(PRCRx_GPIO);
+	sys_base_unlock(PRCRx_SYS_CTRL);
+
+	/* Disable Write Protection of PRCRS register (LOW_POWER & SYS_CTRL already disabled above)*/
+	sys_safetybase_unlock(PRCRx_CLOCK_GEN);
+	sys_safetybase_unlock(PRCRx_GPIO);
+
 	return PSCI_E_SUCCESS;
 }
 
