@@ -94,7 +94,6 @@ void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 			}
 		}
 
-		decode_major_message(mail, sel_train);
 	} while (train_done == 0);
 
 	if (mail == 0xff) {
