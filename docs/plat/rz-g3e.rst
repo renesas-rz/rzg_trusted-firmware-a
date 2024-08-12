@@ -81,29 +81,57 @@ Base build instruction:
 Build Options:
 ~~~~~~~~~~~~~~
 
-If a debug build with logging is required, then use these two build options.
+If a debug build with logging is required then set DEBUG=1 and set LOG_LEVEL to the desired verbosity.
+
++--------------+-------------------------------------------+
+| Build option | Details                                   |
++==============+===============+===========================+
+|LOG_LEVEL=0   | The log level is set to LOG_LEVEL_NONE    |
++--------------+-------------------------------------------+
+|LOG_LEVEL=10  | The log level is set to LOG_LEVEL_ERROR   |
++--------------+-------------------------------------------+
+|LOG_LEVEL=20  | The log level is set to LOG_LEVEL_NOTICE  |
++--------------+-------------------------------------------+
+|LOG_LEVEL=30  | The log level is set to LOG_LEVEL_WARNING |
++--------------+-------------------------------------------+
+|LOG_LEVEL=40  | The log level is set to LOG_LEVEL_INFO    |
++--------------+-------------------------------------------+
+|LOG_LEVEL=50  | The log level is set to LOG_LEVEL_VERBOSE |
++--------------+-------------------------------------------+
 
 .. code:: bash
 
-    DEBUG=1 LOG_LEVEL=20
+    DEBUG=1 LOG_LEVEL=40
 
-    LOG_LEVEL = 0 = LOG_LEVEL_NONE
-    LOG_LEVEL = 10 = LOG_LEVEL_ERROR
-    LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
-    LOG_LEVEL = 30 = LOG_LEVEL_WARNING
-    LOG_LEVEL = 40 = LOG_LEVEL_INFO
-    LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
+TF-A Packaging Procedure
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-TF-A Build Procedure
-~~~~~~~~~~~~~~~~~~~~
+This procedure packages TF-A binaries by:
+
+* Building the relevant binaries.
+
+* Creating the FIP binary.
+
+* Creating the boot parameter block.
+
+* Converting the necessary files into the srecord format.
+
+The 'Build Options' section covers the possible values for <Build Options>.
+
+Argument descriptions:
+
+* path_to_cc_toolset: This is the path to the required toolset.
+
+* path_to_tfa_project: This is where the TF-A project is located
+
+* path_to_uboot_file: This is where the U-Boot binary used is located.
 
 .. code:: bash
 
-	cd <tfa project path>
-	export CROSS_COMPILE=<path to installed toolset>/bin/aarch64-elf-
-	make PLAT=g3e BOARD=dev_1 BL33=${path_to_u-boot_file}/u-boot.bin bl2 fip bptool pkg
-	make PLAT=g3e BOARD=smarc BL33=${path_to_u-boot_file}/u-boot.bin bl2 fip bptool pkg
-
+	export CROSS_COMPILE=${path_to_cc_toolset}/bin/aarch64-none-elf-
+	cd ${path_to_tfa_project}
+	make PLAT=g3e BOARD=dev_1 BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
+	make PLAT=g3e BOARD=smarc BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
 
 How to load TF-A
 ----------------
@@ -131,7 +159,6 @@ Flash Procedure for xSPI
 		b. Program Top Address: 0x8003600
 		c. QSPI Save Address: 0x00000
 		d. Send the BL2 srecord
-		e. The output should show as follows:
 	3. Write the FIP srecord to the device SPI flash
 		a. Enter: XLS2
 		b. Program Top Address: 0x00000
@@ -173,127 +200,127 @@ Flash Procedure for SD
 
 	Steps 1 to 9 only needs to be performed once.
 	1. Enter fdisk
-			sudo fdisk /dev/<sd device>
+		sudo fdisk /dev/<sd device>
 
-			Welcome to fdisk (util-linux 2.37.2).
-			Changes will remain in memory only, until you decide to write them.
-			Be careful before using the write command.
+		Welcome to fdisk (util-linux 2.37.2).
+		Changes will remain in memory only, until you decide to write them.
+		Be careful before using the write command.
 
 	2. Remove the existing partitions
-			Command (m for help): d
-			Partition number (1,2, default 2):
+		Command (m for help): d
+		Partition number (1,2, default 2):
 
-			Partition 2 has been deleted.
+		Partition 2 has been deleted.
 
-			Command (m for help): d
-			Selected partition 1
-			Partition 1 has been deleted.
+		Command (m for help): d
+		Selected partition 1
+		Partition 1 has been deleted.
 
 	3. Create partitions
-			Command (m for help): n
-			Partition type
-			p   primary (0 primary, 0 extended, 4 free)
-			e   extended (container for logical partitions)
-			Select (default p):
+		Command (m for help): n
+		Partition type
+		p   primary (0 primary, 0 extended, 4 free)
+		e   extended (container for logical partitions)
+		Select (default p):
 
-			Using default response p.
-			Partition number (1-4, default 1):
-			First sector (2048-7744511, default 2048): 4096
-			Last sector, +/-sectors or +/-size{K,M,G,T,P} (4096-7744511, default 7744511): +512M
+		Using default response p.
+		Partition number (1-4, default 1):
+		First sector (2048-7744511, default 2048): 4096
+		Last sector, +/-sectors or +/-size{K,M,G,T,P} (4096-7744511, default 7744511): +512M
 
-			Created a new partition 1 of type 'Linux' and of size 512 MiB.
+		Created a new partition 1 of type 'Linux' and of size 512 MiB.
 
-			Command (m for help): n
-			Partition type
-			p   primary (1 primary, 0 extended, 3 free)
-			e   extended (container for logical partitions)
-			Select (default p):
+		Command (m for help): n
+		Partition type
+		p   primary (1 primary, 0 extended, 3 free)
+		e   extended (container for logical partitions)
+		Select (default p):
 
-			Using default response p.
-			Partition number (2-4, default 2):
-			First sector (1052672-7744511, default 1052672):
-			Last sector, +/-sectors or +/-size{K,M,G,T,P} (1052672-7744511, default 7744511):
+		Using default response p.
+		Partition number (2-4, default 2):
+		First sector (1052672-7744511, default 1052672):
+		Last sector, +/-sectors or +/-size{K,M,G,T,P} (1052672-7744511, default 7744511):
 
-			Created a new partition 2 of type 'Linux' and of size 3.2 GiB.
+		Created a new partition 2 of type 'Linux' and of size 3.2 GiB.
 
-			Command (m for help): p
-			Disk /dev/sdd: 3.71 GiB, 3965190144 bytes, 7744512 sectors
-			Disk model: STORAGE DEVICE
-			Units: sectors of 1 * 512 = 512 bytes
-			Sector size (logical/physical): 512 bytes / 512 bytes
-			I/O size (minimum/optimal): 512 bytes / 512 bytes
-			Disklabel type: dos
-			Disk identifier: 0x00000000
+		Command (m for help): p
+		Disk /dev/sdd: 3.71 GiB, 3965190144 bytes, 7744512 sectors
+		Disk model: STORAGE DEVICE
+		Units: sectors of 1 * 512 = 512 bytes
+		Sector size (logical/physical): 512 bytes / 512 bytes
+		I/O size (minimum/optimal): 512 bytes / 512 bytes
+		Disklabel type: dos
+		Disk identifier: 0x00000000
 
-			Device     Boot   Start     End Sectors  Size Id Type
-			/dev/sdd1          4096 1052671 1048576  512M 83 Linux
-			/dev/sdd2       1052672 7744511 6691840  3.2G 83 Linux
+		Device     Boot   Start     End Sectors  Size Id Type
+		/dev/sdd1          4096 1052671 1048576  512M 83 Linux
+		/dev/sdd2       1052672 7744511 6691840  3.2G 83 Linux
 
 	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
-			Partition #2 contains a ext4 signature.
+		Partition #2 contains a ext4 signature.
 
-			Do you want to remove the signature? [Y]es/[N]o: y
+		Do you want to remove the signature? [Y]es/[N]o: y
 
-			The signature will be removed by a write command.
+		The signature will be removed by a write command.
 
 	5. Write partitions to disk
-			Command (m for help): w
-			The partition table has been altered.
-			Calling ioctl() to re-read partition table.
-			Syncing disks
+		Command (m for help): w
+		The partition table has been altered.
+		Calling ioctl() to re-read partition table.
+		Syncing disks
 
 	6. Remount the SD card by removing it then, plugging it back in.
 
 	7. Format the partitions
-			sudo mkfs.ext4 /dev/<Partition of size 512>
-			mke2fs 1.46.5 (30-Dec-2021)
-			Creating filesystem with 131072 4k blocks and 32768 inodes
-			Filesystem UUID: cb9d787a-fb33-43f2-9a81-2b2049fe6f9d
-			Superblock backups stored on blocks:
-					32768, 98304
+		sudo mkfs.ext4 /dev/<Partition of size 512>
+		mke2fs 1.46.5 (30-Dec-2021)
+		Creating filesystem with 131072 4k blocks and 32768 inodes
+		Filesystem UUID: cb9d787a-fb33-43f2-9a81-2b2049fe6f9d
+		Superblock backups stored on blocks:
+				32768, 98304
 
-			Allocating group tables: done
-			Writing inode tables: done
-			Creating journal (4096 blocks): done
-			Writing superblocks and filesystem accounting information: done
+		Allocating group tables: done
+		Writing inode tables: done
+		Creating journal (4096 blocks): done
+		Writing superblocks and filesystem accounting information: done
 
-			sudo mkfs.ext4 /dev/<the other partition>
-			mke2fs 1.46.5 (30-Dec-2021)
-			Creating filesystem with 364928 4k blocks and 91392 inodes
-			Filesystem UUID: fbd4caa0-690b-43e8-9e67-43e43edf3fa4
-			Superblock backups stored on blocks:
-					32768, 98304, 163840, 229376, 294912
+		sudo mkfs.ext4 /dev/<the other partition>
+		mke2fs 1.46.5 (30-Dec-2021)
+		Creating filesystem with 364928 4k blocks and 91392 inodes
+		Filesystem UUID: fbd4caa0-690b-43e8-9e67-43e43edf3fa4
+		Superblock backups stored on blocks:
+				32768, 98304, 163840, 229376, 294912
 
-			Allocating group tables: done
-			Writing inode tables: done
-			Creating journal (8192 blocks): done
-			Writing superblocks and filesystem accounting information: done
+		Allocating group tables: done
+		Writing inode tables: done
+		Creating journal (8192 blocks): done
+		Writing superblocks and filesystem accounting information: done
 
 	8. Remount the SD card by removing it then, plugging it back in.
 
 	9. Check partitions were created properly.
-			lsblk
-			...
-			sdb      8:16   1  14.5G  0 disk
-			├─sdb1   8:17   1   512M  0 part /media/user/79273262-4ff6-424f-9e7e-a
-			└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
-			...
+		lsblk
+		...
+		sdb      8:16   1  14.5G  0 disk
+		├─sdb1   8:17   1   512M  0 part /media/user/79273262-4ff6-424f-9e7e-a
+		└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
+		...
 
 	10. Write TF-A to SD card
-			sudo dd if=bl2_bp_esd.bin of=/dev/sdb seek=1
-			269+1 records in
-			269+1 records out
-			137746 bytes (138 kB, 135 KiB) copied, 0.481328 s, 286 kB/s
+		sudo dd if=bl2_bp_esd.bin of=/dev/sdb seek=1
+		269+1 records in
+		269+1 records out
+		137746 bytes (138 kB, 135 KiB) copied, 0.481328 s, 286 kB/s
 
-			sudo dd if=fip.bin of=/dev/sdb seek=768
-			1775+1 records in
-			1775+1 records out
-			908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s
+		sudo dd if=fip.bin of=/dev/sdb seek=768
+		1775+1 records in
+		1775+1 records out
+		908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s
 
 	11. Write Linux files to the SD card
-			sudo cp ./<g3e device tree>.dtb /media/user/79273262-4ff6-424f-9e7e-a
-			sudo cp ./<g3e kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
-			sudo tar -jxvf <g3e root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
+		sudo cp ./<g3e device tree>.dtb /media/user/79273262-4ff6-424f-9e7e-a
+		sudo cp ./<g3e kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
+		sudo tar -jxvf <g3e root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
 
 Boot trace
