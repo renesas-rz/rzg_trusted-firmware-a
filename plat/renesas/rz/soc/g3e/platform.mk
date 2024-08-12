@@ -42,9 +42,9 @@ bptool_clean:
 	${Q}${MAKE} --no-print-directory -C ${BPTOOLPATH} clean
 
 pkg:
-	./tools/renesas/bptool build/g3e/${BUILD_TYPE}/bl2.bin build/g3e/${BUILD_TYPE}/bp.bin 0x08004000 spi
-	cat build/g3e/${BUILD_TYPE}/bp.bin build/g3e/${BUILD_TYPE}/bl2.bin > build/g3e/${BUILD_TYPE}/bl2_bp.bin
-	objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/${BUILD_TYPE}/bl2_bp.bin  build/g3e/${BUILD_TYPE}/bl2_bp.srec
+	./tools/renesas/bptool build/g3e/${BUILD_TYPE}/bl2.bin build/g3e/${BUILD_TYPE}/bp_spi.bin 0x08004000 spi
+	cat build/g3e/${BUILD_TYPE}/bp_spi.bin build/g3e/${BUILD_TYPE}/bl2.bin > build/g3e/${BUILD_TYPE}/bl2_bp_spi.bin
+	objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/${BUILD_TYPE}/bl2_bp_spi.bin  build/g3e/${BUILD_TYPE}/bl2_bp_spi.srec
 	./tools/renesas/bptool build/g3e/${BUILD_TYPE}/bl2.bin build/g3e/${BUILD_TYPE}/bp_mmc.bin 0x08004000 mmc
 	cat build/g3e/${BUILD_TYPE}/bp_mmc.bin build/g3e/${BUILD_TYPE}/bl2.bin > build/g3e/${BUILD_TYPE}/bl2_bp_mmc.bin
 	objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/${BUILD_TYPE}/bl2_bp_mmc.bin  build/g3e/${BUILD_TYPE}/bl2_bp_mmc.srec
@@ -53,7 +53,6 @@ pkg:
 	objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/${BUILD_TYPE}/bl2_bp_esd.bin  build/g3e/${BUILD_TYPE}/bl2_bp_esd.srec
 	#Generate FIP S-Record if FIP binary is present
 	if [ -f build/g3e/${BUILD_TYPE}/fip.bin ]; then  objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/${BUILD_TYPE}/fip.bin build/g3e/${BUILD_TYPE}/fip.srec ; fi ;
-	tar zcvf ../tf-a.tar.gz $(shell pwd)
 
 ifneq (${DEBUG}, 0)
 TF_CFLAGS += -O0 -fstack-usage
