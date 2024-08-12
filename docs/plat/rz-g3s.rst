@@ -84,37 +84,46 @@ Base build instruction:
 Build Options:
 ~~~~~~~~~~~~~~
 
-If a debug build with logging is required, then use these two build options.
+If a debug build with logging is required then set DEBUG=1 and set LOG_LEVEL to the desired verbosity.
+
++--------------+-------------------------------------------+
+| Build option | Details                                   |
++==============+===============+===========================+
+|LOG_LEVEL=0   | The log level is set to LOG_LEVEL_NONE    |
++--------------+-------------------------------------------+
+|LOG_LEVEL=10  | The log level is set to LOG_LEVEL_ERROR   |
++--------------+-------------------------------------------+
+|LOG_LEVEL=20  | The log level is set to LOG_LEVEL_NOTICE  |
++--------------+-------------------------------------------+
+|LOG_LEVEL=30  | The log level is set to LOG_LEVEL_WARNING |
++--------------+-------------------------------------------+
+|LOG_LEVEL=40  | The log level is set to LOG_LEVEL_INFO    |
++--------------+-------------------------------------------+
+|LOG_LEVEL=50  | The log level is set to LOG_LEVEL_VERBOSE |
++--------------+-------------------------------------------+
 
 .. code:: bash
 
-    DEBUG=1 LOG_LEVEL=20
+    DEBUG=1 LOG_LEVEL=40
 
-    LOG_LEVEL = 0 = LOG_LEVEL_NONE
-    LOG_LEVEL = 10 = LOG_LEVEL_ERROR
-    LOG_LEVEL = 20 = LOG_LEVEL_NOTICE
-    LOG_LEVEL = 30 = LOG_LEVEL_WARNING
-    LOG_LEVEL = 40 = LOG_LEVEL_INFO
-    LOG_LEVEL = 50 = LOG_LEVEL_VERBOSE
-
-This enables platform suspend in the 'VBat mode'.
-
-.. code:: bash
-
-	PLAT_SYSTEM_SUSPEND=vbat
-
-This enables platform suspend in the 'AWO mode'. This will also enable the CM33 core.
-
-.. code:: bash
-
-	PLAT_SYSTEM_SUSPEND=awo
-
-This enables the CM33 core.
+Boots the CM33 core in the PD_VCC power domain.
 
 .. code:: bash
 
 	PLAT_M33_BOOT_SUPPORT=1
 
+This enables platform suspend in 'AWO mode'.
+It also sets PLAT_M33_BOOT_SUPPORT=1.
+
+.. code:: bash
+
+	PLAT_SYSTEM_SUSPEND=awo
+
+Platform suspend in 'VBAT mode':
+
+.. code:: bash
+
+	PLAT_SYSTEM_SUSPEND=vbat
 Sets the stack canary to default.
 The firmware is set to this value automatically.
 This option is thus only required if the option should be set to a value other than default.
@@ -125,83 +134,35 @@ This option is thus only required if the option should be set to a value other t
 
 NOTE:	Building with PLAT_SYSTEM_SUSPEND=awo and LOG_LEVEL=40 or above breaks the operation of the resume from suspend function.
 
-Test script for VBAT mode
-~~~~~~~~~~~~~~~~~~~~~~~~~
+TF-A Packaging Procedure
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+This procedure packages TF-A binaries by:
+
+* Building the relevant binaries.
+
+* Creating the FIP binary.
+
+* Creating the boot parameter block.
+
+* Converting the necessary files into the srecord format.
+
+The 'Build Options' section covers the possible values for <Build Options>.
+
+Argument descriptions:
+
+* path_to_cc_toolset: This is the path to the required toolset.
+
+* path_to_tfa_project: This is where the TF-A project is located
+
+* path_to_uboot_file: This is where the U-Boot binary used is located.
 
 .. code:: bash
 
-		tfa_project_path="$1"
-		bl33_file_path="$2"
-		workspace_path="$3"
-
-		bp_tool_path="$tfa_project_path/tools/renesas"
-		fip_tool_path="$tfa_project_path/tools/fiptool"
-		bl2_file_path="$tfa_project_path/build/g3s/debug/bl2.bin"
-		bl31_file_path="$tfa_project_path/build/g3s/debug/bl31.bin"
-
-		cd "$tfa_project_path"
-		make PLAT=g3s BOARD=smarc PLAT_SYSTEM_SUSPEND=vbat all fiptool bptool LOG_LEVEL=40 DEBUG=1 PLAT_M33_BOOT_SUPPORT=1
-
-		${fip_tool_path}/fiptool create --align 16 --soc-fw "$bl31_file_path" --nt-fw "$bl33_file_path" "$workspace_path/fip.bin"
-		${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x0000 --srec-forceS3 "$workspace_path/fip.bin" "$workspace_path/fip_vbat_cm33_rzg3s_smarc.srec"
-
-		echo "bl2 file path $bl2_file_path"
-		${bp_tool_path}/bptool "$bl2_file_path" "$workspace_path/bp_mmc.bin" 0xA3000 mmc
-		cat "$workspace_path/bp_mmc.bin" "$bl2_file_path" > "$workspace_path/bl2_bp_mmc.bin"
-		${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 "$workspace_path/bl2_bp_mmc.bin" "$workspace_path/bl2_bp_mmc_vbat_rzg3s_smarc.srec"
-
-		${bp_tool_path}/bptool "$bl2_file_path" "$workspace_path/bp_spi.bin" 0xA3000 spi
-		cat "$workspace_path/bp_spi.bin" "$bl2_file_path" > "$workspace_path/bl2_bp_spi.bin"
-		${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 "$workspace_path/bl2_bp_spi.bin" "$workspace_path/bl2_bp_spi_vbat_rzg3s_smarc.srec"
-
-		${bp_tool_path}/bptool "$bl2_file_path" "$workspace_path/bp_esd.bin" 0xA3000 esd
-		cat "$workspace_path/bp_esd.bin" "$bl2_file_path" > "$workspace_path/bl2_bp_esd.bin"
-
-Script argument descriptions:
-
-* tfa_project_path: This is where the tfa project is located.
-
-* bl33_file_path: This is where the u-boot binary used is located
-
-* workspace_path: This is the output folder of the script.
-
-
-Test script for AWO mode
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: text
-
-		tfa_project_path="$1"
-		bl33_file_path="$2"
-		workspace_path="$3"
-
-		bp_tool_path="$tfa_project_path/tools/renesas"
-		fip_tool_path="$tfa_project_path/tools/fiptool"
-		bl2_file_path="$tfa_project_path/build/g3s/release/bl2.bin"
-		bl31_file_path="$tfa_project_path/build/g3s/release/bl31.bin"
-
-		cd "$tfa_project_path"
-		make PLAT=g3s BOARD=smarc PLAT_SYSTEM_SUSPEND=awo all fiptool bptool
-
-		${fip_tool_path}/fiptool create --align 16 --soc-fw "$bl31_file_path" --nt-fw "$bl33_file_path" "$workspace_path/fip.bin"
-		${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x0000 --srec-forceS3 "$workspace_path/fip.bin" "$workspace_path/fip_awo_cm33_rzg3s_smarc.srec"
-
-		echo "bl2 file path $bl2_file_path"
-		${bp_tool_path}/bptool "$bl2_file_path" "$workspace_path/bp_mmc.bin" 0xA3000 mmc
-		cat "$workspace_path/bp_mmc.bin" "$bl2_file_path" > "$workspace_path/bl2_bp_mmc.bin"
-		${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 "$workspace_path/bl2_bp_mmc.bin" "$workspace_path/bl2_bp_mmc_awo_rzg3s_smarc.srec"
-
-		${bp_tool_path}/bptool "$bl2_file_path" "$workspace_path/bp_spi.bin" 0xA3000 spi
-		cat "$workspace_path/bp_spi.bin" "$bl2_file_path" > "$workspace_path/bl2_bp_spi.bin"
-		${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 "$workspace_path/bl2_bp_spi.bin" "$workspace_path/bl2_bp_spi_awo_rzg3s_smarc.srec"
-
-Script argument descriptions:
-
-* tfa_project_path: This is where the tfa project is located.
-
-* bl33_file_path: This is where the u-boot binary used is located
-
-* workspace_path: This is the output folder of the script.
+	export CROSS_COMPILE=${path_to_cc_toolset}/bin/aarch64-none-elf-
+	cd ${path_to_tfa_project}
+	make PLAT=g3s BOARD=dev14_1_lpddr BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
+	make PLAT=g3s BOARD=smarc BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
 
 How to load TF-A
 ----------------
@@ -234,7 +195,6 @@ Flash Procedure for EMMC
 			i.    Use the Flash Writer's command EM_SECSD.
 			ii.   Enter the EXT_CSD index: B3
 			iii.  Enter the Input Value: 8
-		c. The output should show as follows:
 	3. Write the BL2 srecord to the device
 		a. Use the Flash Writer's command EM_W.
 		b. Partition Select: 1
@@ -266,7 +226,6 @@ Flash Procedure for xSPI
 		b. Program Top Address: 0xA1E00
 		c. QSPI Save Address: 0x00000
 		d. Send the BL2 srecord
-		e. The output should show as follows:
 	3. Write the FIP srecord to the device SPI flash
 		a. Enter: XLS2
 		b. Program Top Address: 0x00000
@@ -285,114 +244,114 @@ Flash Procedure for SD
 
 	Steps 1 to 9 only needs to be performed once.
 	1. Enter fdisk
-			sudo fdisk /dev/sdb
+		sudo fdisk /dev/sdb
 
-			Welcome to fdisk (util-linux 2.37.2).
-			Changes will remain in memory only, until you decide to write them.
-			Be careful before using the write command.
+		Welcome to fdisk (util-linux 2.37.2).
+		Changes will remain in memory only, until you decide to write them.
+		Be careful before using the write command.
 
 	2. Remove the existing partitions
-			Command (m for help): d
-			Partition number (1,2, default 2):
+		Command (m for help): d
+		Partition number (1,2, default 2):
 
-			Partition 2 has been deleted.
+		Partition 2 has been deleted.
 
-			Command (m for help): d
-			Selected partition 1
-			Partition 1 has been deleted.
+		Command (m for help): d
+		Selected partition 1
+		Partition 1 has been deleted.
 
 	3. Create partitions
-			Command (m for help): n
-			Partition type
-			p   primary (0 primary, 0 extended, 4 free)
-			e   extended (container for logical partitions)
-			Select (default p):
+		Command (m for help): n
+		Partition type
+		p   primary (0 primary, 0 extended, 4 free)
+		e   extended (container for logical partitions)
+		Select (default p):
 
-			Using default response p.
-			Partition number (1-4, default 1):
-			First sector (2048-30449663, default 2048): 4096
-			Last sector, +/-sectors or +/-size{K,M,G,T,P} (4096-30449663, default 30449663): +512M
+		Using default response p.
+		Partition number (1-4, default 1):
+		First sector (2048-30449663, default 2048): 4096
+		Last sector, +/-sectors or +/-size{K,M,G,T,P} (4096-30449663, default 30449663): +512M
 
-			Created a new partition 1 of type 'Linux' and of size 512 MiB.
+		Created a new partition 1 of type 'Linux' and of size 512 MiB.
 
-			Command (m for help): n
-			Partition type
-			p   primary (1 primary, 0 extended, 3 free)
-			e   extended (container for logical partitions)
-			Select (default p):
+		Command (m for help): n
+		Partition type
+		p   primary (1 primary, 0 extended, 3 free)
+		e   extended (container for logical partitions)
+		Select (default p):
 
-			Using default response p.
-			Partition number (2-4, default 2):
-			First sector (2048-30449663, default 2048): 1052672
-			Last sector, +/-sectors or +/-size{K,M,G,T,P} (1052672-30449663, default 30449663):
+		Using default response p.
+		Partition number (2-4, default 2):
+		First sector (2048-30449663, default 2048): 1052672
+		Last sector, +/-sectors or +/-size{K,M,G,T,P} (1052672-30449663, default 30449663):
 
-			Created a new partition 2 of type 'Linux' and of size 14 GiB.
+		Created a new partition 2 of type 'Linux' and of size 14 GiB.
 
 	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
-			Partition #2 contains a ext4 signature.
+		Partition #2 contains a ext4 signature.
 
-			Do you want to remove the signature? [Y]es/[N]o: y
+		Do you want to remove the signature? [Y]es/[N]o: y
 
-			The signature will be removed by a write command.
+		The signature will be removed by a write command.
 
 	5. Write partitions to disk
-			Command (m for help): w
-			The partition table has been altered.
-			Calling ioctl() to re-read partition table.
-			Syncing disks
+		Command (m for help): w
+		The partition table has been altered.
+		Calling ioctl() to re-read partition table.
+		Syncing disks
 
 	6. Remount the SD card by removing it then, plugging it back in.
 
 	7. Format the partitions
-			sudo mkfs.ext4 /dev/sdb1
-			mke2fs 1.46.5 (30-Dec-2021)
-			Creating filesystem with 131072 4k blocks and 32768 inodes
-			Filesystem UUID: cb9d787a-fb33-43f2-9a81-2b2049fe6f9d
-			Superblock backups stored on blocks:
-					32768, 98304
+		sudo mkfs.ext4 /dev/sdb1
+		mke2fs 1.46.5 (30-Dec-2021)
+		Creating filesystem with 131072 4k blocks and 32768 inodes
+		Filesystem UUID: cb9d787a-fb33-43f2-9a81-2b2049fe6f9d
+		Superblock backups stored on blocks:
+				32768, 98304
 
-			Allocating group tables: done
-			Writing inode tables: done
-			Creating journal (4096 blocks): done
-			Writing superblocks and filesystem accounting information: done
+		Allocating group tables: done
+		Writing inode tables: done
+		Creating journal (4096 blocks): done
+		Writing superblocks and filesystem accounting information: done
 
-			sudo mkfs.ext4 /dev/sdb2
-			mke2fs 1.46.5 (30-Dec-2021)
-			Creating filesystem with 364928 4k blocks and 91392 inodes
-			Filesystem UUID: fbd4caa0-690b-43e8-9e67-43e43edf3fa4
-			Superblock backups stored on blocks:
-					32768, 98304, 163840, 229376, 294912
+		sudo mkfs.ext4 /dev/sdb2
+		mke2fs 1.46.5 (30-Dec-2021)
+		Creating filesystem with 364928 4k blocks and 91392 inodes
+		Filesystem UUID: fbd4caa0-690b-43e8-9e67-43e43edf3fa4
+		Superblock backups stored on blocks:
+				32768, 98304, 163840, 229376, 294912
 
-			Allocating group tables: done
-			Writing inode tables: done
-			Creating journal (8192 blocks): done
-			Writing superblocks and filesystem accounting information: done
+		Allocating group tables: done
+		Writing inode tables: done
+		Creating journal (8192 blocks): done
+		Writing superblocks and filesystem accounting information: done
 
 	8. Remount the SD card by removing it then, plugging it back in.
 
 	9. Check partitions were created properly.
-			lsblk
-			...
-			sdb      8:16   1  14.5G  0 disk
-			├─sdb1   8:17   1   512M  0 part /media/user/79273262-4ff6-424f-9e7e-a
-			└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
-			...
+		lsblk
+		...
+		sdb      8:16   1  14.5G  0 disk
+		├─sdb1   8:17   1   512M  0 part /media/user/79273262-4ff6-424f-9e7e-a
+		└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
+		...
 
 	10. Write TF-A to SD card
-			sudo dd if=bp_esd_bl2.bin of=/dev/sdb seek=1
-			269+1 records in
-			269+1 records out
-			137746 bytes (138 kB, 135 KiB) copied, 0.481328 s, 286 kB/s
+		sudo dd if=bp_esd_bl2.bin of=/dev/sdb seek=1
+		269+1 records in
+		269+1 records out
+		137746 bytes (138 kB, 135 KiB) copied, 0.481328 s, 286 kB/s
 
-			sudo dd if=fip.bin of=/dev/sdb seek=800
-			1775+1 records in
-			1775+1 records out
-			908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s
+		sudo dd if=fip.bin of=/dev/sdb seek=800
+		1775+1 records in
+		1775+1 records out
+		908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s
 
 	11. Write Linux files to the SD card
-			sudo cp ./Image-r9a08g045s33-smarc.dtb /media/user/79273262-4ff6-424f-9e7e-a
-			sudo cp ./Image-smarc-rzg3s.bin /media/user/79273262-4ff6-424f-9e7e-a
-			sudo tar -jxvf core-image-bsp-smarc-rzg3s.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
+		sudo cp ./Image-r9a08g045s33-smarc.dtb /media/user/79273262-4ff6-424f-9e7e-a
+		sudo cp ./Image-smarc-rzg3s.bin /media/user/79273262-4ff6-424f-9e7e-a
+		sudo tar -jxvf core-image-bsp-smarc-rzg3s.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
 	Note: To boot Linux from SD0, the U-Boot environment variables may require a change.
 	setenv bootargs 'rw rootwait earlycon root=/dev/mmcblk0p2'
