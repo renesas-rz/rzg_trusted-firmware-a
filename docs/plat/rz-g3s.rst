@@ -84,7 +84,7 @@ Base build instruction:
 Build Options:
 ~~~~~~~~~~~~~~
 
-If a debug build with logging is required then set DEBUG=1 and set LOG_LEVEL to the desired verbosity.
+Modify LOG_LEVEL to change to the desired verbosity.
 
 +--------------+-------------------------------------------+
 | Build option | Details                                   |
@@ -102,9 +102,17 @@ If a debug build with logging is required then set DEBUG=1 and set LOG_LEVEL to 
 |LOG_LEVEL=50  | The log level is set to LOG_LEVEL_VERBOSE |
 +--------------+-------------------------------------------+
 
+For example, to set the output to verbose logging:
+
 .. code:: bash
 
-    DEBUG=1 LOG_LEVEL=40
+    LOG_LEVEL=50
+
+To enable debugging set the following option:
+
+.. code:: bash
+
+	DEBUG=1
 
 Boots the CM33 core in the PD_VCC power domain.
 
@@ -202,8 +210,8 @@ Flash Procedure for EMMC
 	4. Write the FIP srecord to the device
 		a. Use the Flash Writer's command EM_W.
 		b. Partition Select: 1
-		c. Input Start Address in sector: 320
-		d. Input Program Start Address: 00000
+		c. Input Start Address in sector: 300
+		d. Input Program Start Address: 0
 		e. Send the FIP srecord file
 	5. Write the CM33 srecord file to device eMMC
 		a. Use the Flash Writer's command EM_W.
@@ -217,17 +225,16 @@ Flash Procedure for xSPI
 
 .. code-block:: text
 
-	Steps 1 to 9 only needs to be performed once.
 	1. Use the ‘Load the flash writer procedure’.
 	2. Write the BL2 srecord to the device SPI flash
 		a. Enter: XLS2
 		b. Program Top Address: 0xA1E00
-		c. QSPI Save Address: 0x00000
+		c. QSPI Save Address: 0x0
 		d. Send the BL2 srecord
 	3. Write the FIP srecord to the device SPI flash
 		a. Enter: XLS2
-		b. Program Top Address: 0x00000
-		c. QSPI Save Address: 0x64000
+		b. Program Top Address: 0x0
+		c. QSPI Save Address: 0x60000
 		d. Send the FIP srecord
 	4. Write the CM33 srecord file to device SPI flash
 		a. Enter: XLS2
@@ -240,15 +247,27 @@ Flash Procedure for SD
 
 .. code-block:: text
 
-	Steps 1 to 9 only needs to be performed once.
-	1. Enter fdisk
+	Steps 1 to 11 only needs to be performed once.
+	1. Find the SD card partitions. In this case it they are sdb1 and sdb2, however they may be different on your system.
+		lsblk
+		...
+		sdb      8:16   1  14.5G  0 disk
+		├─sdb1   8:17   1   512M  0 part /media/user/79273262-4ff6-424f-9e7e-a
+		└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
+		...
+
+	2. Unmount all of the SD card partitions
+		sudo umount /dev/sdb1
+		sudo umount /dev/sdb2
+
+	3. Enter fdisk
 		sudo fdisk /dev/sdb
 
 		Welcome to fdisk (util-linux 2.37.2).
 		Changes will remain in memory only, until you decide to write them.
 		Be careful before using the write command.
 
-	2. Remove the existing partitions
+	4. Remove the existing partitions
 		Command (m for help): d
 		Partition number (1,2, default 2):
 
@@ -258,7 +277,7 @@ Flash Procedure for SD
 		Selected partition 1
 		Partition 1 has been deleted.
 
-	3. Create partitions
+	5. Create partitions
 		Command (m for help): n
 		Partition type
 		p   primary (0 primary, 0 extended, 4 free)
@@ -285,22 +304,22 @@ Flash Procedure for SD
 
 		Created a new partition 2 of type 'Linux' and of size 14 GiB.
 
-	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
+	6. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 		Partition #2 contains a ext4 signature.
 
 		Do you want to remove the signature? [Y]es/[N]o: y
 
 		The signature will be removed by a write command.
 
-	5. Write partitions to disk
+	7. Write partitions to disk
 		Command (m for help): w
 		The partition table has been altered.
 		Calling ioctl() to re-read partition table.
 		Syncing disks
 
-	6. Remount the SD card by removing it then, plugging it back in.
+	8. Remount the SD card by removing it then, plugging it back in.
 
-	7. Format the partitions
+	9. Format the partitions
 		sudo mkfs.ext4 /dev/sdb1
 		mke2fs 1.46.5 (30-Dec-2021)
 		Creating filesystem with 131072 4k blocks and 32768 inodes
@@ -325,9 +344,9 @@ Flash Procedure for SD
 		Creating journal (8192 blocks): done
 		Writing superblocks and filesystem accounting information: done
 
-	8. Remount the SD card by removing it then, plugging it back in.
+	10. Remount the SD card by removing it then, plugging it back in.
 
-	9. Check partitions were created properly.
+	11. Check partitions were created properly.
 		lsblk
 		...
 		sdb      8:16   1  14.5G  0 disk
@@ -335,18 +354,18 @@ Flash Procedure for SD
 		└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
 		...
 
-	10. Write TF-A to SD card
+	12. Write TF-A to SD card
 		sudo dd if=bp_esd_bl2.bin of=/dev/sdb seek=1
 		269+1 records in
 		269+1 records out
 		137746 bytes (138 kB, 135 KiB) copied, 0.481328 s, 286 kB/s
 
-		sudo dd if=fip.bin of=/dev/sdb seek=800
+		sudo dd if=fip.bin of=/dev/sdb seek=768
 		1775+1 records in
 		1775+1 records out
 		908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s
 
-	11. Write Linux files to the SD card
+	13. Write Linux files to the SD card
 		sudo cp ./Image-r9a08g045s33-smarc.dtb /media/user/79273262-4ff6-424f-9e7e-a
 		sudo cp ./Image-smarc-rzg3s.bin /media/user/79273262-4ff6-424f-9e7e-a
 		sudo tar -jxvf core-image-bsp-smarc-rzg3s.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
@@ -361,10 +380,10 @@ Boot trace
 
 .. code-block:: text
 
-	NOTICE:  BL2: v2.7(release): <git describe description>
+	NOTICE:  BL2: v2.10.5(release): <git describe description>
 	NOTICE:  BL2: Built :  <build time and date>
 	NOTICE:  BL2: Booting BL31
-	NOTICE:  BL31: v2.7(release):<git describe description>
+	NOTICE:  BL31: v2.10.5(release):<git describe description>
 	NOTICE:  BL31: Built : <build time and date>
 
 	######
