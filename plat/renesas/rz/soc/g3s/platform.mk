@@ -71,3 +71,16 @@ bptool_make:
 
 bptool_clean:
 	${Q}${MAKE} --no-print-directory -C ${BPTOOLPATH} clean
+
+pkg:
+	./tools/renesas/bptool build/g3s/${BUILD_TYPE}/bl2.bin build/g3s/${BUILD_TYPE}/bp_spi.bin 0x000A3000 spi
+	cat build/g3s/${BUILD_TYPE}/bp_spi.bin build/g3s/${BUILD_TYPE}/bl2.bin > build/g3s/${BUILD_TYPE}/bl2_bp_spi.bin
+	objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 build/g3s/${BUILD_TYPE}/bl2_bp_spi.bin  build/g3s/${BUILD_TYPE}/bl2_bp_spi.srec
+	./tools/renesas/bptool build/g3s/${BUILD_TYPE}/bl2.bin build/g3s/${BUILD_TYPE}/bp_mmc.bin 0x000A3000 mmc
+	cat build/g3s/${BUILD_TYPE}/bp_mmc.bin build/g3s/${BUILD_TYPE}/bl2.bin > build/g3s/${BUILD_TYPE}/bl2_bp_mmc.bin
+	objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 build/g3s/${BUILD_TYPE}/bl2_bp_mmc.bin  build/g3s/${BUILD_TYPE}/bl2_bp_mmc.srec
+	./tools/renesas/bptool build/g3s/${BUILD_TYPE}/bl2.bin build/g3s/${BUILD_TYPE}/bp_esd.bin 0x000A3000 esd
+	cat build/g3s/${BUILD_TYPE}/bp_esd.bin build/g3s/${BUILD_TYPE}/bl2.bin > build/g3s/${BUILD_TYPE}/bl2_bp_esd.bin
+	objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 build/g3s/${BUILD_TYPE}/bl2_bp_esd.bin  build/g3s/${BUILD_TYPE}/bl2_bp_esd.srec
+	#Generate FIP S-Record if FIP binary is present
+	if [ -f build/g3s/${BUILD_TYPE}/fip.bin ]; then  objcopy -I binary -O srec --adjust-vma=0x00000 --srec-forceS3 build/g3s/${BUILD_TYPE}/fip.bin build/g3s/${BUILD_TYPE}/fip.srec ; fi ;

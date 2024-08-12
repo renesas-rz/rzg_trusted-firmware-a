@@ -56,7 +56,6 @@ pkg:
 	objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2n/${BUILD_TYPE}/bl2_bp_esd.bin  build/v2n/${BUILD_TYPE}/bl2_bp_esd.srec
 	#Generate FIP S-Record if FIP binary is present
 	if [ -f build/v2n/${BUILD_TYPE}/fip.bin ]; then  objcopy -I binary -O srec --adjust-vma=0x8101E00 --srec-forceS3 build/v2n/${BUILD_TYPE}/fip.bin build/v2n/${BUILD_TYPE}/fip.srec ; fi ;
-	tar zcvf ../tf-a.tar.gz $(shell pwd)
 
 ifneq (${DEBUG}, 0)
 TF_CFLAGS += -O0 -fstack-usage
