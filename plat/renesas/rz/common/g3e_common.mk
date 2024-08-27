@@ -5,7 +5,7 @@
 #
 
 PLAT_SOC_RZG3E					:= 1
-BL2_AT_EL3						:= 1
+RESET_TO_BL2					:= 1
 COLD_BOOT_SINGLE_CPU			:= 1
 PROGRAMMABLE_RESET_ADDRESS		:= 1
 WARMBOOT_ENABLE_DCACHE_EARLY	:= 1
@@ -17,6 +17,7 @@ PROTECTED_CHIPID				:= 1
 DEBUG_FPGA						:= 0
 PLAT_EMMC_WRITE_ENABLE			:= 0
 PLAT_DDR_ECC					:= 0
+INIT_UNUSED_NS_EL2				:= 1
 
 $(eval $(call add_define,PLAT_SOC_RZG3E))
 $(eval $(call add_define,PROTECTED_CHIPID))
