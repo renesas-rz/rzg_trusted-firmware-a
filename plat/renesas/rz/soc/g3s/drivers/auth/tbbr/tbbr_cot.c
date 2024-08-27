@@ -9,6 +9,8 @@
 #include <platform_def.h>
 #include <drivers/auth_common.h>
 #include <drivers/auth/auth_mod.h>
+#include <common/tbbr/cot_def.h>
+
 #if USE_TBBR_DEFS
 #include <tools_share/tbbr_oid.h>
 #else

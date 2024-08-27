@@ -66,9 +66,10 @@ ERRATA_A55_903758 				:= 1
 ERRATA_A55_1221012				:= 1
 ERRATA_A55_1530923				:= 1
 
-PLAT_INCLUDES			+=	-Iplat/renesas/rz/common/include						\
-							-Iplat/renesas/rz/common/drivers/io				\
-							-Iplat/renesas/rz/common/drivers/sd				\
+PLAT_INCLUDES			+=	-Iinclude/common/tbbr									\
+							-Iplat/renesas/rz/common/include						\
+							-Iplat/renesas/rz/common/drivers/io						\
+							-Iplat/renesas/rz/common/drivers/sd						\
 							-Idrivers/renesas/common/io
 
 RZ_TIMER_SOURCES		:=	drivers/delay_timer/generic_delay_timer.c				\
