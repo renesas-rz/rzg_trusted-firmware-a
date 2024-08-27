@@ -111,9 +111,14 @@ BL31_SOURCES			+=	plat/common/plat_gicv3.c								\
 							plat/renesas/rz/common/plat_topology.c					\
 							plat/renesas/rz/common/plat_gic.c						\
 							plat/renesas/rz/common/rz_sip_svc.c						\
+							plat/renesas/rz/common/drivers/wdt.c					\
+							${RZ_TIMER_SOURCES}										\
 							${GICV3_SOURCES}
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
+
+	EL3_CPTR_CLEAR_TFP	:= 1
+    $(eval $(call add_define,EL3_CPTR_CLEAR_TFP))
 
 	# Include common TBB sources
 	AUTH_SOURCES		:=	drivers/auth/img_parser_mod.c
