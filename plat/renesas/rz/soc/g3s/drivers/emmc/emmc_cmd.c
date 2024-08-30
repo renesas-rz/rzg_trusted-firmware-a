@@ -265,9 +265,8 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 				(SD_INFO2_ALL_ERR | SD_INFO2_CLEAR));
 
 			state = ESTATE_ISSUE_CMD;
-			/* fallthrough */
-			__attribute__((fallthrough));
 
+			__fallthrough;
 		case ESTATE_ISSUE_CMD:
 			/* ARG */
 			SETR_32(SD_ARG, mmc_drv_obj.cmd_info.arg);
@@ -466,8 +465,8 @@ EMMC_ERROR_CODE emmc_exec_cmd(uint32_t error_mask, uint32_t *response)
 				SETR_32(SD_STOP, 0x00000000U);
 				mmc_drv_obj.during_dma_transfer = FALSE;
 			}
-			/* fallthrough */
-			__attribute__((fallthrough));
+
+			__fallthrough;
 		case ESTATE_ERROR:
 			if (err_not_care_flag == TRUE) {
 				mmc_drv_obj.during_cmd_processing = FALSE;
