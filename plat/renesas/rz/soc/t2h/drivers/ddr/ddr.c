@@ -22,6 +22,7 @@ static void phyinit_d2h_2d(void);
 static void phyinit_mc(void);
 static void phyinit_i(void);
 static void phyinit_j(void);
+static void prog_all0(uint64_t start_addr);
 
 
 void ddr_setup(void)
@@ -42,6 +43,8 @@ void ddr_setup(void)
 
 	phyinit_i();
 	phyinit_j();
+
+	prog_all0(0);
 
 	update_mc();
 }
@@ -158,3 +161,58 @@ static void phyinit_mc(void)
 	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
 }
 
+static void prog_all0(uint64_t start_addr)
+{
+#if PLAT_DDR_ECC
+	val = DDRTOP_mc_param_rd(CS_MAP_ADDR, CS_MAP_OFFSET, CS_MAP_WIDTH);
+	if (val == 0x01) {
+		end_addr17 = DDRTOP_mc_param_rd(CS_VAL_UPPER_0_ADDR, CS_VAL_UPPER_0_OFFSET, CS_VAL_UPPER_0_WIDTH);
+	} else {
+		end_addr17 = DDRTOP_mc_param_rd(CS_VAL_UPPER_1_ADDR, CS_VAL_UPPER_1_OFFSET, CS_VAL_UPPER_1_WIDTH);
+	}
+	if (end_addr17 == 0xdfff) {
+		addr_space = 33;
+	} else if (end_addr17 == 0x6fff) {
+		addr_space = 32;
+	} else if (end_addr17 == 0x37ff) {
+		addr_space = 31;
+	} else if (end_addr17 == 0x1bff) {
+		addr_space = 30;
+	} else if (end_addr17 == 0x0dff) {
+		addr_space = 29;
+	} else {
+		addr_space = 33;
+	}
+
+	uint32_t bak_lp_auto_entry_en;
+
+	ddrtop_mc_param_wr(ECC_DISABLE_W_UC_ERR_ADDR, ECC_DISABLE_W_UC_ERR_OFFSET, ECC_DISABLE_W_UC_ERR_WIDTH, 1);
+
+	bak_lp_auto_entry_en = ddrtop_mc_param_rd(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_OFFSET, LP_AUTO_ENTRY_EN_WIDTH);
+	ddrtop_mc_param_wr(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_OFFSET, LP_AUTO_ENTRY_EN_WIDTH, 0x0);
+
+	ddrtop_mc_param_wr(BIST_START_ADDRESS_ADDR+0, 0, 32, (start_addr&0xffffffff));
+	ddrtop_mc_param_wr(BIST_START_ADDRESS_ADDR+1, 0, BIST_START_ADDRESS_WIDTH-32, ((start_addr>>32)&0x0ffffffff));
+	ddrtop_mc_param_wr(ADDR_SPACE_ADDR, ADDR_SPACE_OFFSET, ADDR_SPACE_WIDTH, addr_space);
+	ddrtop_mc_param_wr(BIST_DATA_CHECK_ADDR, BIST_DATA_CHECK_OFFSET, BIST_DATA_CHECK_WIDTH, 1);
+	ddrtop_mc_param_wr(BIST_TEST_MODE_ADDR, BIST_TEST_MODE_OFFSET, BIST_TEST_MODE_WIDTH, 0b100);
+	ddrtop_mc_param_wr(BIST_DATA_PATTERN_ADDR+0, 0, 32, 0x00000000);
+	ddrtop_mc_param_wr(BIST_DATA_PATTERN_ADDR+1, 0, 32, 0x00000000);
+	ddrtop_mc_param_wr(BIST_DATA_PATTERN_ADDR+2, 0, 32, 0x00000000);
+	ddrtop_mc_param_wr(BIST_DATA_PATTERN_ADDR+3, 0, 32, 0x00000000);
+
+	udelay(1);
+
+	ddrtop_mc_param_wr(BIST_GO_ADDR, BIST_GO_OFFSET, BIST_GO_WIDTH, 1);
+	ddrtop_mc_param_poll(INT_STATUS_BIST_ADDR, INT_STATUS_BIST_OFFSET+0, 1, 1);
+	ddrtop_mc_param_wr(BIST_GO_ADDR, BIST_GO_OFFSET, BIST_GO_WIDTH, 0);
+	ddrtop_mc_param_wr(INT_ACK_BIST_ADDR, INT_ACK_BIST_OFFSET+0, 1, 1);
+	ddrtop_mc_param_wr(INT_ACK_ECC_ADDR, INT_ACK_ECC_OFFSET, INT_ACK_ECC_WIDTH, 0x000001CF);
+	ddrtop_mc_param_poll(INT_STATUS_BIST_ADDR, INT_STATUS_BIST_OFFSET+0, 1, 0);
+	ddrtop_mc_param_poll(INT_STATUS_ECC_ADDR, INT_STATUS_ECC_OFFSET, INT_STATUS_ECC_WIDTH, 0);
+	ddrtop_mc_param_wr(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_OFFSET, LP_AUTO_ENTRY_EN_WIDTH, bak_lp_auto_entry_en);
+	ddrtop_mc_param_wr(ECC_DISABLE_W_UC_ERR_ADDR, ECC_DISABLE_W_UC_ERR_OFFSET, ECC_DISABLE_W_UC_ERR_WIDTH, 0);
+
+	udelay(1);
+#endif
+}

@@ -8,7 +8,7 @@
 #include "rz_soc_def.h"
 
 
-#define DDR_VERSION		"2.02"
+#define DDR_VERSION		"2.03"
 
 
 const uint32_t param_phyinit_c[][2] = {
