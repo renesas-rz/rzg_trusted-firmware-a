@@ -16,7 +16,7 @@
 
 
 /* SDHI 0 */
-static PFC_REGS pfc_sd_reg_tbl[PFC_TBL_LEN] = {
+static PFC_REGS pfc_sd0_reg_tbl[PFC_TBL_LEN] = {
 	/* SD0_CLK (P9.0), SD0_CMD (P9.1), SD0_RSTN (P9.2) */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
@@ -27,11 +27,11 @@ static PFC_REGS pfc_sd_reg_tbl[PFC_TBL_LEN] = {
 		{ PFC_ON,  (uintptr_t)PFC_IEN09,  0x0000000000000100 }		/* IEN */
 	},
 
-	/* SD0_DATA (PA.0 - PA.7 */
+	/* SD0_DATA (PA.0 - PA.7) */
 	{
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PMC */
 		{ PFC_OFF, (uintptr_t)NULL,       0 },						/* PFC */
-		{ PFC_ON,  (uintptr_t)PFC_IOLH0A, 0x0303030303030303 },		/* IOLH */
+		{ PFC_ON,  (uintptr_t)PFC_IOLH0A, 0x0202020202020202 },		/* IOLH */
 		{ PFC_ON,  (uintptr_t)PFC_PUPD0A, 0x0000000000000000 },		/* PUPD */
 		{ PFC_ON,  (uintptr_t)PFC_SR0A,   0x0000000000000000 },		/* SR */
 		{ PFC_ON,  (uintptr_t)PFC_IEN0A,  0x0101010101010101 }		/* IEN */
@@ -105,16 +105,16 @@ static void pfc_sd_setup(void)
 
 	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
 		/* PUPD */
-		if (pfc_sd_reg_tbl[cnt].pupd.flg == PFC_ON) {
-			mmio_write_64(pfc_sd_reg_tbl[cnt].pupd.reg, pfc_sd_reg_tbl[cnt].pupd.val);
+		if (pfc_sd0_reg_tbl[cnt].pupd.flg == PFC_ON) {
+			mmio_write_64(pfc_sd0_reg_tbl[cnt].pupd.reg, pfc_sd0_reg_tbl[cnt].pupd.val);
 		}
 		/* SR */
-		if (pfc_sd_reg_tbl[cnt].sr.flg == PFC_ON) {
-			mmio_write_64(pfc_sd_reg_tbl[cnt].sr.reg, pfc_sd_reg_tbl[cnt].sr.val);
+		if (pfc_sd0_reg_tbl[cnt].sr.flg == PFC_ON) {
+			mmio_write_64(pfc_sd0_reg_tbl[cnt].sr.reg, pfc_sd0_reg_tbl[cnt].sr.val);
 		}
 		/* IEN */
-		if (pfc_sd_reg_tbl[cnt].ien.flg == PFC_ON) {
-			mmio_write_64(pfc_sd_reg_tbl[cnt].ien.reg, pfc_sd_reg_tbl[cnt].ien.val);
+		if (pfc_sd0_reg_tbl[cnt].ien.flg == PFC_ON) {
+			mmio_write_64(pfc_sd0_reg_tbl[cnt].ien.reg, pfc_sd0_reg_tbl[cnt].ien.val);
 		}
 	}
 }
@@ -153,7 +153,14 @@ static void pfc_scif_setup(void)
 
 static void pfc_drive_setup(void)
 {
+	int cnt;
 
+	for (cnt = 0; cnt < PFC_TBL_LEN; cnt++) {
+		/* IOLH for SD0 */
+		if (pfc_sd0_reg_tbl[cnt].iolh.flg == PFC_ON) {
+			mmio_write_64(pfc_sd0_reg_tbl[cnt].iolh.reg, pfc_sd0_reg_tbl[cnt].iolh.val);
+		}
+	}
 }
 
 static void pfc_riic_pmic_setup(void)
