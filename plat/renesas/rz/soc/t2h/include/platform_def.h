@@ -53,28 +53,28 @@
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
-#define BL31_BASE				ULL(0x200000000)
-#define BL31_LIMIT				(BL31_BASE + 0x00200000)
+#define BL31_BASE				UL(0xC0000000)
+#define BL31_LIMIT				(BL31_BASE + 0x00100000)
 
 /*******************************************************************************
  * BL32 specific defines.
  ******************************************************************************/
 #ifndef SPD_none
-#define BL32_BASE				ULL(0x202000000)
-#define BL32_LIMIT				(BL32_BASE + 0x00200000)
+#define BL32_BASE				UL(0xC0100000)
+#define BL32_LIMIT				(BL32_BASE + 0x00100000)
 #endif
 
 /*******************************************************************************
  * BL33
  ******************************************************************************/
-#define BL33_BASE				ULL(0x204000000)
+#define BL33_BASE				UL(0xC4000000)
 #define BL33_LIMIT				(BL33_BASE + 0x01000000)
 
 /*******************************************************************************
  * Platform specific page table and MMU setup constants
  ******************************************************************************/
 #if IMAGE_BL2
-#define MAX_XLAT_TABLES			U(7)
+#define MAX_XLAT_TABLES			U(8)
 #define MAX_MMAP_REGIONS		U(12)
 #elif IMAGE_BL31
 #define MAX_XLAT_TABLES			U(5)
