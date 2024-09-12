@@ -7,10 +7,12 @@
 include plat/renesas/rz/common/rz_common.mk
 include plat/renesas/rz/board/${BOARD}/rz_board.mk
 
-PLAT_INCLUDES			+=	-Iplat/renesas/rz/soc/v2l/include
+PLAT_INCLUDES			+= -Iplat/renesas/rz/soc/v2l/include
 
 DDR_SOURCES 			+= plat/renesas/rz/soc/v2l/drivers/ddr/ddr_v2l.c
 
-PLAT_BL_COMMON_SOURCES	+=	${DDR_SOURCES}
+PLAT_BL_COMMON_SOURCES	+= ${DDR_SOURCES}
+
+RZV2L					:= 1
 
 $(eval $(call add_define,RZV2L))
