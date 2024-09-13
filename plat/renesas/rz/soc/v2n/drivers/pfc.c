@@ -7,13 +7,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <pfc_regs.h>
-#include <sys_regs.h>
 #include <sys.h>
 #include <lib/mmio.h>
-
+#include "pfc_pmic.h"
 
 #define PFC_TBL_LEN						(2)
-
 
 /* SDHI 0 */
 static PFC_REGS pfc_sd0_reg_tbl[PFC_TBL_LEN] = {
@@ -78,7 +76,7 @@ static PFC_REGS pfc_scif_reg_tbl[PFC_TBL_LEN] = {
 	},
 };
 
-#if PLAT_SYSTEM_SUSPEND
+#if ENABLE_PMIC_CONTROL
 /* I2C8 */
 static PFC_REGS pfc_i2c_bus8_reg_tbl[PFC_TBL_LEN] = {
 	/* I2C8_SDA (P20.6), I2C8_SCL (P20.7) */
@@ -96,7 +94,7 @@ static PFC_REGS pfc_i2c_bus8_reg_tbl[PFC_TBL_LEN] = {
 		{0}
 	},
 };
-#endif /* PLAT_SYSTEM_SUSPEND */
+#endif /* ENABLE_PMIC_CONTROL */
 
 
 
@@ -164,9 +162,10 @@ static void pfc_drive_setup(void)
 	}
 }
 
-static void pfc_riic_pmic_setup(void)
+#if ENABLE_PMIC_CONTROL
+void pfc_riic_pmic_setup(void)
 {
-#if PLAT_SYSTEM_SUSPEND
+
 	int cnt;
 
 	mmio_write_32(PFC_PWPR, mmio_read_32(PFC_PWPR) | PWPR_REGWE_A);
@@ -183,8 +182,8 @@ static void pfc_riic_pmic_setup(void)
 	}
 
 	mmio_write_32(PFC_PWPR, mmio_read_32(PFC_PWPR) & ~PWPR_REGWE_A);
-#endif /* PLAT_SYSTEM_SUSPEND */
 }
+#endif /* ENABLE_PMIC_CONTROL */
 
 void pfc_setup(void)
 {
@@ -192,5 +191,4 @@ void pfc_setup(void)
 	pfc_qspi_setup();
 	pfc_scif_setup();
 	pfc_drive_setup();
-	pfc_riic_pmic_setup();
 }
