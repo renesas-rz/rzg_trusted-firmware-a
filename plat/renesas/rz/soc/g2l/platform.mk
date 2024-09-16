@@ -25,4 +25,3 @@ bptool_make:
 
 bptool_clean:
 	${Q}${MAKE} --no-print-directory -C ${BPTOOLPATH} clean
-	

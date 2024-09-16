@@ -165,7 +165,7 @@ void ddr_setup(void)
 	// Step31 is skipped because ECC is unused.
 #if (DDR_ECC_ENABLE == 1)
 	printf("NOTICE:  BL2: ECC MODE: ");
-#if(DDR_ECC_DETECT_CORRECT == 1)
+#if (DDR_ECC_DETECT_CORRECT == 1)
 	printf(" Error Detect and Correct\n");
 #elif (DDR_ECC_DETECT == 1)
 	printf(" Error Detect\n");
@@ -218,23 +218,23 @@ static int ecc_force_ce_error(void)
 
 	// make checkcode
 	xor_check_code = (data_synd[0] << 8) | 1;
-	user_word = (uint64_t*)ECC_ERR_ADDRESS;
+	user_word = (uint64_t *)ECC_ERR_ADDRESS;
 
-	do{
+	do {
 		tmp = read_mc_reg(DDRMC_R020);
-	} while(tmp & 1);
+	} while (tmp & 1);
 
 	rmw_mc_reg(DDRMC_R052, ~((0xff << 8) | 1), xor_check_code);
 
 	*user_word = USER_WORD_DATA;
 	flush_dcache_range((unsigned long)user_word, sizeof(uint64_t));
-	(*(const volatile uint64_t*)user_word);
+	(*(const volatile uint64_t *)user_word);
 
 	rmw_mc_reg(DDRMC_R052, ~((0xff << 8) | 1), 0);
 
 	do {
 		tmp = read_mc_reg(DDRMC_R064);
-	} while((retry--) && !(tmp & 0xffffU));
+	} while ((retry--) && !(tmp & 0xffffU));
 
 	// out of retry or not CE
 	if (!retry || !(tmp & 0x3)) {
@@ -251,7 +251,7 @@ static int ecc_force_ce_error(void)
 	err_addr = err_addr << 32;
 	err_addr |= (uint64_t)read_mc_reg(DDRMC_R053);
 	err_addr += DDR_BASE_ADDRESS;
-	if (((uint64_t)user_word) != err_addr){
+	if (((uint64_t)user_word) != err_addr) {
 		ret = -1;
 		goto err;
 	}
@@ -259,7 +259,7 @@ static int ecc_force_ce_error(void)
 	// check error synd
 	synd = read_mc_reg(DDRMC_R054);
 	synd = (synd >> 8) & 0xff;
-	if (synd != (xor_check_code >> 8)){
+	if (synd != (xor_check_code >> 8)) {
 		ret = -1;
 		goto err;
 	}
@@ -279,7 +279,10 @@ err:
 	return ret;
 }
 #else
-static int ecc_force_ce_error(void) {return 0;}
+static int ecc_force_ce_error(void)
+{
+	return 0;
+}
 #endif
 
 static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
@@ -343,7 +346,7 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 
 			do {
 				val = read_mc_reg(DDRMC_R065);
-			}while(!(val & (1 << 16)));
+			} while (!(val & (1 << 16)));
 
 			// bit_go=0
 #if RZV2L
@@ -355,7 +358,7 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 
 			do {
 				val = read_mc_reg(DDRMC_R065);
-			}while(val & (1 << 16));
+			} while (val & (1 << 16));
 
 			addr += (1 << i);
 		}
@@ -367,9 +370,9 @@ static void ecc_prog_all0(uint64_t addr_start, uint64_t addr_end)
 	write_mc_reg(DDRMC_R066, val);
 
 	// wait unitl the ecc int clear
-	do{
+	do {
 		val = read_mc_reg(DDRMC_R064);
-	}while(val & 0xffffU);
+	} while (val & 0xffffU);
 
 	// 6
 	rmw_mc_reg(DDRMC_R069, ~(0xff << 16), 0);
@@ -449,7 +452,7 @@ static void program_mc1_ecc_en(void)
 
 	tmp = read_mc_reg(DDRMC_R051);
 	tmp &= ~(0x3 << 24);
-#if(DDR_ECC_DETECT_CORRECT == 1)
+#if (DDR_ECC_DETECT_CORRECT == 1)
 	tmp |= (0x3 << 24);
 #elif (DDR_ECC_DETECT == 1)
 	tmp |= (0x2 << 24);
@@ -477,7 +480,7 @@ static void program_mc1_ecc_en(void)
 	tmp = read_mc_reg(DDRMC_R055);
 	addr_diff[1] = (uint16_t)((tmp >> 16) & 0x3);
 	tmp = read_mc_reg(DDRMC_R056);
-	addr_diff[1] += (uint16_t)((tmp>> 16) & 0xf);
+	addr_diff[1] += (uint16_t)((tmp >> 16) & 0xf);
 	tmp = read_mc_reg(DDRMC_R056);
 	addr_diff[1] += (uint16_t)(tmp & 0x7);
 
