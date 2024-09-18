@@ -24,7 +24,6 @@ static bl_mem_params_node_t bl2_mem_params_descs[] = {
 		.ep_info.spsr = SPSR_64(MODE_EL3,
 			MODE_SP_ELX, DISABLE_ALL_EXCEPTIONS),
 		.ep_info.pc = BL31_BASE,
-		.ep_info.args.arg0 = (uintptr_t)PARAMS_BASE,
 
 		SET_STATIC_PARAM_HEAD(image_info, PARAM_EP, VERSION_2,
 			image_info_t, IMAGE_ATTRIB_PLAT_SETUP),

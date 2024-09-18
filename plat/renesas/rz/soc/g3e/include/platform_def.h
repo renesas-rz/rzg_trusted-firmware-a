@@ -38,7 +38,7 @@
 #define PLAT_MAX_OFF_STATE		U(2)
 #define PLAT_MAX_PWR_LVL_STATES	U(2)
 
-#define MAX_IO_DEVICES			U(2)
+#define MAX_IO_DEVICES			U(3)
 #define MAX_IO_HANDLES			U(2)
 #define MAX_IO_BLOCK_DEVICES	U(1)
 
@@ -55,6 +55,8 @@
 #define BL31_BASE				UL(0x44000000)
 #define BL31_LIMIT				UL(0x44040000)
 
+#define BL31_SRAM_BASE				FDT_BASE + FDT_SIZE
+#define BL31_SRAM_LIMIT				U(0x08080000)
 
 /*******************************************************************************
  * BL32 specific defines.
@@ -63,6 +65,12 @@
 #define BL32_BASE				UL(0x44100000)
 #define BL32_LIMIT				(BL32_BASE + 0x100000)
 #endif
+
+/*******************************************************************************
+ * Platform suspend defines
+ ******************************************************************************/
+#define RZG3E_NS_DRAM_BASE				ULL(0x48000000)
+#define PLAT_TRUSTED_MAILBOX_BASE		BL31_LIMIT
 
 /*******************************************************************************
  * BL33

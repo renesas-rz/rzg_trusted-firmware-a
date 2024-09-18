@@ -176,6 +176,7 @@
 #define	CPG_LP_SRAM_STBY_CTL1		(CPG_BASE + 0xC50)	/* DRP SRAM standby control */
 #define	CPG_LP_SRAM_STBY_CTL2		(CPG_BASE + 0xC54)	/* Shared SRAM standby control 0 */
 #define	CPG_LP_SRAM_STBY_CTL3		(CPG_BASE + 0xC58)	/* Shared SRAM standby control 8 */
+
 /*
  * TODO: Check CPG_LP_DDR_CTL1 value exists.
  * The manual does not include this register value, however it is necessary for the operation of the device.

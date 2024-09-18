@@ -18,18 +18,36 @@
 #include <cpg.h>
 #include <syc.h>
 #include <scifa.h>
-#include <ddr.h>
 #include <sys_regs.h>
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
-#include <rz_private.h>
+#include "rz_private.h"
 #include <libfdt.h>
 
+#include "ddr.h"
+#include "pwrc.h"
+#include "sys.h"
 
 static console_t rzg3e_bl2_console;
 
+static uint32_t bl2_plat_get_boot_mode(void)
+{
+	if (sys_is_resume_reboot())
+		return RZ_WARM_BOOT;
+	else
+		return RZ_COLD_BOOT;
+}
+
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
+	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+
+	if (bl2_plat_get_boot_mode() == RZ_WARM_BOOT)
+		bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+
+	/* Clean next_params_info in BL image node */
+	bl_mem_params->params_node_mem.next_params_info = NULL;
+
 	return 0;
 }
 
@@ -46,6 +64,9 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	bl_mem_params = get_bl_mem_params_node(image_id);
 
 	switch (image_id) {
+	case BL31_IMAGE_ID:
+		params->boot_kind = bl2_plat_get_boot_mode();
+		break;
 	case BL32_IMAGE_ID:
 		memcpy(&params->bl32_ep_info, &bl_mem_params->ep_info,
 			sizeof(entry_point_info_t));
@@ -122,6 +143,8 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 
 	console_set_scope(&rzg3e_bl2_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
+
+	pwrc_setup();
 }
 
 void bl2_el3_plat_arch_setup(void)
@@ -170,7 +193,7 @@ void bl2_platform_setup(void)
 	rz_io_setup();
 
 	/* initialize DDR */
-	ddr_setup();
+	plat_ddr_setup();
 
 	bl2_init_fdt();
 }

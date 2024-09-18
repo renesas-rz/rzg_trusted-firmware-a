@@ -376,6 +376,20 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 
 		.type = CPG_T_CLK
 	},
+
+	{	/* RIIC */
+		.reg =  {
+				.addr = (uintptr_t)CPG_CLKON_9,
+				.val  = 0x00000FF8,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_CLKMON_4,
+				.val  = 0x0FF80000,
+				},
+
+		.type = CPG_T_CLK
+	},
 };
 
 static CPG_SETUP_DATA cpg_reset_tbl[] = {
@@ -501,6 +515,34 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_RSTMON_5,
 				.val  = 0x00000006,
+				},
+
+		.type = CPG_T_RST
+	},
+
+	{	/* RIIC part 1 */
+		.reg =  {
+				.addr = (uintptr_t)CPG_RST_9,
+				.val  = 0x0000FF00,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_RSTMON_4,
+				.val  = 0x0001FE00,
+				},
+
+		.type = CPG_T_RST
+	},
+
+	{	/* RIIC part 2 */
+		.reg =  {
+				.addr = (uintptr_t)CPG_RST_10,
+				.val  = 0x00000001,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_RSTMON_4,
+				.val  = 0x00020000,
 				},
 
 		.type = CPG_T_RST
@@ -782,25 +824,16 @@ static void cpg_wdtrst_sel_setup(void)
 
 void cpg_ddr_part1(void)
 {
-	/* 11.2 */
 	mmio_write_32(CPG_RST_11, 0x0FF80000);	/* DDR0 */
 
-	/*
-	 *	TODO: Check the PwrOkIn setting is done here.
-	 *	The DDR APN requires the PwrOkIn bit to be cleared here.
-	 *	PwrOkIn but is set in CPG_LP_DDR_CTL1, however the manual does not include this register.
-	 *	This misalignment must then be resolved.
-	 */
 	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000001);	/* DDR0 */
 
-	/* 11.3 */
 	mmio_write_32(CPG_PLLDDR0_STBY, 0x00010001);	/* PLLDDR0 clock start */
 	while ((mmio_read_32(CPG_PLLDDR0_MON) & 0x00000011) != 0x00000011)
 		;
 
 	mmio_write_32(CPG_CLKON_12, 0x0FC00FC0);
 
-	/* 11.4 */
 	udelay(1);
 
 	mmio_write_32(CPG_RST_11, 0x00080008);

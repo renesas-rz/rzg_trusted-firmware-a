@@ -7,9 +7,12 @@
 #include <stdint.h>
 #include <common/debug.h>
 #include <drivers/delay_timer.h>
+
 #include "ddr_regs.h"
 #include "rz_soc_def.h"
 #include "cpg.h"
+#include "cpg_regs.h"
+#include "ddr.h"
 #include "ddr_private.h"
 
 static void phyinit_c(void);
@@ -20,7 +23,9 @@ static void phyinit_i(void);
 static void phyinit_j(void);
 static void prog_all0(uint32_t addr_space);
 static void save_retcsr(void);
+static void restore_retcsr(void);
 
+#define MCAR_CTL				0x800
 
 void ddr_setup(void)
 {
@@ -48,6 +53,55 @@ void ddr_setup(void)
 
 	prog_all0(33);
 
+	update_mc();
+}
+
+void ddr_retention_entry(void)
+{
+	uint8_t num_rank;
+	uint32_t val = ddrtop_mc_param_rd(PCPCS_PD_EN_ADDR, PCPCS_PD_EN_OFFSET, PCPCS_PD_EN_WIDTH);
+
+	if (val == 3) {
+		num_rank = 2;
+	} else {
+		num_rank = 1;
+	}
+	dwc_ddrphy_apb_wr(0x020010, 0);
+	ddrtop_mc_param_poll(CONTROLLER_BUSY_ADDR, CONTROLLER_BUSY_OFFSET, CONTROLLER_BUSY_WIDTH, 0);
+	ddrtop_mc_param_wr(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_OFFSET, LP_AUTO_ENTRY_EN_WIDTH, 0);
+	ddrtop_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0);
+
+	ddrtop_mc_param_wr(LP_CMD_ADDR, LP_CMD_OFFSET, LP_CMD_WIDTH, 0b1010001);
+	ddrtop_mc_param_poll(LP_STATE_CS0_ADDR, LP_STATE_CS0_OFFSET, LP_STATE_CS0_WIDTH, 0b1001111);
+	if (num_rank > 1) {
+		ddrtop_mc_param_poll(LP_STATE_CS1_ADDR, LP_STATE_CS1_OFFSET, LP_STATE_CS1_WIDTH, 0b1001111);
+	}
+
+	ddrtop_mc_param_wr(DFIBUS_FREQ_F0_ADDR, DFIBUS_FREQ_F0_OFFSET, DFIBUS_FREQ_F0_WIDTH, 0x1f);
+	ddrtop_mc_param_wr(MCAR_CTL, 16, 1, 1);
+	dwc_ddrphy_apb_poll(0x0d00fa, (0<<0), (1<<0));
+
+
+	ddrtop_mc_param_wr(MCAR_CTL, 16, 1, 0);
+	dwc_ddrphy_apb_poll(0x0d00fa, (1<<0), (1<<0));
+
+	mmio_write_32(CPG_LP_DDR_CTL1, mmio_read_32(CPG_LP_DDR_CTL1) & ~0x00000001);
+
+	wait_dficlk(18);
+}
+
+void ddr_retention_exit(void)
+{
+	INFO("DDR: Retention Exit (Rev. %s)\n", DDR_VERSION);
+	cpg_ddr_part1();
+	setup_mc();
+	cpg_ddr_part2();
+	phyinit_c();
+
+	restore_retcsr();
+
+	phyinit_i();
+	phyinit_j();
 	update_mc();
 }
 
@@ -163,16 +217,6 @@ static void phyinit_mc(void)
 	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
 }
 
-static void save_retcsr(void)
-{
-	dwc_ddrphy_apb_wr(0x0d0000, 0);
-	dwc_ddrphy_apb_wr(0x0c0080, 3);
-
-
-	dwc_ddrphy_apb_wr(0x0c0080, 2);
-	dwc_ddrphy_apb_wr(0x0d0000, 1);
-}
-
 static void prog_all0(uint32_t addr_space)
 {
 #if PLAT_DDR_ECC
@@ -207,4 +251,19 @@ static void prog_all0(uint32_t addr_space)
 
 	udelay(1);
 #endif
+}
+
+static void	save_retcsr(void)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(ddr_csr_table); i++)
+		ddr_csr_table[i] = ~0x0;
+
+	retcsr_read_registers(ddr_csr_table, sizeof(ddr_csr_table));
+}
+
+static void	restore_retcsr(void)
+{
+	retcsr_write_registers(ddr_csr_table, sizeof(ddr_csr_table));
 }

@@ -10,11 +10,18 @@
 #include <common/bl_common.h>
 #include <lib/xlat_tables/xlat_tables_compat.h>
 #include <plat/common/common_def.h>
-
 #include <scifa.h>
-#include <plat_tzc_def.h>
-#include <rz_private.h>
-#include <rz_soc_def.h>
+
+#include "plat_tzc_def.h"
+#include "rz_private.h"
+#include "rz_soc_def.h"
+#include "pwrc.h"
+
+#ifdef PLAT_EXTRA_LD_SCRIPT
+IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_START__, BL31_PMUSRAM_START);
+IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_END__, BL31_PMUSRAM_END);
+IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_BASE__, BL31_PMUSRAM_BASE);
+#endif
 
 
 static console_t rzg3e_bl31_console;
@@ -41,7 +48,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
 
 	/* copy bl2_to_bl31_params_mem_t*/
-	memcpy(&from_bl2, (void *)arg0, sizeof(from_bl2));
+	memcpy(&from_bl2, (void *)PARAMS_BASE, sizeof(from_bl2));
 }
 
 void bl31_plat_arch_setup(void)
@@ -61,6 +68,8 @@ void bl31_plat_arch_setup(void)
 					MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(RZG3E_DEVICE_BASE, RZG3E_DEVICE_SIZE,
 				MT_DEVICE | MT_RW | MT_SECURE),
+		MAP_REGION_FLAT(RZG3E_DDR_BASE, RZG3E_DDR_SIZE,
+				MT_MEMORY | MT_RW | MT_SECURE),
 		{0}
 	};
 
@@ -68,11 +77,39 @@ void bl31_plat_arch_setup(void)
 	enable_mmu_el3(0);
 }
 
+void plat_copy_code_to_system_ram(void)
+{
+#ifdef PLAT_EXTRA_LD_SCRIPT
+	INFO("Copying code to SRAM\n");
+	uint32_t attr;
+	const uintptr_t pmu_code_load = BL31_PMUSRAM_BASE;
+	const uintptr_t pmu_code_image = BL31_PMUSRAM_START;
+	size_t pmu_code_size = BL31_PMUSRAM_END - BL31_PMUSRAM_START;
+
+	attr = MT_MEMORY | MT_RW | MT_SECURE | MT_EXECUTE_NEVER;
+	xlat_change_mem_attributes(pmu_code_image, pmu_code_size, attr);
+
+	memcpy((void *)pmu_code_image, (void *)pmu_code_load, pmu_code_size);
+	flush_dcache_range(pmu_code_image, pmu_code_size);
+
+	attr = MT_MEMORY | MT_RO | MT_SECURE | MT_EXECUTE;
+	xlat_change_mem_attributes(pmu_code_image, pmu_code_size, attr);
+
+	/* Invalidate instruction cache */
+	plat_invalidate_icache();
+	dsb();
+	isb();
+#endif
+}
+
 void bl31_platform_setup(void)
 {
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
+
+	plat_copy_code_to_system_ram();
+	pwrc_setup();
 }
 
 entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)

@@ -12,21 +12,27 @@ include plat/renesas/rz/common/g3e_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 include lib/libfdt/libfdt.mk
 
-PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3e/plat_security.c
+DDR_SOURCES				+=	plat/renesas/rz/soc/g3e/drivers/ddr/ddr.c		\
+							plat/renesas/rz/soc/g3e/drivers/ddr/ddr_misc.c
+
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3e/drivers/pwrc/pwrc.c			\
+							plat/renesas/rz/soc/g3e/drivers/pwrc/pwrc_stack.S	\
+							plat/renesas/rz/soc/g3e/drivers/riic.c				\
+							plat/renesas/rz/soc/g3e/plat_security.c				\
+							${DDR_SOURCES}
 
 BL2_SOURCES				+=	plat/renesas/rz/soc/g3e/bl2_plat_setup.c			\
 							plat/renesas/rz/soc/g3e/plat_storage.c				\
 							plat/renesas/rz/soc/g3e/bl2_plat_mem_params_desc.c	\
 							plat/renesas/rz/soc/g3e/drivers/cpg.c				\
 							plat/renesas/rz/soc/g3e/drivers/sys.c				\
-							plat/renesas/rz/soc/g3e/drivers/pfc.c
+							plat/renesas/rz/soc/g3e/drivers/pfc.c				\
+							plat/renesas/rz/soc/g3e/plat_ddr_setup.c
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/g3e/bl31_plat_setup.c		\
 							plat/renesas/rz/soc/g3e/plat_pm.c				\
 							plat/renesas/rz/soc/g3e/rz_plat_sip_handler.c
 
-DDR_SOURCES				+=	plat/renesas/rz/soc/g3e/drivers/ddr/ddr.c		\
-							plat/renesas/rz/soc/g3e/drivers/ddr/ddr_misc.c
 
 .PHONY: bptool_make bptool_clean
 

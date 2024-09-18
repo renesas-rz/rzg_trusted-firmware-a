@@ -225,8 +225,8 @@ Flash Procedure for SD
 
 		Using default response p.
 		Partition number (1-4, default 1):
-		First sector (2048-7744511, default 2048): 4096
-		Last sector, +/-sectors or +/-size{K,M,G,T,P} (4096-7744511, default 7744511): +512M
+		First sector (2048-7744511, default 2048): 6144
+		Last sector, +/-sectors or +/-size{K,M,G,T,P} (6144-62333951, default 62333951): +512M
 
 		Created a new partition 1 of type 'Linux' and of size 512 MiB.
 
@@ -238,8 +238,8 @@ Flash Procedure for SD
 
 		Using default response p.
 		Partition number (2-4, default 2):
-		First sector (1052672-7744511, default 1052672):
-		Last sector, +/-sectors or +/-size{K,M,G,T,P} (1052672-7744511, default 7744511):
+		First sector (1054720-7744511, default 1054720): 1054720
+		Last sector, +/-sectors or +/-size{K,M,G,T,P} (1054720-62333951, default 62333951):
 
 		Created a new partition 2 of type 'Linux' and of size 3.2 GiB.
 
@@ -252,9 +252,9 @@ Flash Procedure for SD
 		Disklabel type: dos
 		Disk identifier: 0x00000000
 
-		Device     Boot   Start     End Sectors  Size Id Type
-		/dev/sdd1          4096 1052671 1048576  512M 83 Linux
-		/dev/sdd2       1052672 7744511 6691840  3.2G 83 Linux
+		Device     Boot   Start      End  Sectors  Size Id Type
+		/dev/sdb1          6144  1054719  1048576  512M 83 Linux
+		/dev/sdb2       1054720 62333951 61279232 29.2G 83 Linux
 
 	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 		Partition #2 contains a ext4 signature.

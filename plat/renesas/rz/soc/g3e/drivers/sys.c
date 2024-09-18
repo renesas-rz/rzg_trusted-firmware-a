@@ -9,6 +9,7 @@
 #include <sys.h>
 #include <sys_regs.h>
 #include <common/debug.h>
+#include <pwrc_board.h>
 
 /* MD_BOOT [2:0] */
 #define SYS_LSI_MODE_ESD					(0)
@@ -19,6 +20,15 @@
 #define SYS_LSI_MODE_EMMC_1V8				(5)
 #define SYS_LSI_MODE_SFLASH_1V8				(6)
 #define SYS_LSI_MODE_MASK					(0x7)
+
+bool sys_is_resume_reboot(void)
+{
+#if PLAT_SYSTEM_SUSPEND
+	return pwrc_board_is_resume();
+#else
+	return false;
+#endif
+}
 
 boot_mode_t sys_get_boot_mode(void)
 {

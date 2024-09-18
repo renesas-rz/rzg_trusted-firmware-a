@@ -5,25 +5,32 @@
 #
 
 PLAT_SOC_RZG3E					:= 1
+RESET_TO_BL31					:= 1
 RESET_TO_BL2					:= 1
 COLD_BOOT_SINGLE_CPU			:= 1
-PROGRAMMABLE_RESET_ADDRESS		:= 1
+PROGRAMMABLE_RESET_ADDRESS		:= 0
 WARMBOOT_ENABLE_DCACHE_EARLY	:= 1
 GICV3_SUPPORT_GIC600			:= 1
+GICV3_OVERRIDE_DISTIF_PWR_OPS	:= 1
 HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
-DEBUG_FPGA						:= 0
-PLAT_EMMC_WRITE_ENABLE			:= 0
+PLAT_EMMC_WRITE_ENABLE			:= 1
 PLAT_DDR_ECC					:= 0
 INIT_UNUSED_NS_EL2				:= 1
+PLAT_SYSTEM_SUSPEND				:= 0
+
+ifneq (${PLAT_SYSTEM_SUSPEND},0)
+override PLAT_SYSTEM_SUSPEND	:= 1
+$(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
+endif
 
 $(eval $(call add_define,PLAT_SOC_RZG3E))
 $(eval $(call add_define,PROTECTED_CHIPID))
-$(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PLAT_EMMC_WRITE_ENABLE))
 $(eval $(call add_define,PLAT_DDR_ECC))
+$(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1
@@ -45,10 +52,11 @@ RZ_TIMER_SOURCES		:=	drivers/delay_timer/generic_delay_timer.c			\
 							drivers/delay_timer/delay_timer.c
 
 BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
-							drivers/arm/tzc/tzc400.c
+							drivers/arm/tzc/tzc400.c							\
+							${RZ_TIMER_SOURCES}
 
 include lib/xlat_tables_v2/xlat_tables.mk
-PLAT_BL_COMMON_SOURCES		:=	${XLAT_TABLES_LIB_SRCS}								\
+PLAT_BL_COMMON_SOURCES	:=	${XLAT_TABLES_LIB_SRCS}								\
 							plat/renesas/rz/common/plat_rz_common.c				\
 							plat/renesas/rz/common/aarch64/plat_helpers.S		\
 							plat/renesas/rz/common/drivers/syc.c				\
@@ -60,12 +68,13 @@ endif
 
 XSPI_SOURCES			:=	plat/renesas/rz/common/drivers/xspi.c
 
-EMMC_SOURCES			:=	plat/renesas/rz/common/drivers/io/io_emmcdrv.c		\
+EMMC_SOURCES			:=	plat/renesas/rz/common/drivers/io/io_emmcdrv.c			\
 							plat/renesas/rz/common/drivers/emmc/emmc_interrupt.c	\
-							plat/renesas/rz/common/drivers/emmc/emmc_utility.c	\
-							plat/renesas/rz/common/drivers/emmc/emmc_mount.c	\
-							plat/renesas/rz/common/drivers/emmc/emmc_init.c		\
-							plat/renesas/rz/common/drivers/emmc/emmc_read.c		\
+							plat/renesas/rz/common/drivers/emmc/emmc_utility.c		\
+							plat/renesas/rz/common/drivers/emmc/emmc_mount.c		\
+							plat/renesas/rz/common/drivers/emmc/emmc_init.c			\
+							plat/renesas/rz/common/drivers/emmc/emmc_read.c			\
+							plat/renesas/rz/common/drivers/emmc/emmc_write.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_cmd.c
 
 SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c			\
@@ -85,8 +94,7 @@ BL2_SOURCES				+=	common/desc_image_load.c							\
 							drivers/io/io_memmap.c								\
 							drivers/io/io_fip.c									\
 							plat/renesas/rz/common/plat_image_load.c			\
-							${RZ_TIMER_SOURCES}									\
-							${DDR_SOURCES}										\
+							plat/renesas/rz/common/drivers/io/io_xspidrv.c		\
 							${XSPI_SOURCES}										\
 							${EMMC_SOURCES}										\
 							${SD_SOURCES}

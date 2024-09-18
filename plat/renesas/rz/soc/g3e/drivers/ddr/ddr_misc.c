@@ -71,14 +71,29 @@ void ddrtop_mc_param_poll(uint32_t addr, uint32_t offset, uint32_t width, uint32
 	ddrtop_mc_apb_poll(addr, tmp_data, tmp_mask);
 }
 
+void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
+{
+	uint32_t tmp_data;
+
+	tmp_data = dwc_ddrphy_apb_rd(addr);
+	tmp_data &= mask;
+
+	while (tmp_data != data) {
+		wait_pclk(10);
+		tmp_data = dwc_ddrphy_apb_rd(addr);
+		tmp_data &= mask;
+	}
+}
+
 void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 {
 	uint32_t train_done = 0;
 	uint32_t mail;
 
+	wait_pclk(10);
 	do {
+		wait_dficlk(500);
 		uint32_t data = dwc_ddrphy_apb_rd(0x0d0004);
-
 		if ((data & 0x1) == 0) {
 			mail = get_mail(0);
 			if (mail == 0xff || mail == 0x07) {
@@ -120,3 +135,33 @@ uint32_t get_mail(uint8_t mode_32bits)
 
 	return mail;
 }
+
+static void soft_delay(uint64_t usec)
+{
+	/* RZ/G3E: CPU Clock = 1.8G Hz*/
+	const uint32_t cpuclk_freq = 1800000000;
+	const uint32_t nop_clk_cycles = 4;
+	const uint32_t num_of_nop_needed = cpuclk_freq / (nop_clk_cycles * 1000000);
+
+	volatile uint64_t timeout = num_of_nop_needed * usec;
+
+	while (timeout--) {
+		__asm__ ("nop");
+		dsb();
+	}
+}
+
+void wait_dficlk(uint32_t cycles)
+{
+	const uint32_t dficlk_freq = 800000000; /* dfiCLK = 800MHz */
+
+	soft_delay((((uint64_t)cycles * 1000000) / dficlk_freq) + 1);
+}
+
+void wait_pclk(uint32_t cycles)
+{
+	const uint32_t pclk_freq = 100000000; /* PCLK = 100MHz */
+
+	soft_delay((((uint64_t)cycles * 1000000) / pclk_freq) + 1);
+}
+
