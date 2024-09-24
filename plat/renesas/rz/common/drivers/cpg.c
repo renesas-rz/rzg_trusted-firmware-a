@@ -95,12 +95,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		0x00010000,
 		CPG_T_CLK
 	},
-	{		/* DMAC */
-		(uintptr_t)CPG_CLKON_DAMC_REG,
-		(uintptr_t)CPG_CLKMON_DAMC_REG,
-		0x00030003,
-		CPG_T_CLK
-	},
 	{		/* OSTM */
 		(uintptr_t)CPG_CLKON_OSTM,
 		(uintptr_t)CPG_CLKMON_OSTM,
@@ -184,14 +178,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		0x00030000,
 		CPG_T_CLK
 	},
-#if !RZG2UL
-	{		/* H.264 codec */
-		(uintptr_t)CPG_CLKON_H264,
-		(uintptr_t)CPG_CLKMON_H264,
-		0x00010001,
-		CPG_T_CLK
-	},
-#endif
 	{		/* Camera Data Receive Unit */
 		(uintptr_t)CPG_CLKON_CRU,
 		(uintptr_t)CPG_CLKMON_CRU,
@@ -305,12 +291,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		0x00010000,
 		CPG_T_RST
 	},
-	{		/* DMAC */
-		(uintptr_t)CPG_RST_DMAC,
-		(uintptr_t)CPG_RSTMON_DMAC,
-		0x00030003,
-		CPG_T_RST
-	},
 	{		/* OSTM */
 		(uintptr_t)CPG_RST_OSTM,
 		(uintptr_t)CPG_RSTMON_OSTM,
@@ -394,14 +374,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		0x00030000,
 		CPG_T_RST
 	},
-#if !RZG2UL
-	{		/* H.264 codec */
-		(uintptr_t)CPG_RST_H264,
-		(uintptr_t)CPG_RSTMON_H264,
-		0x00030003,
-		CPG_T_RST
-	},
-#endif
 	{		/* Camera Data Receive Unit */
 		(uintptr_t)CPG_RST_CRU,
 		(uintptr_t)CPG_RSTMON_CRU,
@@ -554,13 +526,11 @@ static CPG_REG_SETTING cpg_sel_pll3_1_on_off[] = {
 	{(uintptr_t)CPG_CLKON_CM33, 0x00010001 },
 	{(uintptr_t)CPG_CLKON_CRU, 0x000C000C },
 	{(uintptr_t)CPG_CLKON_CST, 0x07FD07FD },
-	{(uintptr_t)CPG_CLKON_DAMC_REG, 0x00030003 },
 	{(uintptr_t)CPG_CLKON_DDR, 0x00030003 },
 	{(uintptr_t)CPG_CLKON_ETH, 0x00030003 },
 	{(uintptr_t)CPG_CLKON_GIC600, 0x00010001 },
 #if !RZG2UL
 	{(uintptr_t)CPG_CLKON_GPU, 0x00070007 },
-	{(uintptr_t)CPG_CLKON_H264, 0x00010001 },
 #endif
 	{(uintptr_t)CPG_CLKON_IA55, 0x00030003 },
 	{(uintptr_t)CPG_CLKON_IM33, 0x00030003 },
