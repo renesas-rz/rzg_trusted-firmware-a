@@ -31,13 +31,22 @@
   tags:
     - "${PLAT}_tag_tests"
   script:
-    - scripts/create_and_setup_release_branch.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$PLATFORM"
+    - if [[ "$CI_COMMIT_REF_NAME" == *"2.10.0"* ]]; then
+    - TFA_VER="2.10.0"
+    - elif [[ "$CI_COMMIT_REF_NAME" == *"2.7.0"* ]]; then
+    - TFA_VER="2.7.0"
+    - else
+    - echo "Incorrect TF_A version branch provided"
+    - exit 1
+    - fi
+    - echo "RELEASE IS BASED OFF TF-A VERSION $TFA_VER"
+    - scripts/create_and_setup_release_branch.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$PLATFORM" "$TFA_VER"
     - cd ../workspace/tf-a
-    - git checkout "2.7.0/rz_rel_${BSP_NAME}.${BSP_RELEASE_NUM}"
-    - git merge "2.7.0/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
-    - git branch --delete "2.7.0/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - git checkout "${TFA_VER}/rz_rel_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - git merge "${TFA_VER}/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - git branch --delete "${TFA_VER}/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
     - cd ../../tf-a
-    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$TAG_NAME"
+    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$TAG_NAME" "$TFA_VER"
     - cd ../workspace/tf-a
 
 ######################################### tag_deployment_job_template #################################################
