@@ -25,6 +25,7 @@ bsp_name="$1"
 bsp_release_number="$2"
 workspace_path="$3"
 tag_name="$4"
+tfa_version="$5"
 
 EXIT_PASS=0
 EXIT_FAIL_GIT_ERROR=1
@@ -37,8 +38,8 @@ if [ "$workspace_path" == "" ]; then
     workspace_path="$(pwd)/workspace"
 fi
 tfa_project_path="${workspace_path}/tf-a"
-tag_version_number="2.7.0"
-tfa_release_branch_name="2.7.0/rz_rel_${bsp_name}.${bsp_release_number}"
+tag_version_number="${tfa_version}"
+tfa_release_branch_name="${tfa_version}/rz_rel_${bsp_name}.${bsp_release_number}"
 tfa_public_repo_location="git@github.com:renesas-rz/rzg_trusted-firmware-a.git"
 
 ################################################## file_exists ########################################################

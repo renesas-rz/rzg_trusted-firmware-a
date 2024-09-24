@@ -32,8 +32,8 @@
 .checkpatch_test_job_template: &checkpatch_test_job_template
   stage: static_analysis_testing
   variables:
-    REFERENCE_BRANCH: "2.7.0/rz_main"
-    TARGET_BRANCH: $CI_COMMIT_BRANCH
+    REFERENCE_BRANCH: ""
+    TARGET_BRANCH: ""
   script:
     - echo "TARGET BRANCH - ${TARGET_BRANCH}"
     - echo "REFERENCE BRANCH - ${REFERENCE_BRANCH}"

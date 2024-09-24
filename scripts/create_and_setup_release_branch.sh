@@ -25,15 +25,16 @@ bsp_name="$1"
 bsp_release_number="$2"
 workspace_path="$3"
 list_devices_to_keep="$4"
+tfa_version="$5"
 
 if [ "$workspace_path" == "" ]; then
 	cd ..
 	workspace_path="$(pwd)/workspace"
 fi
 tfa_project_path="${workspace_path}/tf-a"
-tfa_release_branch_name="2.7.0/rz_rel_${bsp_name}.${bsp_release_number}"
-tfa_rel_feature_branch_name="2.7.0/rz_rel_feat_rm_dev_${bsp_name}.${bsp_release_number}"
-tfa_main_branch_name="2.7.0/rz_main"
+tfa_release_branch_name="${tfa_version}/rz_rel_${bsp_name}.${bsp_release_number}"
+tfa_rel_feature_branch_name="${tfa_version}/rz_rel_feat_rm_dev_${bsp_name}.${bsp_release_number}"
+tfa_main_branch_name="${tfa_version}/rz_main"
 
 BASEDIR=$(dirname "$(realpath "$0")")
 

@@ -25,8 +25,14 @@ include:
 
 ############################################## Checkpatch test jobs ###################################################
 overnight-checkpatch-testing:
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ '/2\.10\.0/'
+      variables:
+        REFERENCE_BRANCH: "2.10.0/rz_main"
+    - if: $CI_COMMIT_BRANCH =~ '/2\.7\.0/'
+      variables:
+        REFERENCE_BRANCH: "2.7.0/rz_main"
   variables:
-    REFERENCE_BRANCH: "2.7.0/rz_main"
     TARGET_BRANCH: $CI_COMMIT_BRANCH
   extends:
     - .overnight_checkpatch_test_job_template
