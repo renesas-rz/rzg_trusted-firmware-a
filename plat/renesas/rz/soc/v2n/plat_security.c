@@ -21,101 +21,6 @@ typedef struct arm_tzc_regions_info {
 } arm_tzc_regions_info_t;
 
 
-static const struct {
-	uint32_t reg;
-	uint32_t msk;
-	uint32_t val;
-} sys_acctl[] = {
-	/* Master Access Control Register */
-	{SYS_MSTACCCTL0,  0xBBBBBBBBU, 0xAAAAAAAAU},
-	{SYS_MSTACCCTL1,  0x000000BBU, 0x000000AAU},
-	{SYS_MSTACCCTL3,  0x00BBBBBBU, 0x00AAAAAAU},
-	{SYS_MSTACCCTL4,  0x000000BBU, 0x000000AAU},
-	{SYS_MSTACCCTL5,  0x00BB00BBU, 0x00AA00AAU},
-	{SYS_MSTACCCTL6,  0x0000BBBBU, 0x0000AAAAU},
-	{SYS_MSTACCCTL7,  0x000000BBU, 0x000000AAU},
-	{SYS_MSTACCCTL8,  0x03030303U, 0x02020202U},
-	{SYS_MSTACCCTL10, 0x0030B303U, 0x0020A202U},
-	{SYS_MSTACCCTL11, 0x00000033U, 0x00000022U},
-	{SYS_MSTACCCTL12, 0x000000BBU, 0x000000AAU},
-	{SYS_MSTACCCTL13, 0x000000BBU, 0x000000AAU},
-	{SYS_MSTACCCTL14, 0x000000BBU, 0x000000AAU},
-	{SYS_MSTACCCTL15, 0x000000BBU, 0x000000AAU},
-	{SYS_MSTACCCTL17, 0x000000BBU, 0x000000AAU},
-	{SYS_MSTACCCTL18, 0xB0B0BBBBU, 0xA0A0AAAAU},
-	/* Slave Access Control Register */
-	{SYS_SLVACCCTL0,  0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL1,  0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL2,  0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL3,  0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL4,  0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL5,  0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL6,  0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL7,  0x00000FFFU, 0x00000000U},
-	{SYS_SLVACCCTL8,  0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL9,  0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL10, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL11, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL12, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL13, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL14, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL15, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL19, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL20, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL21, 0x0000000FU, 0x0000000AU},
-	{SYS_SLVACCCTL22, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL32, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL33, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL35, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL36, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL37, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL38, 0x0000FFFFU, 0x00000000U},
-	{SYS_SLVACCCTL39, 0x0000003FU, 0x00000000U},
-	{SYS_SLVACCCTL40, 0x00003333U, 0x00000000U},
-	{SYS_SLVACCCTL41, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL43, 0x00000033U, 0x00000000U},
-	{SYS_SLVACCCTL44, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL45, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL46, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL47, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL48, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL49, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL50, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL51, 0x0000003FU, 0x00000000U},
-	{SYS_SLVACCCTL52, 0x0000003FU, 0x00000000U},
-	{SYS_SLVACCCTL53, 0x0000003FU, 0x00000000U},
-	{SYS_SLVACCCTL54, 0x0000003CU, 0x00000000U},
-	{SYS_SLVACCCTL55, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL56, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL57, 0x000030FFU, 0x000020AAU},
-	{SYS_SLVACCCTL58, 0x000003FFU, 0x00000000U},
-	{SYS_SLVACCCTL64, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL65, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL66, 0x0000FFFFU, 0x00000000U},
-	{SYS_SLVACCCTL67, 0x000000FFU, 0x00000000U},
-	{SYS_SLVACCCTL68, 0x0000000FU, 0x00000000U},
-	{SYS_SLVACCCTL80, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL81, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL89, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL91, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL92, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL93, 0x00000003U, 0x00000000U},
-};
-
-
-void plat_access_control_setup(void)
-{
-	uint32_t i;
-
-	for (i = 0; i < ARRAY_SIZE(sys_acctl); i++) {
-		uint32_t val = mmio_read_32(sys_acctl[i].reg) & (~sys_acctl[i].msk);
-
-		val |= (sys_acctl[i].val & sys_acctl[i].msk);
-
-		mmio_write_32(sys_acctl[i].reg, val);
-	}
-}
-
 uint8_t tzc400_get_num_filters(uintptr_t tzc_base)
 {
 	uint32_t tzc400_build;
@@ -161,21 +66,103 @@ void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_reg
 	tzc400_enable_filters();
 }
 
-static void plat_tzc_sram_setup(void)
-{
-	const arm_tzc_regions_info_t msram_tzc_regions[] = {
-		{
-			/* Default Region 0: Lock down */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
-		},
-		{}
-	};
+#if IMAGE_BL2
+static const struct {
+	uint32_t reg;
+	uint32_t msk;
+	uint32_t val;
+} sys_acctl[] = {
+	/* Master Access Control Register */
+	{SYS_MSTACCCTL0,  0xBBBBBBBBU, 0xAAAAAAAAU},
+	{SYS_MSTACCCTL1,  0x000000BBU, 0x000000AAU},
+	{SYS_MSTACCCTL3,  0x00BBBBBBU, 0x00AAAAAAU},
+	{SYS_MSTACCCTL4,  0x000000BBU, 0x000000AAU},
+	{SYS_MSTACCCTL5,  0x00BB00BBU, 0x00AA00AAU},
+	{SYS_MSTACCCTL6,  0x0000BBBBU, 0x0000AAAAU},
+	{SYS_MSTACCCTL7,  0x000000BBU, 0x000000AAU},
+	{SYS_MSTACCCTL8,  0x03030303U, 0x02020202U},
+	{SYS_MSTACCCTL10, 0x0030B303U, 0x0020A202U},
+	{SYS_MSTACCCTL11, 0x00000033U, 0x00000022U},
+	{SYS_MSTACCCTL12, 0x000000BBU, 0x000000AAU},
+	{SYS_MSTACCCTL13, 0x000000BBU, 0x000000AAU},
+	{SYS_MSTACCCTL14, 0x000000BBU, 0x000000AAU},
+	{SYS_MSTACCCTL15, 0x000000BBU, 0x000000AAU},
+	{SYS_MSTACCCTL17, 0x000000BBU, 0x000000AAU},
+	{SYS_MSTACCCTL18, 0xB0B0BBBBU, 0xA0A0AAAAU},
+	/* Slave Access Control Register */
+	{SYS_SLVACCCTL0,  0x00000003U, 0x00000000U},
+	/* SYS_SLVACCCTL1 is readonly */
+	{SYS_SLVACCCTL2,  0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL3,  0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL4,  0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL5,  0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL6,  0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL7,  0x00000FFFU, 0x00000000U},
+	{SYS_SLVACCCTL8,  0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL9,  0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL10, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL11, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL12, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL13, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL14, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL15, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL16, 0x0000000FU, 0x0000000AU},
+	{SYS_SLVACCCTL19, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL20, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL21, 0x0000000FU, 0x0000000AU},
+	{SYS_SLVACCCTL22, 0x00000003U, 0x00000002U},
+	{SYS_SLVACCCTL32, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL33, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL35, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL36, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL37, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL38, 0x0000FFFFU, 0x00000000U},
+	{SYS_SLVACCCTL39, 0x0000003FU, 0x00000000U},
+	{SYS_SLVACCCTL40, 0x00003333U, 0x00000000U},
+	{SYS_SLVACCCTL41, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL43, 0x00000033U, 0x00000000U},
+	{SYS_SLVACCCTL44, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL45, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL46, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL47, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL48, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL49, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL50, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL51, 0x0000003FU, 0x00000000U},
+	{SYS_SLVACCCTL52, 0x0000003FU, 0x00000000U},
+	{SYS_SLVACCCTL53, 0x0000003FU, 0x00000000U},
+	{SYS_SLVACCCTL54, 0x0000003CU, 0x00000000U},
+	{SYS_SLVACCCTL55, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL56, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL57, 0x000030FFU, 0x000020AAU},
+	{SYS_SLVACCCTL58, 0x000003FFU, 0x000002AAU},
+	{SYS_SLVACCCTL64, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL65, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL66, 0x0000FFFFU, 0x00000000U},
+	{SYS_SLVACCCTL67, 0x000000FFU, 0x00000000U},
+	{SYS_SLVACCCTL68, 0x0000000FU, 0x00000000U},
+	{SYS_SLVACCCTL80, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL81, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL89, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL91, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL92, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL93, 0x00000003U, 0x00000000U},
+};
 
-	plat_tzc400_setup(RZV2N_TZC400_SRAM_0_1, &msram_tzc_regions[0]);
+
+static void plat_access_control_setup(void)
+{
+	uint32_t i;
+
+	for (i = 0; i < ARRAY_SIZE(sys_acctl); i++) {
+		uint32_t val = mmio_read_32(sys_acctl[i].reg) & (~sys_acctl[i].msk);
+
+		val |= (sys_acctl[i].val & sys_acctl[i].msk);
+
+		mmio_write_32(sys_acctl[i].reg, val);
+	}
 }
+
 
 static void plat_tzc_ddr_setup(void)
 {
@@ -204,6 +191,14 @@ static void plat_tzc_ddr_setup(void)
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
+
+		{
+			.base = PLAT_TEE_TZC_PROT_DRAM01_END + 1,
+			.end  = UL(0xFFFFFFFFF),
+			.sec_attr = TZC_REGION_S_NONE,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
+		},
+
 #else
 		{
 			/* Default Region 0: Complete access */
@@ -213,7 +208,7 @@ static void plat_tzc_ddr_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
-		{}
+		{0}
 	};
 
 	const arm_tzc_regions_info_t ddr_default_tzc_regions[] = {
@@ -225,7 +220,7 @@ static void plat_tzc_ddr_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
-		{}
+		{0}
 	};
 
 	plat_tzc400_setup(RZV2N_TZC400_DDR0_BASE, &ddr_default_tzc_regions[0]);
@@ -252,10 +247,10 @@ static void plat_tzc_spi_setup(void)
 		},
 
 
-		{}
+		{0}
 	};
 
-	plat_tzc400_setup(RZV2N_TZC400_xSPI_BASE, &xspi_tzc_regions[0]);
+	plat_tzc400_setup(RZV2N_TZC400_XSPI_BASE, &xspi_tzc_regions[0]);
 }
 
 static void plat_tzc_pci_setup(void)
@@ -269,10 +264,10 @@ static void plat_tzc_pci_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
-		{}
+		{0}
 	};
 
-	plat_tzc400_setup(RZV2N_TZC400_PCIe_BASE, &pci_tzc_regions[0]);
+	plat_tzc400_setup(RZV2N_TZC400_PCIE_BASE, &pci_tzc_regions[0]);
 }
 
 static void plat_tzc_rcpu_setup(void)
@@ -286,26 +281,57 @@ static void plat_tzc_rcpu_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
-		{}
+		{0}
 	};
 
 	plat_tzc400_setup(RZV2N_TZC400_RCPU_BASE, &rcpu_tzc_regions[0]);
 }
 
-static void bl2_security_setup(void)
+void bl2_security_setup(void)
 {
 	/* initialize TZC-400 */
-	plat_tzc_sram_setup();
 	plat_tzc_spi_setup();
 	plat_tzc_ddr_setup();
 	plat_tzc_pci_setup();
 	plat_tzc_rcpu_setup();
 
-	/* setup Master/Slave Access Control */
+	/* Setup Master/Slave access control */
 	plat_access_control_setup();
 }
+#endif /* IMAGE_BL2 */
 
-void plat_security_setup(void)
+#if IMAGE_BL31
+static void plat_tzc_sram_setup(void)
 {
-	bl2_security_setup();
+	const arm_tzc_regions_info_t msram_tzc_regions[] = {
+		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+		},
+		{}
+	};
+
+	const arm_tzc_regions_info_t asram_tzc_regions[] = {
+		{
+			/* Default Region 0: Restricted */
+			.base = 0,	/* Not Used by Region 0*/
+			.end  = 0,	/* Not Used by Region 0*/
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+		{0}
+	};
+
+	plat_tzc400_setup(RZV2N_TZC400_SRAM_0_1, &msram_tzc_regions[0]);
+	plat_tzc400_setup(RZV2N_TZC400_SRAM_2, &asram_tzc_regions[0]);
 }
+
+void bl31_security_setup(void)
+{
+	/* initialize TZC-400 */
+	plat_tzc_sram_setup();
+}
+#endif /* IMAGE_BL31 */
