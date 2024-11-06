@@ -197,11 +197,11 @@ void phyinit_exec_1d_image(void)
 			ddrtop_mc_param_wr(w2w_adr, w2w_ofs, w2w_wid, val);
 		}
 
-		ddrtop_mc_param_rd(r2w_adr, r2w_ofs, r2w_wid);
+		val = ddrtop_mc_param_rd(r2w_adr, r2w_ofs, r2w_wid);
 		val += cdd_rw_abs;
 		ddrtop_mc_param_wr(r2w_adr, r2w_ofs, r2w_wid, val);
 
-		ddrtop_mc_param_rd(w2r_adr, w2r_ofs, w2r_wid);
+		val = ddrtop_mc_param_rd(w2r_adr, w2r_ofs, w2r_wid);
 		val += cdd_ww_abs;
 		ddrtop_mc_param_wr(w2r_adr, w2r_ofs, w2r_wid, val);
 	}
