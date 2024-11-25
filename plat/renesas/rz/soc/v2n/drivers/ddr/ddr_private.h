@@ -52,4 +52,7 @@ extern void phyinit_load_2d_image(void);
 extern void phyinit_exec_2d_image(void);
 extern void phyinit_load_eng_image(void);
 
+extern void wait_pclk(uint32_t cycles);
+extern void wait_dficlk(uint32_t cycles);
+
 #endif /* __DDR_PRIVATE_H__ */
