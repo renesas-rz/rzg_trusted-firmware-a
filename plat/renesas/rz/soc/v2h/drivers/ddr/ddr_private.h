@@ -11,8 +11,8 @@
 
 #include "ddr_regs.h"
 
-#define DDR4_VERSION	"1.03"
-#define LPDDR4_VERSION	"1.03"
+#define DDR4_VERSION	"1.06"
+#define LPDDR4_VERSION	"1.06"
 
 #if !LPDDR4
 #define DDR_VERSION		DDR4_VERSION
