@@ -63,12 +63,20 @@ ERRATA_A55_1530923				:= 1
 PLAT_INCLUDES			+=	-Iplat/renesas/rz/common/include						\
 							-Iplat/renesas/rz/common/drivers/io						\
 							-Iplat/renesas/rz/common/drivers/sd						\
+							-Iplat/renesas/rz/common/drivers/emmc					\
 							-Idrivers/renesas/common/io
 
 RZ_TIMER_SOURCES		:=	drivers/delay_timer/generic_delay_timer.c				\
 							drivers/delay_timer/delay_timer.c
 
-EMMC_SOURCES			:=
+EMMC_SOURCES			:=	plat/renesas/rz/common/drivers/io/io_emmcdrv.c			\
+							plat/renesas/rz/common/drivers/emmc/emmc_interrupt.c	\
+							plat/renesas/rz/common/drivers/emmc/emmc_utility.c		\
+							plat/renesas/rz/common/drivers/emmc/emmc_mount.c		\
+							plat/renesas/rz/common/drivers/emmc/emmc_init.c			\
+							plat/renesas/rz/common/drivers/emmc/emmc_read.c			\
+							plat/renesas/rz/common/drivers/emmc/emmc_write.c		\
+							plat/renesas/rz/common/drivers/emmc/emmc_cmd.c
 
 XSPI_SOURCES			:=	plat/renesas/rz/common/drivers/xspi.c
 
@@ -80,6 +88,7 @@ SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c				\
 							plat/renesas/rz/common/drivers/sd/sd_int.c				\
 							plat/renesas/rz/common/drivers/sd/sd_trns.c				\
 							plat/renesas/rz/common/drivers/sd/sd_read.c				\
+							plat/renesas/rz/common/drivers/sd/sd_dev_low.c			\
 							plat/renesas/rz/common/drivers/sd/sd_write.c
 
 BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S

@@ -10,21 +10,10 @@ PLAT_INCLUDES		:=	-Iplat/renesas/rz/soc/g3l/include
 include plat/renesas/rz/common/g3l_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
-PLAT_INCLUDES			+=	-Iplat/renesas/rz/soc/g3l/drivers/ddr					\
-							-Iplat/renesas/rz/soc/g3l/drivers/emmc
+PLAT_INCLUDES			+=	-Iplat/renesas/rz/soc/g3l/drivers/ddr
 
 DDR_SOURCES				+=  plat/renesas/rz/soc/g3l/drivers/ddr/ddr.c				\
 							plat/renesas/rz/soc/g3l/drivers/ddr/ddr_misc.c
-
-EMMC_SOURCES			+=	plat/renesas/rz/soc/g3l/drivers/emmc/emmc_interrupt.c	\
-							plat/renesas/rz/soc/g3l/drivers/emmc/emmc_utility.c		\
-							plat/renesas/rz/soc/g3l/drivers/emmc/emmc_mount.c		\
-							plat/renesas/rz/soc/g3l/drivers/emmc/emmc_init.c		\
-							plat/renesas/rz/soc/g3l/drivers/emmc/emmc_read.c		\
-							plat/renesas/rz/soc/g3l/drivers/emmc/emmc_cmd.c			\
-							plat/renesas/rz/soc/g3l/drivers/emmc/emmc_write.c
-
-SD_SOURCES				+=	plat/renesas/rz/soc/g3l/drivers/sd_dev_low.c
 
 PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3l/drivers/riic.c					\
 							plat/renesas/rz/soc/g3l/drivers/tzc/tzc400.c			\
