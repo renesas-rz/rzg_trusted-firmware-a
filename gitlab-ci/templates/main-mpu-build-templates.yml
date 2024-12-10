@@ -16,14 +16,34 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing templates for tag MPU build tests.
+# Description: Yaml file containing templates for main branch MPU build tests.
 #######################################################################################################################
 
-############################################ tag_build_job_template ###################################################
-# 1. Contains basic template for building MPU code within a tag.
+######################################### prep_for_main_build_job_template ############################################
+# 1. Template for preparation job which runs before the build jobs for the main branch
+# 2. It locally merges the integration branch into the main branch
+#######################################################################################################################
+.prep_for_main_build_job_template:
+  stage: pre_test
+  variables:
+    PLAT: ""
+  tags:
+    - "${PLAT}_tests"
+  script:
+    - cd "../workspace"
+    - rm -r -f ./*
+    - git clone http://svc_sp3_ci_etcetc:DC_p5HnJoAsvmocwdYer@global-infra-jp-main.dgn.renesas.com/products/common/bootloader/soc/tf-a.git
+    - cd tf-a
+    - git checkout $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+    - git checkout $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - git merge $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+    - git status
+
+########################################### main_build_job_template ###################################################
+# 1. Contains basic template for building MPU code within main branch.
 # 2. All the variables listed are required in the mpu_build.sh script.
 #######################################################################################################################
-.tag_build_job_template: &tag_build_job_template
+.main_build_job_template: &main_build_job_template
   stage: mpu_build_testing
   variables:
     PLAT: "n2h"
@@ -31,35 +51,33 @@
     BUILD_TYPE: "release"
     TARGET_OS: ""
     CONFIGS: ""
-    TEST_TYPE: "tag"
+    TEST_TYPE: "main"
     ERROR_MSG: ""
   interruptible: true
 
-########################################## linux_tag_build_job_template ###############################################
+########################################## linux_main_build_job_template ###############################################
 # 1. Extends the basic template for a Linux environment.
-# 2. A single runner for all MPUs within the tag, since the tag is local.
-# 3. The local tag is in the workspace directory, hence moving to that directory before any command.
+# 2. Separate runner for every platform within the main branch.
 #######################################################################################################################
-.linux_tag_build_job_template: &linux_tag_build_job_template
-  <<: *tag_build_job_template
+.linux_main_build_job_template: &linux_main_build_job_template
+  <<: *main_build_job_template
   tags:
-    - release_tests
+    - "${PLAT}_tests"
   before_script:
     - cd "../workspace/tf-a"
+    - git status
     - export CROSS_COMPILE=../../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
-    - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
+    - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
 
-####################################### linux_tag_build_success_job_template ##########################################
+####################################### linux_main_build_success_job_template ##########################################
 # 1. Extends the Linux template for a success test case.
-# 2. After building the TF-A .bin and .srec files, the files are moved to the default runner tf-a directory.
-#    This is because job artifacts are only picked from the default runner tf-a directory.
-# 3. The artifacts are set to expire in 1 week, as this would help manage storage space efficiently and 1 week is
+# 2. The artifacts are set to expire in 1 week, as this would help manage storage space efficiently and 1 week is
 #    sufficient time for the deletion to not impact any work or testing.
 #######################################################################################################################
-.linux_tag_build_success_job_template:
-  <<: *linux_tag_build_job_template
+.linux_main_build_success_job_template:
+  <<: *linux_main_build_job_template
   after_script:
     - mkdir -p build && cd build
     - mkdir -p $PLAT && cd $PLAT
@@ -72,10 +90,10 @@
       - ./build/$PLAT/$BUILD_TYPE/*.bin
       - ./build/$PLAT/$BUILD_TYPE/*.srec
 
-####################################### linux_tag_build_failure_job_template ##########################################
+####################################### linux_main_build_failure_job_template ##########################################
 # 1. Extends the Linux template for a failure test case.
 # 2. There are no additional requirements or procedures required after running the mpu_build.sh as it's all built
 #    within the script.
 #######################################################################################################################
-.linux_tag_build_failure_job_template:
-  <<: *linux_tag_build_job_template
+.linux_main_build_failure_job_template:
+  <<: *linux_main_build_job_template

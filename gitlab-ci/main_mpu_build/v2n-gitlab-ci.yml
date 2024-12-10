@@ -16,85 +16,73 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing V2H dev overnight MPU build jobs.
+# Description: Yaml file containing V2N main merge gateway MPU build jobs.
 #######################################################################################################################
 
 ################################################## include ############################################################
 include:
-  - local: gitlab-ci/templates/dev-mpu-build-templates.yml
+  - local: gitlab-ci/templates/main-mpu-build-templates.yml
 
-##################################### V2H evk_alpha MPU build jobs : dev branch #######################################
-rzv2h-release-evk-alpha:
+################################### Preparation job for main branch V2N build jobs ####################################
+rzv2n-prep-for-main-build-job:
   variables:
-    PLAT: "v2h"
-    BOARD: "evk_alpha"
+    PLAT: "v2n"
+  extends:
+    - .prep_for_main_build_job_template
+
+####################################### V2N dev_1 MPU build jobs : main branch ########################################
+rzv2n-release-dev-1:
+  variables:
+    PLAT: "v2n"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:
-    - .linux_dev_build_success_job_template
+    - .linux_main_build_success_job_template
 
-rzv2h-release-evk-alpha-stack-protector-0:
+rzv2n-release-dev-1-stack-protector-0:
   variables:
-    PLAT: "v2h"
-    BOARD: "evk_alpha"
+    PLAT: "v2n"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
     ERROR_MSG: "unrecognized command line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
   extends:
-    - .linux_dev_build_failure_job_template
+    - .linux_main_build_failure_job_template
 
-rzv2h-debug-log0-evk-alpha:
+rzv2n-debug-log0-dev-1:
   variables:
-    PLAT: "v2h"
-    BOARD: "evk_alpha"
+    PLAT: "v2n"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0"
   extends:
-    - .linux_dev_build_success_job_template
+    - .linux_main_build_success_job_template
 
-rzv2h-debug-log50-evk-alpha:
+rzv2n-debug-log50-dev-1:
   variables:
-    PLAT: "v2h"
-    BOARD: "evk_alpha"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
-  extends:
-    - .linux_dev_build_success_job_template
-
-####################################### V2H evk_1 MPU build jobs : dev branch #########################################
-rzv2h-release-evk-1:
-  variables:
-    PLAT: "v2h"
-    BOARD: "evk_1"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-  extends:
-    - .linux_dev_build_success_job_template
-
-rzv2h-debug-log50-evk-1:
-  variables:
-    PLAT: "v2h"
-    BOARD: "evk_1"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
-  extends:
-    - .linux_dev_build_success_job_template
-
-####################################### V2H dev_1 MPU build jobs : dev branch #########################################
-rzv2h-release-dev-1:
-  variables:
-    PLAT: "v2h"
-    BOARD: "dev_1"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-  extends:
-    - .linux_dev_build_success_job_template
-
-rzv2h-debug-log50-dev-1:
-  variables:
-    PLAT: "v2h"
+    PLAT: "v2n"
     BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
-    - .linux_dev_build_success_job_template
+    - .linux_main_build_success_job_template
+
+####################################### V2N evk_1 MPU build jobs : main branch ########################################
+rzv2n-release-evk-1:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .linux_main_build_success_job_template
+
+rzv2n-debug-log50-evk-1:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_1"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
+  extends:
+    - .linux_main_build_success_job_template

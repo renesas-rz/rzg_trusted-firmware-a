@@ -43,14 +43,14 @@ TEST_TYPE   : $TEST_TYPE
 ERROR_MSG   : $ERROR_MSG"
 
 ################################################## n2h_build ##########################################################
-# 1. For tag testing, the current path would be within the workspace directory rather than the default runner tf-a
-#	 directory. Hence, the path to u-boot would be different for tag build testing.
+# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
 # 2. Build commands for building n2h, these are run via the run_command function.
 #######################################################################################################################
 n2h_build()
 {
 	U_BOOT_FILE=""
-	if [ "$BOARD" = "eval" ] && [ "$TEST_TYPE" = "tag" ]; then
+	if [ "$BOARD" = "eval" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/n2h-u-boot.bin"
 	elif [ "$BOARD" = "eval" ] ; then
 		U_BOOT_FILE="../u-boot/n2h-u-boot.bin"
@@ -71,14 +71,14 @@ n2h_build()
 }
 
 ################################################## t2h_build ##########################################################
-# 1. For tag testing, the current path would be within the workspace directory rather than the default runner tf-a
-#	 directory. Hence, the path to u-boot would be different for tag build testing.
+# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
 # 2. Build commands for building t2h, these are run via the run_command function.
 #######################################################################################################################
 t2h_build()
 {
 	U_BOOT_FILE=""
-	if [ "$BOARD" = "dev_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+	if [ "$BOARD" = "dev_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/t2h-u-boot.bin"
 	elif [ "$BOARD" = "dev_1" ]; then
 		U_BOOT_FILE="../u-boot/t2h-u-boot.bin"
@@ -99,18 +99,18 @@ t2h_build()
 }
 
 ################################################## g3s_build ##########################################################
-# 1. For tag testing, the current path would be within the workspace directory rather than the default runner tf-a
-#	 directory. Hence, the path to u-boot would be different for tag build testing.
+# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
 # 2. Build commands for building g3s, these are run via the run_command function.
 #######################################################################################################################
 g3s_build()
 {
 	U_BOOT_FILE=""
-	if [ "$BOARD" = "smarc" ] && [ "$TEST_TYPE" = "tag" ]; then
+	if [ "$BOARD" = "smarc" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/g3s-u-boot.bin"
 	elif [ "$BOARD" = "smarc" ]; then
 		U_BOOT_FILE="../u-boot/g3s-u-boot.bin"
-	elif [ "$BOARD" = "dev14_1_lpddr" ] && [ "$TEST_TYPE" = "tag" ]; then
+	elif [ "$BOARD" = "dev14_1_lpddr" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/g3s-dev-u-boot.bin"
 	elif [ "$BOARD" = "dev14_1_lpddr" ]; then
 		U_BOOT_FILE="../u-boot/g3s-dev-u-boot.bin"
@@ -143,27 +143,29 @@ g3s_build()
 	run_command "cat $BUILD_PATH/bp_mmc.bin $BUILD_PATH/bl2.bin > $BUILD_PATH/bl2_bp_mmc.bin" "$ERROR_MSG"
 	cd "$TFA_PATH"
 	run_command "${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0x0000 --srec-forceS3 $BUILD_PATH/fip.bin $BUILD_PATH/fip.srec" "$ERROR_MSG"
-	run_command "${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 $BUILD_PATH/bl2_bp_spi.bin $BUILD_PATH/bl2_bp_spi.srec" "$ERROR_MSG"
-	run_command "${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 $BUILD_PATH/bl2_bp_mmc.bin $BUILD_PATH/bl2_bp_mmc.srec" "$ERROR_MSG"
+	run_command "${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 $BUILD_PATH/bl2_bp_spi.bin $BUILD_PATH/bl2_bp_spi.srec" \
+				"$ERROR_MSG"
+	run_command "${CROSS_COMPILE}objcopy -I binary -O srec --adjust-vma=0xA1E00 --srec-forceS3 $BUILD_PATH/bl2_bp_mmc.bin $BUILD_PATH/bl2_bp_mmc.srec" \
+				"$ERROR_MSG"
 }
 
 ################################################## v2h_build ##########################################################
-# 1. For tag testing, the current path would be within the workspace directory rather than the default runner tf-a
-#	 directory. Hence, the path to u-boot would be different for tag build testing.
+# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
 # 2. Build commands for building v2h, these are run via the run_command function.
 #######################################################################################################################
 v2h_build()
 {
 	U_BOOT_FILE=""
-	if [ "$BOARD" = "evk_alpha" ] && [ "$TEST_TYPE" = "tag" ]; then
+	if [ "$BOARD" = "evk_alpha" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/v2h-evk-al-u-boot.bin"
 	elif [ "$BOARD" = "evk_alpha" ]; then
 		U_BOOT_FILE="../u-boot/v2h-evk-al-u-boot.bin"
-	elif [ "$BOARD" = "evk_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+	elif [ "$BOARD" = "evk_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/v2h-evk-1-u-boot.bin"
 	elif [ "$BOARD" = "evk_1" ] ; then
 		U_BOOT_FILE="../u-boot/v2h-evk-1-u-boot.bin"
-	elif [ "$BOARD" = "dev_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+	elif [ "$BOARD" = "dev_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/v2h-dev-1-u-boot.bin"
 	elif [ "$BOARD" = "dev_1" ]; then
 		U_BOOT_FILE="../u-boot/v2h-dev-1-u-boot.bin"
@@ -183,18 +185,18 @@ v2h_build()
 }
 
 ################################################## v2n_build ##########################################################
-# 1. For tag testing, the current path would be within the workspace directory rather than the default runner tf-a
-#	 directory. Hence, the path to u-boot would be different for tag build testing.
+# 1. For tag testing and main merge gateway, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for tag build testing.
 # 2. Build commands for building v2n, these are run via the run_command function.
 #######################################################################################################################
 v2n_build()
 {
 	U_BOOT_FILE=""
-	if [ "$BOARD" = "dev_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+	if [ "$BOARD" = "dev_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/v2n-dev-1-u-boot.bin"
 	elif [ "$BOARD" = "dev_1" ]; then
 		U_BOOT_FILE="../u-boot/v2n-dev-1-u-boot.bin"
-	elif [ "$BOARD" = "evk_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+	elif [ "$BOARD" = "evk_1" ] && { [ "$TEST_TYPE" = "tag" ] || [ "$TEST_TYPE" = "main" ]; }; then
 		U_BOOT_FILE="../../u-boot/v2n-evk-1-u-boot.bin"
 	elif [ "$BOARD" = "evk_1" ] ; then
 		U_BOOT_FILE="../u-boot/v2n-evk-1-u-boot.bin"

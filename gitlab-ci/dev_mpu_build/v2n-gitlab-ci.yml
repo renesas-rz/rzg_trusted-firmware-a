@@ -23,16 +23,7 @@
 include:
   - local: gitlab-ci/templates/dev-mpu-build-templates.yml
 
-######################################### V2N dev overnight MPU build jobs ############################################
-rzv2n-release-evk-1:
-  variables:
-    PLAT: "v2n"
-    BOARD: "evk_1"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-  extends:
-    - .linux_dev_build_success_job_template
-
+####################################### V2N dev_1 MPU build jobs : dev branch #########################################
 rzv2n-release-dev-1:
   variables:
     PLAT: "v2n"
@@ -61,19 +52,29 @@ rzv2n-debug-log0-dev-1:
   extends:
     - .linux_dev_build_success_job_template
 
-rzv2n-debug-log50-evk-1:
+rzv2n-debug-log50-dev-1:
   variables:
     PLAT: "v2n"
-    BOARD: "evk_1"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
     - .linux_dev_build_success_job_template
 
-rzv2n-debug-log50-dev-1:
+####################################### V2N evk_1 MPU build jobs : dev branch #########################################
+rzv2n-release-evk-1:
   variables:
     PLAT: "v2n"
-    BOARD: "dev_1"
+    BOARD: "evk_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .linux_dev_build_success_job_template
+
+rzv2n-debug-log50-evk-1:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:

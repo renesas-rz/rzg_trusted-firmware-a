@@ -23,7 +23,7 @@
 include:
   - local: gitlab-ci/templates/tag-mpu-build-templates.yml
 
-######################################### T2H tag overnight MPU build jobs ############################################
+######################################## T2H dev_1 MPU build jobs : tag ###############################################
 rzt2h-release-core4:
   variables:
     PLAT: "t2h"

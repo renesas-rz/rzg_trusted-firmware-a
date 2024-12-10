@@ -16,21 +16,28 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing G3S tag overnight MPU build jobs.
+# Description: Yaml file containing G3S main merge gateway MPU build jobs.
 #######################################################################################################################
 
 ################################################## include ############################################################
 include:
-  - local: gitlab-ci/templates/tag-mpu-build-templates.yml
+  - local: gitlab-ci/templates/main-mpu-build-templates.yml
 
-######################################## G3S smarc MPU build jobs : tag ###############################################
+################################### Preparation job for main branch G3S build jobs ####################################
+rzg3s-prep-for-main-build-job:
+  variables:
+    PLAT: "g3s"
+  extends:
+    - .prep_for_main_build_job_template
+
+####################################### G3S smarc MPU build jobs : main branch ########################################
 rzg3s-release-no-configs-smarc:
   variables:
     PLAT: "g3s"
     BOARD: "smarc"
     BUILD_TYPE: "release"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-vbat-smarc:
   variables:
@@ -39,7 +46,7 @@ rzg3s-release-vbat-smarc:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-awo-smarc:
   variables:
@@ -48,7 +55,7 @@ rzg3s-release-awo-smarc:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=awo"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-vbat-m33-smarc:
   variables:
@@ -57,7 +64,7 @@ rzg3s-release-vbat-m33-smarc:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=1"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-vbat-disable-m33-smarc:
   variables:
@@ -66,7 +73,7 @@ rzg3s-release-vbat-disable-m33-smarc:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-stack-protector-0-smarc:
   variables:
@@ -76,7 +83,7 @@ rzg3s-release-stack-protector-0-smarc:
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
     ERROR_MSG: "unrecognized command line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
   extends:
-    - .linux_tag_build_failure_job_template
+    - .linux_main_build_failure_job_template
 
 rzg3s-debug-log0-smarc:
   variables:
@@ -85,7 +92,7 @@ rzg3s-debug-log0-smarc:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-smarc:
   variables:
@@ -94,7 +101,7 @@ rzg3s-debug-log50-smarc:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-vbat-smarc:
   variables:
@@ -103,7 +110,7 @@ rzg3s-debug-log50-vbat-smarc:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-awo-smarc:
   variables:
@@ -112,7 +119,7 @@ rzg3s-debug-log50-awo-smarc:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=awo"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-vbat-m33-smarc:
   variables:
@@ -121,7 +128,7 @@ rzg3s-debug-log50-vbat-m33-smarc:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=1"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-vbat-disable-m33-smarc:
   variables:
@@ -130,16 +137,16 @@ rzg3s-debug-log50-vbat-disable-m33-smarc:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
-######################################## G3S dev14_1_lpddr MPU build jobs : tag #######################################
+##################################### G3S dev14_1_lpddr MPU build jobs : main branch ##################################
 rzg3s-release-no-configs-dev:
   variables:
     PLAT: "g3s"
     BOARD: "dev14_1_lpddr"
     BUILD_TYPE: "release"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-vbat-dev:
   variables:
@@ -148,7 +155,7 @@ rzg3s-release-vbat-dev:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-awo-dev:
   variables:
@@ -157,7 +164,7 @@ rzg3s-release-awo-dev:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=awo"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-vbat-m33-dev:
   variables:
@@ -166,7 +173,7 @@ rzg3s-release-vbat-m33-dev:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=1"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-vbat-disable-m33-dev:
   variables:
@@ -175,7 +182,7 @@ rzg3s-release-vbat-disable-m33-dev:
     BUILD_TYPE: "release"
     CONFIGS: "PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-release-stack-protector-0-dev:
   variables:
@@ -185,7 +192,7 @@ rzg3s-release-stack-protector-0-dev:
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
     ERROR_MSG: "unrecognized command line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
   extends:
-    - .linux_tag_build_failure_job_template
+    - .linux_main_build_failure_job_template
 
 rzg3s-debug-log0-dev:
   variables:
@@ -194,7 +201,7 @@ rzg3s-debug-log0-dev:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-dev:
   variables:
@@ -203,7 +210,7 @@ rzg3s-debug-log50-dev:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-vbat-dev:
   variables:
@@ -212,7 +219,7 @@ rzg3s-debug-log50-vbat-dev:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-awo-dev:
   variables:
@@ -221,7 +228,7 @@ rzg3s-debug-log50-awo-dev:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=awo"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-vbat-m33-dev:
   variables:
@@ -230,7 +237,7 @@ rzg3s-debug-log50-vbat-m33-dev:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=1"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template
 
 rzg3s-debug-log50-vbat-disable-m33-dev:
   variables:
@@ -239,4 +246,4 @@ rzg3s-debug-log50-vbat-disable-m33-dev:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
   extends:
-    - .linux_tag_build_success_job_template
+    - .linux_main_build_success_job_template

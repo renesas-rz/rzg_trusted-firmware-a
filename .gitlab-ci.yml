@@ -34,14 +34,18 @@ workflow:
 
 ################################################## include ############################################################
 # Different types of testing
-#   1. Merge Gateway for dev branch (on dev branch)
-#   2. Dev Overnight testing        (on dev branch)
-#   3. Tag Overnight testing        (on main branch)
+#   1. Merge Gateway for main branch (on main branch)
+#   2. Merge Gateway for dev branch  (on dev branch)
+#   3. Dev Overnight testing         (on dev branch)
+#   4. Tag Overnight testing         (on main branch)
 #######################################################################################################################
 include:
-  - local: gitlab-ci/merge-gateway-pipeline.yml
+  - local: gitlab-ci/main-merge-gateway-pipeline.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_main\b.*$/'
+  - local: gitlab-ci/dev-merge-gateway-pipeline.yml
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_dev\b.*$/'
   - local: gitlab-ci/dev-overnight-pipeline.yml
     rules:
       - if: $DEV_OVERNIGHT == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
