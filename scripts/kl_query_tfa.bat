@@ -1,4 +1,20 @@
 @echo off
+REM #######################################################################################################################
+REM Copyright [2024] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+REM
+REM The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
+REM and/or its licensors ("Renesas") and subject to statutory and contractual protections.
+REM
+REM Unless otherwise expressly agreed in writing between Renesas and you: 1) you may not use, copy, modify, distribute,
+REM display, or perform the contents; 2) you may not use any name or mark of Renesas for advertising or publicity
+REM purposes or in connection with your use of the contents; 3) RENESAS MAKES NO WARRANTY OR REPRESENTATIONS ABOUT THE
+REM SUITABILITY OF THE CONTENTS FOR ANY PURPOSE; THE CONTENTS ARE PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED
+REM WARRANTY, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+REM NON-INFRINGEMENT; AND 4) RENESAS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, OR CONSEQUENTIAL DAMAGES,
+REM INCLUDING DAMAGES RESULTING FROM LOSS OF USE, DATA, OR PROJECTS, WHETHER IN AN ACTION OF CONTRACT OR TORT, ARISING
+REM OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE CONTENTS. Third-party contents included in this file may
+REM be subject to different terms.
+REM #######################################################################################################################
 
 REM args[0] = parameter to select the query criteria by Issue status
 REM 1. "Open" Issues [status=Defer,Analyze,Fix,Fix in Next Release] = DEFAULT

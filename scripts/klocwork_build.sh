@@ -1,4 +1,24 @@
 #! /bin/bash
+#######################################################################################################################
+# Copyright [2024] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+#
+# The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
+# and/or its licensors ("Renesas") and subject to statutory and contractual protections.
+#
+# Unless otherwise expressly agreed in writing between Renesas and you: 1) you may not use, copy, modify, distribute,
+# display, or perform the contents; 2) you may not use any name or mark of Renesas for advertising or publicity
+# purposes or in connection with your use of the contents; 3) RENESAS MAKES NO WARRANTY OR REPRESENTATIONS ABOUT THE
+# SUITABILITY OF THE CONTENTS FOR ANY PURPOSE; THE CONTENTS ARE PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED
+# WARRANTY, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+# NON-INFRINGEMENT; AND 4) RENESAS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, OR CONSEQUENTIAL DAMAGES,
+# INCLUDING DAMAGES RESULTING FROM LOSS OF USE, DATA, OR PROJECTS, WHETHER IN AN ACTION OF CONTRACT OR TORT, ARISING
+# OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE CONTENTS. Third-party contents included in this file may
+# be subject to different terms.
+#######################################################################################################################
+
+#######################################################################################################################
+# Description: Shell script to generate static analysis results for given MPU configuration for klocwork.
+#######################################################################################################################
 
 # $1 = Project specific klocwork_config.sh file argument
 if [ -z "$1" ]; then
@@ -19,6 +39,7 @@ BUILD_TYPE="$4"
 TARGET_OS="$5"
 CONFIGS="$6"
 TEST_TYPE="$7"
+ERROR_MSG="$8"
 
 echo "MPU configuration received from GitLab YAML:
 PLAT 	   : $PLAT
@@ -26,7 +47,8 @@ BOARD 	   : $BOARD
 BUILD_TYPE : $BUILD_TYPE
 TARGET_OS  : $TARGET_OS
 CONFIGS    : $CONFIGS
-TEST_TYPE  : $TEST_TYPE"
+TEST_TYPE  : $TEST_TYPE
+ERROR_MSG  : $ERROR_MSG"
 
 # PROJECT_NAME, BUILD_BAT, and EXCLUDE_LIST are set in the configuration file provided as the $1 argument
 source $1 $PLAT

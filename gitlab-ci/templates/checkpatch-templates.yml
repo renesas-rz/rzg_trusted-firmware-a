@@ -1,24 +1,71 @@
-##########################################################
-#.............CHECKPATCH JOB TEMPLATES...................#
-##########################################################
+#######################################################################################################################
+# Copyright [2024] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+#
+# The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
+# and/or its licensors ("Renesas") and subject to statutory and contractual protections.
+#
+# Unless otherwise expressly agreed in writing between Renesas and you: 1) you may not use, copy, modify, distribute,
+# display, or perform the contents; 2) you may not use any name or mark of Renesas for advertising or publicity
+# purposes or in connection with your use of the contents; 3) RENESAS MAKES NO WARRANTY OR REPRESENTATIONS ABOUT THE
+# SUITABILITY OF THE CONTENTS FOR ANY PURPOSE; THE CONTENTS ARE PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED
+# WARRANTY, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+# NON-INFRINGEMENT; AND 4) RENESAS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, OR CONSEQUENTIAL DAMAGES,
+# INCLUDING DAMAGES RESULTING FROM LOSS OF USE, DATA, OR PROJECTS, WHETHER IN AN ACTION OF CONTRACT OR TORT, ARISING
+# OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE CONTENTS. Third-party contents included in this file may
+# be subject to different terms.
+#######################################################################################################################
+
+#######################################################################################################################
+# Description: Yaml file containing templates for checkpatch tests.
+#######################################################################################################################
+
+########################################## checkpatch_test_job_template ###############################################
+# 1. Contains basic template for checkpatch testing.
+# 2. Error checks in place to see all checkpatch test files exist and the checkpatch script has executable
+#    permissions.
+# 3. Reference and target branches are both locally checked out to run the test locally.
+# 4. The checkpatch script run line is ORed with true so the result can be analysed and pipeline output can be
+#    determined manually later.
+# 5. In case warnings are found in the log, the pipeline passes with allow_failure which gives a warning sign on the
+#    pipeline. In case errors are found in the log, the pipeline fails.
+#######################################################################################################################
 .checkpatch_test_job_template: &checkpatch_test_job_template
   stage: static_analysis_testing
   variables:
     REFERENCE_BRANCH: "2.7.0/rz_main"
     TARGET_BRANCH: $CI_COMMIT_BRANCH
   script:
+    - echo "TARGET BRANCH - ${TARGET_BRANCH}"
+    - echo "REFERENCE BRANCH - ${REFERENCE_BRANCH}"
+    - CHECKPATCH_SCRIPT=../scripts/checkpatch/checkpatch.pl
+    - SPELLING_FILE=../scripts/checkpatch/spelling.txt
+    - CONST_STRUCTS_FILE=../scripts/checkpatch/const_structs.checkpatch
+    - if [ ! -f $CHECKPATCH_SCRIPT ]; then
+    - echo "checkpatch.pl does not exist, check if the file path is correct"
+    - exit 1
+    - elif [ ! -f $SPELLING_FILE ]; then
+    - echo "spelling.txt file does not exist, check if the file path is correct"
+    - exit 1
+    - elif [ ! -f $CONST_STRUCTS_FILE ]; then
+    - echo "const_structs.checkpatch file does not exist, check if the file path is correct"
+    - exit 1
+    - elif [[ ! -x "$CHECKPATCH_SCRIPT" ]]; then
+    - echo "Checkpatch script is not executable, set permission to 'Allow executing file as program'"
+    - exit 1
+    - else
     - git fetch origin $REFERENCE_BRANCH
     - git checkout $REFERENCE_BRANCH
     - git fetch origin $TARGET_BRANCH
     - git checkout $TARGET_BRANCH
     - git diff --unified=5 $REFERENCE_BRANCH > test.patch
-    - (../scripts/checkpatch/checkpatch.pl test.patch --max-line-length=160 > checkpatch.log) || true
-    - if grep -q "ERROR" checkpatch.log; then
+    - ($CHECKPATCH_SCRIPT test.patch --max-line-length=160 > checkpatch.log) || true
+    - if grep -q "ERROR:" checkpatch.log; then
     - exit 1
     - elif grep -q "WARNING" checkpatch.log; then
     - exit 2
     - else
     - exit 0
+    - fi
     - fi
   allow_failure:
     exit_codes: 2
@@ -31,6 +78,10 @@
       - ./test.patch
       - ./checkpatch.log
 
+####################################### overnight_checkpatch_test_job_template ########################################
+# 1. Extends the basic template for overnight tests.
+# 2. This needs to be separated as it would be a scheduled pipeline.
+#######################################################################################################################
 .overnight_checkpatch_test_job_template:
   <<: *checkpatch_test_job_template
   tags:
@@ -38,6 +89,10 @@
   rules:
       - if: $CI_PIPELINE_SOURCE == "schedule"
 
+####################################### merge_gateway_checkpatch_test_job_template ########################################
+# 1. Extends the basic template for merge request gateways.
+# 2. This needs to be separated as it would be a merge request event.
+#######################################################################################################################
 .merge_gateway_checkpatch_test_job_template:
   <<: *checkpatch_test_job_template
   tags:
