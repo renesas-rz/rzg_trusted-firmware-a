@@ -91,6 +91,8 @@ echo ""
 #Step 2: Remove code that should be removed for all releases
 git rm "$tfa_project_path/.gitlab-ci.yml"
 git rm -r "$tfa_project_path/gitlab-ci"
+git rm -r "$tfa_project_path/.gitlab"
+git rm -r "$tfa_project_path/scripts"
 
 echo "Step 2 Passed - Removed code that should be removed for all releases"
 #Step 3: Remove references to devices
@@ -120,7 +122,6 @@ else
 	do
 		#the only common file to edit.
 		delete_lines_from_file "rz-${device_for_removal}" "$tfa_project_path/docs/plat/index.rst"
-		delete_lines_from_file "RZ${device_for_removal^^}" "$tfa_project_path/plat/renesas/rz/common/rz_plat_sip_handler.c"
 
 		#remove specified directories and files
 		git rm -r "$tfa_project_path/plat/renesas/rz/soc/$device_for_removal"
