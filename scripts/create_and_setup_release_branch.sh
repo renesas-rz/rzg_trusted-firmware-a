@@ -98,7 +98,7 @@ echo "Step 2 Passed - Removed code that should be removed for all releases"
 #Step 3: Remove references to devices
 all_unreleased_devices_list="n2h,t2h,g3s,v2h,v2n"
 
-IFS=',' read -ra array_keep <<< "$list_devices_to_keep"
+IFS=' ' read -ra array_keep <<< "$list_devices_to_keep"
 IFS=',' read -ra array_remove <<< "$all_unreleased_devices_list"
 
 for device_keep in "${array_keep[@]}"; do
