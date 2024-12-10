@@ -56,12 +56,12 @@ n2h_build()
 		U_BOOT_FILE="../u-boot/n2h-u-boot.bin"
 	else
 		echo "Invalid N2H board: Board doesn't exist"
-		exit -1
+		exit 1
 	fi
 
 	if [ ! -f $U_BOOT_FILE ]; then
 		echo "U-boot file doesn't exist, check file path"
-		exit -1
+		exit 1
 	fi
 
 	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
@@ -84,12 +84,12 @@ t2h_build()
 		U_BOOT_FILE="../u-boot/t2h-u-boot.bin"
 	else
 		echo "Invalid T2H board: Board doesn't exist"
-		exit -1
+		exit 1
 	fi
 
 	if [ ! -f $U_BOOT_FILE ]; then
 		echo "U-boot file doesn't exist, check file path"
-		exit -1
+		exit 1
 	fi
 
 	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS" "$ERROR_MSG"
@@ -116,12 +116,12 @@ g3s_build()
 		U_BOOT_FILE="../u-boot/g3s-dev-u-boot.bin"
 	else
 		echo "Invalid G3S board: Board doesn't exist"
-		exit -1
+		exit 1
 	fi
 
 	if [ ! -f $U_BOOT_FILE ]; then
 		echo "U-boot file doesn't exist, check file path"
-		exit -1
+		exit 1
 	fi
 
 	TFA_PATH=$(pwd)
@@ -171,12 +171,12 @@ v2h_build()
 		U_BOOT_FILE="../u-boot/v2h-dev-1-u-boot.bin"
 	else
 		echo "Invalid V2H board: Board doesn't exist"
-		exit -1
+		exit 1
 	fi
 
 	if [ ! -f $U_BOOT_FILE ]; then
 		echo "U-boot file doesn't exist, check file path"
-		exit -1
+		exit 1
 	fi
 
 	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE"" "$ERROR_MSG"
@@ -202,12 +202,12 @@ v2n_build()
 		U_BOOT_FILE="../u-boot/v2n-evk-1-u-boot.bin"
 	else
 		echo "Invalid V2N board: Board doesn't exist"
-		exit -1
+		exit 1
 	fi
 
 	if [ ! -f $U_BOOT_FILE ]; then
 		echo "U-boot file doesn't exist, check file path"
-		exit -1
+		exit 1
 	fi
 
 	run_command "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE"" "$ERROR_MSG"
@@ -248,17 +248,15 @@ run_command()
 
 	LOG_FILE=../mpu_log.txt
 	eval "$BUILD_COMMAND" 2>&1 | tee $LOG_FILE
-	if [ "$ERR_MSG" = "" ] && grep -q -i "error:" $LOG_FILE; then
+	if [ "$ERR_MSG" = "" ] && { grep -q -i "error:" $LOG_FILE || grep -Eq -i "Error [0-9]+" $LOG_FILE; }; then
 		echo "ERROR: This should be a success test case, unexpected error caused failure."
-		exit -1
-	elif [ "$ERR_MSG" != "" ] && grep -q -i "error:" $LOG_FILE && grep -q -i "${ERR_MSG}" $LOG_FILE; then
+		exit 1
+	elif [ "$ERR_MSG" != "" ] && { grep -q -i "error:" $LOG_FILE || grep -Eq -i "Error [0-9]+" $LOG_FILE; } && grep -q -i "${ERR_MSG}" $LOG_FILE; then
 		echo "PASS: This is a failure test case. An expected error caused failure."
 		exit 0
-	elif [ "$ERR_MSG" != "" ] && grep -q -i "error:" $LOG_FILE && ! grep -q -i "${ERR_MSG}" $LOG_FILE; then
+	elif [ "$ERR_MSG" != "" ] && { grep -q -i "error:" $LOG_FILE || grep -Eq -i "Error [0-9]+" $LOG_FILE; } && ! grep -q -i "${ERR_MSG}" $LOG_FILE; then
 		echo "ERROR: This is a failure test case, however, an unexpected error caused failure."
-		exit -1
-	else
-		echo ""
+		exit 1
 	fi
 }
 
@@ -266,13 +264,13 @@ run_command()
 # 1. This was written specifically for a failure test case job. In case a failure test case job builds successfully,
 #    then it would be caught in this function.
 # 2. ERR_MSG != "" indicates it is a failure test case. And a failure test case should not execute this far. It should
-#	 exit with either code 0, or -1 within the run_command function when running the build commands.
+#	 exit with either code 0, or 1 within the run_command function when running the build commands.
 #######################################################################################################################
 final_job_status_check()
 {
 	if [ "$ERR_MSG" != "" ]; then
 		echo "ERROR: This is a failure test case, but, it build successfully."
-		exit -1
+		exit 1
 	else
 		exit 0
 	fi
@@ -305,7 +303,7 @@ elif [ "$PLAT" = "v2n" ] && [ "$TARGET_OS" = "windows" ]; then
 # Error handling
 else
 	echo "Invalid platform: Platform doesn't exist"
-	exit -1
+	exit 1
 fi
 
 #Final check in case failure test case jobs have not failed yet
