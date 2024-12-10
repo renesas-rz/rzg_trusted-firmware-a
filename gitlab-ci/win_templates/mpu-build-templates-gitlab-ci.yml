@@ -1,0 +1,20 @@
+##########################################################
+#..............MPU BUILD JOB TEMPLATES...................#
+##########################################################
+.mpu_build_job_template: &mpu_build_job_template
+  stage: mpu_build_testing
+  variables:
+    PLAT: ""
+    BOARD: ""
+    BUILD_TYPE: ""
+    TARGET_OS: "windows"
+    CONFIGS: ""
+    TEST_TYPE: ""
+  interruptible: true
+
+.windows_mpu_build_job_template:
+  <<: *mpu_build_job_template
+  tags:
+    - "${PLAT}_windows"
+  script:
+    - bash scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}"

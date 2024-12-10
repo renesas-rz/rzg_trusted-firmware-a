@@ -1,0 +1,25 @@
+.mpu_build_job_template: &mpu_build_job_template
+  stage: klocwork
+  variables:
+    PLAT: ""
+    BOARD: ""
+    BUILD_TYPE: ""
+    TARGET_OS: "windows"
+    CONFIGS: ""
+    TEST_TYPE: ""
+  interruptible: true
+
+.mpu_klocwork_job_template:
+  <<: *mpu_build_job_template
+  tags:
+    - "${PLAT}_windows"
+  script:
+    # Klocwork build generates static analysis results for given MPU configuration
+    - bash scripts\klocwork_build.sh scripts\klocwork_config.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}"
+    # Batch script takes argument "Open" and PLAT, then calls Python script to generate Klocwork reports
+    - scripts\kl_query_tfa.bat Open $PLAT
+  artifacts:
+    name: "$CI_JOB_NAME"
+    when: always
+    paths:
+      - .\generated\**\*.txt

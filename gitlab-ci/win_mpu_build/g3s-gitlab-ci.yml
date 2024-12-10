@@ -1,0 +1,21 @@
+include:
+  - local: gitlab-ci/win_templates/mpu-build-templates-gitlab-ci.yml
+  - local: gitlab-ci/win_templates/klocwork-build-templates.yml
+
+rzg3s-release-no-configs-windows:
+  variables:
+    PLAT: "g3s"
+    BOARD: "smarc"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .windows_mpu_build_job_template
+
+rzg3s-release-no-configs-klocwork:
+  variables:
+    PLAT: "g3s"
+    BOARD: "smarc"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .mpu_klocwork_job_template

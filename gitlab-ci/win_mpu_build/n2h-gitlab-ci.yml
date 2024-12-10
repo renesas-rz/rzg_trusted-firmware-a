@@ -1,0 +1,21 @@
+include:
+  - local: gitlab-ci/win_templates/mpu-build-templates-gitlab-ci.yml
+  - local: gitlab-ci/win_templates/klocwork-build-templates.yml
+
+rzn2h-release-core4-windows:
+  variables:
+    PLAT: "n2h"
+    BOARD: "eval"
+    BUILD_TYPE: "release"
+    CONFIGS: "PLATFORM_CORE_COUNT=4"
+  extends:
+    - .windows_mpu_build_job_template
+
+rzn2h-release-core4-klocwork:
+  variables:
+    PLAT: "n2h"
+    BOARD: "eval"
+    BUILD_TYPE: "release"
+    CONFIGS: "PLATFORM_CORE_COUNT=4"
+  extends:
+    - .mpu_klocwork_job_template

@@ -3,6 +3,7 @@ stages:
   - tag_creation
   - static_analysis_testing
   - mpu_build_testing
+  - klocwork
 
 workflow:
   rules:

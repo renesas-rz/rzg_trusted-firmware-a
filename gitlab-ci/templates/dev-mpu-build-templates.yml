@@ -7,7 +7,9 @@
     PLAT: "n2h"
     BOARD: "eval"
     BUILD_TYPE: "release"
+    TARGET_OS: ""
     CONFIGS: ""
+    TEST_TYPE: ""
   interruptible: true
 
 .linux_mpu_build_job_template: &linux_mpu_build_job_template
@@ -21,7 +23,7 @@
 .linux_mpu_build_success_job_template:
   <<: *linux_mpu_build_job_template
   script:
-    - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}"
+    - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}"
   artifacts:
     expire_in: 1 week
     when: always
@@ -33,4 +35,4 @@
 .linux_mpu_build_failure_job_template:
   <<: *linux_mpu_build_job_template
   script:
-    - ( ! scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}" )
+    - ( ! scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" )

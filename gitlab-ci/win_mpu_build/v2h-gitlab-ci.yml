@@ -1,0 +1,21 @@
+include:
+  - local: gitlab-ci/win_templates/mpu-build-templates-gitlab-ci.yml
+  - local: gitlab-ci/win_templates/klocwork-build-templates.yml
+
+rzv2h-release-evk-1-windows:
+  variables:
+    PLAT: "v2h"
+    BOARD: "evk_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .windows_mpu_build_job_template
+
+rzv2h-release-evk-1-klocwork:
+  variables:
+    PLAT: "v2h"
+    BOARD: "evk_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .mpu_klocwork_job_template

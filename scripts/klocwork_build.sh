@@ -1,0 +1,129 @@
+#! /bin/bash
+
+# $1 = Project specific klocwork_config.sh file argument
+if [ -z "$1" ]; then
+	echo "ERROR - No configuration file argument provided"
+	exit 1
+fi
+
+# Check whether configuration file exists
+if [ ! -f $1 ]; then
+	echo "ERROR - Configuration file provided cannot be found"
+	exit 2
+fi
+
+# Assigning MPU arguments
+PLAT="$2"
+BOARD="$3"
+BUILD_TYPE="$4"
+TARGET_OS="$5"
+CONFIGS="$6"
+TEST_TYPE="$7"
+
+echo "MPU configuration received from GitLab YAML:
+PLAT 	   : $PLAT
+BOARD 	   : $BOARD
+BUILD_TYPE : $BUILD_TYPE
+TARGET_OS  : $TARGET_OS
+CONFIGS    : $CONFIGS
+TEST_TYPE  : $TEST_TYPE"
+
+# PROJECT_NAME, BUILD_BAT, and EXCLUDE_LIST are set in the configuration file provided as the $1 argument
+source $1 $PLAT
+
+if [ ! -f $BUILD_BAT ]; then
+	echo "ERROR - Build File not found in configuration file"
+	exit 2
+fi
+
+# Set a custom Klocwork build string to come from GitLab
+export BUILD_STR="KL-$PROJECT_NAME-$CI_JOB_NAME-$CI_PIPELINE_ID"
+
+echo "Running Klocwork analysis...
+CI_BUILDS_DIR  : $CI_BUILDS_DIR
+CI_JOB_NAME    : $CI_JOB_NAME
+CI_PIPELINE_ID : $CI_PIPELINE_ID
+CI_PROJECT_DIR : $CI_PROJECT_DIR
+BUILD_STR      : $BUILD_STR"
+
+# Set the Klocwork tool paths as installed on the CI build machine
+export KWADMIN="C:\klocwork\kwbuildtools\bin\kwadmin.exe"
+export KWINJECT="C:\klocwork\kwbuildtools\bin\kwinject.exe"
+export KWBUILDPROJECT="C:\klocwork\kwbuildtools\bin\kwbuildproject.exe"
+export KWDEPLOY="C:\klocwork\kwbuildtools\bin\kwdeploy.exe"
+
+if [ ! -f $KWADMIN ]; then
+	echo "KWADMIN        : $KWADMIN not found"
+	exit 230
+fi
+
+echo "KWADMIN        : $KWADMIN"
+
+# Debugging
+export JOB_FOLDER="$CI_BUILDS_DIR\jobs\\$CI_JOB_NAME\builds\\$CI_PIPELINE_ID"
+echo "JOB_FOLDER     : $JOB_FOLDER"
+# mkdir "$JOB_FOLDER"  # Creates new directory (inside the VM) - NOT WORKING
+export KLOFOLDER="$JOB_FOLDER\kloTables"
+export KWINJECT_OUT="C:\Users\svc_SP3_CI_etcetc\Desktop\Dawid\kwinject_$PLAT.txt"  # Hard coded path temporarily
+# export KWINJECT_OUT="$JOB_FOLDER\kwinject.txt"
+export KWHOST="--host ree-be0klocwork.ree.adwin.renesas.com --port 8080"
+export KW_LICENCE="--license-host dusls3.ree.adwin.renesas.com --license-port 3313"
+export KWPROJECT="--project $PROJECT_NAME"
+
+echo "Running KWDEPLOY $KWDEPLOY"
+$KWDEPLOY sync --url http://ree-be0klocwork.ree.adwin.renesas.com:8080/
+
+echo "Running KWINJECT $BUILD_STR"
+# The -w option to kwinject _should_ force a complete regeneration of a clean build spec.
+# This removes the disconcerting (but expected) warnings
+# Warning: <.>\buildspec.out:243: 'compile' line for object file <.>.o is already defined (ignored)
+# If there is an EXCLUDE_LIST provided in the config file then it will include it in KWINJECT
+if [ -z "$EXCLUDE_LIST" ]; then
+	echo "$KWINJECT --output $KWINJECT_OUT sh $BUILD_BAT"
+	$KWINJECT --output $KWINJECT_OUT sh $BUILD_BAT $PLAT $BOARD $BUILD_TYPE $TARGET_OS "${CONFIGS}"
+else
+	echo "$KWINJECT --output $KWINJECT_OUT --ignore-files $EXCLUDE_LIST sh $BUILD_BAT $PLAT $BOARD $BUILD_TYPE $TARGET_OS "${CONFIGS}""
+	$KWINJECT --output $KWINJECT_OUT --ignore-files $EXCLUDE_LIST sh $BUILD_BAT $PLAT $BOARD $BUILD_TYPE $TARGET_OS "${CONFIGS}"
+fi
+
+# Checking errorlevel
+if [ $? -ne 0 ]; then
+    echo "Klocwork BAT file failure: $?"
+	exit 230
+fi
+
+echo "KWINJECT $BUILD_STR result: $?"
+
+echo "Running KWBUILD"
+
+# If there is a .sconf CONFIG_FILE provided in the config batch file then it will include it in KWBUILDPROJECT
+if [ -z "$CONFIG_FILE" ]; then
+	echo "$KWBUILDPROJECT $KWINJECT_OUT $KWPROJECT $KWHOST $KW_LICENCE --tables-directory $KLOFOLDER --force"
+	$KWBUILDPROJECT $KWINJECT_OUT $KWPROJECT $KWHOST $KW_LICENCE --tables-directory $KLOFOLDER --force
+else
+	echo "$KWBUILDPROJECT $KWINJECT_OUT $KWPROJECT $KWHOST $KW_LICENCE --exclude-issues $CONFIG_FILE --tables-directory $KLOFOLDER --force"
+	$KWBUILDPROJECT $KWINJECT_OUT $KWPROJECT $KWHOST $KW_LICENCE --exclude-issues $CONFIG_FILE --tables-directory $KLOFOLDER --force
+fi
+
+# Checking errorlevel
+if [ $? -ne 0 ]; then
+    echo "Klocwork BAT file failure: $?"
+	exit 230
+fi
+
+echo "KWBUILD $BUILD_STR result: $?"
+
+# Uploading build results to Klocwork portal under the name $BUILD_STR
+echo "Running KWADMIN $BUILD_STR"
+echo "$KWADMIN $KWHOST load $PROJECT_NAME $KLOFOLDER --name $BUILD_STR"
+$KWADMIN $KWHOST load $PROJECT_NAME $KLOFOLDER --name $BUILD_STR
+
+# Checking errorlevel
+if [ $? -ne 0 ]; then
+	echo "Klocwork BAT file failure: $?"
+	exit 230
+fi
+
+echo "KWADMIN $BUILD_STR result: $?"
+echo "Klocwork $BUILD_STR finished OK"
+exit 0
