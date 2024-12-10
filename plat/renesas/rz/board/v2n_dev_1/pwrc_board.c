@@ -32,7 +32,7 @@ bool pwrc_board_is_resume(void)
 
 			/* Reset default value */
 			if (riic_write(PMIC, 0x8D, 0x22) < 0) {
-				ERROR("RZ/V2H: Fail to resume system.\n");
+				ERROR("RZ/V2N: Fail to resume system.\n");
 				panic();
 			}
 		}

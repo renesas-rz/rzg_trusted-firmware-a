@@ -11,6 +11,9 @@ include:
   - local: gitlab-ci/tag_mpu_build/t2h-gitlab-ci.yml
     rules:
       - if: $PLATFORM =~  '/^.*\bt2h\b.*$/'
+  - local: gitlab-ci/tag_mpu_build/v2n-gitlab-ci.yml
+    rules:
+      - if: $PLATFORM =~  '/^.*\bv2n\b.*$/'
 
 tag-creation-job:
   stage: tag_creation

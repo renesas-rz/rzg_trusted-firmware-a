@@ -14,3 +14,6 @@ include:
   - local: gitlab-ci/dev_mpu_build/v2h-gitlab-ci.yml
     rules:
       - if: $RUN_MPU_BUILD == "true"
+  - local: gitlab-ci/dev_mpu_build/v2n-gitlab-ci.yml
+    rules:
+      - if: $RUN_MPU_BUILD == "true"
