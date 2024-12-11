@@ -19,6 +19,7 @@
     # Batch script takes argument "Open" and PLAT, then calls Python script to generate Klocwork reports
     - scripts\kl_query_tfa.bat Open $PLAT
   artifacts:
+    expire_in: 1 week
     name: "$CI_JOB_NAME"
     when: always
     paths:
