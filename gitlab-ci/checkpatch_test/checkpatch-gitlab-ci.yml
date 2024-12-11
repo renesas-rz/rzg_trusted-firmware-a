@@ -1,11 +1,10 @@
 include:
-  - local: gitlab-ci/yaml-files/templates/checkpatch-templates-gitlab-ci.yml
+  - local: gitlab-ci/templates/checkpatch-templates.yml
 
 overnight-checkpatch-testing:
   variables:
     REFERENCE_BRANCH: "2.7.0/rz_main"
     TARGET_BRANCH: $CI_COMMIT_BRANCH
-    PATCH_FILE: "test.patch"
   extends:
     - .overnight_checkpatch_test_job_template
 
@@ -13,6 +12,5 @@ merge-gateway-checkpatch-testing:
   variables:
     REFERENCE_BRANCH: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     TARGET_BRANCH: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
-    PATCH_FILE: "test.patch"
   extends:
     - .merge_gateway_checkpatch_test_job_template

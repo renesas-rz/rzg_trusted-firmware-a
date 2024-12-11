@@ -1,5 +1,5 @@
 include:
-  - local: gitlab-ci/yaml-files/templates/mpu-build-templates-gitlab-ci.yml
+  - local: gitlab-ci/templates/tag-mpu-build-templates.yml
 
 rzn2h-release-core4:
   variables:
@@ -8,7 +8,7 @@ rzn2h-release-core4:
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=4"
   extends:
-    - .linux_mpu_build_success_job_template
+    - .linux_tag_build_success_job_template
 
 rzn2h-release-core2:
   variables:
@@ -17,7 +17,7 @@ rzn2h-release-core2:
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=2"
   extends:
-    - .linux_mpu_build_success_job_template
+    - .linux_tag_build_success_job_template
 
 rzn2h-release-core1:
   variables:
@@ -26,7 +26,7 @@ rzn2h-release-core1:
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=1"
   extends:
-    - .linux_mpu_build_success_job_template
+    - .linux_tag_build_success_job_template
 
 rzn2h-release-core0:
   variables:
@@ -35,7 +35,7 @@ rzn2h-release-core0:
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=0"
   extends:
-    - .linux_mpu_build_failure_job_template
+    - .linux_tag_build_failure_job_template
 
 rzn2h-release-core5:
   variables:
@@ -44,7 +44,7 @@ rzn2h-release-core5:
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=5"
   extends:
-    - .linux_mpu_build_failure_job_template
+    - .linux_tag_build_failure_job_template
 
 rzn2h-release-stack-protector-0:
   variables:
@@ -53,7 +53,7 @@ rzn2h-release-stack-protector-0:
     BUILD_TYPE: "release"
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
   extends:
-    - .linux_mpu_build_failure_job_template
+    - .linux_tag_build_failure_job_template
 
 rzn2h-debug-log0:
   variables:
@@ -62,7 +62,7 @@ rzn2h-debug-log0:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0 PLATFORM_CORE_COUNT=4"
   extends:
-    - .linux_mpu_build_success_job_template
+    - .linux_tag_build_success_job_template
 
 rzn2h-debug-log50:
   variables:
@@ -71,7 +71,7 @@ rzn2h-debug-log50:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=4"
   extends:
-    - .linux_mpu_build_success_job_template
+    - .linux_tag_build_success_job_template
 
 rzn2h-debug-log50-core2:
   variables:
@@ -80,7 +80,7 @@ rzn2h-debug-log50-core2:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=2"
   extends:
-    - .linux_mpu_build_success_job_template
+    - .linux_tag_build_success_job_template
 
 rzn2h-debug-log50-core1:
   variables:
@@ -89,7 +89,7 @@ rzn2h-debug-log50-core1:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=1"
   extends:
-    - .linux_mpu_build_success_job_template
+    - .linux_tag_build_success_job_template
 
 rzn2h-debug-log50-core0:
   variables:
@@ -98,7 +98,7 @@ rzn2h-debug-log50-core0:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=0"
   extends:
-    - .linux_mpu_build_failure_job_template
+    - .linux_tag_build_failure_job_template
 
 rzn2h-debug-log50-core5:
   variables:
@@ -107,13 +107,4 @@ rzn2h-debug-log50-core5:
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=5"
   extends:
-    - .linux_mpu_build_failure_job_template
-
-rzn2h-debug-log50-stack-protector-0:
-  variables:
-    PLAT: "n2h"
-    BOARD: "eval"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50 ENABLE_STACK_PROTECTOR=0"
-  extends:
-    - .linux_mpu_build_failure_job_template
+    - .linux_tag_build_failure_job_template

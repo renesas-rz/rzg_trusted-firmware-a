@@ -1,0 +1,40 @@
+.tag_build_job_template: &tag_build_job_template
+  stage: mpu_build_testing
+  variables:
+    PLAT: "n2h"
+    BOARD: "eval"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+    TEST_TYPE: "tag"
+  interruptible: true
+
+.linux_tag_build_job_template: &linux_tag_build_job_template
+  <<: *tag_build_job_template
+  tags:
+    - "${PLATFORM}_tests"
+  before_script:
+    - cd "../workspace/tf-a"
+    - export CROSS_COMPILE=../../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
+    - make PLAT=$PLAT realclean BOARD=$BOARD
+
+.linux_tag_build_success_job_template:
+  <<: *linux_tag_build_job_template
+  script:
+    - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}" $TEST_TYPE
+    - cd "../../tf-a"
+    - pwd
+    - mkdir -p build && cd build
+    - mkdir -p $PLAT && cd $PLAT
+    - cp -r "../../../workspace/tf-a/build/${PLAT}/${BUILD_TYPE}" .
+  artifacts:
+    expire_in: 1 week
+    when: always
+    name: "$CI_JOB_NAME"
+    paths:
+      - ./build/$PLAT/$BUILD_TYPE/*.bin
+      - ./build/$PLAT/$BUILD_TYPE/*.srec
+
+.linux_tag_build_failure_job_template:
+  <<: *linux_tag_build_job_template
+  script:
+    - ( ! ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}" $TEST_TYPE )

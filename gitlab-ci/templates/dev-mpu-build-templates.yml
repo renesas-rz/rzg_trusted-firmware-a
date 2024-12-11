@@ -17,6 +17,11 @@
   before_script:
     - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
     - make PLAT=$PLAT realclean BOARD=$BOARD
+
+.linux_mpu_build_success_job_template:
+  <<: *linux_mpu_build_job_template
+  script:
+    - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}"
   artifacts:
     expire_in: 1 week
     when: always
@@ -25,12 +30,7 @@
       - ./build/$PLAT/$BUILD_TYPE/*.bin
       - ./build/$PLAT/$BUILD_TYPE/*.srec
 
-.linux_mpu_build_success_job_template:
-  <<: *linux_mpu_build_job_template
-  script:
-    - gitlab-ci/scripts/mpu_build/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}"
-
 .linux_mpu_build_failure_job_template:
   <<: *linux_mpu_build_job_template
   script:
-    - ( ! gitlab-ci/scripts/mpu_build/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}" )
+    - ( ! scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${CONFIGS}" )

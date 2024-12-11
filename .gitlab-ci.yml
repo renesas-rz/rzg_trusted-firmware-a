@@ -1,5 +1,6 @@
 stages:
   - pre_test
+  - tag_creation
   - static_analysis_testing
   - mpu_build_testing
 
@@ -9,12 +10,15 @@ workflow:
       when: always
 
 include:
-  - local: gitlab-ci/yaml-files/merge-gateway-pipeline.yml
+  - local: gitlab-ci/merge-gateway-pipeline.yml
     rules:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-  - local: gitlab-ci/yaml-files/overnight-pipeline.yml
+  - local: gitlab-ci/dev-overnight-pipeline.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
+      - if: $DEV_OVERNIGHT == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
+  - local: gitlab-ci/tag-overnight-pipeline.yml
+    rules:
+      - if: $TAG_OVERNIGHT == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
 
 RZ MPU Git Automation:
   stage: pre_test

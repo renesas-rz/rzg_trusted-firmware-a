@@ -4,19 +4,30 @@ PLAT="$1"
 BOARD="$2"
 BUILD_TYPE="$3"
 CONFIGS="$4"
+TEST_TYPE="$5"
 
 n2h_build()
 {
+	if [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../u-boot/n2h-u-boot.bin"
+	else
+		U_BOOT_FILE="../u-boot/n2h-u-boot.bin"
+	fi
 	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"
-	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33=../u-boot/n2h-u-boot.bin"
+	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE""
 	python3 tools/renesas/rzt2h_boot_param/parameter_block_generator.py --output=param_output
 	eval "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS"
 }
 
 t2h_build()
 {
+	if [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../u-boot/t2h-u-boot.bin"
+	else
+		U_BOOT_FILE="../u-boot/t2h-u-boot.bin"
+	fi
 	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"
-	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33=../u-boot/t2h-u-boot.bin"
+	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE""
 	python3 tools/renesas/rzt2h_boot_param/parameter_block_generator.py --output=param_output
 	eval "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS"
 }
@@ -27,12 +38,17 @@ g3s_build()
 	FIP_TOOL_PATH="$TFA_PATH/tools/fiptool"
 	BP_TOOL_PATH="$TFA_PATH/tools/renesas/rz_boot_param"
 	BUILD_PATH="$TFA_PATH/build/$PLAT/$BUILD_TYPE"
+	if [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../../../u-boot/g3s-u-boot.bin"
+	else
+		U_BOOT_FILE="../../../u-boot/g3s-u-boot.bin"
+	fi
 
 	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"
 
 	cd "$FIP_TOOL_PATH"
 	make fiptool
-	eval ./fiptool create --align 16 --soc-fw "$BUILD_PATH"/bl31.bin --nt-fw "../../../u-boot/g3s-u-boot.bin" "$BUILD_PATH"/fip.bin
+	eval ./fiptool create --align 16 --soc-fw "$BUILD_PATH"/bl31.bin --nt-fw "$U_BOOT_FILE" "$BUILD_PATH"/fip.bin
 
 	cd "$BP_TOOL_PATH"
 	make PLAT=$PLAT bptool BOARD=$BOARD
@@ -49,17 +65,23 @@ g3s_build()
 v2h_build()
 {
 	U_BOOT_FILE=""
-	if [ "$BOARD" = "evk_alpha" ]; then
-		U_BOOT_FILE="v2h-evk-al-u-boot.bin"
-	elif [ "$BOARD" = "evk_1" ]; then
-		U_BOOT_FILE="v2h-evk-1-u-boot.bin"
+	if [ "$BOARD" = "evk_alpha" ] && [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../u-boot/v2h-evk-al-u-boot.bin"
+	elif [ "$BOARD" = "evk_alpha" ]; then
+		U_BOOT_FILE="../u-boot/v2h-evk-al-u-boot.bin"
+	elif [ "$BOARD" = "evk_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../u-boot/v2h-evk-1-u-boot.bin"
+	elif [ "$BOARD" = "evk_1" ] ; then
+		U_BOOT_FILE="../u-boot/v2h-evk-1-u-boot.bin"
+	elif [ "$BOARD" = "dev_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../u-boot/v2h-dev-1-u-boot.bin"
 	elif [ "$BOARD" = "dev_1" ]; then
-		U_BOOT_FILE="v2h-dev-1-u-boot.bin"
+		U_BOOT_FILE="../u-boot/v2h-dev-1-u-boot.bin"
 	else
 		echo "Invalid V2H board: Board doesn't exist"
 	fi
 
-	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33=../u-boot/""$U_BOOT_FILE"
+	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE""
 	make PLAT=$PLAT bptool BOARD=$BOARD
 	eval "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS"
 }

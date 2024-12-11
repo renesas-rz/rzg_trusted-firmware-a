@@ -6,14 +6,13 @@
   variables:
     REFERENCE_BRANCH: "2.7.0/rz_main"
     TARGET_BRANCH: $CI_COMMIT_BRANCH
-    PATCH_FILE: "test.patch"
   script:
     - git fetch origin $REFERENCE_BRANCH
     - git checkout $REFERENCE_BRANCH
     - git fetch origin $TARGET_BRANCH
     - git checkout $TARGET_BRANCH
-    - git diff --unified=5 $REFERENCE_BRANCH > $PATCH_FILE
-    - (../scripts/checkpatch/checkpatch.pl $PATCH_FILE --max-line-length=160 > checkpatch.log) || true
+    - git diff --unified=5 $REFERENCE_BRANCH > test.patch
+    - (../scripts/checkpatch/checkpatch.pl test.patch --max-line-length=160 > checkpatch.log) || true
     - if grep -q "ERROR" checkpatch.log; then
     - exit 1
     - elif grep -q "WARNING" checkpatch.log; then
@@ -29,7 +28,7 @@
     when: always
     name: "RZ Checkpatch files"
     paths:
-      - ./$PATCH_FILE
+      - ./test.patch
       - ./checkpatch.log
 
 .overnight_checkpatch_test_job_template:

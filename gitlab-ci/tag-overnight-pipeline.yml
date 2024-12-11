@@ -1,0 +1,33 @@
+include:
+  - local: gitlab-ci/tag_mpu_build/g3s-gitlab-ci.yml
+    rules:
+      - if: $PLATFORM == "g3s"
+  - local: gitlab-ci/tag_mpu_build/t2h-gitlab-ci.yml
+    rules:
+      - if: $PLATFORM == "tn2h"
+  - local: gitlab-ci/tag_mpu_build/n2h-gitlab-ci.yml
+    rules:
+      - if: $PLATFORM == "tn2h"
+  - local: gitlab-ci/tag_mpu_build/v2h-gitlab-ci.yml
+    rules:
+      - if: $PLATFORM == "v2h"
+
+tag-creation-job:
+  stage: tag_creation
+  interruptible: true
+  tags:
+    - "${PLATFORM}_tests"
+  script:
+    - scripts/create_and_setup_release_branch.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$DEVICES_TO_KEEP"
+    - cd ../workspace/tf-a
+    - git checkout "2.7.0/rz_rel_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - git merge "2.7.0/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - git branch --delete "2.7.0/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
+    - cd ../../tf-a
+    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$TAG_NAME"
+    - cd ../workspace/tf-a
+    - if [ "$PUSH_TAG" = "true" ]; then
+    - git push origin $TAG_NAME
+    - else
+    - echo "Tag NOT pushed to repository."
+    - fi
