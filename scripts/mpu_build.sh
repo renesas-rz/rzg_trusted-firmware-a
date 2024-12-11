@@ -3,8 +3,21 @@
 PLAT="$1"
 BOARD="$2"
 BUILD_TYPE="$3"
-CONFIGS="$4"
-TEST_TYPE="$5"
+TARGET_OS="$4"
+CONFIGS="$5"
+TEST_TYPE="$6"
+
+if [ "$TARGET_OS" = "" ]; then
+	TARGET_OS="Linux"
+fi
+
+echo "MPU build configuration:
+PLAT        : $PLAT
+BOARD       : $BOARD
+BUILD_TYPE  : $BUILD_TYPE
+TARGET_OS   : $TARGET_OS
+CONFIGS     : $CONFIGS
+TEST_TYPE   : $TEST_TYPE"
 
 n2h_build()
 {
@@ -86,15 +99,61 @@ v2h_build()
 	eval "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS"
 }
 
-#Platform specific execution
-if [ "$PLAT" = "n2h" ]; then
+
+v2n_build()
+{
+	U_BOOT_FILE=""
+	if [ "$BOARD" = "dev_1" ] && [ "$TEST_TYPE" = "tag" ]; then
+		U_BOOT_FILE="../../u-boot/v2n-dev-1-u-boot.bin"
+	elif [ "$BOARD" = "dev_1" ]; then
+		U_BOOT_FILE="../u-boot/v2n-dev-1-u-boot.bin"
+	else
+		echo "Invalid V2N board: Board doesn't exist"
+	fi
+
+	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"" fip BL33="$U_BOOT_FILE""
+	make PLAT=$PLAT bptool BOARD=$BOARD
+	eval "make PLAT=$PLAT pkg BOARD=$BOARD ""$CONFIGS"
+}
+
+tfa_build_windows()
+{
+	# Path to Windows version of the ARM cross compiler toolchain
+	export CROSS_COMPILE=../compiler/gcc-arm-11.2-2022.02-mingw-w64-i686-aarch64-none-elf/bin/aarch64-none-elf-
+
+	# Path to directory containing make.exe
+	export PATH=$PATH
+
+	echo "Configuring realclean for $PLAT $BOARD ..."
+	make PLAT=$PLAT realclean BOARD=$BOARD
+
+	eval "make PLAT=$PLAT all BOARD=$BOARD ""$CONFIGS"
+}
+
+# Linux specific execution
+if [ "$PLAT" = "n2h" ] && [ "$TARGET_OS" != "windows" ]; then
 	n2h_build
-elif [ "$PLAT" = "t2h" ]; then
+elif [ "$PLAT" = "t2h" ] && [ "$TARGET_OS" != "windows" ]; then
 	t2h_build
-elif [ "$PLAT" = "g3s" ]; then
+elif [ "$PLAT" = "g3s" ] && [ "$TARGET_OS" != "windows" ]; then
 	g3s_build
-elif [ "$PLAT" = "v2h" ]; then
+elif [ "$PLAT" = "v2h" ] && [ "$TARGET_OS" != "windows" ]; then
 	v2h_build
+elif [ "$PLAT" = "v2n" ] && [ "$TARGET_OS" != "windows" ]; then
+	v2n_build
+
+# Windows specific execution
+elif [ "$PLAT" = "n2h" ] && [ "$TARGET_OS" = "windows" ]; then
+	tfa_build_windows
+elif [ "$PLAT" = "t2h" ] && [ "$TARGET_OS" = "windows" ]; then
+	tfa_build_windows
+elif [ "$PLAT" = "g3s" ] && [ "$TARGET_OS" = "windows" ]; then
+	tfa_build_windows
+elif [ "$PLAT" = "v2h" ] && [ "$TARGET_OS" = "windows" ]; then
+	tfa_build_windows
+elif [ "$PLAT" = "v2n" ] && [ "$TARGET_OS" = "windows" ]; then
+	tfa_build_windows
+# Error handling
 else
 	echo "Invalid platform: Platform doesn't exist"
 	exit -1
