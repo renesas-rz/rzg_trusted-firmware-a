@@ -206,29 +206,6 @@ static CPG_PLL_SETTINGS cpg_pll_tbl[] = {
 
 	/* CPG_PLLDDR0 and CPG_PLLDDR1 are set in DDR setup routine */
 
-	{	/* GPU */
-		.stby = {
-				.addr = (uintptr_t)CPG_PLLGPU_STBY,
-				.val  = 0x00050001,
-				},
-
-		.clk1 = {
-				.addr = (uintptr_t)CPG_PLLGPU_CLK1,
-				.val  = 0x00003482,
-				},
-
-
-		.clk2 = {
-				.addr = (uintptr_t)CPG_PLLGPU_CLK2,
-				.val  = 0x000C1A01,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_PLLGPU_MON,
-				.val  = 0,
-				},
-	},
-
 	{	/* DRP */
 		.stby = {
 				.addr = (uintptr_t)NULL,		/* Auto turn-on */
@@ -417,20 +394,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_CLKMON_5,
 				.val  = 0x00007FF8,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* GPU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x00000007,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x00070000,
 				},
 
 		.type = CPG_T_CLK
@@ -789,20 +752,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* ISP */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_14,
-				.val  = 0x0000003C,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x0000003C,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* VCD */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_15,
@@ -1096,20 +1045,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_RSTMON_4,
 				.val  = 0x07000000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* GPU */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x0000E000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x0001C000,
 				},
 
 		.type = CPG_T_RST
@@ -1432,20 +1367,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_RSTMON_5,
 				.val  = 0x00000008,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* ISP */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_13,
-				.val  = 0x0000001E,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x0000003C,
 				},
 
 		.type = CPG_T_RST

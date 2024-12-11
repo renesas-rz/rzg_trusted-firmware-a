@@ -109,23 +109,6 @@ void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_reg
 	tzc400_enable_filters();
 }
 
-static void plat_tzc_syssram_setup(void)
-{
-	const arm_tzc_regions_info_t msram_tzc_regions[] = {
-		{
-			/* Default Region 0: Lock down */
-			.base = 0,	/* Not Used by Region 0*/
-			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_RDWR,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
-		},
-
-		{}
-	};
-
-	plat_tzc400_setup(RZT2H_TZC400_5, &msram_tzc_regions[0]);
-}
-
 static void plat_tzc_ddr_setup(void)
 {
 	const arm_tzc_regions_info_t ddr_a_bus_tzc_regions[] = {
@@ -247,7 +230,6 @@ static void plat_tzc_bsc_setup(void)
 static void bl2_security_setup(void)
 {
 	/* initialize TZC-400 */
-	plat_tzc_syssram_setup();
 	plat_tzc_xspi_setup();
 	plat_tzc_ddr_setup();
 	plat_tzc_pci_setup();
