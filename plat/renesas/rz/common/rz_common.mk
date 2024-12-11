@@ -15,13 +15,11 @@ HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
-DEBUG_FPGA						:= 0
 PLAT_EMMC_WRITE_ENABLE			:= 0
 INIT_UNUSED_NS_EL2				:= 1
 
 $(eval $(call add_define,PLAT_SOC_RZG2L))
 $(eval $(call add_define,PROTECTED_CHIPID))
-$(eval $(call add_define,DEBUG_FPGA))
 
 WA_RZG2L_GIC64BIT				:= 1
 $(eval $(call add_define,WA_RZG2L_GIC64BIT))
@@ -43,7 +41,11 @@ $(eval $(call add_define,DDR_ECC_DETECT))
 $(eval $(call add_define,DDR_ECC_DETECT_CORRECT))
 
 ifndef SPI_FLASH
-  SPI_FLASH = MT25QU512ABB
+	ifneq (${BOARD},g2ul_smarc)
+		SPI_FLASH = MT25QU512ABB
+	else
+		SPI_FLASH = AT25QL128A
+	endif
 endif
 
 PLAT_INCLUDES			:=	-Iplat/renesas/rz/common/include						\
@@ -84,6 +86,7 @@ SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c				\
 BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S							\
 							drivers/arm/tzc/tzc400.c
 
+include lib/libfdt/libfdt.mk
 include lib/xlat_tables_v2/xlat_tables.mk
 PLAT_BL_COMMON_SOURCES	:=	${XLAT_TABLES_LIB_SRCS}									\
 							plat/renesas/rz/common/aarch64/plat_helpers.S			\
@@ -92,6 +95,7 @@ PLAT_BL_COMMON_SOURCES	:=	${XLAT_TABLES_LIB_SRCS}									\
 							plat/renesas/rz/common/drivers/sys.c					\
 							plat/renesas/rz/common/drivers/cpg.c					\
 							plat/renesas/rz/common/plat_rz_common.c					\
+							${RZ_TIMER_SOURCES}										\
 							plat/renesas/rz/common/plat_security.c
 
 ifneq (${ENABLE_STACK_PROTECTOR},0)
@@ -109,7 +113,6 @@ BL2_SOURCES				+=	common/desc_image_load.c								\
 							plat/renesas/rz/common/plat_image_load.c				\
 							plat/renesas/rz/common/plat_storage.c					\
 							plat/renesas/rz/common/drivers/pfc.c					\
-							${RZ_TIMER_SOURCES}										\
 							${EMMC_SOURCES}											\
 							${SPI_MULTI_SOURCE}										\
 							${SD_SOURCES}
@@ -125,9 +128,13 @@ BL31_SOURCES			+=	plat/common/plat_gicv3.c								\
 							plat/renesas/rz/common/plat_gic.c						\
 							plat/renesas/rz/common/rz_plat_sip_handler.c			\
 							plat/renesas/rz/common/rz_sip_svc.c						\
+							plat/renesas/rz/common/drivers/wdt.c					\
 							${GICV3_SOURCES}
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
+
+	EL3_CPTR_CLEAR_TFP	:= 1
+    $(eval $(call add_define,EL3_CPTR_CLEAR_TFP))
 
 	# Include common TBB sources
 	AUTH_SOURCES		:=	drivers/auth/img_parser_mod.c
