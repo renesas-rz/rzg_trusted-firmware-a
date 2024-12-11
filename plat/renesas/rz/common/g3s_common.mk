@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
-BL2_AT_EL3						:= 1
+RESET_TO_BL2					:= 1
 RESET_TO_BL31					:= 1
 COLD_BOOT_SINGLE_CPU			:= 1
 PROGRAMMABLE_RESET_ADDRESS		:= 0
@@ -20,6 +20,7 @@ TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
 SECURE_RTC						:= 0
 DEBUG_FPGA						:= 0
+INIT_UNUSED_NS_EL2				:= 1
 
 # This option gets enabled automatically if the TRUSTED_BOARD_BOOT
 # is set via root Makefile, but Renesas support Trusted-Boot without

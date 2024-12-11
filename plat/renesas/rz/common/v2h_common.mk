@@ -5,7 +5,7 @@
 #
 
 PLAT_SOC_RZV2H					:= 1
-BL2_AT_EL3						:= 1
+RESET_TO_BL2					:= 1
 COLD_BOOT_SINGLE_CPU			:= 1
 PROGRAMMABLE_RESET_ADDRESS		:= 0
 WARMBOOT_ENABLE_DCACHE_EARLY	:= 1
@@ -17,6 +17,8 @@ TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
 DEBUG_FPGA						:= 0
 PLAT_DDR_ECC					:= 0
+INIT_UNUSED_NS_EL2				:= 1
+
 # This option gets enabled automatically if the TRUSTED_BOARD_BOOT
 # is set via root Makefile, but Renesas support Trusted-Boot without
 # Crypto module.
