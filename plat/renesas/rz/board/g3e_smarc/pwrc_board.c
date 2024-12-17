@@ -77,6 +77,7 @@ bool pwrc_board_is_resume(void)
 void pwrc_board_suspend_on(void)
 {
 #if defined(PLAT_SYSTEM_SUSPEND)
+	riic_setup();
 	riic_write(GPAK, 0xF4, 0x0E);
 	riic_write(GPAK, 0xF4, 0x0F);
 #endif

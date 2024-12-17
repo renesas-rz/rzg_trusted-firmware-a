@@ -778,6 +778,41 @@ static void cpg_mstop_setup(void)
 										| CPG_BUS_13_MSTOP_FDP1_FCPF);
 }
 
+static CPG_SETUP_DATA cpg_clk_sr2_tbl[] = {
+	{	/* I2C8 */
+		.reg =  {
+				.addr = (uintptr_t)CPG_CLKON_9,
+				.val  = 0x00000008,
+			},
+
+		.mon =	{
+				.addr = (uintptr_t)CPG_CLKMON_4,
+				.val  = 0x00080000,
+			},
+
+			.type = CPG_T_CLK
+	},
+
+	{	/* I2C8 */
+		.reg =  {
+				.addr = (uintptr_t)CPG_RST_10,
+				.val  = 0x00000001,
+			},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_RSTMON_4,
+				.val  = 0x00020000,
+			},
+
+		.type = CPG_T_RST
+	}
+};
+
+void cpg_prepare_suspend(void)
+{
+	cpg_ctrl_clkrst(&cpg_clk_sr2_tbl[0], ARRAY_SIZE(cpg_clk_sr2_tbl));
+}
+
 static void cpg_clk_on_setup(void)
 {
 	cpg_ctrl_clkrst(&cpg_clk_on_tbl[0], ARRAY_SIZE(cpg_clk_on_tbl));
