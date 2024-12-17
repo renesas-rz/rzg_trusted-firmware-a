@@ -35,13 +35,31 @@ typedef struct {
 	uint32_t  pstate_on_mask;
 } CPG_CORE_PWR;
 
-static void rz_program_trusted_mailbox(uintptr_t address)
-{
-	uintptr_t *mailbox = (uintptr_t *) PLAT_TRUSTED_MAILBOX_BASE;
+typedef struct {
+	unsigned long value __aligned(CACHE_WRITEBACK_GRANULE);
+} mailbox_t;
 
-	*mailbox = address;
+uintptr_t	gp_warm_ep;
+
+static void rz_program_trusted_mailbox(u_register_t mpidr, uintptr_t address)
+{
+	mailbox_t *mailbox = (mailbox_t *) PLAT_TRUSTED_MAILBOX_BASE;
+	uint64_t linear_id = plat_core_pos_by_mpidr(mpidr);
+	unsigned long range;
+
+	mailbox[linear_id].value = address;
+	range = (unsigned long)&mailbox[linear_id];
+
+	flush_dcache_range(range, sizeof(range));
 }
 
+static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
+{
+	if (ns_entrypoint >= RZG3E_NS_DRAM_BASE)
+		return PSCI_E_SUCCESS;
+
+	return PSCI_E_INVALID_ADDRESS;
+}
 
 static int rz_validate_power_state(unsigned int power_state, psci_power_state_t *req_state)
 {
@@ -65,11 +83,104 @@ static int rz_validate_power_state(unsigned int power_state, psci_power_state_t 
 	return PSCI_E_SUCCESS;
 }
 
+static int rzg3e_pwr_domain_on(u_register_t mpidr)
+{
+	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
+		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
+		{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
+		{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
+		{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
+	};
+
+	const CPG_CORE_PWR pch[PLATFORM_CORE_COUNT] = {
+		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ0, CPG_LP_CA55_CTL2_COREACCEPT0, CPG_LP_CA55_CTL2_CORESTATE0_ON_MASK },
+		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ1, CPG_LP_CA55_CTL2_COREACCEPT1, CPG_LP_CA55_CTL2_CORESTATE1_ON_MASK },
+		{ CPG_LP_CA55_CTL3, CPG_LP_CA55_CTL3_COREPREQ2, CPG_LP_CA55_CTL3_COREACCEPT2, CPG_LP_CA55_CTL3_CORESTATE2_ON_MASK },
+		{ CPG_LP_CA55_CTL3, CPG_LP_CA55_CTL3_COREPREQ3, CPG_LP_CA55_CTL3_COREACCEPT3, CPG_LP_CA55_CTL3_CORESTATE3_ON_MASK }
+	};
+
+	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
+
+	if (coreid >= PLATFORM_CORE_COUNT)
+		return PSCI_E_INVALID_PARAMS;
+
+	/* Check if in standby */
+	if ((mmio_read_32(CPG_LP_CTL1) & 0x1) == 0x1) {
+		mmio_write_32(pch[coreid].reg, pch[coreid].preq_mask);
+		while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != pch[coreid].paccept_mask)
+			;
+		mmio_write_32(pch[coreid].reg, 0x00000000);
+		while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != 0x0)
+			;
+	}
+
+	rz_program_trusted_mailbox(mpidr, gp_warm_ep);
+
+	/*  Start the core */
+	mmio_write_32(rval[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
+	mmio_write_32(rval[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
+
+	/* Assert PORESET */
+	mmio_write_32(CPG_RST_0, (0x00010000 << coreid));
+	while ((mmio_read_32(CPG_RSTMON_0) & (0x1 << coreid)) == 0x0)
+		;
+
+	/* Deassert PORESET and RERESET */
+	mmio_write_32(CPG_RST_0, (0x00110011 << coreid));
+	while ((mmio_read_32(CPG_RSTMON_0) & (0x1 << coreid)) != 0x0)
+		;
+
+	mmio_write_32(pch[coreid].reg, (pch[coreid].pstate_on_mask | pch[coreid].preq_mask));
+	while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != pch[coreid].paccept_mask)
+		;
+
+	mmio_write_32(pch[coreid].reg, pch[coreid].pstate_on_mask);
+	while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != 0x0)
+		;
+
+	return PSCI_E_SUCCESS;
+}
+
+static void rzg3e_pwr_domain_on_finish(const psci_power_state_t *target_state)
+{
+	plat_gic_pcpu_init();
+	plat_gic_cpuif_enable();
+}
+
+static void rzg3e_pwr_domain_off(const psci_power_state_t *state)
+{
+	unsigned long mpidr = read_mpidr_el1();
+	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
+
+	if (coreid >= PLATFORM_CORE_COUNT)
+		return;
+
+	/* Prevent interrupts from spuriously waking up this cpu */
+	plat_gic_cpuif_disable();
+
+	/* Request transition to Cortex-A55 CoreX Sleep Mode */
+	mmio_write_32(CPG_LP_CTL1, (CPG_LP_CTL1_CA55SLEEP_REQ << coreid));
+
+
+	/* Enter the Cortex-A55 Sleep Mode */
+	mmio_write_32(CPG_LP_CTL1, mmio_read_32(CPG_LP_CTL1) | 0x00000001);
+
+	/* Issue Barrier instruction */
+	isb();
+	dsb();
+
+	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
+}
+
 #if PLAT_SYSTEM_SUSPEND
 static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
+	unsigned long mpidr = read_mpidr_el1();
+
 	if (CORE_PWR_STATE(target_state) != PLAT_MAX_OFF_STATE)
 		return;
+
+	rz_program_trusted_mailbox(mpidr, gp_warm_ep);
 
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
@@ -84,14 +195,6 @@ static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 
 	plat_copy_code_to_system_ram();
 	pwrc_setup();
-}
-
-static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
-{
-	if (ns_entrypoint >= RZG3E_NS_DRAM_BASE)
-		return PSCI_E_SUCCESS;
-
-	return PSCI_E_INVALID_ADDRESS;
 }
 
 static void __dead2 rz_pwr_domain_pwr_down_wfi(const psci_power_state_t *target_state)
@@ -124,34 +227,30 @@ static void __dead2 rzg3e_system_off(void)
 
 
 const plat_psci_ops_t rzg3e_plat_psci_ops = {
+	/*****PSCI Common function*****/
+	.validate_ns_entrypoint				= rz_validate_ns_entrypoint,
 	/*****PSCI_CPU_SUSPEND_AARCH64*****/
-	.cpu_standby						= NULL,
 	.validate_power_state				= rz_validate_power_state,
-
-	/**********************************/
 	/*****PSCI_CPU_ON_AARCH64*****/
-	.pwr_domain_on						= NULL,
-	.pwr_domain_on_finish				= NULL,
-	.pwr_domain_off						= NULL,
-	/*****************************/
+	.pwr_domain_on						= rzg3e_pwr_domain_on,
+	.pwr_domain_on_finish				= rzg3e_pwr_domain_on_finish,
+	/*****PSCI_CPU_OFF*****/
+	.pwr_domain_off						= rzg3e_pwr_domain_off,
 	/*****PSCI_SYSTEM_OFF*****/
 	.system_off							= rzg3e_system_off,
-	/*************************/
 	/*****PSCI_SYSTEM_SUSPEND_AARCH64*****/
 	#if PLAT_SYSTEM_SUSPEND
 	.pwr_domain_suspend					= rz_pwr_domain_suspend,
 	.pwr_domain_suspend_finish			= rz_pwr_domain_suspend_finish,
 	.pwr_domain_pwr_down_wfi			= rz_pwr_domain_pwr_down_wfi,
-	.validate_ns_entrypoint				= rz_validate_ns_entrypoint,
 	.get_sys_suspend_power_state		= rz_get_sys_suspend_power_state,
 	#endif /* PLAT_SYSTEM_SUSPEND */
-	/*************************************/
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 			const plat_psci_ops_t **psci_ops)
 {
-	rz_program_trusted_mailbox(sec_entrypoint);
+	gp_warm_ep = sec_entrypoint;
 	*psci_ops = &rzg3e_plat_psci_ops;
 
 	return 0;
