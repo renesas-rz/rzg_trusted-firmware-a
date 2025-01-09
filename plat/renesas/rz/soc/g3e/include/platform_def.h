@@ -44,16 +44,16 @@
 
 /*******************************************************************************
  * BL2 specific defines.
- * BL2_LIMIT = BL2_BASE + Size limit due to eSD boot mode < SRAM end address - PARAMS_SIZE
+ * BL2_LIMIT = BL2_BASE + (Size limit due to eSD boot mode) < (SRAM end address) - PARAMS_SIZE - FDT_SIZE
  ******************************************************************************/
 #define BL2_BASE				UL(0x08004000)
-#define BL2_LIMIT				UL(0x08064000)
+#define BL2_LIMIT				UL(0x08057000)
 
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
 #define BL31_BASE				UL(0x44000000)
-#define BL31_LIMIT				UL(0x44040000)
+#define BL31_LIMIT				UL(0x44080000)
 
 #define BL31_SRAM_BASE				FDT_BASE + FDT_SIZE
 #define BL31_SRAM_LIMIT				U(0x08080000)
@@ -88,8 +88,14 @@
  * TODO: Find the minimum MAX_XLAT_TABLES and MAX_MMAP_REGIONS that will work for BL31.
  */
 #if IMAGE_BL2
-#define MAX_XLAT_TABLES			U(8)
-#define MAX_MMAP_REGIONS		U(11)
+#define MAX_XLAT_TABLES			U(4)
+#define MAX_MMAP_REGIONS		U(5)
+#if TRUSTED_BOARD_BOOT
+#warning "redefine MAX_XLAT_TABLES and MAX_MMAP_REGIONS now TRUSTED_BOARD_BOOT is defined"
+#endif
+#if SEPARATE_CODE_AND_RODATA
+#warning "redefine MAX_XLAT_TABLES and MAX_MMAP_REGIONS now SEPARATE_CODE_AND_RODATA is defined"
+#endif
 #elif IMAGE_BL31
 #define MAX_XLAT_TABLES			U(6)
 #define MAX_MMAP_REGIONS		U(9)
