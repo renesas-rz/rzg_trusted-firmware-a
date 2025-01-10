@@ -13,6 +13,7 @@
 
 #include <arch.h>
 #include <rz_soc_def.h>
+#include <common/bl_common.h>
 
 /*******************************************************************************
  * Platform binary types for linking
@@ -47,7 +48,35 @@
  * BL2_LIMIT = BL2_BASE + (Size limit due to eSD boot mode) < (SRAM end address) - PARAMS_SIZE - FDT_SIZE
  ******************************************************************************/
 #define BL2_BASE				UL(0x08004000)
-#define BL2_LIMIT				UL(0x08057000)
+#define BL2_LIMIT				UL(0x08053000)
+
+/* Base address where BL2 stores the parameters for the subsequent images */
+#define PARAMS_BASE				BL2_LIMIT
+#define PARAMS_SIZE				UL(0x1000)
+
+/* 
+ * This is used to reduce the size of the translation tables needed
+ * 0x60000 >= BL2_TOTAL_SRAM_SIZE >= BL2_LIMIT + FDT_SIZE + PARAMS_SIZE
+ */
+#define BL2_TOTAL_SRAM_SIZE			(0x60000)
+
+#if BL2_TOTAL_SRAM_SIZE > 0x60000
+#error "BL2_TOTAL_SRAM_SIZE exceeds the maximum allowed size"
+#endif
+
+#if (BL2_IMAGE)
+#if BL2_END - BL2_BASE > BL2_TOTAL_SRAM_SIZE
+#error "BL2_TOTAL_SRAM_SIZE is too small"
+#endif
+
+#if BL2_END	> BL2_LIMIT
+#error "BL2_LIMIT is too small"
+#endif
+#endif
+
+#define FDT_LIMIT				UL(0x59000000)
+#define FDT_SIZE				UL(0x1000)
+#define FDT_BASE				(FDT_LIMIT - FDT_SIZE)
 
 /*******************************************************************************
  * BL31 specific defines.
@@ -55,8 +84,19 @@
 #define BL31_BASE				UL(0x44000000)
 #define BL31_LIMIT				UL(0x44080000)
 
-#define BL31_SRAM_BASE				FDT_BASE + FDT_SIZE
-#define BL31_SRAM_LIMIT				U(0x08080000)
+/*******************************************************************************
+ * Platform suspend defines
+ ******************************************************************************/
+#define PLAT_TRUSTED_MAILBOX_BASE		BL31_LIMIT
+#define RZG3E_NS_DRAM_BASE				ULL(0x48000000)
+
+/*
+ * Base address where the suspend stack a portion of the BL31 code suspend code is stored.
+ * This is for when the DDR is powered down and the code needs to be executed from SRAM.
+ */
+#define BL31_SRAM_BASE			PARAMS_BASE + PARAMS_SIZE
+#define BL31_SRAM_SIZE			U(0x5000)
+#define BL31_SRAM_LIMIT			(BL31_SRAM_BASE + BL31_SRAM_SIZE)
 
 /*******************************************************************************
  * BL32 specific defines.
@@ -66,11 +106,6 @@
 #define BL32_LIMIT				(BL32_BASE + 0x100000)
 #endif
 
-/*******************************************************************************
- * Platform suspend defines
- ******************************************************************************/
-#define RZG3E_NS_DRAM_BASE				ULL(0x48000000)
-#define PLAT_TRUSTED_MAILBOX_BASE		BL31_LIMIT
 
 /*******************************************************************************
  * BL33

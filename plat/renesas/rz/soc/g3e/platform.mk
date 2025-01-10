@@ -15,7 +15,7 @@ include lib/libfdt/libfdt.mk
 DDR_SOURCES				+=	plat/renesas/rz/soc/g3e/drivers/ddr/ddr.c		\
 							plat/renesas/rz/soc/g3e/drivers/ddr/ddr_misc.c
 
-PLAT_BL_COMMON_SOURCES	+=				plat/renesas/rz/soc/g3e/drivers/cpg.c		\
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3e/drivers/cpg.c				\
 							plat/renesas/rz/soc/g3e/drivers/pwrc/pwrc.c			\
 							plat/renesas/rz/soc/g3e/drivers/pwrc/pwrc_stack.S	\
 							plat/renesas/rz/soc/g3e/drivers/riic.c				\

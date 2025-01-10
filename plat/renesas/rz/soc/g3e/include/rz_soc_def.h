@@ -8,7 +8,6 @@
 #define __RZ_SOC_DEF_H__
 
 #include <lib/utils_def.h>
-#include <common/bl_common.h>
 
 #define RZG3E_BOOT_ROM_BASE			UL(0x00000000)
 #define RZG3E_SRAM0_BASE			UL(0x08000000)
@@ -93,34 +92,6 @@
 #define RZG3E_UART_INCK_HZ			UL(100000000)
 
 #define RZG3E_UART_BARDRATE			UL(115200)
-
-/* Definitions used in common code */
-
-/*
- * Base address where parameters to BL31 are stored
- * This needs a minimum size of 1 page as the region is setup in the MMU.
- */
-#define PARAMS_BASE					BL2_LIMIT
-#define PARAMS_SIZE					UL(0x1000)
-
-/* This section will hold the flattend device tree blob used by u-boot */
-#define FDT_BASE					(PARAMS_BASE + PARAMS_SIZE)
-#define FDT_SIZE					UL(0x1000)
-
-/* This is used to reduce the size of the translation tables needed
- * 0x60000 >= BL2_TOTAL_SRAM_SIZE >= BL2_LIMIT + FDT_SIZE + PARAMS_SIZE
- */
-#define BL2_TOTAL_SRAM_SIZE			(0x60000)
-
-#if BL2_TOTAL_SRAM_SIZE > 0x60000
-#error "BL2_TOTAL_SRAM_SIZE exceeds the maximum allowed size"
-#endif
-
-#if (BL2_IMAGE)
-#if BL2_END - BL2_BASE > BL2_TOTAL_SRAM_SIZE
-#error "BL2_TOTAL_SRAM_SIZE is too small"
-#endif
-#endif
 
 #define RZ_SOC_SYC_BASE				RZG3E_SYC_BASE
 

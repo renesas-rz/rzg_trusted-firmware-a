@@ -7,6 +7,7 @@
 #include <common/desc_image_load.h>
 #include <plat/common/platform.h>
 #include <rz_soc_def.h>
+#include <platform_def.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 
 #if (RZG2L_BL33_EXECUTION_EL == 0)
