@@ -54,7 +54,7 @@
 #define PARAMS_BASE				BL2_LIMIT
 #define PARAMS_SIZE				UL(0x1000)
 
-/* 
+/*
  * This is used to reduce the size of the translation tables needed
  * 0x60000 >= BL2_TOTAL_SRAM_SIZE >= BL2_LIMIT + FDT_SIZE + PARAMS_SIZE
  */
