@@ -46,7 +46,7 @@ include:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_main\b.*$/'
   - local: gitlab-ci/dev-merge-gateway-pipeline.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_dev\b.*$/'
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_dev\b.*$/' || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ '/^.*rz_[a-zA-Z0-9]+_dev\b.*$/')
   - local: gitlab-ci/dev-overnight-pipeline.yml
     rules:
       - if: $DEV_OVERNIGHT == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")
