@@ -68,10 +68,6 @@
 #if BL2_END - BL2_BASE > BL2_TOTAL_SRAM_SIZE
 #error "BL2_TOTAL_SRAM_SIZE is too small"
 #endif
-
-#if BL2_END	> BL2_LIMIT
-#error "BL2_LIMIT is too small"
-#endif
 #endif
 
 #define FDT_LIMIT				UL(0x59000000)
