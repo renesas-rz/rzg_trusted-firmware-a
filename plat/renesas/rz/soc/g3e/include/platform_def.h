@@ -50,10 +50,6 @@
 #define BL2_BASE				UL(0x08004000)
 #define BL2_LIMIT				UL(0x08053000)
 
-/* Base address where BL2 stores the parameters for the subsequent images */
-#define PARAMS_BASE				BL2_LIMIT
-#define PARAMS_SIZE				UL(0x1000)
-
 /*
  * This is used to reduce the size of the translation tables needed
  * 0x60000 >= BL2_TOTAL_SRAM_SIZE >= BL2_LIMIT + FDT_SIZE + PARAMS_SIZE
@@ -74,6 +70,11 @@
 #define FDT_SIZE				UL(0x1000)
 #define FDT_BASE				(FDT_LIMIT - FDT_SIZE)
 
+/* Base address where BL2 stores the parameters for the subsequent images */
+#define PARAMS_BASE				(FDT_BASE - PARAMS_SIZE)
+#define PARAMS_SIZE				UL(0x1000)
+
+
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
@@ -90,7 +91,7 @@
  * Base address where the suspend stack a portion of the BL31 code suspend code is stored.
  * This is for when the DDR is powered down and the code needs to be executed from SRAM.
  */
-#define BL31_SRAM_BASE			PARAMS_BASE + PARAMS_SIZE
+#define BL31_SRAM_BASE			BL2_LIMIT
 #define BL31_SRAM_SIZE			U(0x5000)
 #define BL31_SRAM_LIMIT			(BL31_SRAM_BASE + BL31_SRAM_SIZE)
 
