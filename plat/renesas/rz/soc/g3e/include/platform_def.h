@@ -45,26 +45,18 @@
 
 /*******************************************************************************
  * BL2 specific defines.
- * BL2_LIMIT = BL2_BASE + (Size limit due to eSD boot mode) < (SRAM end address) - PARAMS_SIZE - FDT_SIZE
+ * BL2_LIMIT = maximum build size of BL2 (when in verbose and debug mode)
  ******************************************************************************/
 #define BL2_BASE				UL(0x08004000)
-#define BL2_LIMIT				UL(0x08053000)
+#define BL2_LIMIT				UL(0x08054000)
 
 /*
  * This is used to reduce the size of the translation tables needed
- * 0x60000 >= BL2_TOTAL_SRAM_SIZE >= BL2_LIMIT + FDT_SIZE + PARAMS_SIZE
+ * BL2_SRAM_MMU_SIZE = BL2's maximum size rounded up to the nearest 0x10000
+ * The increase in granularity size results smaller translation tables.
  */
-#define BL2_TOTAL_SRAM_SIZE			(0x60000)
-
-#if BL2_TOTAL_SRAM_SIZE > 0x60000
-#error "BL2_TOTAL_SRAM_SIZE exceeds the maximum allowed size"
-#endif
-
-#if (BL2_IMAGE)
-#if BL2_END - BL2_BASE > BL2_TOTAL_SRAM_SIZE
-#error "BL2_TOTAL_SRAM_SIZE is too small"
-#endif
-#endif
+#define ROUND_UP_TO_0x10000(x)      (((x) + 0xFFFF) & ~0xFFFFUL)
+#define BL2_SRAM_MMU_SIZE         ROUND_UP_TO_0x10000(BL2_LIMIT - BL2_BASE)
 
 #define FDT_LIMIT				UL(0x59000000)
 #define FDT_SIZE				UL(0x1000)
@@ -79,7 +71,7 @@
  * BL31 specific defines.
  ******************************************************************************/
 #define BL31_BASE				UL(0x44000000)
-#define BL31_LIMIT				UL(0x44080000)
+#define BL31_LIMIT				UL(0x44040000)
 
 /*******************************************************************************
  * Platform suspend defines
@@ -92,7 +84,7 @@
  * This is for when the DDR is powered down and the code needs to be executed from SRAM.
  */
 #define BL31_SRAM_BASE			BL2_LIMIT
-#define BL31_SRAM_SIZE			U(0x5000)
+#define BL31_SRAM_SIZE			U(0x3000)
 #define BL31_SRAM_LIMIT			(BL31_SRAM_BASE + BL31_SRAM_SIZE)
 
 /*******************************************************************************
@@ -114,19 +106,15 @@
  * Platform specific page table and MMU setup constants
  ******************************************************************************/
 /*
- * With TRUSTED_BOARD_BOOT=1 and SEPARATE_CODE_AND_RODATA=1 one 9 regions will be defined.
- * Without these defined the number of regions defined is 7.
- *
  * TODO: Find the minimum MAX_XLAT_TABLES and MAX_MMAP_REGIONS that will work for BL31.
  */
 #if IMAGE_BL2
-#define MAX_XLAT_TABLES			U(4)
-#define MAX_MMAP_REGIONS		U(5)
 #if TRUSTED_BOARD_BOOT
-#warning "redefine MAX_XLAT_TABLES and MAX_MMAP_REGIONS now TRUSTED_BOARD_BOOT is defined"
-#endif
-#if SEPARATE_CODE_AND_RODATA
-#warning "redefine MAX_XLAT_TABLES and MAX_MMAP_REGIONS now SEPARATE_CODE_AND_RODATA is defined"
+#define MAX_XLAT_TABLES			U(5)
+#define MAX_MMAP_REGIONS		U(7)
+#else
+#define MAX_XLAT_TABLES			U(4)
+#define MAX_MMAP_REGIONS		U(6)
 #endif
 #elif IMAGE_BL31
 #define MAX_XLAT_TABLES			U(6)

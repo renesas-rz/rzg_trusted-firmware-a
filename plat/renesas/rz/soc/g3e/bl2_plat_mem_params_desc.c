@@ -10,7 +10,7 @@
 #include <platform_def.h>
 #include <lib/xlat_tables/xlat_tables_defs.h>
 
-#if (RZG2L_BL33_EXECUTION_EL == 0)
+#if (RZG3E_BL33_EXECUTION_EL == 0)
 #define BL33_MODE MODE_EL1
 #else
 #define BL33_MODE MODE_EL2

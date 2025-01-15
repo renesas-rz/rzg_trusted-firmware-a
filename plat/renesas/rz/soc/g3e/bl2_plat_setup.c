@@ -150,7 +150,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 void bl2_el3_plat_arch_setup(void)
 {
 	const mmap_region_t bl2_regions[] = {
-		MAP_REGION_FLAT(BL2_BASE, BL2_TOTAL_SRAM_SIZE,
+		MAP_REGION_FLAT(BL2_BASE, BL2_SRAM_MMU_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(BL_CODE_BASE, BL_CODE_END - BL_CODE_BASE,
 				MT_CODE | MT_SECURE),
