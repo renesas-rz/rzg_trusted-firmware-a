@@ -172,4 +172,8 @@ void bl2_platform_setup(void)
 
 	/* initialize DDR */
 	plat_ddr_setup();
+
+	NOTICE("BL2: SYS_LSI_MODE: 0X%x\n", mmio_read_32(SYS_LSI_MODE));
+	NOTICE("BL2: SYS_LSI_DEVID: 0X%x\n", mmio_read_32(SYS_LSI_DEVID));
+	NOTICE("BL2: SYS_LSI_PRR: 0X%x\n", mmio_read_32(SYS_LSI_PRR));
 }
