@@ -53,12 +53,20 @@ void __dead2 pwrc_suspend_to_ram(void)
 void pwrc_setup(void)
 {
 	#if PLAT_SYSTEM_SUSPEND
-	uintptr_t sec_entrypoint = (uintptr_t)BL2_BASE;
+	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
+		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
+		{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
+		{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
+		{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
+	};
 
-	uint32_t rvah0 = (uint32_t)(sec_entrypoint >> 32);
-	uint32_t rval0 = (uint32_t)(sec_entrypoint & 0xFFFFFFFF);
+	unsigned int i;
+	uint32_t rvah0 = (uint32_t)(((uintptr_t)&plat_secondary_reset >> 32) & 0xFF);
+	uint32_t rval0 = (uint32_t)((uintptr_t)&plat_secondary_reset & 0xFFFFFFFC);
 
-	mmio_write_32(SYS_ACPU_CFG_RVAH0, rvah0);
-	mmio_write_32(SYS_ACPU_CFG_RVAL0, rval0);
+	for (i = 0; i < PLATFORM_CORE_COUNT; i++) {
+		mmio_write_32(rval[i][1], rvah0);
+		mmio_write_32(rval[i][0], rval0);
+	}
 	#endif
 }

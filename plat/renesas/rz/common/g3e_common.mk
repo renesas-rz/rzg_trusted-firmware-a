@@ -58,7 +58,7 @@ BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S						\
 include lib/xlat_tables_v2/xlat_tables.mk
 PLAT_BL_COMMON_SOURCES	:=	${XLAT_TABLES_LIB_SRCS}								\
 							plat/renesas/rz/common/plat_rz_common.c				\
-							plat/renesas/rz/common/aarch64/plat_helpers.S		\
+							plat/renesas/rz/common/aarch64/plat_helpers_system_suspend.S		\
 							plat/renesas/rz/common/drivers/syc.c				\
 							plat/renesas/rz/common/drivers/scifa.S
 
