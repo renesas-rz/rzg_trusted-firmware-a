@@ -157,4 +157,14 @@
 
 #define SCI_CCR0_OFFSET						UL(0x0008)
 
+#define RZT2H_OTPPWR						UL(0x810C0000)
+#define RZT2H_OTPSTR						UL(0x810C0004)
+#define RZT2H_OTPADRRD						UL(0x810C0014)
+#define RZT2H_OTPDATARD						UL(0x810C0018)
+#define RZT2H_OTPPWR_ACCL					UL(0x10)
+#define RZT2H_OTPPWR_PWR					UL(0x1)
+
+#define OTP_TSU_REG_ADR_TEMPHI					UL(0x01DC)
+#define OTP_TSU_REG_ADR_TEMPLO					UL(0x01DD)
+
 #endif /* __RZ_SOC_DEF_H__ */

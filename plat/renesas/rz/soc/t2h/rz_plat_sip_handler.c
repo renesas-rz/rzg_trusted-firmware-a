@@ -48,6 +48,31 @@ static uintptr_t rz_otp_handler_productid(void *handle)
 	SMC_RET1(handle, productid);
 }
 
+static bool is_rz_otp_tsu_offset(uint32_t offset)
+{
+	return ((offset >= OTP_TSU_REG_ADR_TEMPHI) && (offset <= OTP_TSU_REG_ADR_TEMPLO));
+}
+
+static uintptr_t rz_otp_tsu_get_temp(void *handle, u_register_t x1)
+{
+	uint32_t val;
+
+	if (is_rz_otp_tsu_offset((uint32_t) x1)) {
+		mmio_write_32(RZT2H_OTPPWR, (RZT2H_OTPPWR_ACCL | RZT2H_OTPPWR_PWR));
+		while ((mmio_read_32(RZT2H_OTPSTR) & 0x1) != 0x1)
+			;
+		mmio_write_32(RZT2H_OTPADRRD, (uintptr_t) x1);
+		val = mmio_read_32(RZT2H_OTPDATARD);
+		mmio_write_32(RZT2H_OTPPWR, 0x0);
+		while ((mmio_read_32(RZT2H_OTPSTR) & 0x1) == 0x1)
+			;
+		SMC_RET1(handle, val);
+	} else {
+		WARN("%s: Offset address out of OTP-TSU areas\n", __func__);
+		SMC_RET1(handle, SMC_ARCH_CALL_INVAL_PARAM);
+	}
+}
+
 uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 					u_register_t x1,
 					u_register_t x2,
@@ -62,6 +87,8 @@ uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 		return rz_otp_handler_chipid(handle, x1, flags);
 	case RZ_SIP_SVC_GET_PRODUCTID:
 		return rz_otp_handler_productid(handle);
+	case RZ_SIP_SVC_GET_OTPTSU:
+		return rz_otp_tsu_get_temp(handle, x1);
 	default:
 		WARN("%s: Unimplemented RZ SiP Service Call: 0x%x\n", __func__, smc_fid);
 		SMC_RET1(handle, SMC_UNK);
