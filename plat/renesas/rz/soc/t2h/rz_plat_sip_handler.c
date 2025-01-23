@@ -87,7 +87,7 @@ uintptr_t rz_plat_sip_handler(uint32_t smc_fid,
 		return rz_otp_handler_chipid(handle, x1, flags);
 	case RZ_SIP_SVC_GET_PRODUCTID:
 		return rz_otp_handler_productid(handle);
-	case RZ_SIP_SVC_GET_OTPTSU:
+	case RZ_SIP_SVC_GET_SYSTSU:
 		return rz_otp_tsu_get_temp(handle, x1);
 	default:
 		WARN("%s: Unimplemented RZ SiP Service Call: 0x%x\n", __func__, smc_fid);
