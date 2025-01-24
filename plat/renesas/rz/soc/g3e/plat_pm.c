@@ -168,6 +168,7 @@ static void rzg3e_pwr_domain_off(const psci_power_state_t *state)
 	/* Issue Barrier instruction */
 	isb();
 	dsb();
+	dcsw_op_all(DCCISW);
 
 	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
 }
