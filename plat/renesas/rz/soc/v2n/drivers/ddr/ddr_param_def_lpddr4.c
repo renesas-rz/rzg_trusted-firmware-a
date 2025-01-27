@@ -665,7 +665,7 @@ const uint32_t param_phyinit_i[][2] = {
 	{0x0d0000, 0x0001}
 };
 
-const uint32_t param_phyinit_f_1d_0[][2] = {
+const uint16_t param_phyinit_1d_dat1[] = {
 	{0x0d0000, 0x0000},
 	{0x054000, 0x0000},
 	{0x054001, 0x0000},
@@ -1500,7 +1500,7 @@ const uint32_t param_phyinit_f_1d_0[][2] = {
 	{0x0d0000, 0x0001}
 };
 
-const uint32_t param_phyinit_f_2d_0[][2] = {
+const uint16_t param_phyinit_2d_dat1[] = {
 	{0x0d0000, 0x0000},
 	{0x054000, 0x0000},
 	{0x054001, 0x0000},
@@ -2209,7 +2209,7 @@ const uint32_t param_phyinit_f_2d_0[][2] = {
 	{0x0d0000, 0x0001}
 };
 
-const uint32_t phyinit_1d[] = {
+const uint16_t param_phyinit_1d_dat0[] = {
 	0x0114,
 	0x0000,
 	0x0050,
@@ -18596,7 +18596,7 @@ const uint32_t phyinit_1d[] = {
 	0x0000
 };
 
-const uint32_t phyinit_2d[] = {
+const uint16_t param_phyinit_2d_dat0[] = {
 	0x0204,
 	0x0000,
 	0x0050,
