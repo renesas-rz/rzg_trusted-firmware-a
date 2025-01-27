@@ -81,8 +81,12 @@ void phyinit_load_1d_image(void)
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x0);
 
-	for (i = 0; i < param_phyinit_1d_dat0_size; i++)	{
+	for (i = 0; i < param_phyinit_1d_dat0_size; i++) {
 		dwc_ddrphy_apb_wr((uint32_t)(0x50000+i), (uint32_t)(param_phyinit_1d_dat0[i]));
+	}
+
+	for (i = i; i < 0x4000; i++) {
+		dwc_ddrphy_apb_wr((uint32_t)(0x50000+i), (uint32_t)(0));
 	}
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
@@ -219,6 +223,10 @@ void phyinit_load_2d_image(void)
 
 	for (i = 0; i < param_phyinit_2d_dat0_size; i++) {
 		dwc_ddrphy_apb_wr((uint32_t)(0x50000 + i), (uint32_t)(param_phyinit_2d_dat0[i]));
+	}
+
+	for (i = i; i < 0x4000; i++) {
+		dwc_ddrphy_apb_wr((uint32_t)(0x50000+i), (uint32_t)(0));
 	}
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
