@@ -11,15 +11,6 @@
 
 #include "ddr_regs.h"
 
-#define DDR4_VERSION	"2.04"
-#define LPDDR4_VERSION	"2.04"
-
-#if !LPDDR4
-#define DDR_VERSION		DDR4_VERSION
-#else
-#define DDR_VERSION		LPDDR4_VERSION
-#endif
-
 
 /* DDR misc function */
 static inline void ddrtop_mc_apb_wr(uint32_t addr, uint32_t data)
