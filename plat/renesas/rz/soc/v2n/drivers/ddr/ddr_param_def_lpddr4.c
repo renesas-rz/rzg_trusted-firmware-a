@@ -36592,9 +36592,9 @@ const uint32_t param_setup_mc[][2] = {
 
 const uint32_t param_phyinit_c_size = ARRAY_SIZE(param_phyinit_c);
 const uint32_t param_phyinit_i_size = ARRAY_SIZE(param_phyinit_i);
-const uint32_t param_phyinit_f_1d_0_size = ARRAY_SIZE(param_phyinit_f_1d_0);
-const uint32_t param_phyinit_f_2d_0_size = ARRAY_SIZE(param_phyinit_f_2d_0);
-const uint32_t phyinit_1d_size = ARRAY_SIZE(phyinit_1d);
-const uint32_t phyinit_2d_size = ARRAY_SIZE(phyinit_2d);
+const uint32_t param_phyinit_1d_dat1_size = ARRAY_SIZE(param_phyinit_1d_dat1);
+const uint32_t param_phyinit_2d_dat1_size = ARRAY_SIZE(param_phyinit_2d_dat1);
+const uint32_t param_phyinit_1d_dat0_size = ARRAY_SIZE(param_phyinit_1d_dat0);
+const uint32_t param_phyinit_2d_dat0_size = ARRAY_SIZE(param_phyinit_2d_dat0);
 const uint32_t param_phyinit_swizzle_size = ARRAY_SIZE(param_phyinit_swizzle);
 const uint32_t param_setup_mc_size = ARRAY_SIZE(param_setup_mc);
