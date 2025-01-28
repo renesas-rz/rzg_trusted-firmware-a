@@ -48,7 +48,7 @@
  * BL2_LIMIT = maximum build size of BL2 (when in verbose and debug mode)
  ******************************************************************************/
 #define BL2_BASE				UL(0x08004000)
-#define BL2_LIMIT				UL(0x08054000)
+#define BL2_LIMIT				UL(0x08040000)
 
 /*
  * This is used to reduce the size of the translation tables needed
