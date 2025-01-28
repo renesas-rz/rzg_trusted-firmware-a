@@ -11,15 +11,6 @@
 
 #include "ddr_regs.h"
 
-#define DDR4_VERSION	"1.20"
-#define LPDDR4_VERSION	"1.20"
-
-#if !LPDDR4
-#define DDR_VERSION		DDR4_VERSION
-#else
-#define DDR_VERSION		LPDDR4_VERSION
-#endif
-
 static inline void ddrtop_mc_apb_wr(uint32_t addr, uint32_t data)
 {
 	mmio_write_32(DDR_MC_BASE + (addr << 2), data);

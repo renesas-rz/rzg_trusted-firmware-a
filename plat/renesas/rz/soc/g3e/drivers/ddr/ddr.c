@@ -29,9 +29,11 @@ static void restore_retcsr(void);
 
 #define MCAR_CTL				0x800
 
+extern const char ddr_version_str[];
+
 void ddr_setup(void)
 {
-	INFO("DDR: Setup (Rev. %s)\n", DDR_VERSION);
+	INFO("DDR: Setup (Rev. %s)\n", ddr_version_str);
 
 	cpg_ddr_part1();
 
@@ -96,7 +98,7 @@ void ddr_retention_entry(void)
 
 void ddr_retention_exit(void)
 {
-	INFO("DDR: Retention Exit (Rev. %s)\n", DDR_VERSION);
+	INFO("DDR: Retention Exit (Rev. %s)\n", ddr_version_str);
 	cpg_ddr_part1();
 	setup_mc();
 	cpg_ddr_part2();
