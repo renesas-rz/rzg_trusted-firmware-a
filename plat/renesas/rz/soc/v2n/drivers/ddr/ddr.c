@@ -40,7 +40,7 @@ static void save_retcsr(void);
 
 void ddr_setup(void)
 {
-	INFO("DDR: Setup (Rev. %s)\n", ddr_an_version);
+	INFO("DDR: Setup (Rev. %s)\n", ddr_version_str);
 
 	cpg_ddr_part1();
 
