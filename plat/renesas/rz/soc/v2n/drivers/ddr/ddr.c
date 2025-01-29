@@ -23,7 +23,7 @@ extern const uint32_t retention_mcreglist[];
 extern const uint32_t retention_phyreglist_1d_size;
 extern const uint32_t retention_phyreglist_2d_size;
 extern const uint32_t retention_mcreglist_size;
-extern const char     ddr_an_version[];
+extern const char     ddr_version_str[];
 
 
 static void phyinit_c(void);
