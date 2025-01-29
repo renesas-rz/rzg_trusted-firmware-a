@@ -1,0 +1,91 @@
+#######################################################################################################################
+# Copyright [2024] Renesas Electronics Corporation and/or its licensors. All Rights Reserved.
+#
+# The contents of this file (the "contents") are proprietary and confidential to Renesas Electronics Corporation
+# and/or its licensors ("Renesas") and subject to statutory and contractual protections.
+#
+# Unless otherwise expressly agreed in writing between Renesas and you: 1) you may not use, copy, modify, distribute,
+# display, or perform the contents; 2) you may not use any name or mark of Renesas for advertising or publicity
+# purposes or in connection with your use of the contents; 3) RENESAS MAKES NO WARRANTY OR REPRESENTATIONS ABOUT THE
+# SUITABILITY OF THE CONTENTS FOR ANY PURPOSE; THE CONTENTS ARE PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED
+# WARRANTY, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+# NON-INFRINGEMENT; AND 4) RENESAS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, OR CONSEQUENTIAL DAMAGES,
+# INCLUDING DAMAGES RESULTING FROM LOSS OF USE, DATA, OR PROJECTS, WHETHER IN AN ACTION OF CONTRACT OR TORT, ARISING
+# OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE CONTENTS. Third-party contents included in this file may
+# be subject to different terms.
+#######################################################################################################################
+
+#######################################################################################################################
+# Description: Yaml file containing templates for MPU build tests.
+#######################################################################################################################
+
+############################################ mpu_build_job_template ###################################################
+# 1. Contains basic template for building MPU code.
+# 2. All the variables listed are required in the mpu_build.sh script.
+#######################################################################################################################
+.mpu_build_job_template: &mpu_build_job_template
+  stage: mpu_build_testing
+  variables:
+    PLAT: "n2h"
+    BOARD: "eval"
+    BUILD_TYPE: "release"
+    TARGET_OS: ""
+    CONFIGS: ""
+    TEST_TYPE: ""
+    ERROR_MSG: ""
+  interruptible: true
+
+########################################## linux_mpu_build_job_template ###############################################
+# 1. Extends the basic template for a Linux environment.
+# 2. Separate runner for every platform.
+# 3. The local tag is in the workspace directory, hence moving to that directory before any command.
+#######################################################################################################################
+.linux_mpu_build_job_template: &linux_mpu_build_job_template
+  <<: *mpu_build_job_template
+  tags:
+    - "${PLAT}_${PIPELINE_TYPE}_tests"
+  before_script:
+    - #TO-DO: Check if current path ends with "tf-a"
+    - if $PIPELINE_TYPE == "main" || $PIPELINE_TYPE == "tag"
+    - cd "../workspace/tf-a"
+    - fi
+    - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
+    - make PLAT=$PLAT realclean BOARD=$BOARD
+  script:
+    - if $PIPELINE_TYPE == "main"
+    - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
+    
+    - else
+    - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
+    - fi
+
+####################################### linux_mpu_build_success_job_template ##########################################
+# 1. Extends the Linux template for a success test case.
+# 2. After building the TF-A .bin and .srec files, the files are moved to the default runner tf-a directory.
+#    This is because job artifacts are only picked from the default runner tf-a directory.
+# 3. The artifacts are set to expire in 1 week, as this would help manage storage space efficiently and 1 week is
+#    sufficient time for the deletion to not impact any work or testing.
+#######################################################################################################################
+.linux_mpu_build_success_job_template:
+  <<: *linux_mpu_build_job_template
+  after_script:
+    - if $PIPELINE_TYPE == "main" || $PIPELINE_TYPE == "tag"
+    - mkdir -p build && cd build
+    - mkdir -p $PLAT && cd $PLAT
+    - cp -r "../../../workspace/tf-a/build/${PLAT}/${BUILD_TYPE}" .
+    - fi
+  artifacts:
+    expire_in: 1 week
+    when: always
+    name: "$CI_JOB_NAME"
+    paths:
+      - ./build/$PLAT/$BUILD_TYPE/*.bin
+      - ./build/$PLAT/$BUILD_TYPE/*.srec
+
+####################################### linux_mpu_build_failure_job_template ##########################################
+# 1. Extends the Linux template for a failure test case.
+# 2. There are no additional requirements or procedures required after running the mpu_build.sh as it's all built
+#    within the script.
+#######################################################################################################################
+.linux_mpu_build_failure_job_template:
+  <<: *linux_mpu_build_job_template
