@@ -37,32 +37,31 @@
 
 ########################################## linux_mpu_build_job_template ###############################################
 # 1. Extends the basic template for a Linux environment.
-# 2. Separate runner for every platform.
-# 3. The local tag is in the workspace directory, hence moving to that directory before any command.
+# 2. Separate runner for every platform for every pipeline type.
+# 3. For the main and tag pipeline, the control is in the workspace directory, hence moving to that directory 
+#    before any command.
 #######################################################################################################################
 .linux_mpu_build_job_template: &linux_mpu_build_job_template
   <<: *mpu_build_job_template
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   before_script:
-    - #TO-DO: Check if current path ends with "tf-a"
     - if $PIPELINE_TYPE == "main" || $PIPELINE_TYPE == "tag"
     - cd "../workspace/tf-a"
     - fi
     - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
-    - if $PIPELINE_TYPE == "main"
+    - if $PIPELINE_TYPE == "tag"
     - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
-    
     - else
     - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
     - fi
 
 ####################################### linux_mpu_build_success_job_template ##########################################
 # 1. Extends the Linux template for a success test case.
-# 2. After building the TF-A .bin and .srec files, the files are moved to the default runner tf-a directory.
-#    This is because job artifacts are only picked from the default runner tf-a directory.
+# 2. For main an tag, after building the TF-A .bin and .srec files, the files are moved to the default runner 
+#    tf-a directory. This is because job artifacts are only picked from the default runner tf-a directory.
 # 3. The artifacts are set to expire in 1 week, as this would help manage storage space efficiently and 1 week is
 #    sufficient time for the deletion to not impact any work or testing.
 #######################################################################################################################
