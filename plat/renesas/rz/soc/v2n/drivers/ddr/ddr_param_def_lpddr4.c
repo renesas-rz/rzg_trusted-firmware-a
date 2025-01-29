@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "rz_soc_def.h"
 
-const char ddr_an_version[] = "03.01";
+const char ddr_version_str[] = "03.01";
 
 const uint32_t param_phyinit_c[][2] =  {
 	{0x0001005f, 0x0000055f},
