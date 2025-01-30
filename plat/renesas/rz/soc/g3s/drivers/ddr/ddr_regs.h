@@ -12,6 +12,9 @@
 #define	DDR_PHY_BASE				((uintptr_t)RZ_SOC_DDR_PHY_BASE)
 #define	DDR_MC_BASE					((uintptr_t)RZ_SOC_DDR_MC_BASE)
 
+#define CS_MAP_ADDR					(686)
+#define CS_MAP_OFFSET				(8)
+#define CS_MAP_WIDTH				(2)
 #define INT_STATUS_INIT_ADDR		(370)
 #define INT_STATUS_INIT_OFFSET		(24)
 #define INT_STATUS_INIT_WIDTH		(8)
@@ -54,5 +57,19 @@
 #define BSTLEN_ADDR					(67)
 #define BSTLEN_OFFSET				(16)
 #define BSTLEN_WIDTH				(5)
+
+#define R2R_DIFFCS_DLY_F0_ADDR		(695)
+#define R2R_DIFFCS_DLY_F0_OFFSET	(24)
+#define R2R_DIFFCS_DLY_F0_WIDTH		(5)
+#define R2W_DIFFCS_DLY_F0_ADDR		(696)
+#define R2W_DIFFCS_DLY_F0_OFFSET	(0)
+#define R2W_DIFFCS_DLY_F0_WIDTH		(5)
+
+#define W2R_DIFFCS_DLY_F0_ADDR		(696)
+#define W2R_DIFFCS_DLY_F0_OFFSET	(8)
+#define W2R_DIFFCS_DLY_F0_WIDTH		(5)
+#define W2W_DIFFCS_DLY_F0_ADDR		(696)
+#define W2W_DIFFCS_DLY_F0_OFFSET	(16)
+#define W2W_DIFFCS_DLY_F0_WIDTH		(5)
 
 #endif /* __DDR_REGS_H__ */

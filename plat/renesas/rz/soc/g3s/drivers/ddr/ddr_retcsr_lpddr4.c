@@ -61,7 +61,7 @@ static uint32_t retcsr_list_2d[] = {
 };
 
 static uint32_t retcsr_list_ctrl[] = {
-	0x000226, 0x000243
+	0x000226, 0x000243, 0x0002B7, 0x0002B8
 };
 
 void retcsr_read_registers(uint32_t *buffer, size_t size)
@@ -73,16 +73,23 @@ void retcsr_read_registers(uint32_t *buffer, size_t size)
 	dwc_ddrphy_apb_wr(0x0006E000, 0);
 	dwc_ddrphy_apb_wr(0x0006D080, 3);
 
-	for (i = 0; i < ARRAY_SIZE(retcsr_list_1d); i++, buffer++)
+	for (i = 0; i < ARRAY_SIZE(retcsr_list_1d); i++, buffer++) {
 		*buffer = dwc_ddrphy_apb_rd(retcsr_list_1d[i]);
+	}
 
-	for (i = 0; i < ARRAY_SIZE(retcsr_list_2d); i++, buffer++)
+	for (i = 0; i < ARRAY_SIZE(retcsr_list_2d); i++, buffer++) {
 		*buffer = dwc_ddrphy_apb_rd(retcsr_list_2d[i]);
+	}
 
-	for (i = 0; i < ARRAY_SIZE(retcsr_list_ctrl); i++, buffer++)
+	for (i = 0; i < ARRAY_SIZE(retcsr_list_ctrl); i++, buffer++) {
 		*buffer = DDRTOP_mc_apb_rd(retcsr_list_ctrl[i]);
+	}
 
+#if LPDDR4
 	dwc_ddrphy_apb_wr(0x0006D080, 2);
+#else
+	dwc_ddrphy_apb_wr(0x0006D080, 0);
+#endif
 	dwc_ddrphy_apb_wr(0x0006E000, 1);
 }
 
@@ -95,15 +102,22 @@ void retcsr_write_registers(uint32_t *buffer, size_t size)
 	dwc_ddrphy_apb_wr(0x0006E000, 0);
 	dwc_ddrphy_apb_wr(0x0006D080, 3);
 
-	for (i = 0; i < ARRAY_SIZE(retcsr_list_1d); i++, buffer++)
+	for (i = 0; i < ARRAY_SIZE(retcsr_list_1d); i++, buffer++) {
 		dwc_ddrphy_apb_wr(retcsr_list_1d[i], *buffer);
+	}
 
-	for (i = 0; i < ARRAY_SIZE(retcsr_list_2d); i++, buffer++)
+	for (i = 0; i < ARRAY_SIZE(retcsr_list_2d); i++, buffer++) {
 		dwc_ddrphy_apb_wr(retcsr_list_2d[i], *buffer);
+	}
 
-	for (i = 0; i < ARRAY_SIZE(retcsr_list_ctrl); i++, buffer++)
+	for (i = 0; i < ARRAY_SIZE(retcsr_list_ctrl); i++, buffer++) {
 		DDRTOP_mc_apb_wr(retcsr_list_ctrl[i], *buffer);
+	}
 
+#if LPDDR4
 	dwc_ddrphy_apb_wr(0x0006D080, 2);
+#else
+	dwc_ddrphy_apb_wr(0x0006D080, 0);
+#endif
 	dwc_ddrphy_apb_wr(0x0006E000, 1);
 }

@@ -37,12 +37,6 @@ endif
 endif
 
 ifeq (${PLAT_SUSPEND_MODE},awo)
-ifeq ($(shell echo $$(($(LOG_LEVEL) > 30))),1)
-$(warning "Warning! Suspend AWO mode does not work the log level set to 40 or above.")
-endif
-endif
-
-ifeq (${PLAT_SUSPEND_MODE},awo)
 override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 
