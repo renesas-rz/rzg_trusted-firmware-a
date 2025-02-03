@@ -19,6 +19,13 @@
 
 #define RZT2H_R_BUS_NON_SAFETY_DEVICE_BASE	UL(0x80000000)
 #define RZT2H_SCIF_BASE						UL(0x80005000)
+#define RZT2H_SPI_UNIT0_BASE                UL(0x81007000)
+#define RZT2H_CMTW_BASE                     UL(0X80081000)
+#define RZT2H_I2C_UNIT0_BASE                UL(0x80088000)
+#define RZT2H_GMAC_BASE                     UL(0X80100000)
+#define RZT2H_ETHSW_BASE                    UL(0X80120000)
+#define RZT2H_ESC_BASE                      UL(0X80130000)
+#define RZT2H_ETHSS_BASE                    UL(0X80110000)
 #define RZT2H_XSPI0_BASE					UL(0x801C0000)
 #define RZT2H_XSPI1_BASE					UL(0x801C1000)
 #define RZT2H_SYSC_BASE						UL(0x80280000)
@@ -27,6 +34,7 @@
 #define RZT2H_DDR_MEMC_BASE					UL(0x80300000)
 
 #define RZT2H_R_BUS_SAFETY_DEVICE_BASE		UL(0x81000000)
+#define RZT2H_RTC_BASE                      UL(0x81009000)
 #define RZT2H_OTP_BASE						UL(0x810C0000)
 #define RZT2H_TZC400_0						UL(0x81100000)				/* DDR SDRAM A0 I/F */
 #define RZT2H_TZC400_1						UL(0x81101000)				/* DDR SDRAM A4 I/F */
@@ -49,8 +57,11 @@
 #define RZT2H_LLPP_DEVICE_BASE				UL(0x90000000)
 
 #define RZT2H_A_BUS_DEVICE_BASE				UL(0x92000000)
+#define RZT2H_USB_BASE                      UL(0x92040000)
 #define RZT2H_SDHI0_BASE					UL(0x92080000)
 #define RZT2H_SDHI1_BASE					UL(0x92090000)
+#define RZT2H_LCDC_BASE                     UL(0x920C0000)
+#define RZT2H_PCIE_REG_BASE                 UL(0x92100000)
 
 #define RZT2H_PCIe0_MIRROR_BASE				ULL(0xA0000000)
 #define RZT2H_PCIe1_MIRROR_BASE				ULL(0xB0000000)
@@ -146,7 +157,21 @@
 #define XSPI0_BASE							RZT2H_XSPI0_BASE
 #define XSPI1_BASE							RZT2H_XSPI1_BASE
 
+#define SPI_BASE                            RZT2H_SPI_UNIT0_BASE
+#define I2C_BASE                            RZT2H_I2C_UNIT0_BASE
+#define RTC_BASE                            RZT2H_RTC_BASE
 #define OTP_BASE							RZT2H_OTP_BASE
+
+#define USB_BASE                            RZT2H_USB_BASE
+#define CMTW_BASE                           RZT2H_CMTW_BASE
+
+#define LCDC_BASE                           RZT2H_LCDC_BASE
+#define PCIE_REG_BASE                       RZT2H_PCIE_REG_BASE
+
+#define GMAC_BASE                           RZT2H_GMAC_BASE
+#define ETHSW_BASE                          RZT2H_ETHSW_BASE
+#define ESC_BASE                            RZT2H_ESC_BASE
+#define ETHSS_BASE                          RZT2H_ETHSS_BASE
 
 /* eMMC registers */
 #define MMC0_SD_BASE						RZT2H_SDHI0_BASE

@@ -100,6 +100,41 @@
 #define SLVACCCTL8							(SYS_SAFETY_BASE + 0x010318)
 #define SLVACCCTL9							(SYS_SAFETY_BASE + 0x01031C)
 
+/* SDHI Module Registers */
+#define SDHI0_SD_CMD                        (MMC0_SD_BASE)
+#define SDHI1_SD_CMD                        (MMC1_SD_BASE)
+
+/* XSPI Module Registers */
+#define XSPI0_WRAPCFG                       (XSPI0_BASE)
+#define XSPI1_WRAPCFG                       (XSPI1_BASE)
+
+/* USB Module Registers */
+#define USB_HCHCCA                          (USB_BASE  + 0x18)
+
+/* CMTW Module Registers */
+#define CMTW_CMWCR                          (CMTW_BASE + 0x04)
+
+/* PCIE Module Registers */
+#define PCI_RC_REQDATA0                     (PCIE_REG_BASE + 0x80)
+
+/* RTC Module Registers */
+#define RTCA0CTL0                           (RTC_BASE)
+
+/* I2C Module Registers */
+#define I2C0_ICCR1                          (I2C_BASE)
+
+/* SPI Module Registers */
+#define SPI0_SSLP                           (SPI_BASE  + 0x10)
+
+/* LCDC Module Registers */
+#define LCDC_VI6_SRESET                     (LCDC_BASE + 0x20028)
+
+/* Ethernet Related Module Registers */
+#define GMAC_TRGSEL                         (GMAC_BASE + 0x10400)
+#define ETHSW_REVISION                      (ETHSW_BASE)
+#define ESC_REVISION                        (ESC_BASE  + 0x1)
+#define ETHSS_PRCMD                         (ETHSS_BASE)
+
 /* xSPI0 */
 #define MRCTLA_MRCTLA04						UL(4)
 /* xSPI1 */
@@ -190,7 +225,6 @@
 #define MSTPCRE_MSTPCRE02_MSK				(0x00000001U << MSTPCRE_MSTPCRE02)
 #define MSTPCRE_MSTPCRE03					UL(3)
 #define MSTPCRE_MSTPCRE03_MSK				(0x00000001U << MSTPCRE_MSTPCRE03)
-#define MSTPCRE_MSTPCRE_ETH_ALL				(MSTPCRE_MSTPCRE00_MSK | MSTPCRE_MSTPCRE01_MSK | MSTPCRE_MSTPCRE02_MSK | MSTPCRE_MSTPCRE03_MSK)
 /* USB */
 #define MSTPCRE_MSTPCRE08					UL(8)
 #define MSTPCRE_MSTPCRE08_MSK				(0x00000001U << MSTPCRE_MSTPCRE08)
@@ -216,7 +250,6 @@
 #define MSTPCRN_MSTPCRN4_MSK				(0x00000001U << MSTPCRN_MSTPCRN4)
 #define MSTPCRN_MSTPCRN5					UL(5)
 #define MSTPCRN_MSTPCRN5_MSK				(0x00000001U << MSTPCRN_MSTPCRN5)
-#define MSTPCRN_MSTPCRN_CA55_ALL			(MSTPCRN_MSTPCRN2_MSK | MSTPCRN_MSTPCRN3_MSK | MSTPCRN_MSTPCRN4_MSK | MSTPCRN_MSTPCRN5_MSK)
 
 
 /* DDR-A*/
