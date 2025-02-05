@@ -99,9 +99,17 @@ If a debug build with logging is required then set DEBUG=1 and set LOG_LEVEL to 
 |LOG_LEVEL=50  | The log level is set to LOG_LEVEL_VERBOSE |
 +--------------+-------------------------------------------+
 
+For example, to build with debug and verbose logging:
+
 .. code:: bash
 
-    DEBUG=1 LOG_LEVEL=40
+    DEBUG=1 LOG_LEVEL=50
+
+If the platform suspend function is required then use the PLAT_SYSTEM_SUSPEND build option and set to 1.
+
+.. code:: bash
+
+	PLAT_SYSTEM_SUSPEND=1
 
 TF-A Packaging Procedure
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -199,14 +207,26 @@ Flash Procedure for SD
 .. code-block:: text
 
 	Steps 1 to 9 only needs to be performed once.
-	1. Enter fdisk
-		sudo fdisk /dev/<sd device>
+	1. Find the SD card partitions. In this case it they are sdb1 and sdb2, however they may be different on your system.
+		lsblk
+		...
+		sdb      8:16   1  14.5G  0 disk
+		├─sdb1   8:17   1   512M  0 part /media/user/79273262-4ff6-424f-9e7e-a
+		└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
+		...
+
+	2. Unmount all of the SD card partitions
+		sudo umount /dev/sdb1
+		sudo umount /dev/sdb2
+
+	3. Enter fdisk
+		sudo fdisk /dev/sdb
 
 		Welcome to fdisk (util-linux 2.37.2).
 		Changes will remain in memory only, until you decide to write them.
 		Be careful before using the write command.
 
-	2. Remove the existing partitions
+	4. Remove the existing partitions
 		Command (m for help): d
 		Partition number (1,2, default 2):
 
@@ -216,7 +236,7 @@ Flash Procedure for SD
 		Selected partition 1
 		Partition 1 has been deleted.
 
-	3. Create partitions
+	5. Create partitions
 		Command (m for help): n
 		Partition type
 		p   primary (0 primary, 0 extended, 4 free)
@@ -256,23 +276,23 @@ Flash Procedure for SD
 		/dev/sdb1          6144  1054719  1048576  512M 83 Linux
 		/dev/sdb2       1054720 62333951 61279232 29.2G 83 Linux
 
-	4. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
+	6. If the signature removal prompt appears after creating either partition, then removed the signature as shown.
 		Partition #2 contains a ext4 signature.
 
 		Do you want to remove the signature? [Y]es/[N]o: y
 
 		The signature will be removed by a write command.
 
-	5. Write partitions to disk
+	7. Write partitions to disk
 		Command (m for help): w
 		The partition table has been altered.
 		Calling ioctl() to re-read partition table.
 		Syncing disks
 
-	6. Remount the SD card by removing it then, plugging it back in.
+	8. Remount the SD card by removing it then, plugging it back in.
 
-	7. Format the partitions
-		sudo mkfs.ext4 /dev/<Partition of size 512>
+	9. Format the partitions
+		sudo mkfs.ext4 /dev/sdb1
 		mke2fs 1.46.5 (30-Dec-2021)
 		Creating filesystem with 131072 4k blocks and 32768 inodes
 		Filesystem UUID: cb9d787a-fb33-43f2-9a81-2b2049fe6f9d
@@ -284,7 +304,7 @@ Flash Procedure for SD
 		Creating journal (4096 blocks): done
 		Writing superblocks and filesystem accounting information: done
 
-		sudo mkfs.ext4 /dev/<the other partition>
+		sudo mkfs.ext4 /dev/sdb2
 		mke2fs 1.46.5 (30-Dec-2021)
 		Creating filesystem with 364928 4k blocks and 91392 inodes
 		Filesystem UUID: fbd4caa0-690b-43e8-9e67-43e43edf3fa4
@@ -296,9 +316,9 @@ Flash Procedure for SD
 		Creating journal (8192 blocks): done
 		Writing superblocks and filesystem accounting information: done
 
-	8. Remount the SD card by removing it then, plugging it back in.
+	10. Remount the SD card by removing it then, plugging it back in.
 
-	9. Check partitions were created properly.
+	11. Check partitions were created properly.
 		lsblk
 		...
 		sdb      8:16   1  14.5G  0 disk
@@ -306,7 +326,7 @@ Flash Procedure for SD
 		└─sdb2   8:18   1    14G  0 part /media/user/c18b1089-2298-40fe-b5eb-c
 		...
 
-	10. Write TF-A to SD card
+	12. Write TF-A to SD card
 		sudo dd if=bl2_bp_esd.bin of=/dev/sdb seek=1
 		269+1 records in
 		269+1 records out
@@ -317,7 +337,7 @@ Flash Procedure for SD
 		1775+1 records out
 		908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s
 
-	11. Write Linux files to the SD card
+	11. If Linux is required on this SD card, then follow the steps below.
 		sudo cp ./<g3e device tree>.dtb /media/user/79273262-4ff6-424f-9e7e-a
 		sudo cp ./<g3e kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
 		sudo tar -jxvf <g3e root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
@@ -330,6 +350,9 @@ Boot trace
 
 	NOTICE:  BL2: v2.7(release): <git describe description>
 	NOTICE:  BL2: Built :  <build time and date>
+	NOTICE:  BL2: SYS_LSI_MODE: <contents of register SYS_LSI_MODE>
+	NOTICE:  BL2: SYS_LSI_DEVID: <contents of register SYS_LSI_DEVID>
+	NOTICE:  BL2: SYS_LSI_PRR: <contents of register SYS_LSI_PRR>
 	NOTICE:  BL2: Booting BL31
 	NOTICE:  BL31: v2.7(release):<git describe description>
 	NOTICE:  BL31: Built : <build time and date>
