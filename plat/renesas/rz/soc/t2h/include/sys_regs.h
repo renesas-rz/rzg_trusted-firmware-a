@@ -135,16 +135,6 @@
 #define PRCRx_GPIO							UL(4)
 #define PRCRx_SYS_CTRL						UL(8)
 
-#define PMSEL_PMSEL2						UL(2)
-#define PMSEL_PMSEL2_MSK					(1U << PMSEL_PMSEL2)
-#define PMSEL_PMSEL2_EXT					(0U << PMSEL_PMSEL2)
-#define PMSEL_PMSEL2_PLL					(1U << PMSEL_PMSEL2)
-
-#define PMSEL_PMSEL3						UL(3)
-#define PMSEL_PMSEL3_MSK					(1U << PMSEL_PMSEL3)
-#define PMSEL_PMSEL3_EXT					(0U << PMSEL_PMSEL3)
-#define PMSEL_PMSEL3_PLL					(1U << PMSEL_PMSEL3)
-
 #define PMSEL_PMSEL2_MON					UL(11)
 #define PMSEL_PMSEL2_MON_MSK				(1U << PMSEL_PMSEL2_MON)
 #define PMSEL_PMSEL2_MON_EXT				(0U << PMSEL_PMSEL2_MON)

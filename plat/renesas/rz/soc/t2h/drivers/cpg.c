@@ -459,45 +459,40 @@ static void cpg_mstop_setup(void)
 
 static void cpg_pll_setup(void)
 {
-	volatile uint32_t dummy;
-
 	/* Enable write to clock generation circuit Registers */
 	sys_safetybase_unlock(PRCRx_CLOCK_GEN);
 
 	/* Setup PLL2 if not already enabled by BootROM */
-	if (PLL2EN_PLL2EN_ENABLE != (PLL2EN_PLL2EN_ENABLE & mmio_read_32(PLL2EN))) {
+	if (PLL2EN_PLL2EN_ENABLE != (mmio_read_32(PLL2EN) & PLL2EN_PLL2EN_MSK)) {
+		/* Leaving  PLL2MFR, PLL2MRR and PLL2SSCEN bits in PLL2_SSC_CTR with default values */
 		/* PLL enable */
 		mmio_write_32(PLL2EN, PLL2EN_PLL2EN_ENABLE);
 		/* wait for PLL Locked */
 		while (PLL2MON_PLL2MON_LOCK != (mmio_read_32(PLL2MON) & PLL2MON_PLL2MON_MSK)) {
 			/* nothing */
 		}
-		/* Select PLL clock */
-		dummy = mmio_read_32(PMSEL) & (~(PMSEL_PMSEL2_PLL));
-		mmio_write_32(PMSEL, dummy | PMSEL_PMSEL2_PLL);
 		/* Wait for PLL selected */
 		while (PMSEL_PMSEL2_MON_PLL != (mmio_read_32(PMSEL) & PMSEL_PMSEL2_MON_MSK)) {
 			/* nothing */
 		}
 	}
 
-/* Setup PLL3
- * According to TRM Table 7.12 default clock out of PLL will be 297MHz which is then divided
- * by default factor of 2 in SCKCR3.LCDCDIVSEL field therefore giving LCD clock of 148.5MHz
- * Will leave PLL3_VCO_CTR0, PLL3_VCO_CTR1 and CKCR3.LCDCDIVSEL with default values for now.
- */
-	mmio_write_32(PLL3EN, PLL3EN_PLL3EN_ENABLE);
-	/* wait for PLL Locked */
-	while (PLL3MON_PLL3MON_LOCK != (mmio_read_32(PLL3MON) & PLL3MON_PLL3MON_MSK)) {
-		__asm__ ("nop");
-	}
-
-	/* select PLL clock */
-	dummy = mmio_read_32(PMSEL) & (~(PMSEL_PMSEL3_PLL));
-	mmio_write_32(PMSEL, dummy | PMSEL_PMSEL3_PLL);
-	/* wait for PLL selected */
-	while (PMSEL_PMSEL3_MON_PLL != (mmio_read_32(PMSEL) & PMSEL_PMSEL3_MON_MSK)) {
-		__asm__ ("nop");
+	/* Setup PLL3 */
+	if (PLL3EN_PLL3EN_ENABLE != (mmio_read_32(PLL3EN) & PLL3EN_PLL3EN_MSK)) {
+		/* According to TRM Table 7.12 default clock out of PLL will be 297MHz which is then divided
+		* by default factor of 2 in SCKCR3.LCDCDIVSEL field therefore giving LCD clock of 148.5MHz
+		* Will leave PLL3_VCO_CTR0, PLL3_VCO_CTR1 and CKCR3.LCDCDIVSEL with default values for now.
+		*/
+		/* PLL enable */
+		mmio_write_32(PLL3EN, PLL3EN_PLL3EN_ENABLE);
+		/* Wait for PLL Locked */
+		while (PLL3MON_PLL3MON_LOCK != (mmio_read_32(PLL3MON) & PLL3MON_PLL3MON_MSK)) {
+			/* nothing */
+		}
+		/* Wait for PLL selected */
+		while (PMSEL_PMSEL3_MON_PLL != (mmio_read_32(PMSEL) & PMSEL_PMSEL3_MON_MSK)) {
+			/* nothing */
+		}
 	}
 
 	/* Disable write to clock generation circuit Registers */
