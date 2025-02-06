@@ -35,8 +35,10 @@ typedef struct {
 	uint32_t  pstate_on_mask;
 } CPG_CORE_PWR;
 
+typedef unsigned long aligned_mailbox_value_t __aligned(CACHE_WRITEBACK_GRANULE);
+
 typedef struct {
-	unsigned long value __aligned(CACHE_WRITEBACK_GRANULE);
+	aligned_mailbox_value_t value; /* Mailbox must be cache aligned */
 } mailbox_t;
 
 uintptr_t	gp_warm_ep;

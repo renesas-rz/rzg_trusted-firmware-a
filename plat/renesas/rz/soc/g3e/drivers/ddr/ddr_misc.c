@@ -94,6 +94,7 @@ void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 	do {
 		wait_dficlk(500);
 		uint32_t data = dwc_ddrphy_apb_rd(0x0d0004);
+
 		if ((data & 0x1) == 0) {
 			mail = get_mail(0);
 			if (mail == 0xff || mail == 0x07) {
