@@ -58,7 +58,7 @@ pkg:
 	cat build/g3e/${BUILD_TYPE}/bp_esd.bin build/g3e/${BUILD_TYPE}/bl2.bin > build/g3e/${BUILD_TYPE}/bl2_bp_esd.bin
 	objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/${BUILD_TYPE}/bl2_bp_esd.bin  build/g3e/${BUILD_TYPE}/bl2_bp_esd.srec
 	#Generate FIP S-Record if FIP binary is present
-	if [ -f build/g3e/${BUILD_TYPE}/fip.bin ]; then  objcopy -I binary -O srec --adjust-vma=0x08003600 --srec-forceS3 build/g3e/${BUILD_TYPE}/fip.bin build/g3e/${BUILD_TYPE}/fip.srec ; fi ;
+	if [ -f build/g3e/${BUILD_TYPE}/fip.bin ]; then  objcopy -I binary -O srec --adjust-vma=0x0 --srec-forceS3 build/g3e/${BUILD_TYPE}/fip.bin build/g3e/${BUILD_TYPE}/fip.srec ; fi ;
 
 ifneq (${DEBUG}, 0)
 TF_CFLAGS += -O0 -fstack-usage
