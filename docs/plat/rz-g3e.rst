@@ -198,7 +198,7 @@ Flash Procedure for EMMC
 		a. Use the Flash Writer's command EM_W.
 		b. Partition Select: 1
 		c. Input Start Address in sector: 300
-		d. Input Program Start Address: 8003600
+		d. Input Program Start Address: 0
 		e. Send the FIP srecord file
 
 Flash Procedure for SD
