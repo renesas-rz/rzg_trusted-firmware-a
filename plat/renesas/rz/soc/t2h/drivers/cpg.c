@@ -480,9 +480,9 @@ static void cpg_pll_setup(void)
 	/* Setup PLL3 */
 	if (PLL3EN_PLL3EN_ENABLE != (mmio_read_32(PLL3EN) & PLL3EN_PLL3EN_MSK)) {
 		/* According to TRM Table 7.12 default clock out of PLL will be 297MHz which is then divided
-		* by default factor of 2 in SCKCR3.LCDCDIVSEL field therefore giving LCD clock of 148.5MHz
-		* Will leave PLL3_VCO_CTR0, PLL3_VCO_CTR1 and CKCR3.LCDCDIVSEL with default values for now.
-		*/
+		 * by default factor of 2 in SCKCR3.LCDCDIVSEL field therefore giving LCD clock of 148.5MHz
+		 * Will leave PLL3_VCO_CTR0, PLL3_VCO_CTR1 and CKCR3.LCDCDIVSEL with default values for now.
+		 */
 		/* PLL enable */
 		mmio_write_32(PLL3EN, PLL3EN_PLL3EN_ENABLE);
 		/* Wait for PLL Locked */
