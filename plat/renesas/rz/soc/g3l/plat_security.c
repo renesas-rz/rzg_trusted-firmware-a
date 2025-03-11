@@ -211,12 +211,6 @@ static void plat_tzc_spi_setup(void)
 			.sec_attr = TZC_REGION_S_NONE,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
-		{
-			.base = RZG3L_OCTA_BASE,
-			.end  = (RZG3L_OCTA_BASE + 0x0FFFFULL),
-			.sec_attr = TZC_REGION_S_NONE,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
-		},
 		{}
 	};
 

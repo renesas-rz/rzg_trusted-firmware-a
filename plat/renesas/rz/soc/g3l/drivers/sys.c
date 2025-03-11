@@ -52,13 +52,9 @@ int16_t sys_get_boot_mode(void)
 #if PLAT_M33_BOOT_SUPPORT
 void sys_m33_core_boot_op(uintptr_t vector)
 {
-	if ((mmio_read_32(CPG_PLL6_STBY) & PLL6_STBY_SSCG_EN) != 0) {
-		mmio_write_32(SYS_CM33_CFG0, 0x01012E1E);
-		mmio_write_32(SYS_CM33_CFG1, 0x01012E1E);
-	} else {
-		mmio_write_32(SYS_CM33_CFG0, 0x0001312C);
-		mmio_write_32(SYS_CM33_CFG1, 0x0001312C);
-	}
+	/* CM33 is uses PLL2 and SSCG is fixed to off for PLL2 */
+	mmio_write_32(SYS_CM33_CFG0, 0x0001312C);
+	mmio_write_32(SYS_CM33_CFG1, 0x0001312C);
 
 	mmio_write_32(SYS_CM33_CFG2, vector);
 

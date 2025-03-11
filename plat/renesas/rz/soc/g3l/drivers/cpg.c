@@ -25,7 +25,7 @@ typedef struct {
 } CPG_REG_SETTING;
 
 static const CPG_REG_SETTING cpg_early_div_tbl[] = {
-	{ (uintptr_t)CPG_PL1_DDIV,				0x00010000 },	// 2'b00:1/1
+	{ (uintptr_t)CPG_PL1_DDIV,				0x00010000 },	/* 1200MHz */
 };
 
 static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
@@ -69,7 +69,7 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 
 static const CPG_REG_SETTING cpg_pll4_tbl[] = {
 #if (DDR_PLL4 >= 800)
-	{ CPG_PLL4_CLK1, 0x0498E000 },
+	{ CPG_PLL4_CLK1, 0x04A13557 },
 	{ CPG_PLL4_CLK2, 0x00000002 },
 #else
 #error "Unknown DDR Type."
@@ -78,53 +78,47 @@ static const CPG_REG_SETTING cpg_pll4_tbl[] = {
 };
 
 static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
-	{		/* OCTA */
-		(uintptr_t)CPG_CLKON_OCTA,
-		(uintptr_t)CPG_CLKMON_OCTA,
-		0x00030000,
-		CPG_T_CLK
-	},
-	{		/* SPI */
-		(uintptr_t)CPG_CLKON_SPI,
-		(uintptr_t)CPG_CLKMON_SPI,
+	{		/* XSPI */
+		(uintptr_t)CPG_CLKON_XSPI,
+		(uintptr_t)CPG_CLKMON_XSPI,
 		0x000F0000,
 		CPG_T_CLK
 	},
 };
 
 static const CPG_REG_SETTING cpg_static_select_tbl[] = {
-	{ (uintptr_t)CPG_OCTA_SSEL,				0x00010002 },	// 2'b10:CLK266FIX_CD
-	{ (uintptr_t)CPG_SPI_SSEL,				0x00010002 },	// 2'b10:CLK266FIX_CD
+	{ (uintptr_t)CPG_XSPI_SSEL,				0x00010002 },	/* 2'b10:CLK522 */
 };
 
 static const CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
-	{ (uintptr_t)CPG_PLL_DSEL,				0x00400040 },	// 1'b1:PLL4
-	{ (uintptr_t)CPG_SDHI_DSEL,				0x01110333 },	// 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C
+	{ (uintptr_t)CPG_PLL_DSEL,				0x00400040 },	/* 1'b1:PLL4 */
+	{ (uintptr_t)CPG_SDHI_DSEL,				0x01110333 },	/* 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C */
 };
 
 static const CPG_REG_SETTING cpg_dynamic_division_tbl[] = {
-	{ (uintptr_t)CPG_PL2_DDIV,				0x00100000 },	// 3'b000:1/1(100MHz)
-	{ (uintptr_t)CPG_PL3_DDIV,				0x01110000 },	// 3'b000:1/1(200MHz), 3'b000:1/1(100MHz), 3'b000:1/1(200MHz)
-#if PLAT_M33_BOOT_SUPPORT
-	{ (uintptr_t)CPG_PL6_DDIV,				0x00110000 },	// 3'b000:1/1(250MHz), 3'b000:1/1(250MHz)
-#endif /* PLAT_M33_BOOT_SUPPORT */
-	{ (uintptr_t)CPG_SDHI_DDIV,				0x01110111 },	// 1'b1:1/2, 1'b1:1/2, 1'b1:1/2
-	{ (uintptr_t)CPG_OCTA_DDIV,				0x00010003 },	// 3'b011:1/8
-	{ (uintptr_t)CPG_SPI_DDIV,				0x00010003 },	// 3'b011:1/8
+	{ (uintptr_t)CPG_PL2_DDIV,				0x01110000 },	/* 3'b000:1/4(200MHz), 3'b000:1/8(100MHz), 3'b000:1/4(200MHz) */
+	{ (uintptr_t)CPG_PL3_DDIV,				0x00110000 },	/* 3'b000:1/4(200MHz), 3'b000:1/8(100MHz) */
+	{ (uintptr_t)CPG_SDHI_DDIV,				0x01110111 },	/* 1'b1:1/2, 1'b1:1/2, 1'b1:1/2 */
+	{ (uintptr_t)CPG_XSPI_DDIV,				0x00010007 }	/* 3'b111:1/16 */
 };
 
+/* Power down everything except for SRAM_ACPU in CPG_PWRDN_IP1 */
 static const CPG_REG_SETTING cpg_pwrdown_ip_tbl[] = {
-	{ (uintptr_t)CPG_PWRDN_IP1,				0xFF7FFF7E },
-	{ (uintptr_t)CPG_PWRDN_IP2,				0x001F001F },
+	{ (uintptr_t)CPG_PWRDN_IP1,				0xFFEFFFEE }, 
+	{ (uintptr_t)CPG_PWRDN_IP2,				0x3FF33FF3 },
+	{ (uintptr_t)CPG_PWRDN_IP3,				0x3FFF3FFF },
+	{ (uintptr_t)CPG_PWRDN_IP4,				0x03FF03FF }
 };
 
 #if defined(PLAT_SYSTEM_SUSPEND_awo)
 static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
-	{ (uintptr_t)CPG_BUS_ACPU_MSTOP,		0x00080008 },
-	{ (uintptr_t)CPG_BUS_PERI_COM_MSTOP,	0x0FFF0FFF },
+	{ (uintptr_t)CPG_BUS_ACPU_MSTOP,		0x00070007 },
+	{ (uintptr_t)CPG_BUS_PERI_COM_MSTOP,	0x3FFF3FFF },
 	{ (uintptr_t)CPG_BUS_PERI_DDR_MSTOP,	0x00030003 },
-	{ (uintptr_t)CPG_BUS_TZCDDR_MSTOP,		0x00070007 },
+	{ (uintptr_t)CPG_BUS_PERI_VIDEO1_MSTOP,	0xFFFFFFFF },
+	{ (uintptr_t)CPG_BUS_TZCDDR_MSTOP,		0x000F000F },
 	{ (uintptr_t)CPG_MHU_MSTOP,				0x00010001 },
+	{ (uintptr_t)CPG_BUS_PERI_VIDEO2_MSTOP, 0x00010001 },
 	{ (uintptr_t)CPG_PWRDN_MSTOP,			0x00010001 },
 };
 #endif
@@ -160,39 +154,39 @@ static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
 
 static const CPG_REG_SETTING cpg_s2r_mstop_tbl[] = {
 #if PLAT_SYSTEM_SUSPEND
-			/* I2C Ch1 */
-	{ (uintptr_t)CPG_BUS_MCPU2_MSTOP,	0x08000000 },
+			/* I2C Ch0 */
+	{ (uintptr_t)CPG_BUS_MCPU2_MSTOP,	0x04000000 },
 			/* VBAT */
 	{ (uintptr_t)CPG_BUS_MCPU3_MSTOP,	0x01000000 },
 #endif
 };
 
 static const CPG_SETUP_DATA cpg_ddr_clkrst_tbl[] = {
-	{		/* DDR */
+	{		/* enable all DDR clocks*/
 		(uintptr_t)CPG_CLKON_DDR,
 		(uintptr_t)CPG_CLKMON_DDR,
-		0x000F000F,
+		0x003F003F,
 		CPG_T_CLK
 	},
-	{		/* DDR */
+	{		/* apply all DDR resets*/
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
-		0x01CF0000,
+		0x01FE0000,
 		CPG_T_RST
 	},
-	{		/* DDR */
+	{		/* DDR release DDR_PWROKIN */
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
 		0x01000100,
 		CPG_T_RST
 	},
-	{		/* DDR */
+	{		/* Release DDR_AXIy_AreSETN, REG_ARESETN*/
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
-		0x004D004D,
+		0x007C007C,
 		CPG_T_RST
 	},
-	{		/* DDR */
+	{		/* Release DDR_PRESETN, DDR_RESET */
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
 		0x00820082,
@@ -218,18 +212,6 @@ static const CPG_SETUP_DATA cpg_m33_clkrst_tbl[] = {
 };
 
 static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
-	{		/* GIC */
-		(uintptr_t)CPG_CLKON_GIC600,
-		(uintptr_t)CPG_CLKMON_GIC600,
-		0x00010001,
-		CPG_T_CLK
-	},
-	{		/* MHU */
-		(uintptr_t)CPG_CLKON_MHU,
-		(uintptr_t)CPG_CLKMON_MHU,
-		0x00010000,
-		CPG_T_CLK
-	},
 	{		/* SDHI */
 		(uintptr_t)CPG_CLKON_SDHI,
 		(uintptr_t)CPG_CLKMON_SDHI,
@@ -239,31 +221,31 @@ static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
 	{		/* USB */
 		(uintptr_t)CPG_CLKON_USB,
 		(uintptr_t)CPG_CLKMON_USB,
-		0x000F0000,
+		0x001F001F,
 		CPG_T_CLK
 	},
 	{		/* ETHER */
 		(uintptr_t)CPG_CLKON_ETH,
 		(uintptr_t)CPG_CLKMON_ETH,
-		0x03030000,
+		0x3FFF3FFF,
 		CPG_T_CLK
 	},
 	{		/* DDR */
 		(uintptr_t)CPG_CLKON_DDR,
 		(uintptr_t)CPG_CLKMON_DDR,
-		0x000F0000,
+		0x003F0000,
 		CPG_T_CLK
 	},
 	{		/* AXI_COM_BUS */
 		(uintptr_t)CPG_CLKON_AXI_COM_BUS,
 		(uintptr_t)CPG_CLKMON_AXI_COM_BUS,
-		0x03030303,
+		0x01010101,
 		CPG_T_CLK
 	},
 	{		/* PERI_COM */
 		(uintptr_t)CPG_CLKON_PERI_COM,
 		(uintptr_t)CPG_CLKMON_PERI_COM,
-		0x03030303,
+		0x01010101,
 		CPG_T_CLK
 	},
 	{		/* PERI_DDR */
@@ -275,58 +257,34 @@ static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
 	{		/* AXI_TZCDDR */
 		(uintptr_t)CPG_CLKON_AXI_TZCDDR,
 		(uintptr_t)CPG_CLKMON_AXI_TZCDDR,
-		0x000F000F,
+		0x007F007F,
 		CPG_T_CLK
-	},
-	{		/* OTFDE_DDR */
-		(uintptr_t)CPG_CLKON_OTFDE_DDR,
-		(uintptr_t)CPG_CLKMON_OTFDE_DDR,
-		0x00030000,
-		CPG_T_CLK
-	},
-	{		/* PCI */
-		(uintptr_t)CPG_CLKON_PCI,
-		(uintptr_t)CPG_CLKMON_PCI,
-		0x00030000,
-		CPG_T_CLK
-	},
+	}
 };
 
 static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
-	{		/* GIC */
-		(uintptr_t)CPG_RST_GIC600,
-		(uintptr_t)CPG_RSTMON_GIC600,
-		0x00030003,
-		CPG_T_RST
-	},
-	{		/* MHU */
-		(uintptr_t)CPG_RST_MHU,
-		(uintptr_t)CPG_RSTMON_MHU,
-		0x00010000,
-		CPG_T_RST
-	},
 	{		/* SDHI */
 		(uintptr_t)CPG_RST_SDHI,
 		(uintptr_t)CPG_RSTMON_SDHI,
-		0x00070007,
+		0x01FF01FF,
 		CPG_T_RST
 	},
 	{		/* USB */
 		(uintptr_t)CPG_RST_USB,
 		(uintptr_t)CPG_RSTMON_USB,
-		0x000F0000,
+		0x001F001F,
 		CPG_T_RST
 	},
 	{		/* ETHER */
 		(uintptr_t)CPG_RST_ETH,
 		(uintptr_t)CPG_RSTMON_ETH,
-		0x00030000,
+		0x00030003,
 		CPG_T_RST
 	},
 	{		/* DDR */
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
-		0x01CF0000,
+		0x01FE0000,
 		CPG_T_RST
 	},
 	{		/* AXI_COM_BUS */
@@ -336,7 +294,7 @@ static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
 		CPG_T_RST
 	},
 	{		/* PERI_COM */
-		(uintptr_t)CPG_RST_PERI_COM,
+		(uintptr_t)CPG_RST_AXI_PERI_COM,
 		(uintptr_t)CPG_RSTMON_PERI_COM,
 		0x00030003,
 		CPG_T_RST
@@ -350,19 +308,7 @@ static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
 	{		/* AXI_TZCDDR */
 		(uintptr_t)CPG_RST_AXI_TZCDDR,
 		(uintptr_t)CPG_RSTMON_AXI_TZCDDR,
-		0x000F000F,
-		CPG_T_RST
-	},
-	{		/* OTFDE_DDR */
-		(uintptr_t)CPG_RST_OTFDE_DDR,
-		(uintptr_t)CPG_RSTMON_OTFDE_DDR,
-		0x00030000,
-		CPG_T_RST
-	},
-	{		/* PCI */
-		(uintptr_t)CPG_RST_PCI,
-		(uintptr_t)CPG_RSTMON_PCI,
-		0x007F0000,
+		0x003F003F,
 		CPG_T_RST
 	},
 };
@@ -383,64 +329,16 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		0x00030003,
 		CPG_T_CLK
 	},
-	{		/* DMAC_REG */
-		(uintptr_t)CPG_CLKON_DMAC_REG,
-		(uintptr_t)CPG_CLKMON_DMAC_REG,
-		0x00030001,
-		CPG_T_CLK
-	},
-	{		/* OSTM */
-		(uintptr_t)CPG_CLKON_GTM,
-		(uintptr_t)CPG_CLKMON_GTM,
-		0x00FF0000,
-		CPG_T_CLK
-	},
-	{		/* MTU */
-		(uintptr_t)CPG_CLKON_MTU,
-		(uintptr_t)CPG_CLKMON_MTU,
-		0x00010000,
-		CPG_T_CLK
-	},
-	{		/* POE3 */
-		(uintptr_t)CPG_CLKON_POE3,
-		(uintptr_t)CPG_CLKMON_POE3,
-		0x00010000,
-		CPG_T_CLK
-	},
-	{		/* GPT */
-		(uintptr_t)CPG_CLKON_GPT,
-		(uintptr_t)CPG_CLKMON_GPT,
-		0x00010000,
-		CPG_T_CLK
-	},
-	{		/* POEG */
-		(uintptr_t)CPG_CLKON_POEG,
-		(uintptr_t)CPG_CLKMON_POEG,
-		0x000F0000,
-		CPG_T_CLK
-	},
 	{		/* WDT */
 		(uintptr_t)CPG_CLKON_WDT,
 		(uintptr_t)CPG_CLKMON_WDT,
-		0x00FF0000,
+		0x003F003F,
 		CPG_T_CLK
 	},
-	{		/* SPI */
-		(uintptr_t)CPG_CLKON_SPI,
-		(uintptr_t)CPG_CLKMON_SPI,
+	{		/* XSPI */
+		(uintptr_t)CPG_CLKON_XSPI,
+		(uintptr_t)CPG_CLKMON_XSPI,
 		0x000F000F,
-		CPG_T_CLK
-	},
-	{		/* SSI */
-		(uintptr_t)CPG_CLKON_SSI,
-		(uintptr_t)CPG_CLKMON_SSI,
-		0x00FF0000,
-		CPG_T_CLK
-	},
-	{		/* SRC */
-		(uintptr_t)CPG_CLKON_SRC,
-		(uintptr_t)CPG_CLKMON_SRC,
-		0x00010000,
 		CPG_T_CLK
 	},
 	{		/* SCIF */
@@ -449,72 +347,12 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 		0x003F0001,
 		CPG_T_CLK
 	},
-	{		/* SCI */
-		(uintptr_t)CPG_CLKON_SCI,
-		(uintptr_t)CPG_CLKMON_SCI,
-		0x00030000,
-		CPG_T_CLK
-	},
-	{		/* IrDA */
-		(uintptr_t)CPG_CLKON_IRDA,
-		(uintptr_t)CPG_CLKMON_IRDA,
-		0x00010000,
-		CPG_T_CLK
-	},
-	{		/* RSPI */
-		(uintptr_t)CPG_CLKON_RSPI,
-		(uintptr_t)CPG_CLKMON_RSPI,
-		0x001F0000,
-		CPG_T_CLK
-	},
-	{		/* CANFD */
-		(uintptr_t)CPG_CLKON_CANFD,
-		(uintptr_t)CPG_CLKMON_CANFD,
-		0x00030000,
-		CPG_T_CLK
-	},
 	{		/* GPIO */
 		(uintptr_t)CPG_CLKON_GPIO,
 		(uintptr_t)CPG_CLKMON_GPIO,
 		0x00010001,
 		CPG_T_CLK
-	},
-	{		/* ADC */
-		(uintptr_t)CPG_CLKON_ADC,
-		(uintptr_t)CPG_CLKMON_ADC,
-		0x00030000,
-		CPG_T_CLK
-	},
-	{		/* TSU */
-		(uintptr_t)CPG_CLKON_TSU,
-		(uintptr_t)CPG_CLKMON_TSU,
-		0x00010000,
-		CPG_T_CLK
-	},
-	{		/* OCTA */
-		(uintptr_t)CPG_CLKON_OCTA,
-		(uintptr_t)CPG_CLKMON_OCTA,
-		0x00030003,
-		CPG_T_CLK
-	},
-	{		/* PDM */
-		(uintptr_t)CPG_CLKON_PDM,
-		(uintptr_t)CPG_CLKMON_PDM,
-		0x003F0000,
-		CPG_T_CLK
-	},
-	{		/* SPDIF */
-		(uintptr_t)CPG_CLKON_SPDIF,
-		(uintptr_t)CPG_CLKMON_SPDIF,
-		0x00010000,
-		CPG_T_CLK
-	},
-	{		/* I3C */
-		(uintptr_t)CPG_CLKON_I3C,
-		(uintptr_t)CPG_CLKMON_I3C,
-		0x00030000,
-		CPG_T_CLK
-	},
+	}
 };
 
 static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
@@ -532,64 +370,16 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		0x00010001,
 		CPG_T_RST
 	},
-	{		/* DMAC */
-		(uintptr_t)CPG_RST_DMAC,
-		(uintptr_t)CPG_RSTMON_DMAC,
-		0x00030003,
-		CPG_T_RST
-	},
-	{		/* OSTM */
-		(uintptr_t)CPG_RST_GTM,
-		(uintptr_t)CPG_RSTMON_GTM,
-		0x00FF0000,
-		CPG_T_RST
-	},
-	{		/* MTU */
-		(uintptr_t)CPG_RST_MTU,
-		(uintptr_t)CPG_RSTMON_MTU,
-		0x00010000,
-		CPG_T_RST
-	},
-	{		/* POE3 */
-		(uintptr_t)CPG_RST_POE3,
-		(uintptr_t)CPG_RSTMON_POE3,
-		0x00010000,
-		CPG_T_RST
-	},
-	{		/* GPT */
-		(uintptr_t)CPG_RST_GPT,
-		(uintptr_t)CPG_RSTMON_GPT,
-		0x00010000,
-		CPG_T_RST
-	},
-	{		/* POEG */
-		(uintptr_t)CPG_RST_POEG,
-		(uintptr_t)CPG_RSTMON_POEG,
-		0x000F0000,
-		CPG_T_RST
-	},
 	{		/* WDT */
 		(uintptr_t)CPG_RST_WDT,
 		(uintptr_t)CPG_RSTMON_WDT,
-		0x000F0000,
+		0x00070007,
 		CPG_T_RST
 	},
-	{		/* SPI */
-		(uintptr_t)CPG_RST_SPI,
-		(uintptr_t)CPG_RSTMON_SPI,
+	{		/* XSPI */
+		(uintptr_t)CPG_RST_XSPI,
+		(uintptr_t)CPG_RSTMON_XSPI,
 		0x00030003,
-		CPG_T_RST
-	},
-	{		/* SSIF */
-		(uintptr_t)CPG_RST_SSIF,
-		(uintptr_t)CPG_RSTMON_SSIF,
-		0x000F0000,
-		CPG_T_RST
-	},
-	{		/* SRC */
-		(uintptr_t)CPG_RST_SRC,
-		(uintptr_t)CPG_RSTMON_SRC,
-		0x00010000,
 		CPG_T_RST
 	},
 	{		/* SCIF */
@@ -598,72 +388,12 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 		0x003F0001,
 		CPG_T_RST
 	},
-	{		/* SCI */
-		(uintptr_t)CPG_RST_SCI,
-		(uintptr_t)CPG_RSTMON_SCI,
-		0x00030000,
-		CPG_T_RST
-	},
-	{		/* IrDA */
-		(uintptr_t)CPG_RST_IRDA,
-		(uintptr_t)CPG_RSTMON_IRDA,
-		0x00010000,
-		CPG_T_RST
-	},
-	{		/* RSPI */
-		(uintptr_t)CPG_RST_RSPI,
-		(uintptr_t)CPG_RSTMON_RSPI,
-		0x001F0000,
-		CPG_T_RST
-	},
-	{		/* CANFD */
-		(uintptr_t)CPG_RST_CANFD,
-		(uintptr_t)CPG_RSTMON_CANFD,
-		0x00030000,
-		CPG_T_RST
-	},
 	{		/* GPIO */
 		(uintptr_t)CPG_RST_GPIO,
 		(uintptr_t)CPG_RSTMON_GPIO,
-		0x00010001,
+		0x00070007,
 		CPG_T_RST
-	},
-	{		/* ADC */
-		(uintptr_t)CPG_RST_ADC,
-		(uintptr_t)CPG_RSTMON_ADC,
-		0x00030000,
-		CPG_T_RST
-	},
-	{		/* TSU */
-		(uintptr_t)CPG_RST_TSU,
-		(uintptr_t)CPG_RSTMON_TSU,
-		0x00010000,
-		CPG_T_RST
-	},
-	{		/* OCTA */
-		(uintptr_t)CPG_RST_OCTA,
-		(uintptr_t)CPG_RSTMON_OCTA,
-		0x00010001,
-		CPG_T_RST
-	},
-	{		/* PDM */
-		(uintptr_t)CPG_RST_PDM,
-		(uintptr_t)CPG_RSTMON_PDM,
-		0x00070000,
-		CPG_T_RST
-	},
-	{		/* SPDIF */
-		(uintptr_t)CPG_RST_SPDIF,
-		(uintptr_t)CPG_RSTMON_SPDIF,
-		0x00010000,
-		CPG_T_RST
-	},
-	{		/* I3C */
-		(uintptr_t)CPG_RST_I3C,
-		(uintptr_t)CPG_RSTMON_I3C,
-		0x00030000,
-		CPG_T_RST
-	},
+	}
 };
 
 static void cpg_sel_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
@@ -835,9 +565,11 @@ void cpg_setup(void)
 
 void cpg_active_ddr1(void)
 {
+	/* Apply reset DDR_RESET_N in CPG_OTHERFUNC2_REG*/
 	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[0], 1);
 	udelay(1);
 
+	/* Release reset DDR_RESET_N in CPG_OTHERFUNC2_REG*/
 	cpg_clkrst_stop(&cpg_ddr_clkrst_tbl[1], 1);
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
 	udelay(1);
