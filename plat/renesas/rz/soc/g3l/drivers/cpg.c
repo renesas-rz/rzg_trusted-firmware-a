@@ -8,9 +8,21 @@
 #include <cpg_regs.h>
 #include <lib/mmio.h>
 #include <drivers/delay_timer.h>
+#include <ddr_private.h>
 
 #define CPG_T_CLK						(0)
 #define CPG_T_RST						(1)
+
+#define DDR_CONFIG_TYPE_S21			(1)
+#define DDR_CONFIG_TYPE_S16			(0)
+
+#if DDR_CONFIG_TYPE_S21
+#define param_ddr_pll_ctl1				0x00908000
+#elif DDR_CONFIG_TYPE_S16
+#define param_ddr_pll_ctl1				0x0498E000
+#else
+#error "Unknown DDR Type."
+#endif
 
 typedef struct {
 	uintptr_t reg;
@@ -104,7 +116,7 @@ static const CPG_REG_SETTING cpg_dynamic_division_tbl[] = {
 
 /* Power down everything except for SRAM_ACPU in CPG_PWRDN_IP1 */
 static const CPG_REG_SETTING cpg_pwrdown_ip_tbl[] = {
-	{ (uintptr_t)CPG_PWRDN_IP1,				0xFFEFFFEE }, 
+	{ (uintptr_t)CPG_PWRDN_IP1,				0xFFEFFFEE },
 	{ (uintptr_t)CPG_PWRDN_IP2,				0x3FF33FF3 },
 	{ (uintptr_t)CPG_PWRDN_IP3,				0x3FFF3FFF },
 	{ (uintptr_t)CPG_PWRDN_IP4,				0x03FF03FF }
@@ -159,39 +171,6 @@ static const CPG_REG_SETTING cpg_s2r_mstop_tbl[] = {
 			/* VBAT */
 	{ (uintptr_t)CPG_BUS_MCPU3_MSTOP,	0x01000000 },
 #endif
-};
-
-static const CPG_SETUP_DATA cpg_ddr_clkrst_tbl[] = {
-	{		/* enable all DDR clocks*/
-		(uintptr_t)CPG_CLKON_DDR,
-		(uintptr_t)CPG_CLKMON_DDR,
-		0x003F003F,
-		CPG_T_CLK
-	},
-	{		/* apply all DDR resets*/
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x01FE0000,
-		CPG_T_RST
-	},
-	{		/* DDR release DDR_PWROKIN */
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x01000100,
-		CPG_T_RST
-	},
-	{		/* Release DDR_AXIy_AreSETN, REG_ARESETN*/
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x007C007C,
-		CPG_T_RST
-	},
-	{		/* Release DDR_PRESETN, DDR_RESET */
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x00820082,
-		CPG_T_RST
-	},
 };
 
 static const CPG_SETUP_DATA cpg_m33_clkrst_tbl[] = {
@@ -487,7 +466,7 @@ static void cpg_clkrst_start(const CPG_SETUP_DATA *tbl, const uint32_t size)
 }
 
 /* It is assumed that the PLL has stopped by the time this function is executed. */
-static void cpg_pll_setup(void)
+static void cpg_pll4_setup(void)
 {
 	int cnt;
 	uint32_t val = 0;
@@ -555,7 +534,10 @@ void cpg_early_setup(void)
 
 void cpg_setup(void)
 {
-	cpg_pll_setup();
+/* TODO: check if this is required */
+#if 0
+	 cpg_pll4_setup();
+#endif
 	cpg_div_sel_static_setup();
 	cpg_clock_on_setup();
 	cpg_div_sel_dynamic_setup();
@@ -565,27 +547,41 @@ void cpg_setup(void)
 
 void cpg_active_ddr1(void)
 {
-	/* Apply reset DDR_RESET_N in CPG_OTHERFUNC2_REG*/
-	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[0], 1);
-	udelay(1);
-
-	/* Release reset DDR_RESET_N in CPG_OTHERFUNC2_REG*/
-	cpg_clkrst_stop(&cpg_ddr_clkrst_tbl[1], 1);
+	/* 2 */
+	mmio_write_32(CPG_RST_DDR, 0x01FE0000);
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
-	udelay(1);
 
-	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[2], 1);
+	/* 3 */
+	cpg_pll4_setup();
+
+	mmio_write_32(CPG_CLKON_DDR, 0x003F003F);
+	while ((mmio_read_32(CPG_CLKMON_DDR) & 0x0000003F) != 0x0000003F)
+		;
+
+	/* 4 */
+	wait_regaclk(5);
+
+	/* 5 */
+	mmio_write_32(CPG_RST_DDR, 0x01000100);
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010001);
-	udelay(1);
-
-	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[3], 1);
-	udelay(1);
+	/* 6 */
+	wait_regaclk(1);
+	/* 7 */
+	mmio_write_32(CPG_RST_DDR, 0x007C007C);
+	/* 8 */
+	wait_regaclk(2);
 }
 
 void cpg_active_ddr2(void)
 {
-	cpg_clkrst_start(&cpg_ddr_clkrst_tbl[4], 1);
-	udelay(1);
+	/* 12 */
+	mmio_write_32(CPG_RST_DDR, 0x00800080);
+	/* 13 */
+	wait_pclk(2);
+	/* 14 */
+	mmio_write_32(CPG_RST_DDR, 0x00020002);
+	/* 15 */
+	wait_pclk(5);
 }
 
 void cpg_prepare_suspend(void)

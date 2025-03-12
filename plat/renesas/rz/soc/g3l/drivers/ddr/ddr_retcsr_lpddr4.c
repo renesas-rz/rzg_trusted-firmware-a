@@ -61,7 +61,7 @@ static uint32_t retcsr_list_2d[] = {
 };
 
 static uint32_t retcsr_list_ctrl[] = {
-	0x000226, 0x000243
+	0x0001D6, 0x0001D7, 0x0002F4, 0x000311
 };
 
 void retcsr_read_registers(uint32_t *buffer, size_t size)

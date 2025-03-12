@@ -6,7 +6,8 @@
 
 DDR_SOURCES +=	plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr_setup_lpddr4.c	\
 				plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr_retcsr_lpddr4.c	\
-				plat/renesas/rz/board/g3l_dev_1/ddr_param_def_lpddr4.c
+				plat/renesas/rz/board/g3l_dev_1/ddr_param_def_lpddr4.c	\
+				plat/renesas/rz/soc/g3l/drivers/ddr/ddr_setup_lpddr4.c
 
 
 LPDDR4		:= 1

@@ -11,15 +11,6 @@
 
 #include "ddr_regs.h"
 
-#define DDR4_VERSION	"5.23"
-#define LPDDR4_VERSION	"5.23"
-
-#if !LPDDR4
-#define DDR_VERSION		DDR4_VERSION
-#else
-#define DDR_VERSION		LPDDR4_VERSION
-#endif
-
 /* DDR misc function */
 static inline void DDRTOP_mc_apb_wr(uint32_t addr, uint32_t data)
 {
@@ -51,6 +42,7 @@ extern void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
 extern uint32_t get_mail(uint8_t mode_32bits);
 extern void wait_pclk(uint32_t cycles);
 extern void wait_dficlk(uint32_t cycles);
+extern void wait_regaclk(uint32_t cycles);
 
 /* DDR setup MC funcion */
 extern void setup_mc(void);

@@ -47,13 +47,7 @@
 #define SYS_WDT1_CTRL						(SYS_BASE + 0x00000260)
 #define SYS_WDT2_CTRL						(SYS_BASE + 0x00000270)
 
-/* TODO: check SYS_DDR_CFG as it is not mentioned in the manual but it looks like its required by the APN.*/
-#define SYS_DDR_CFG							(SYS_BASE + 0x00000300)
-
 #define SYS_DDR_MCAR_CTRL					(SYS_BASE + 0x00000304)
-
-/* TODO: check SYS_DDR_MCAR_SRCTL0 as it is not mentioned in the manual but it looks like its required by the APN.*/
-#define SYS_DDR_MCAR_SRCTL0					(SYS_BASE + 0x00000314)
 
 #define SYS_XSPI_MAP_STAADD_CS0				(SYS_BASE + 0x00000348)
 #define SYS_XSPI_MAP_ENDADD_CS0				(SYS_BASE + 0x0000034C)
@@ -119,7 +113,7 @@
 #define SYS_LP_CA55CK_CTL4					(SYS_BASE + 0x00000D4C)
 
 #define SYS_PD_ISO_CTRL						(SYS_BASE + 0x00000D60)
-#define PWRDN_DDRPHY_CTRL					(SYS_BASE + 0x00000D68)
+#define SYS_PWRDN_DDRPHY_CTRL				(SYS_BASE + 0x00000D68)
 #define ISO_IOBUF_SE18_CTRL					(SYS_BASE + 0x00000D6C)
 #define SYS_USB_PWRRDY						(SYS_BASE + 0x00000D70)
 #define SYS_PCIE_RST_RSM_B					(SYS_BASE + 0x00000D74)

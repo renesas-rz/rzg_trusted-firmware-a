@@ -35,6 +35,13 @@ void wait_dficlk(uint32_t cycles)
 	soft_delay((((uint64_t)cycles * 1000000) / dficlk_freq) + 1);
 }
 
+void wait_regaclk(uint32_t cycles)
+{
+	const uint32_t aclk_freq = 100000000; /* ACLK = 100MHz */
+
+	soft_delay((((uint64_t)cycles * 1000000) / aclk_freq) + 1);
+}
+
 void DDRTOP_mc_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask)
 {
 	uint32_t tmp_data;
@@ -108,18 +115,21 @@ void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 
 void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 {
-	uint32_t mail;
+	uint32_t mail = 0, data = 0, train_done = 0;
 
 	wait_dficlk(10);
 
-	do {
+	while (train_done == 0) {
 		wait_pclk(500);
 
-		mail = get_mail(0);
-
-		decode_major_message(mail, sel_train);
-
-	} while ((mail != 0xff) && (mail != 0x07));
+		data = dwc_ddrphy_apb_rd(0x6e004);
+		if ((data & 0x1) == 0) {
+			mail = get_mail(0);
+			if (mail == 0xff || mail == 0x07) {
+				train_done = 1;
+			}
+		}
+	}
 
 	if (mail == 0xff) {
 		ERROR("Training failed.\n");
