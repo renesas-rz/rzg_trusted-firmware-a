@@ -69,9 +69,9 @@
     - cd "../workspace/tf-a"
   resource_group: deploy_tag_lock
   script:
-    - if git ls-remote --tags | grep -q "refs/tags/$TAG_NAME"; then
+    - if [[ git ls-remote --tags | grep -q "refs/tags/$TAG_NAME" ]]; then
     - echo "Tag already exists in GitLab repository."
-    - elif [ "$PUSH_TAG" = "true" ]; then
+    - elif [[ "$PUSH_TAG" = "true" ]]; then
     - git push origin $TAG_NAME
     - echo "Tag pushed to GitLab repository."
     - else
