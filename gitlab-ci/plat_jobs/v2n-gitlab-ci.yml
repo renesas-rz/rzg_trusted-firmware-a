@@ -23,7 +23,6 @@
 include:
   - local: gitlab-ci/templates/common-job-templates.yml
   - local: gitlab-ci/templates/merge-gateway-job-templates.yml
-  - local: gitlab-ci/templates/overnight-job-templates.yml
   - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
 ################################### Preparation job for main branch V2N build jobs ####################################
