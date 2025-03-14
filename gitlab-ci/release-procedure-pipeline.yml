@@ -40,3 +40,7 @@ include:
   - local: gitlab-ci/plat_jobs/t2h-gitlab-ci.yml
     rules:
       - if: $PLATFORM =~  '/^.*\bt2h\b.*$/'
+  - local: gitlab-ci/plat_jobs/g3e-gitlab-ci.yml
+    rules:
+      - if: $PLATFORM =~  '/^.*\bg3e\b.*$/'
+

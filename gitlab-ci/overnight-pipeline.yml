@@ -46,6 +46,10 @@ include:
   - local: gitlab-ci/plat_jobs/v2n-gitlab-ci.yml
     rules:
       - if: $CHECKPATCH_AND_BUILD == "true"
+  - local: gitlab-ci/plat_jobs/g3e-gitlab-ci.yml
+    rules:
+      - if: $CHECKPATCH_AND_BUILD == "true"
+
   # Windows (Klocwork) MPU builds
   - local: gitlab-ci/win_mpu_build/n2h-gitlab-ci.yml
     rules:
@@ -60,5 +64,8 @@ include:
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
   - local: gitlab-ci/win_mpu_build/v2n-gitlab-ci.yml
+    rules:
+      - if: $RUN_KLOCWORK_BUILD == "true"
+  - local: gitlab-ci/win_mpu_build/g3e-gitlab-ci.yml
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
