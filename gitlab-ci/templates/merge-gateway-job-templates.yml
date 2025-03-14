@@ -29,6 +29,8 @@
     PLAT: ""
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
+  rules:
+      - if: $PIPELINE_TYPE == "main"
   script:
     - cd "../workspace"
     - rm -r -f ./*
