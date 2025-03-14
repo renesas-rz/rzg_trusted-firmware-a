@@ -16,49 +16,30 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Top level yaml file for dev overnight testing.
+# Description: Yaml file containing checkpatch test jobs.
 #######################################################################################################################
 
 ################################################## include ############################################################
-# 1. Including a checkpatch test to be run on the dev branch using the main branch as reference.
-# 2. Including MPU build tests for every platform.
-# 3. Including klocwork tests for every platform.
-#######################################################################################################################
-
 include:
-  # Linux checkpatch test
-  - local: gitlab-ci/branch_jobs/checkpatch-gitlab-ci.yml
-    rules:
-      - if: $CHECKPATCH_AND_BUILD == "true"
-  # Linux MPU builds
-  - local: gitlab-ci/plat_jobs/n2h-gitlab-ci.yml
-    rules:
-      - if: $CHECKPATCH_AND_BUILD == "true"
-  - local: gitlab-ci/plat_jobs/t2h-gitlab-ci.yml
-    rules:
-      - if: $CHECKPATCH_AND_BUILD == "true"
-  - local: gitlab-ci/plat_jobs/g3s-gitlab-ci.yml
-    rules:
-      - if: $CHECKPATCH_AND_BUILD == "true"
-  - local: gitlab-ci/plat_jobs/v2h-gitlab-ci.yml
-    rules:
-      - if: $CHECKPATCH_AND_BUILD == "true"
-  - local: gitlab-ci/plat_jobs/v2n-gitlab-ci.yml
-    rules:
-      - if: $CHECKPATCH_AND_BUILD == "true"
-  # Windows (Klocwork) MPU builds
-  - local: gitlab-ci/win_mpu_build/n2h-gitlab-ci.yml
-    rules:
-      - if: $RUN_KLOCWORK_BUILD == "true"
-  - local: gitlab-ci/win_mpu_build/t2h-gitlab-ci.yml
-    rules:
-      - if: $RUN_KLOCWORK_BUILD == "true"
-  - local: gitlab-ci/win_mpu_build/g3s-gitlab-ci.yml
-    rules:
-      - if: $RUN_KLOCWORK_BUILD == "true"
-  - local: gitlab-ci/win_mpu_build/v2h-gitlab-ci.yml
-    rules:
-      - if: $RUN_KLOCWORK_BUILD == "true"
-  - local: gitlab-ci/win_mpu_build/v2n-gitlab-ci.yml
-    rules:
-      - if: $RUN_KLOCWORK_BUILD == "true"
+  - local: gitlab-ci/templates/checkpatch-templates.yml
+
+############################################## Checkpatch test jobs ###################################################
+overnight-checkpatch-testing:
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ '/2\.10\.5/'
+      variables:
+        REFERENCE_BRANCH: "2.10.5/rz_main"
+    - if: $CI_COMMIT_BRANCH =~ '/2\.7\.0/'
+      variables:
+        REFERENCE_BRANCH: "2.7.0/rz_main"
+  variables:
+    TARGET_BRANCH: $CI_COMMIT_BRANCH
+  extends:
+    - .overnight_checkpatch_test_job_template
+
+merge-gateway-checkpatch-testing:
+  variables:
+    REFERENCE_BRANCH: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    TARGET_BRANCH: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+  extends:
+    - .merge_gateway_checkpatch_test_job_template
