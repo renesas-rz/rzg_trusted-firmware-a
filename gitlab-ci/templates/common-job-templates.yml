@@ -97,7 +97,7 @@
 ########################################## linux_mpu_build_job_template ###############################################
 # 1. Extends the basic template for a Linux environment.
 # 2. Separate runner for every platform for every pipeline type.
-# 3. For the main and tag pipeline, the control is in the workspace directory, hence moving to that directory 
+# 3. For the main and tag pipeline, the control is in the workspace directory, hence moving to that directory
 #    before any command.
 #######################################################################################################################
 .linux_mpu_build_job_template: &linux_mpu_build_job_template
@@ -119,7 +119,7 @@
 
 ####################################### linux_mpu_build_success_job_template ##########################################
 # 1. Extends the Linux template for a success test case.
-# 2. For main an tag, after building the TF-A .bin and .srec files, the files are moved to the default runner 
+# 2. For main an tag, after building the TF-A .bin and .srec files, the files are moved to the default runner
 #    tf-a directory. This is because job artifacts are only picked from the default runner tf-a directory.
 # 3. The artifacts are set to expire in 1 week, as this would help manage storage space efficiently and 1 week is
 #    sufficient time for the deletion to not impact any work or testing.
