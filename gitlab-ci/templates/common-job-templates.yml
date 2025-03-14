@@ -19,6 +19,65 @@
 # Description: Yaml file containing templates for MPU build tests.
 #######################################################################################################################
 
+########################################## checkpatch_test_job_template ###############################################
+# 1. Contains basic template for checkpatch testing.
+# 2. Error checks in place to see all checkpatch test files exist and the checkpatch script has executable
+#    permissions.
+# 3. Reference and target branches are both locally checked out to run the test locally.
+# 4. The checkpatch script run line is ORed with true so the result can be analysed and pipeline output can be
+#    determined manually later.
+# 5. In case warnings are found in the log, the pipeline passes with allow_failure which gives a warning sign on the
+#    pipeline. In case errors are found in the log, the pipeline fails.
+#######################################################################################################################
+.checkpatch_test_job_template: &checkpatch_test_job_template
+  stage: static_analysis_testing
+  variables:
+    REFERENCE_BRANCH: ""
+    TARGET_BRANCH: ""
+  script:
+    - echo "TARGET BRANCH - ${TARGET_BRANCH}"
+    - echo "REFERENCE BRANCH - ${REFERENCE_BRANCH}"
+    - CHECKPATCH_SCRIPT=../scripts/checkpatch/checkpatch.pl
+    - SPELLING_FILE=../scripts/checkpatch/spelling.txt
+    - CONST_STRUCTS_FILE=../scripts/checkpatch/const_structs.checkpatch
+    - if [ ! -f $CHECKPATCH_SCRIPT ]; then
+    - echo "checkpatch.pl does not exist, check if the file path is correct"
+    - exit 1
+    - elif [ ! -f $SPELLING_FILE ]; then
+    - echo "spelling.txt file does not exist, check if the file path is correct"
+    - exit 1
+    - elif [ ! -f $CONST_STRUCTS_FILE ]; then
+    - echo "const_structs.checkpatch file does not exist, check if the file path is correct"
+    - exit 1
+    - elif [[ ! -x "$CHECKPATCH_SCRIPT" ]]; then
+    - echo "Checkpatch script is not executable, set permission to 'Allow executing file as program'"
+    - exit 1
+    - else
+    - git fetch origin $REFERENCE_BRANCH
+    - git checkout $REFERENCE_BRANCH
+    - git fetch origin $TARGET_BRANCH
+    - git checkout $TARGET_BRANCH
+    - git diff --unified=5 $REFERENCE_BRANCH > test.patch
+    - ($CHECKPATCH_SCRIPT test.patch --max-line-length=160 > checkpatch.log) || true
+    - if grep -q "ERROR:" checkpatch.log; then
+    - exit 1
+    - elif grep -q "WARNING" checkpatch.log; then
+    - exit 2
+    - else
+    - exit 0
+    - fi
+    - fi
+  allow_failure:
+    exit_codes: 2
+  interruptible: true
+  artifacts:
+    expire_in: 1 week
+    when: always
+    name: "RZ Checkpatch files"
+    paths:
+      - ./test.patch
+      - ./checkpatch.log
+
 ############################################ mpu_build_job_template ###################################################
 # 1. Contains basic template for building MPU code.
 # 2. All the variables listed are required in the mpu_build.sh script.
