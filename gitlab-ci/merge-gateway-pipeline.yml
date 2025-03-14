@@ -27,18 +27,18 @@
 #######################################################################################################################
 include:
   - local: gitlab-ci/checkpatch_test/checkpatch-gitlab-ci.yml
-  - local: gitlab-ci/main_mpu_build/n2h-gitlab-ci.yml
+  - local: gitlab-ci/dev_mpu_build/n2h-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /n2h/ || $CI_MERGE_REQUEST_LABELS =~ /t2h/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
-  - local: gitlab-ci/main_mpu_build/t2h-gitlab-ci.yml
+  - local: gitlab-ci/dev_mpu_build/t2h-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /n2h/ || $CI_MERGE_REQUEST_LABELS =~ /t2h/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
-  - local: gitlab-ci/main_mpu_build/g3s-gitlab-ci.yml
+  - local: gitlab-ci/dev_mpu_build/g3s-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /g3s/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
-  - local: gitlab-ci/main_mpu_build/v2h-gitlab-ci.yml
+  - local: gitlab-ci/dev_mpu_build/v2h-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /v2h/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
-  - local: gitlab-ci/main_mpu_build/v2n-gitlab-ci.yml
+  - local: gitlab-ci/dev_mpu_build/v2n-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /v2n/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
