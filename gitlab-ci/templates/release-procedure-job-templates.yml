@@ -21,7 +21,7 @@
 
 ######################################### tag_creation_job_template ###################################################
 # 1. Creates a local tag off the main branch within the workspace directory.
-# 2. The scripts are used from the other tf-a directory created by the runner. Using cd commands to move from 
+# 2. The scripts are used from the other tf-a directory created by the runner. Using cd commands to move from
 #    one dir to another.
 #######################################################################################################################
 .tag_creation_job_template:
