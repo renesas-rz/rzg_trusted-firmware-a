@@ -31,7 +31,6 @@
     BUILD_TYPE: "release"
     TARGET_OS: ""
     CONFIGS: ""
-    TEST_TYPE: ""
     ERROR_MSG: ""
   interruptible: true
 
