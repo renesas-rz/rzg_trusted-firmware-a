@@ -47,9 +47,11 @@
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   before_script:
     - pwd
-    - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
     - if [[ "$PIPELINE_TYPE" == "tag"  || "$PIPELINE_TYPE" == "main" ]]; then
     - cd "../workspace/tf-a"
+    - export CROSS_COMPILE=../../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
+    - else
+    - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
     - fi
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
