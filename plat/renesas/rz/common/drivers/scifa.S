@@ -208,9 +208,15 @@ endfunc console_rz_putc
 	/* ---------------------------------------------
 	 * int console_rz_flush(console_t *console)
 	 * Function to force a write of all buffered
-	 * data that hasn't been output. It returns 0
-	 * upon successful completion, otherwise it
-	 * returns -1.
+	 * data that hasn't been output. Checks if there is
+	 * data queued for transmission, if so then wait for the
+	 * transmit end flag. It returns 0 upon successful
+	 * completion.
+	 *
+	 * Note: In the rare case where the FSR register has data
+	 * and the transmit FIFO has no data queued upon entering
+	 * the flush function, a character might not be transmitted.
+	 *
 	 * In : x0 - pointer to console_t structure
 	 * Out : return 0 upon successful completion, otherwise -1
 	 * Clobber list : x1
@@ -218,6 +224,16 @@ endfunc console_rz_putc
 	 */
 func console_rz_flush
 	ldr x0, [x0, #CONSOLE_T_BASE]
+
+	/* Check transmission data quantity is 0 */
+	ldrh w1, [x0, #FDR]
+	ubfx w1, w1, #8, #5
+	cmp	w1, #0
+	bne	1f
+
+	mov	w0, #0
+	ret
+
 1:
 	/* Check TEND flag */
 	ldrh w1, [x0, #FSR]
