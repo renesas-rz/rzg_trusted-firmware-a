@@ -29,10 +29,10 @@ include:
   - local: gitlab-ci/branch_jobs/checkpatch-gitlab-ci.yml
   - local: gitlab-ci/plat_jobs/n2h-gitlab-ci.yml
     rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /n2h/ || $CI_MERGE_REQUEST_LABELS =~ /t2h/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
+      - if: $CI_MERGE_REQUEST_LABELS =~ /tn2h/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
   - local: gitlab-ci/plat_jobs/t2h-gitlab-ci.yml
     rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /n2h/ || $CI_MERGE_REQUEST_LABELS =~ /t2h/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
+      - if: $CI_MERGE_REQUEST_LABELS =~ /tn2h/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
   - local: gitlab-ci/plat_jobs/g3s-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /g3s/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
