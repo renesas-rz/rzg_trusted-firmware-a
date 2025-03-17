@@ -47,7 +47,7 @@
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   before_script:
     - pwd
-    - if [[ "$PIPELINE_TYPE" == "tag"  || "$PIPELINE_TYPE" == "main" ]]; then
+    - if [[ "$PIPELINE_TYPE" == "release"  || "$PIPELINE_TYPE" == "merge" ]]; then
     - cd "../workspace/tf-a"
     - export CROSS_COMPILE=../../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
     - else
@@ -56,7 +56,7 @@
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
     - pwd
-    - if [[ "$PIPELINE_TYPE" == "tag" ]]; then
+    - if [[ "$PIPELINE_TYPE" == "release" ]]; then
     - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${PIPELINE_TYPE}" "${ERROR_MSG}"
     - else
     - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${PIPELINE_TYPE}" "${ERROR_MSG}"
@@ -72,7 +72,7 @@
 .linux_mpu_build_success_job_template:
   <<: *linux_mpu_build_job_template
   after_script:
-    - if [[ "$PIPELINE_TYPE" == "tag"  || "$PIPELINE_TYPE" == "main" ]]; then
+    - if [[ "$PIPELINE_TYPE" == "release"  || "$PIPELINE_TYPE" == "merge" ]]; then
     - mkdir -p build && cd build
     - mkdir -p $PLAT && cd $PLAT
     - cp -r "../../../workspace/tf-a/build/${PLAT}/${BUILD_TYPE}" .

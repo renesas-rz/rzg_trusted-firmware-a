@@ -30,7 +30,7 @@
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   rules:
-      - if: $PIPELINE_TYPE == "main"
+      - if: $PIPELINE_TYPE == "merge"
   script:
     - cd "../workspace"
     - rm -r -f ./*

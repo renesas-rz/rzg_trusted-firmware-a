@@ -31,7 +31,7 @@
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   rules:
-      - if: $PIPELINE_TYPE == "tag"
+      - if: $PIPELINE_TYPE == "release"
   script:
     - if [[ "$CI_COMMIT_REF_NAME" == *"2.10.0"* ]]; then
     - TFA_VER="2.10.0"
@@ -64,7 +64,7 @@
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   rules:
-      - if: $PIPELINE_TYPE == "tag"
+      - if: $PIPELINE_TYPE == "release"
   before_script:
     - cd "../workspace/tf-a"
   resource_group: deploy_tag_lock
