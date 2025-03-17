@@ -46,10 +46,10 @@
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   before_script:
-    - if [[ "$PIPELINE_TYPE" == "main" || "$PIPELINE_TYPE" == "tag" ]]; then
+    - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
+    - if [[ "$PIPELINE_TYPE" == "tag" ]]; then
     - cd "../workspace/tf-a"
     - fi
-    - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
     - if [[ "$PIPELINE_TYPE" == "tag" ]]; then
@@ -68,7 +68,7 @@
 .linux_mpu_build_success_job_template:
   <<: *linux_mpu_build_job_template
   after_script:
-    - if [[ "$PIPELINE_TYPE" == "main" || "$PIPELINE_TYPE" == "tag" ]]; then
+    - if [[ "$PIPELINE_TYPE" == "tag" ]]; then
     - mkdir -p build && cd build
     - mkdir -p $PLAT && cd $PLAT
     - cp -r "../../../workspace/tf-a/build/${PLAT}/${BUILD_TYPE}" .
