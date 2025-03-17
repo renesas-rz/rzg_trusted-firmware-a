@@ -57,9 +57,9 @@
   script:
     - pwd
     - if [[ "$PIPELINE_TYPE" == "tag" ]]; then
-    - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
+    - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${PIPELINE_TYPE}" "${ERROR_MSG}"
     - else
-    - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
+    - scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${PIPELINE_TYPE}" "${ERROR_MSG}"
     - fi
 
 ####################################### linux_mpu_build_success_job_template ##########################################
