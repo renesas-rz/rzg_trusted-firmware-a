@@ -29,7 +29,6 @@
     PLAT: "n2h"
     BOARD: "eval"
     BUILD_TYPE: "release"
-    TARGET_OS: ""
     CONFIGS: ""
     ERROR_MSG: ""
   interruptible: true
@@ -42,6 +41,8 @@
 #######################################################################################################################
 .linux_mpu_build_job_template: &linux_mpu_build_job_template
   <<: *mpu_build_job_template
+  variables:
+    TARGET_OS: "Linux"
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   before_script:
