@@ -46,12 +46,14 @@
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   before_script:
+    - echo pwd
     - export CROSS_COMPILE=../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
     - if [[ "$PIPELINE_TYPE" == "tag" ]]; then
     - cd "../workspace/tf-a"
     - fi
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
+    - echo pwd
     - if [[ "$PIPELINE_TYPE" == "tag" ]]; then
     - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${TEST_TYPE}" "${ERROR_MSG}"
     - else

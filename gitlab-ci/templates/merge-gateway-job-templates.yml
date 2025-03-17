@@ -36,6 +36,7 @@
     # - rm -r -f ./*
     # - git clone http://svc_sp3_ci_etcetc:DC_p5HnJoAsvmocwdYer@global-infra-jp-main.dgn.renesas.com/products/common/bootloader/soc/tf-a.git
     # - cd tf-a
+    - echo pwd
     - git pull
     - git checkout $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
     - git checkout $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
