@@ -16,11 +16,11 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Top level yaml file for merge gateway of main branch.
+# Description: Top level yaml file for merge gateway pipelines.
 #######################################################################################################################
 
 ################################################## include ############################################################
-# 1. Including a checkpatch test to be run on the integration branch using the main branch as reference.
+# 1. Including a checkpatch test to be run on the feature branch using the MR target branch as reference.
 # 2. Using the MR label to determine what platforms should be tested, and including the MPU build tests for it.
 # 3. Either individual platforms or all platforms can be tested.
 #    (except n2h and t2h where both the plats would always be tested since they use the same code base)
@@ -39,9 +39,9 @@ include:
   - local: gitlab-ci/plat_jobs/v2h-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /v2h/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
-  - local: gitlab-ci/plat_jobs/v2n-gitlab-ci.yml
-    rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /v2n/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
   - local: gitlab-ci/plat_jobs/g3e-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /g3e/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
+  - local: gitlab-ci/plat_jobs/v2n-gitlab-ci.yml
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /v2n/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/

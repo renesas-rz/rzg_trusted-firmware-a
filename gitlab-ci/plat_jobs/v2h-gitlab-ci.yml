@@ -16,7 +16,7 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing V2H tag overnight MPU build jobs.
+# Description: Yaml file containing jobs for V2H.
 #######################################################################################################################
 
 ################################################## include ############################################################
@@ -25,7 +25,7 @@ include:
   - local: gitlab-ci/templates/merge-gateway-job-templates.yml
   - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
-################################### Preparation job for main branch V2H build jobs ####################################
+################################### Preparation job for V2H merge gateway pipeline ####################################
 rzv2h-prep-for-merge-gateway-build-job:
   variables:
     PLAT: "v2h"
@@ -46,7 +46,7 @@ rzv2h-tag-deployment-job:
   extends:
     - .tag_deployment_job_template
 
-######################################## V2H evk_alpha MPU build jobs : tag ###########################################
+############################################ V2H evk_alpha MPU build jobs #############################################
 rzv2h-release-evk-alpha:
   variables:
     PLAT: "v2h"
@@ -84,7 +84,7 @@ rzv2h-debug-log50-evk-alpha:
   extends:
     - .linux_mpu_build_success_job_template
 
-######################################## V2H evk_1 MPU build jobs : tag ###############################################
+############################################# V2H evk_1 MPU build jobs ################################################
 rzv2h-release-evk-1:
   variables:
     PLAT: "v2h"
@@ -103,7 +103,7 @@ rzv2h-debug-log50-evk-1:
   extends:
     - .linux_mpu_build_success_job_template
 
-######################################## V2H dev_1 MPU build jobs : tag ###############################################
+############################################## V2H dev_1 MPU build jobs ###############################################
 rzv2h-release-dev-1:
   variables:
     PLAT: "v2h"

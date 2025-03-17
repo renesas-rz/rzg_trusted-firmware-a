@@ -16,12 +16,12 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing templates for main branch MPU build tests.
+# Description: Yaml file containing templates for jobs specific to the merge gateway pipelines.
 #######################################################################################################################
 
-######################################### prep_for_main_MR_build_job_template ############################################
-# 1. Template for preparation job which runs before the build jobs in an MR pipeline which targets the main branch
-# 2. It locally merges the integration branch into the main branch
+################################## prep_for_merge_gateway_build_job_template ##########################################
+# 1. Template for preparation job which runs before the build jobs in an MR pipeline.
+# 2. It locally merges the source/feature branch into the target branch
 #######################################################################################################################
 .prep_for_merge_gateway_build_job_template:
   stage: prep_MR_test

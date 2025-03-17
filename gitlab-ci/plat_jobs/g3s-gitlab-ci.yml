@@ -16,7 +16,7 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing G3S tag overnight MPU build jobs.
+# Description: Yaml file containing jobs for G3S.
 #######################################################################################################################
 
 ################################################## include ############################################################
@@ -25,7 +25,7 @@ include:
   - local: gitlab-ci/templates/merge-gateway-job-templates.yml
   - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
-################################### Preparation job for main branch G3S build jobs ####################################
+################################### Preparation job for G3S merge gateway pipeline ####################################
 rzg3s-prep-for-merge-gateway-build-job:
   variables:
     PLAT: "g3s"
@@ -46,7 +46,7 @@ rzg3s-tag-deployment-job:
   extends:
     - .tag_deployment_job_template
 
-######################################## G3S smarc MPU build jobs : tag ###############################################
+############################################## G3S smarc MPU build jobs ###############################################
 rzg3s-release-no-configs-smarc:
   variables:
     PLAT: "g3s"
@@ -155,7 +155,7 @@ rzg3s-debug-log50-vbat-disable-m33-smarc:
   extends:
     - .linux_mpu_build_success_job_template
 
-######################################## G3S dev14_1_lpddr MPU build jobs : tag #######################################
+########################################### G3S dev14_1_lpddr MPU build jobs ##########################################
 rzg3s-release-no-configs-dev:
   variables:
     PLAT: "g3s"

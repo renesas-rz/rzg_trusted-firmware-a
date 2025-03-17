@@ -16,7 +16,7 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing templates for MPU build tests.
+# Description: Yaml file containing templates for jobs common to all pipelines.
 #######################################################################################################################
 
 ############################################ mpu_build_job_template ###################################################
@@ -34,10 +34,10 @@
   interruptible: true
 
 ########################################## linux_mpu_build_job_template ###############################################
-# 1. Extends the basic template for a Linux environment.
+# 1. Extends the basic template for a Linux environment hence, setting TARGET_OS to Linux.
 # 2. Separate runner for every platform for every pipeline type.
-# 3. For the main and tag pipeline, the control is in the workspace directory, hence moving to that directory
-#    before any command.
+# 3. For the merge gateway and release pipelines, the control is in the workspace directory, hence moving to that
+#    directory before any command.
 #######################################################################################################################
 .linux_mpu_build_job_template: &linux_mpu_build_job_template
   <<: *mpu_build_job_template
@@ -46,7 +46,6 @@
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   before_script:
-    - pwd
     - if [[ "$PIPELINE_TYPE" == "release"  || "$PIPELINE_TYPE" == "merge" ]]; then
     - cd "../workspace/tf-a"
     - export CROSS_COMPILE=../../compiler/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/aarch64-elf-
@@ -55,7 +54,6 @@
     - fi
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
-    - pwd
     - if [[ "$PIPELINE_TYPE" == "release" ]]; then
     - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${PIPELINE_TYPE}" "${ERROR_MSG}"
     - else
@@ -64,8 +62,8 @@
 
 ####################################### linux_mpu_build_success_job_template ##########################################
 # 1. Extends the Linux template for a success test case.
-# 2. For main an tag, after building the TF-A .bin and .srec files, the files are moved to the default runner
-#    tf-a directory. This is because job artifacts are only picked from the default runner tf-a directory.
+# 2. For merge gateway and release pipelines, after building the TF-A .bin and .srec files, the files are moved to the
+#    default runner tf-a directory. This is because job artifacts are only picked from the default runner tf-a directory.
 # 3. The artifacts are set to expire in 1 week, as this would help manage storage space efficiently and 1 week is
 #    sufficient time for the deletion to not impact any work or testing.
 #######################################################################################################################
@@ -88,7 +86,7 @@
 ####################################### linux_mpu_build_failure_job_template ##########################################
 # 1. Extends the Linux template for a failure test case.
 # 2. There are no additional requirements or procedures required after running the mpu_build.sh as it's all built
-#    within the script.
+#    within the script mpu build.
 #######################################################################################################################
 .linux_mpu_build_failure_job_template:
   <<: *linux_mpu_build_job_template

@@ -16,12 +16,13 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing templates for tag MPU build tests.
+# Description: Yaml file containing templates for jobs specific to the release procedure pipelines.
 #######################################################################################################################
 
 ######################################### tag_creation_job_template ###################################################
 # 1. Creates a local tag off the main branch within the workspace directory.
-# 2. The scripts are used from the dev branch. Using cd commands to move from one dir to another.
+# 2. The scripts are used from the other tf-a directory created by the runner. Using cd commands to move from 
+#    one dir to another.
 #######################################################################################################################
 .tag_creation_job_template:
   stage: tag_creation
@@ -69,9 +70,9 @@
     - cd "../workspace/tf-a"
   resource_group: deploy_tag_lock
   script:
-    - if [[ git ls-remote --tags | grep -q "refs/tags/$TAG_NAME" ]]; then
+    - if [[ git ls-remote --tags || grep -q "refs/tags/$TAG_NAME" ]]; then
     - echo "Tag already exists in GitLab repository."
-    - elif [[ "$PUSH_TAG" = "true" ]]; then
+    - elif [[ "$PUSH_TAG" == "true" ]]; then
     - git push origin $TAG_NAME
     - echo "Tag pushed to GitLab repository."
     - else

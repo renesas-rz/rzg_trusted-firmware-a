@@ -16,11 +16,11 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Top level yaml file for dev overnight testing.
+# Description: Top level yaml file for overnight pipelines.
 #######################################################################################################################
 
 ################################################## include ############################################################
-# 1. Including a checkpatch test to be run on the dev branch using the main branch as reference.
+# 1. Including checkpatch test to be run on the target branch using the main branch as reference.
 # 2. Including MPU build tests for every platform.
 # 3. Including klocwork tests for every platform.
 #######################################################################################################################
@@ -43,10 +43,10 @@ include:
   - local: gitlab-ci/plat_jobs/v2h-gitlab-ci.yml
     rules:
       - if: $CHECKPATCH_AND_BUILD == "true"
-  - local: gitlab-ci/plat_jobs/v2n-gitlab-ci.yml
+  - local: gitlab-ci/plat_jobs/g3e-gitlab-ci.yml
     rules:
       - if: $CHECKPATCH_AND_BUILD == "true"
-  - local: gitlab-ci/plat_jobs/g3e-gitlab-ci.yml
+  - local: gitlab-ci/plat_jobs/v2n-gitlab-ci.yml
     rules:
       - if: $CHECKPATCH_AND_BUILD == "true"
 
@@ -63,9 +63,9 @@ include:
   - local: gitlab-ci/win_mpu_build/v2h-gitlab-ci.yml
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
-  - local: gitlab-ci/win_mpu_build/v2n-gitlab-ci.yml
+  - local: gitlab-ci/win_mpu_build/g3e-gitlab-ci.yml
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
-  - local: gitlab-ci/win_mpu_build/g3e-gitlab-ci.yml
+  - local: gitlab-ci/win_mpu_build/v2n-gitlab-ci.yml
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
