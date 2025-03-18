@@ -57,7 +57,7 @@
 #define BRR_C_SUB		(1)
 
 // Define a global flag
-    .section .bss
+    .section .bss.putc_called_flag
     .align 3
     .global putc_called_flag
 putc_called_flag:
