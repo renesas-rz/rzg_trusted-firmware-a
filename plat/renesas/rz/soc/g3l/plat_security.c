@@ -214,7 +214,7 @@ static void plat_tzc_spi_setup(void)
 		{}
 	};
 
-	plat_tzc400_setup(RZG3L_TZC400_xSPI_BASE, &xspi_tzc_regions[0]);
+	plat_tzc400_setup(RZG3L_TZC400_XSPI_BASE, &xspi_tzc_regions[0]);
 }
 
 static void bl2_security_setup(void)

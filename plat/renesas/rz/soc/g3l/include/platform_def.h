@@ -18,7 +18,7 @@
  * Platform binary types for linking
  ******************************************************************************/
 #define PLATFORM_LINKER_FORMAT		"elf64-littleaarch64"
-#define PLATFORM_LINKER_ARCH		  aarch64
+#define PLATFORM_LINKER_ARCH		aarch64
 
 /*******************************************************************************
  * Generic platform constants
@@ -45,19 +45,29 @@
 /*******************************************************************************
  * BL2 specific defines.
  ******************************************************************************/
-#define BL2_BASE					U(0x000A3000)
-#define BL2_LIMIT					U(0x00110000)
+#define BL2_PARAMS_BASE				U(0x00021E00) /* Base address for parameters for BL2 */
+#define BL2_PARAMS_SIZE				U(0x00000200)
+
+#define BL2_BASE					U(BL2_PARAMS_BASE + BL2_PARAMS_SIZE + 0x1000)
+#define BL2_LIMIT					U(BL2_BASE + 0x60000)
 
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
+#define PARAMS_BASE					(BL2_LIMIT) /* Base address for parameters for BL31 */
+#define PARAMS_SIZE					UL(0x00001000)
+
+#define BL31_SRAM_BASE				U(PARAMS_BASE + PARAMS_SIZE)
+#define BL31_SRAM_LIMIT				U(BL31_SRAM_BASE + 0x3000)
+
 #define BL31_BASE					U(0x44000000)
 #define BL31_LIMIT					U(0x44040000)
 
-#define BL31_SRAM_BASE				U(0x00118000)
-#define BL31_SRAM_LIMIT				U(0x0011F000)
-
+/*******************************************************************************
+ * Platform suspend defines
+ ******************************************************************************/
 #define PLAT_TRUSTED_MAILBOX_BASE   BL31_LIMIT
+#define RZG3L_NS_DRAM_BASE			ULL(0x48000000)
 
 /*******************************************************************************
  * BL32 specific defines.
@@ -77,8 +87,8 @@
  * BL22 (Cortex-M33)
  ******************************************************************************/
 #if PLAT_M33_BOOT_SUPPORT
-#define BL22_BASE					U(0x00023000)
-#define BL22_LIMIT					U(0x00060000)
+#define BL22_BASE					U(BL31_SRAM_LIMIT)
+#define BL22_LIMIT					U(RZG3L_SRAM_LIMIT)
 #endif /* PLAT_M33_BOOT_SUPPORT */
 
 /*******************************************************************************
@@ -93,8 +103,8 @@
 #define MAX_MMAP_REGIONS			U(9)
 #endif
 
-#define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 36)
-#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 36)	/* Max Physical Address is 0xF_FFFF_FFFF */
+#define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 34)
+#define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 34)	/* Max Physical Address is 0x3_FFFF_FFFF */
 
 /*******************************************************************************
  * Declarations and constants to access the mailboxes safely. Each mailbox is

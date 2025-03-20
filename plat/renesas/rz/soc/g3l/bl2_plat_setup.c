@@ -22,6 +22,7 @@
 #include <pwrc.h>
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
+#include <platform_def.h>
 #include <rz_private.h>
 
 static console_t rzg3l_bl2_console;
@@ -166,7 +167,7 @@ void bl2_el3_plat_arch_setup(void)
 					MT_DEVICE | MT_RW | MT_SECURE),
 			MAP_REGION_FLAT(RZG3L_SPIROM_BASE, RZG3L_SPIROM_SIZE,
 					MT_MEMORY | MT_RO | MT_SECURE),
-			MAP_REGION_FLAT(RZG3L_DDR0_BASE, RZG3L_DDR0_SIZE,
+			MAP_REGION_FLAT(RZG3L_DDR_MEM_BASE, RZG3L_DDR_MEM_SIZE,
 					MT_MEMORY | MT_RW | MT_SECURE),
 			{0}
 		};
