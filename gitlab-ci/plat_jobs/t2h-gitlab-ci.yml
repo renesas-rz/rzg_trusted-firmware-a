@@ -32,10 +32,10 @@ rzt2h-prep-for-merge-gateway-build-job:
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-################################ Preparation job for N2H release procedure pipeline ###################################
-rzn2h-prep-for-release-build-job:
+################################ Preparation job for T2H release procedure pipeline ###################################
+rzt2h-prep-for-release-build-job:
   variables:
-    PLAT: "n2h"
+    PLAT: "t2h"
   extends:
     - .release_testing_prep_job_template
 
