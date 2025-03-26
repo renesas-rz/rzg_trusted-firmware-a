@@ -32,19 +32,12 @@ rzg3s-prep-for-merge-gateway-build-job:
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-############################################## G3S tag creation job ###################################################
-rzg3s-tag-creation-job:
+################################ Preparation job for G3S release procedure pipeline ###################################
+rzg3s-prep-for-release-build-job:
   variables:
     PLAT: "g3s"
   extends:
-    - .tag_creation_job_template
-
-############################################## G3S tag deployment job #################################################
-rzg3s-tag-deployment-job:
-  variables:
-    PLAT: "g3s"
-  extends:
-    - .tag_deployment_job_template
+    - .release_testing_prep_job_template
 
 ############################################## G3S smarc MPU build jobs ###############################################
 rzg3s-release-no-configs-smarc:

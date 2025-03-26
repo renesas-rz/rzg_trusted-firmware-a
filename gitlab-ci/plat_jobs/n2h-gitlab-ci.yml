@@ -32,19 +32,12 @@ rzn2h-prep-for-merge-gateway-build-job:
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-############################################## N2H tag creation job ###################################################
-rzn2h-tag-creation-job:
+################################ Preparation job for N2H release procedure pipeline ###################################
+rzn2h-prep-for-release-build-job:
   variables:
     PLAT: "n2h"
   extends:
-    - .tag_creation_job_template
-
-############################################## N2H tag deployment job #################################################
-rzn2h-tag-deployment-job:
-  variables:
-    PLAT: "n2h"
-  extends:
-    - .tag_deployment_job_template
+    - .release_testing_prep_job_template
 
 ############################################## N2H eval MPU build jobs ################################################
 rzn2h-release-core4:

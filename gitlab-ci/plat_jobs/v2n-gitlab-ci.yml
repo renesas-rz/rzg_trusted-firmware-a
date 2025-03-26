@@ -32,19 +32,12 @@ rzv2n-prep-for-merge-gateway-build-job:
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-############################################## V2N tag creation job ###################################################
-rzv2n-tag-creation-job:
+################################ Preparation job for V2N release procedure pipeline ###################################
+rzv2n-prep-for-release-build-job:
   variables:
     PLAT: "v2n"
   extends:
-    - .tag_creation_job_template
-
-############################################## V2N tag deployment job #################################################
-rzv2n-tag-deployment-job:
-  variables:
-    PLAT: "v2n"
-  extends:
-    - .tag_deployment_job_template
+    - .release_testing_prep_job_template
 
 ############################################### V2N dev_1 MPU build jobs ##############################################
 rzv2n-release-dev-1:

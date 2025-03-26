@@ -32,19 +32,12 @@ rzg3e-prep-for-merge-gateway-build-job:
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-############################################## G3E tag creation job ###################################################
-rzg3e-tag-creation-job:
+################################ Preparation job for G3E release procedure pipeline ###################################
+rzg3e-prep-for-release-build-job:
   variables:
     PLAT: "g3e"
   extends:
-    - .tag_creation_job_template
-
-############################################## G3E tag deployment job #################################################
-rzg3e-tag-deployment-job:
-  variables:
-    PLAT: "g3e"
-  extends:
-    - .tag_deployment_job_template
+    - .release_testing_prep_job_template
 
 ############################################## G3E dev_1 MPU build jobs ###############################################
 rzg3e-release-dev-1:

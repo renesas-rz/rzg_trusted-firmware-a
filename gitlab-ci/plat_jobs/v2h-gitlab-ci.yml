@@ -32,19 +32,12 @@ rzv2h-prep-for-merge-gateway-build-job:
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-############################################## V2H tag creation job ###################################################
-rzv2h-tag-creation-job:
+################################ Preparation job for V2H release procedure pipeline ###################################
+rzv2h-prep-for-release-build-job:
   variables:
     PLAT: "v2h"
   extends:
-    - .tag_creation_job_template
-
-############################################## V2H tag deployment job #################################################
-rzv2h-tag-deployment-job:
-  variables:
-    PLAT: "v2h"
-  extends:
-    - .tag_deployment_job_template
+    - .release_testing_prep_job_template
 
 ############################################ V2H evk_alpha MPU build jobs #############################################
 rzv2h-release-evk-alpha:

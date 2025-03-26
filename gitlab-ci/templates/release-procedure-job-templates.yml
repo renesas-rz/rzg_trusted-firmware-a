@@ -19,13 +19,13 @@
 # Description: Yaml file containing templates for jobs specific to the release procedure pipelines.
 #######################################################################################################################
 
-######################################### tag_creation_job_template ###################################################
-# 1. Creates a local tag off the target branch within the workspace directory.
-# 2. The scripts are used from the other tf-a directory created by the runner. Using cd commands to move from
-#    one dir to another.
+######################################### prep_for_release_build_job_template #########################################
+# 1. Clear the workspace tf-a directory within the platform runner directory.
+# 2. Copies over the tag code from the release_tests runner workspace tf-a to the platform runner workspace tf-a.
+# 3. Checks the git status to ensure the correct tag would be tested.
 #######################################################################################################################
-.tag_creation_job_template:
-  stage: tag_creation
+.prep_for_release_build_job_template:
+  stage: prep_testing
   variables:
     PLAT: ""
   interruptible: true
@@ -34,47 +34,14 @@
   rules:
       - if: $PIPELINE_TYPE == "release"
   script:
-    - if [[ "$CI_COMMIT_REF_NAME" == *"2.10.0"* ]]; then
-    - TFA_VER="2.10.0"
-    - elif [[ "$CI_COMMIT_REF_NAME" == *"2.7.0"* ]]; then
-    - TFA_VER="2.7.0"
-    - else
-    - echo "Incorrect TF_A version branch provided"
-    - exit 1
+    - cd "../workspace"
+    - if [ ! -d "tf-a" ]; then
+    - mkdir -p tf-a
     - fi
-    - echo "RELEASE IS BASED OFF BRANCH $CI_COMMIT_REF_NAME"
-    - scripts/create_and_setup_release_branch.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$PLATFORM" "$TFA_VER" "$CI_COMMIT_REF_NAME"
-    - cd ../workspace/tf-a
-    - git checkout "${TFA_VER}/rz_rel_${BSP_NAME}.${BSP_RELEASE_NUM}"
-    - git merge "${TFA_VER}/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
-    - git branch --delete "${TFA_VER}/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
-    - cd ../../tf-a
-    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$TAG_NAME" "$TFA_VER"
-    - cd ../workspace/tf-a
-
-######################################### tag_deployment_job_template #################################################
-# 1. Tag would be pushed to repository only if PUSH_TAG pipeline variable is set to true and the tag is NOT already
-#    present in the repository.
-# 2. In all other cases, appropriate messages would be printed.
-#######################################################################################################################
-.tag_deployment_job_template:
-  stage: tag_deployment
-  variables:
-    PLAT: ""
-  interruptible: true
-  tags:
-    - "${PLAT}_${PIPELINE_TYPE}_tests"
-  rules:
-      - if: $PIPELINE_TYPE == "release"
-  before_script:
-    - cd "../workspace/tf-a"
-  resource_group: deploy_tag_lock
-  script:
-    - if [[ git ls-remote --tags || grep -q "refs/tags/$TAG_NAME" ]]; then
-    - echo "Tag already exists in GitLab repository."
-    - elif [[ "$PUSH_TAG" == "true" ]]; then
-    - git push origin $TAG_NAME
-    - echo "Tag pushed to GitLab repository."
-    - else
-    - echo "Tag NOT pushed to GitLab repository."
-    - fi
+    - cd tf-a
+    - shopt -s dotglob
+    - echo "Emptying directory $(pwd)"
+    - rm -r -f ./*
+    - echo "Copying over the files from the release_tests runner workspace tf-a to platform runner workspace tf-a"
+    - cp -r ../../../../../../../../c67zz7zx/0/products/common/bootloader/soc/workspace/tf-a/* ./
+    - git status

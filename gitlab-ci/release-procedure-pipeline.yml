@@ -25,6 +25,7 @@
 # 3. Multiple platforms can be included in the tag.
 #######################################################################################################################
 include:
+  - local: gitlab-ci/branch_jobs/release-procedure-gitlab-ci.yml
   - local: gitlab-ci/plat_jobs/n2h-gitlab-ci.yml
     rules:
       - if: $PLATFORM =~  '/^.*\bn2h\b.*$/'
