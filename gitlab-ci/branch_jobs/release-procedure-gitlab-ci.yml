@@ -44,7 +44,8 @@ tag_creation_job:
     - git branch --delete "${TFA_VER}/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
     - cd ../../tf-a
     - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$TAG_NAME" "$TFA_VER"
-    - cd ../workspace/tf-a
+    - pwd
+    - git status
 
 ############################################# tag_deployment_job ######################################################
 # 1. Tag would be pushed to repository only if PUSH_TAG pipeline variable is set to true and the tag is NOT already
