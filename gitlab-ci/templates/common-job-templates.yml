@@ -54,6 +54,7 @@
     - fi
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
+    - git status
     - if [[ "$PIPELINE_TYPE" == "release" ]]; then
     - ../../tf-a/scripts/mpu_build.sh $PLAT $BOARD $BUILD_TYPE "${TARGET_OS}" "${CONFIGS}" "${PIPELINE_TYPE}" "${ERROR_MSG}"
     - else
