@@ -337,7 +337,7 @@ Flash Procedure for SD
 		1775+1 records out
 		908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s
 
-	11. If Linux is required on this SD card, then follow the steps below.
+	13. If Linux is required on this SD card, then follow the steps below.
 		sudo cp ./<g3e device tree>.dtb /media/user/79273262-4ff6-424f-9e7e-a
 		sudo cp ./<g3e kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
 		sudo tar -jxvf <g3e root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
@@ -348,13 +348,13 @@ Boot trace
 
 .. code-block:: text
 
-	NOTICE:  BL2: v2.7(release): <git describe description>
+	NOTICE:  BL2: v2.10.5(release): <git describe description>
 	NOTICE:  BL2: Built :  <build time and date>
 	NOTICE:  BL2: SYS_LSI_MODE: <contents of register SYS_LSI_MODE>
 	NOTICE:  BL2: SYS_LSI_DEVID: <contents of register SYS_LSI_DEVID>
 	NOTICE:  BL2: SYS_LSI_PRR: <contents of register SYS_LSI_PRR>
 	NOTICE:  BL2: Booting BL31
-	NOTICE:  BL31: v2.7(release):<git describe description>
+	NOTICE:  BL31: v2.10.5(release):<git describe description>
 	NOTICE:  BL31: Built : <build time and date>
 
 
