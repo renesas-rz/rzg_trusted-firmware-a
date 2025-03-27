@@ -32,7 +32,7 @@ patch_creation_job:
     - git status
     - mkdir release_patches
     - cd release_patches
-    - git format-patch $OLD_COMMIT_ID^..HEAD -o release_patches/
+    - git format-patch $OLD_COMMIT_ID^..HEAD
   artifacts:
     expire_in: 1 week
     when: always
