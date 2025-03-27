@@ -87,7 +87,7 @@ tag_deployment_job:
     - cd "../workspace/tf-a"
   script:
     - git status
-    - if git ls-remote --tags | grep -q "refs/tags/$TAG_NAME"; then
+    - if git ls-remote --tags | grep -q "refs/tags/\b$TAG_NAME\b"; then
     - echo "Tag already exists in GitLab repository."
     - elif [[ "$PUSH_TAG" == "true" ]]; then
     - git push origin $TAG_NAME
