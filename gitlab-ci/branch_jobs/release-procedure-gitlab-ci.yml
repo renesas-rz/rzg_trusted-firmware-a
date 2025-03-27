@@ -69,3 +69,4 @@ tag_deployment_job:
     - else
     - echo "Tag NOT pushed to GitLab repository."
     - fi
+  dependencies: []
