@@ -15,13 +15,39 @@
 # be subject to different terms.
 #######################################################################################################################
 
+############################################## patch_creation_job #####################################################
+# 1. Creates commit patches for internal release in the workspace directory.
+# 2. The artifacts are set to expire in 1 week, as this would help manage storage space efficiently and 1 week is
+#    sufficient time for the deletion to not impact any work or testing.
+#######################################################################################################################
+patch_creation_job:
+  stage: prep_release_package
+  interruptible: true
+  tags:
+    - "release_tests"
+  rules:
+      - if: $PIPELINE_TYPE == "release" && $RELEASE == "internal"
+  script:
+    - git checkout $CI_COMMIT_REF_NAME
+    - git status
+    - mkdir release_patches
+    - cd release_patches
+    - git format-patch $OLD_COMMIT_ID^..HEAD -o release_patches/
+  artifacts:
+    expire_in: 1 week
+    when: always
+    name: ${TAG_NAME}_patches
+    paths:
+      - ./release_patches/*.patch
+
+
 ############################################## tag_creation_job #######################################################
 # 1. Creates a local tag off the target branch within the workspace directory.
 # 2. The scripts are used from the other tf-a directory created by the runner. Using cd commands to move from
 #    one dir to another.
 #######################################################################################################################
 tag_creation_job:
-  stage: tag_creation
+  stage: prep_release_package
   interruptible: true
   tags:
     - "release_tests"
@@ -51,7 +77,7 @@ tag_creation_job:
 # 2. In all other cases, appropriate messages would be printed.
 #######################################################################################################################
 tag_deployment_job:
-  stage: tag_deployment
+  stage: deployment
   interruptible: true
   tags:
     - "release_tests"

@@ -24,7 +24,7 @@
 # 2. It locally merges the source/feature branch into the target branch
 #######################################################################################################################
 .prep_for_merge_gateway_build_job_template:
-  stage: prep_MR_test
+  stage: prep_testing
   variables:
     PLAT: ""
   tags:
