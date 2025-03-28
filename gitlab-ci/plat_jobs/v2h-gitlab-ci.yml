@@ -37,7 +37,7 @@ rzv2h-prep-for-release-build-job:
   variables:
     PLAT: "v2h"
   extends:
-    - .release_testing_prep_job_template
+    - .prep_for_release_build_job_template
 
 ############################################ V2H evk_alpha MPU build jobs #############################################
 rzv2h-release-evk-alpha:

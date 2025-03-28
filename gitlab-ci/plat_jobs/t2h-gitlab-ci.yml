@@ -37,7 +37,7 @@ rzt2h-prep-for-release-build-job:
   variables:
     PLAT: "t2h"
   extends:
-    - .release_testing_prep_job_template
+    - .prep_for_release_build_job_template
 
 ############################################## T2H dev_1 MPU build jobs ###############################################
 rzt2h-release-core4:

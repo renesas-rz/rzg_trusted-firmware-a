@@ -37,7 +37,7 @@ rzv2n-prep-for-release-build-job:
   variables:
     PLAT: "v2n"
   extends:
-    - .release_testing_prep_job_template
+    - .prep_for_release_build_job_template
 
 ############################################### V2N dev_1 MPU build jobs ##############################################
 rzv2n-release-dev-1:

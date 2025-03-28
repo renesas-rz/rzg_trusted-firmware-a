@@ -27,6 +27,7 @@
   stage: prep_testing
   variables:
     PLAT: ""
+  interruptible: true
   tags:
     - "${PLAT}_${PIPELINE_TYPE}_tests"
   rules:

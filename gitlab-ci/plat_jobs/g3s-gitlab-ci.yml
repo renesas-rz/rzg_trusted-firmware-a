@@ -37,7 +37,7 @@ rzg3s-prep-for-release-build-job:
   variables:
     PLAT: "g3s"
   extends:
-    - .release_testing_prep_job_template
+    - .prep_for_release_build_job_template
 
 ############################################## G3S smarc MPU build jobs ###############################################
 rzg3s-release-no-configs-smarc:

@@ -37,7 +37,7 @@ rzn2h-prep-for-release-build-job:
   variables:
     PLAT: "n2h"
   extends:
-    - .release_testing_prep_job_template
+    - .prep_for_release_build_job_template
 
 ############################################## N2H eval MPU build jobs ################################################
 rzn2h-release-core4:
