@@ -41,12 +41,7 @@ patch_creation_job:
         sanitized_commit_message=$(echo "$commit_message" | tr -cd '[:alnum:]._-')
 
         # Generate the diff for the current commit and exclude unwanted files/folders
-        git diff ${commit}^..${commit} -- . ':(exclude)gitlab-ci/' ':(exclude).gitlab-ci.yml' | \
-          awk 'BEGIN {skip=0} 
-              /^diff --git a\/unwanted_folder\// {skip=1} 
-              /^diff --git a\/unwanted_file.txt/ {skip=1} 
-              /^diff --git/ {skip=0} 
-              skip==0 {print}' > $(printf "%04d" $patch_count)-${sanitized_commit_message}.patch
+        git diff ${commit}^..${commit} -- . ':(exclude)gitlab-ci/' ':(exclude).gitlab-ci.yml' | > $(printf "%04d" $patch_count)-${commit_message}.patch
 
         # Increment the patch count
         patch_count=$((patch_count + 1))
