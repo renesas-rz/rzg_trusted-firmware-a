@@ -34,7 +34,7 @@ patch_creation_job:
     - cd release_patches
     - |
       patch_count=1
-      for commit in $(git rev-list --reverse ${OLD_COMMIT_ID}..HEAD); do
+      for commit in $(git rev-list --reverse ${OLD_COMMIT_ID}^..HEAD); do
         # Get the commit message for the filename
         commit_message=$(git log --format=%s -n 1 $commit)
         # Sanitize the commit message to create a valid filename (remove unwanted chars)
