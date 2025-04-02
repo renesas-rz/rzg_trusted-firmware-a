@@ -34,16 +34,9 @@ patch_creation_job:
     - cd release_patches
     - |
       for commit in $(git rev-list --reverse ${OLD_COMMIT_ID}..HEAD); do
-        # Generate the patch with the default filename format
-        git format-patch -1 $commit --stdout | awk '
-          BEGIN {skip=0}
-          /^diff --git a\/.gitlab\// {skip=1}
-          /^diff --git a\/gitlab-ci\// {skip=1}
-          /^diff --git a\/scripts\// {skip=1}
-          /^diff --git a\/.gitlab-ci.yml/ {skip=1}
-          /^diff --git/ {skip=0}
-          skip==0 {print}
-        ' > $(git format-patch -1 $commit | head -n 1 | cut -d ' ' -f 2)
+        git diff --exclude=gitlab-ci/ --exclude=.gitlab-ci.yml ${commit}^..${commit} | git apply --cached
+        git format-patch -1 ${commit}
+        git reset
       done
   artifacts:
     expire_in: 1 week
