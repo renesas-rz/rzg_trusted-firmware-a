@@ -46,6 +46,7 @@ patch_creation_job:
 
         # Remove the patch file if it is empty
         if [ ! -s ${patch_file} ]; then
+          echo "It's an empty file"
           rm ${patch_file}
         else
           # Increment the patch count only if the patch is not empty
