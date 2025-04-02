@@ -44,8 +44,13 @@ patch_creation_job:
         patch_file="$(printf "%04d" $patch_count)-${sanitised_commit_message}.patch"
         git diff ${commit}^..${commit} -- . ':(exclude)gitlab-ci/' ':(exclude)scripts/' ':(exclude).gitlab/' ':(exclude).gitlab-ci.yml' > $patch_file
 
-        # Increment the patch count
-        patch_count=$((patch_count + 1))
+        # Remove the patch file if it is empty
+        if [ ! -s ${patch_file} ]; then
+          rm ${patch_file}
+        else
+          # Increment the patch count only if the patch is not empty
+          patch_count=$((patch_count + 1))
+        fi
       done
   artifacts:
     expire_in: 1 week
