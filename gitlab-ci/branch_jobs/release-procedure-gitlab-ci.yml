@@ -33,10 +33,23 @@ patch_creation_job:
     - mkdir -p release_patches
     - cd release_patches
     - |
+      patch_count=1
       for commit in $(git rev-list --reverse ${OLD_COMMIT_ID}..HEAD); do
-        git diff --exclude=gitlab-ci/ --exclude=.gitlab-ci.yml ${commit}^..${commit} | git apply --cached
-        git format-patch -1 ${commit}
-        git reset
+        # Get the commit message for the filename
+        commit_message=$(git log --format=%s -n 1 $commit)
+        # Sanitize the commit message to create a valid filename (remove unwanted chars)
+        sanitized_commit_message=$(echo "$commit_message" | tr -cd '[:alnum:]._-')
+
+        # Generate the diff for the current commit and exclude unwanted files/folders
+        git diff ${commit}^..${commit} -- . ':(exclude)gitlab-ci/' ':(exclude).gitlab-ci.yml' | \
+          awk 'BEGIN {skip=0} 
+              /^diff --git a\/unwanted_folder\// {skip=1} 
+              /^diff --git a\/unwanted_file.txt/ {skip=1} 
+              /^diff --git/ {skip=0} 
+              skip==0 {print}' > $(printf "%04d" $patch_count)-${sanitized_commit_message}.patch
+
+        # Increment the patch count
+        patch_count=$((patch_count + 1))
       done
   artifacts:
     expire_in: 1 week
