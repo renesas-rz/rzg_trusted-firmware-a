@@ -30,9 +30,21 @@ patch_creation_job:
   script:
     - git checkout $CI_COMMIT_REF_NAME
     - git status
-    - mkdir release_patches
+    - mkdir -p release_patches
     - cd release_patches
-    - git format-patch $OLD_COMMIT_ID^..HEAD
+    - |
+      for commit in $(git rev-list --reverse ${OLD_COMMIT_ID}..HEAD); do
+        # Generate the patch with the default filename format
+        git format-patch -1 $commit --stdout | awk '
+          BEGIN {skip=0}
+          /^diff --git a\/.gitlab\// {skip=1}
+          /^diff --git a\/gitlab-ci\// {skip=1}
+          /^diff --git a\/scripts\// {skip=1}
+          /^diff --git a\/.gitlab-ci.yml/ {skip=1}
+          /^diff --git/ {skip=0}
+          skip==0 {print}
+        ' > $(git format-patch -1 $commit | head -n 1 | cut -d ' ' -f 2)
+      done
   artifacts:
     expire_in: 1 week
     when: always
