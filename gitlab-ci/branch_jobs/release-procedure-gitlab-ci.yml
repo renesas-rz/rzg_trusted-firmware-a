@@ -38,10 +38,11 @@ patch_creation_job:
         # Get the commit message for the filename
         commit_message=$(git log --format=%s -n 1 $commit)
         # Sanitize the commit message to create a valid filename (remove unwanted chars)
-        sanitized_commit_message=$(echo "$commit_message" | tr -cd '[:alnum:]._-')
+        sanitised_commit_message=$(echo "$commit_message" | tr -cd '[:alnum:] ' | sed 's/ /_/g')
 
         # Generate the diff for the current commit and exclude unwanted files/folders
-        git diff ${commit}^..${commit} -- . ':(exclude)gitlab-ci/' ':(exclude).gitlab-ci.yml' > $(printf "%04d" $patch_count)-${commit_message}.patch
+        git diff ${commit}^..${commit} -- . ':(exclude)unwanted_folder/' ':(exclude)unwanted_file.txt' > \
+        $(printf "%04d" $patch_count)-${sanitized_commit_message}.patch
 
         # Increment the patch count
         patch_count=$((patch_count + 1))
