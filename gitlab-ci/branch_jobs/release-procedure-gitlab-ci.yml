@@ -42,12 +42,12 @@ patch_creation_job:
 
         # Generate the diff for the current commit and exclude unwanted files/folders
         patch_file="$(printf "%04d" $patch_count)-${sanitised_commit_message}.patch"
-        git diff ${commit}^1..${commit} > $patch_file
+        git diff ${commit}^..${commit} -- . ':(exclude).gitlab-ci.yml' > $patch_file
 
         # Remove the patch file if it is empty
-        if [ ! -s ${patch_file} ]; then
+        if [ ! -s "${patch_file}" ]; then
           echo "It's an empty file"
-          rm ${patch_file}
+          rm -f ${patch_file}
         else
           # Increment the patch count only if the patch is not empty
           patch_count=$((patch_count + 1))
