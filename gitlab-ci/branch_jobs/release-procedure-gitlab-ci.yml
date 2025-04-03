@@ -37,7 +37,7 @@ patch_creation_job:
           echo "========================"
           echo "Changes in commit: $commit"
           echo "========================"
-        git format-patch ${commit}^..${commit}
+        git format-patch ${commit}^..${commit} -- . ":!.gitlab-ci.yml"
       done
   artifacts:
     expire_in: 1 week
