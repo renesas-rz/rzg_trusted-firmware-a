@@ -40,7 +40,7 @@ patch_creation_job:
 
         # Generate the diff for the current commit and exclude unwanted files/folders
         patch_file="$(printf "%04d" $patch_count)-${sanitised_commit_message}.patch"
-        git diff ${commit}^..${commit} -- . ':!.gitlab-ci.yml' > $patch_file
+        git diff ${commit}^..${commit} -- . ':!.gitlab-ci.yml'
 
         # if [ ! -s "${patch_file}" ]; then
         #   echo "It's an empty file"
