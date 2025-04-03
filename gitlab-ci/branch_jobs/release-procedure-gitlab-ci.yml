@@ -37,7 +37,7 @@ patch_creation_job:
           echo "========================"
           echo "Changes in commit: $commit"
           echo "========================"
-        git format-patch ${commit}^..${commit} -- . ":!gitlab-ci/branch_jobs/release-procedure-gitlab-ci.yml"
+          git diff ${commit}^..${commit} | filterdiff -I ":!gitlab-ci/branch_jobs/release-procedure-gitlab-ci.yml"
       done
   artifacts:
     expire_in: 1 week
