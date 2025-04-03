@@ -32,20 +32,24 @@ patch_creation_job:
     - git status
     - mkdir -p release_patches
     - cd release_patches
-    - patch_count=1
-    - for commit in $(git rev-list --reverse ${OLD_COMMIT_ID}^..HEAD); do
-    - # Get the commit message for the filename
-    - commit_message=$(git log --format=%s -n 1 $commit)
-    - sanitised_commit_message=$(echo "$commit_message" | tr -cd '[:alnum:] ' | sed 's/ /_/g')
-    - patch_file="$(printf "%04d" $patch_count)-${sanitised_commit_message}.patch"
-    - git diff ${commit}^..${commit} -- . ':(exclude).gitlab-ci.yml' > $patch_file
-    # - if [ ! -s "${patch_file}" ]; then
-    # - echo "It's an empty file"
-    # - rm -f ${patch_file}
-    # - else
-    - patch_count=$((patch_count + 1))
-    # - fi
-    - done
+    - |
+      patch_count=1
+      for commit in $(git rev-list --reverse ${OLD_COMMIT_ID}^..HEAD); do
+        commit_message=$(git log --format=%s -n 1 $commit)
+        sanitised_commit_message=$(echo "$commit_message" | tr -cd '[:alnum:] ' | sed 's/ /_/g')
+
+        # Generate the diff for the current commit and exclude unwanted files/folders
+        patch_file="$(printf "%04d" $patch_count)-${sanitised_commit_message}.patch"
+        git diff ${commit}^..${commit} -- . ':(exclude).gitlab-ci.yml' > $patch_file
+
+        # if [ ! -s "${patch_file}" ]; then
+        #   echo "It's an empty file"
+        #   rm -f ${patch_file}
+        # else
+        #   # Increment the patch count only if the patch is not empty
+        patch_count=$((patch_count + 1))
+        # fi
+      done
   artifacts:
     expire_in: 1 week
     when: always
