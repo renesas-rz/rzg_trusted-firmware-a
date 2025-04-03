@@ -33,22 +33,11 @@ patch_creation_job:
     - mkdir -p release_patches
     - cd release_patches
     - |
-      patch_count=1
       for commit in $(git rev-list --reverse ${OLD_COMMIT_ID}^..HEAD); do
-        commit_message=$(git log --format=%s -n 1 $commit)
-        sanitised_commit_message=$(echo "$commit_message" | tr -cd '[:alnum:] ' | sed 's/ /_/g')
-
-        # Generate the diff for the current commit and exclude unwanted files/folders
-        patch_file="$(printf "%04d" $patch_count)-${sanitised_commit_message}.patch"
-        git diff ${commit}^..${commit} -- . ':!.gitlab-ci.yml'
-
-        # if [ ! -s "${patch_file}" ]; then
-        #   echo "It's an empty file"
-        #   rm -f ${patch_file}
-        # else
-        #   # Increment the patch count only if the patch is not empty
-        patch_count=$((patch_count + 1))
-        # fi
+          echo "========================"
+          echo "Changes in commit: $commit"
+          echo "========================"
+        git diff ${commit}^..${commit}
       done
   artifacts:
     expire_in: 1 week
