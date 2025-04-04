@@ -35,7 +35,6 @@ static console_t rzt2h_bl2_console;
 
 int bl2_plat_handle_post_image_load(unsigned int image_id)
 {
-	INFO("Hey, this is a test");
 	static bl2_to_bl31_params_mem_t *params;
 	bl_mem_params_node_t *bl_mem_params;
 
