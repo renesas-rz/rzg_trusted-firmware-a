@@ -3,29 +3,11 @@ Renesas RZ/G2L
 
 The "RZ/G2L" high-end 64-bit Arm®-based microprocessors (MPUs)
 enables the solutions required for the smart society of the future.
-Through a dual core of Arm Cortex®-A55 and in addation a M33 core, engineers can
+Through a dual core of Arm Cortex®-A55 and in addition a M33 core, engineers can
 easily implement real-time control and
 industrial ethernet connectivity.
 
 Plug-ins are available for multiple open-source software tools.
-
-
-Renesas RZ/G2L reference platforms:
------------------------------------
-
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-| Board        |      Details                                                                                                                          |
-+==============+===============+=======================================================================================================================+
-| smarc_pmic   | Equipped with Renesas RZ/G2L SoC                                                                                                      |
-|              +---------------------------------------------------------------------------------------------------------------------------------------+
-|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/rzg2l-evaluation-board-kit-rzg2l-evaluation-board-kit |
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-
-`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__
-
-The current TF-A port has been tested on the SMARC PMIC RZ/G2L
-SoC_id  r9a07g044l2 revision ESx.y.
-
 
 ::
 
@@ -46,6 +28,20 @@ SoC_id  r9a07g044l2 revision ESx.y.
         QSPI FLASH 64MB
         EMMC 32 GB EMMC (HS400 240 MBYTES/S)
         MICROSD-CARD SLOT (SDR104 100 MBYTES/S)
+
+
+Renesas RZ/G2L reference platforms:
+-----------------------------------
+
++--------------+---------------------------------------------------------------------------------------------------------------------------------------+
+| Board        |      Details                                                                                                                          |
++==============+===============+=======================================================================================================================+
+| smarc_pmic   | Equipped with Renesas RZ/G2L SoC                                                                                                      |
+|              +---------------------------------------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/rzg2l-evaluation-board-kit-rzg2l-evaluation-board-kit |
++--------------+---------------------------------------------------------------------------------------------------------------------------------------+
+
+`boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__
 
 Overview
 --------
