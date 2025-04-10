@@ -166,7 +166,7 @@ Flash Procedure for xSPI
 	3. Write the FIP srecord to the device SPI flash
 		a. Enter: XLS2
 		b. Program Top Address: 0x00000
-		c. QSPI Save Address: 0x60000
+		c. QSPI Save Address: 0x64000
 		d. Send the FIP srecord
 
 Flash Procedure for EMMC
@@ -193,7 +193,7 @@ Flash Procedure for EMMC
 	4. Write the FIP srecord to the device
 		a. Use the Flash Writer's command EM_W.
 		b. Partition Select: 1
-		c. Input Start Address in sector: 300
+		c. Input Start Address in sector: 320
 		d. Input Program Start Address: 0
 		e. Send the FIP srecord file
 
@@ -202,7 +202,7 @@ Flash Procedure for SD
 
 .. code-block:: text
 
-	Steps 1 to 9 only needs to be performed once.
+	Steps 1 to 11 only needs to be performed once.
 	1. Find the SD card partitions. In this case it they are sdb1 and sdb2, however they may be different on your system.
 		lsblk
 		...
@@ -328,7 +328,7 @@ Flash Procedure for SD
 		269+1 records out
 		137746 bytes (138 kB, 135 KiB) copied, 0.481328 s, 286 kB/s
 
-		sudo dd if=fip.bin of=/dev/sdb seek=768
+		sudo dd if=fip.bin of=/dev/sdb seek=800
 		1775+1 records in
 		1775+1 records out
 		908864 bytes (909 kB, 888 KiB) copied, 2.69016 s, 338 kB/s

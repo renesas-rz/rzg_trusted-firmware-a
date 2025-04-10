@@ -80,12 +80,14 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 };
 
 static const CPG_REG_SETTING cpg_pll4_tbl[] = {
-#if (DDR_PLL4 >= 800)
-	{ CPG_PLL4_CLK1, 0x04A13557 },
-	{ CPG_PLL4_CLK2, 0x00000002 },
+#if (DDR_PLL4 == 2133)
+	{ CPG_PLL4_CLK1, 0x00908000 },
+#elif (DDR_PLL4 == 1600)
+	{ CPG_PLL4_CLK1, 0x0498E000 },
 #else
 #error "Unknown DDR Type."
 #endif
+	{ CPG_PLL4_CLK2, 0x00000002 },
 	{ CPG_PLL4_STBY, 0x00010001 }
 };
 
@@ -534,10 +536,8 @@ void cpg_early_setup(void)
 
 void cpg_setup(void)
 {
-/* TODO: check if this is required */
-#if 0
-	 cpg_pll4_setup();
-#endif
+	mmio_write_32(CPG_PLL6_STBY, 0x10001);
+	cpg_pll4_setup();
 	cpg_div_sel_static_setup();
 	cpg_clock_on_setup();
 	cpg_div_sel_dynamic_setup();
@@ -552,8 +552,6 @@ void cpg_active_ddr1(void)
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
 
 	/* 3 */
-	cpg_pll4_setup();
-
 	mmio_write_32(CPG_CLKON_DDR, 0x003F003F);
 	while ((mmio_read_32(CPG_CLKMON_DDR) & 0x0000003F) != 0x0000003F)
 		;
