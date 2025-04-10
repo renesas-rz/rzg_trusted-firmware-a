@@ -206,7 +206,7 @@ Flash Procedure for SD
 
 .. code-block:: text
 
-	Steps 1 to 9 only needs to be performed once.
+	Steps 1 to 11 only needs to be performed once.
 	1. Find the SD card partitions. In this case it they are sdb1 and sdb2, however they may be different on your system.
 		lsblk
 		...
