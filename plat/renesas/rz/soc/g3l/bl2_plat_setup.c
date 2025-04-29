@@ -24,6 +24,7 @@
 #include <rz_soc_def.h>
 #include <platform_def.h>
 #include <rz_private.h>
+#include <sys_regs.h>
 
 static console_t rzg3l_bl2_console;
 
@@ -185,6 +186,9 @@ void bl2_platform_setup(void)
 	rz_io_setup();
 
 	plat_ddr_setup();
+
+	NOTICE("BL2: SYS_LSI_MODE: 0x%x\n", mmio_read_32(SYS_LSI_MODE));
+	NOTICE("BL2: SYS_LSI_DEVID: 0x%x\n", mmio_read_32(SYS_LSI_DEVID));
 }
 
 void bl2_el3_plat_prepare_exit(void)
