@@ -41,12 +41,13 @@ patch_creation_job:
     - git pull
     - git status
     - git format-patch ${OLD_COMMIT_ID}^ -- . ':!gitlab-ci' ':!scripts' ':!.gitlab-ci.yml'
+    - cp -r ./*.patch ../../tf-a/
   artifacts:
     expire_in: 1 week
     when: always
     name: ${TAG_NAME}_patches
     paths:
-      - ../workspace/tf-a/*.patch
+      - ./*.patch
 
 
 ############################################## tag_creation_job #######################################################
