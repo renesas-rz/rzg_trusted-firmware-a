@@ -28,7 +28,17 @@ patch_creation_job:
   rules:
       - if: $PIPELINE_TYPE == "release" && $RELEASE_TYPE == "internal_non_npi"
   script:
+    - cd ..
+    - if [ -e "./workspace" ]; then
+    - cd "./workspace/tf-a"
+    - else
+    - mkdir "workspace"
+    - cd "workspace"
+    - git clone http://svc_sp3_ci_etcetc:DC_p5HnJoAsvmocwdYer@global-infra-jp-main.dgn.renesas.com/products/common/bootloader/soc/tf-a.git
+    - cd "tf-a"
+    - fi
     - git checkout $CI_COMMIT_REF_NAME
+    - git pull
     - git status
     - git format-patch ${OLD_COMMIT_ID}^ -- . ':!gitlab-ci' ':!scripts' ':!.gitlab-ci.yml'
   artifacts:
@@ -36,7 +46,7 @@ patch_creation_job:
     when: always
     name: ${TAG_NAME}_patches
     paths:
-      - ./*.patch
+      - ../workspace/tf-a/*.patch
 
 
 ############################################## tag_creation_job #######################################################
