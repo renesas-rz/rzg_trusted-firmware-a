@@ -30,15 +30,13 @@ patch_creation_job:
   script:
     - git checkout $CI_COMMIT_REF_NAME
     - git status
-    - mkdir -p release_patches
-    - cd release_patches
     - git format-patch $OLD_COMMIT_ID^ -- . ':!gitlab-ci' ':!scripts' ':!.gitlab-ci.yml'
   artifacts:
     expire_in: 1 week
     when: always
     name: ${TAG_NAME}_patches
     paths:
-      - ./release_patches/*.patch
+      - ./*.patch
 
 
 ############################################## tag_creation_job #######################################################
