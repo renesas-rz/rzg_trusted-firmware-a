@@ -810,6 +810,8 @@ static CPG_SETUP_DATA cpg_clk_sr2_tbl[] = {
 
 void cpg_prepare_suspend(void)
 {
+	REMOVE_MSTOPS_W(CPG_BUS_3_MSTOP, CPG_BUS_3_MSTOP_RIIC8);
+
 	cpg_ctrl_clkrst(&cpg_clk_sr2_tbl[0], ARRAY_SIZE(cpg_clk_sr2_tbl));
 }
 
