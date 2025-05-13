@@ -82,7 +82,10 @@ void retcsr_read_registers(uint32_t *buffer, size_t size)
 	for (i = 0; i < ARRAY_SIZE(retcsr_list_ctrl); i++, buffer++)
 		*buffer = DDRTOP_mc_apb_rd(retcsr_list_ctrl[i]);
 
-	dwc_ddrphy_apb_wr(0x0006D080, 2);
+	uint32_t dram_class = DDRTOP_mc_param_rd(DRAM_CLASS_ADDR, DRAM_CLASS_OFFSET, DRAM_CLASS_WIDTH);
+	uint32_t val = ((dram_class == 0b1011) ? 2 : 0);
+
+	dwc_ddrphy_apb_wr(0x0006D080, val);
 	dwc_ddrphy_apb_wr(0x0006E000, 1);
 }
 
@@ -104,6 +107,9 @@ void retcsr_write_registers(uint32_t *buffer, size_t size)
 	for (i = 0; i < ARRAY_SIZE(retcsr_list_ctrl); i++, buffer++)
 		DDRTOP_mc_apb_wr(retcsr_list_ctrl[i], *buffer);
 
-	dwc_ddrphy_apb_wr(0x0006D080, 2);
+	uint32_t dram_class = DDRTOP_mc_param_rd(DRAM_CLASS_ADDR, DRAM_CLASS_OFFSET, DRAM_CLASS_WIDTH);
+	uint32_t val = ((dram_class == 0b1011) ? 2 : 0);
+
+	dwc_ddrphy_apb_wr(0x0006D080, val);
 	dwc_ddrphy_apb_wr(0x0006E000, 1);
 }

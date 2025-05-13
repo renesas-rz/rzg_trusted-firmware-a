@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-// RZ/G3L, v2.0.2, L4.R1W16X16D16S21.ADEE-0
+// RZ/G3L, v2.0.3, L4.R1W16X16D16S21.ADEE-0
 
 #include <stdint.h>
 #include <lib/utils_def.h>
 
-const char ddr_version_str[] = "02.02";
+const char ddr_version_str[] = "02.03";
 
 const uint32_t param_setup_mc[][2] = {
 	{0x0000, 0x00000b00},

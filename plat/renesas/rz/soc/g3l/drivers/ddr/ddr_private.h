@@ -39,7 +39,6 @@ extern void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train);
 extern void dwc_ddrphy_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask);
 extern void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask);
 
-extern uint32_t get_mail(uint8_t mode_32bits);
 extern void wait_pclk(uint32_t cycles);
 extern void wait_dficlk(uint32_t cycles);
 extern void wait_regaclk(uint32_t cycles);

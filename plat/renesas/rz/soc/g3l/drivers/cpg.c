@@ -468,7 +468,7 @@ static void cpg_clkrst_start(const CPG_SETUP_DATA *tbl, const uint32_t size)
 }
 
 /* It is assumed that the PLL has stopped by the time this function is executed. */
-static void cpg_pll4_setup(void)
+static void cpg_pll_setup(void)
 {
 	int cnt;
 	uint32_t val = 0;
@@ -537,7 +537,7 @@ void cpg_early_setup(void)
 void cpg_setup(void)
 {
 	mmio_write_32(CPG_PLL6_STBY, 0x10001);
-	cpg_pll4_setup();
+	cpg_pll_setup();
 	cpg_div_sel_static_setup();
 	cpg_clock_on_setup();
 	cpg_div_sel_dynamic_setup();

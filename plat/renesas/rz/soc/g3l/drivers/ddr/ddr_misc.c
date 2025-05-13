@@ -113,31 +113,7 @@ void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 	}
 }
 
-void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
-{
-	uint32_t mail = 0, data = 0, train_done = 0;
-
-	wait_dficlk(10);
-
-	while (train_done == 0) {
-		wait_pclk(500);
-
-		data = dwc_ddrphy_apb_rd(0x6e004);
-		if ((data & 0x1) == 0) {
-			mail = get_mail(0);
-			if (mail == 0xff || mail == 0x07) {
-				train_done = 1;
-			}
-		}
-	}
-
-	if (mail == 0xff) {
-		ERROR("Training failed.\n");
-		panic();
-	}
-}
-
-uint32_t get_mail(uint8_t mode_32bits)
+uint32_t dwc_ddrphy_get_mail(uint8_t mode_32bits)
 {
 	uint32_t mail = 0;
 	uint32_t wd_timer = 0;
@@ -163,6 +139,30 @@ uint32_t get_mail(uint8_t mode_32bits)
 	dwc_ddrphy_apb_wr(0x0006E031, 0x00000001);
 
 	return mail;
+}
+
+void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
+{
+	uint32_t mail = 0, data = 0, train_done = 0;
+
+	wait_dficlk(10);
+
+	while (train_done == 0) {
+		wait_pclk(500);
+
+		data = dwc_ddrphy_apb_rd(0x6e004);
+		if ((data & 0x1) == 0) {
+			mail = dwc_ddrphy_get_mail(0);
+			if (mail == 0xff || mail == 0x07) {
+				train_done = 1;
+			}
+		}
+	}
+
+	if (mail == 0xff) {
+		ERROR("Training failed.\n");
+		panic();
+	}
 }
 
 static void soft_delay(uint64_t usec)

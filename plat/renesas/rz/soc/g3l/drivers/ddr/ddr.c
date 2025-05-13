@@ -83,10 +83,7 @@ void ddr_retention_entry(void)
 
 	wait_dficlk(18);
 
-	/* TODO: check the below statements */
-#if 1
 	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000311);
-#endif
 
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	mmio_write_32(VBATT_BKPSR, 0x00000080);
@@ -103,11 +100,8 @@ void ddr_retention_exit(void)
 	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000301);
 #endif
 
-	/* TODO: check the below statements */
-#if 1
 	wait_dficlk(18);
 	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000200);
-#endif
 
 	cpg_active_ddr1();
 	setup_mc();
@@ -162,7 +156,7 @@ static void phyinit_mc(void)
 		val = dwc_ddrphy_apb_rd(0x031020); x = (val > x) ? val : x;
 	}
 
-	val = 12 + tctrl_delay + (2 * x) + ((dram_class  == 0b1101) ? 2 : 1);
+	val = 12 + tctrl_delay + (2 * x) + ((dram_class  == 0b1011) ? 2 : 1);
 	DDRTOP_mc_param_wr(TDFI_PHY_RDLAT_F0_ADDR, TDFI_PHY_RDLAT_F0_OFFSET, TDFI_PHY_RDLAT_F0_WIDTH, val);
 
 	x = 0;
@@ -186,8 +180,8 @@ static void phyinit_mc(void)
 		val = dwc_ddrphy_apb_rd(0x0311d1); x = (val > x) ? val : x;
 	}
 
-	tx_dqs_dly = ((x >> 6) & 0xf) + (((x >> 4) & 0x01) + ((x >> 3) & 0x1));
-	val = tctrl_delay + (6 + (bl / 2)) + tx_dqs_dly;
+	tx_dqs_dly = ((x >> 6) & 0xf) + ((x & 0x1f) > 0 ? 1 : 0);
+	val = tctrl_delay + (6 + (bl >> 1)) + tx_dqs_dly;
 	DDRTOP_mc_param_wr(TDFI_WRDATA_DELAY_ADDR, TDFI_WRDATA_DELAY_OFFSET, TDFI_WRDATA_DELAY_WIDTH, val);
 
 	dwc_ddrphy_apb_wr(0x6E000, 0x1);
@@ -220,7 +214,7 @@ static void	restore_retcsr(void)
 }
 
 #if PLAT_DDR_ECC
-static void ddrtop_prog_all0(uint64_t start_address, uint32_t addr_space)
+static void DDRTOP_bist_prog0(uint64_t start_address, uint32_t addr_space)
 {
 	uint32_t bak_lp_auto_entry_en;
 
@@ -255,30 +249,22 @@ static void ddrtop_prog_all0(uint64_t start_address, uint32_t addr_space)
 static void prog_all0(void)
 {
 	uint32_t val = ddrtop_mc_param_rd(CS_MAP_ADDR, CS_MAP_OFFSET, CS_MAP_WIDTH);
-	uint32_t end_addr17;
+	uint32_t end_addr_u16;
 
 	if (val == 0x01) {
-		end_addr17 = ddrtop_mc_param_rd(CS_VAL_UPPER_0_ADDR, CS_VAL_UPPER_0_OFFSET, CS_VAL_UPPER_0_WIDTH);
+		end_addr_u16 = ddrtop_mc_param_rd(CS_VAL_UPPER_0_ADDR, CS_VAL_UPPER_0_OFFSET, CS_VAL_UPPER_0_WIDTH);
 	} else {
-		end_addr17 = ddrtop_mc_param_rd(CS_VAL_UPPER_1_ADDR, CS_VAL_UPPER_1_OFFSET, CS_VAL_UPPER_1_WIDTH);
+		end_addr_u16 = ddrtop_mc_param_rd(CS_VAL_UPPER_1_ADDR, CS_VAL_UPPER_1_OFFSET, CS_VAL_UPPER_1_WIDTH);
 	}
 
-	uint32_t addr_space;
+	uint32_t addr_space = 0;
 
-	if (end_addr17 == 0xdfff) {
-		addr_space = 33;
-	} else if (end_addr17 == 0x6fff) {
-		addr_space = 32;
-	} else if (end_addr17 == 0x37ff) {
-		addr_space = 31;
-	} else if (end_addr17 == 0x1bff) {
-		addr_space = 30;
-	} else if (end_addr17 == 0x0dff) {
-		addr_space = 29;
-	} else {
-		addr_space = 33;
+	for (uint8_t i = 10; i < 16; i++) {
+		if ((end_addr_u16 & (1 << i)) != 0) {
+			addr_space = 18 + i;
+		}
 	}
 
-	ddrtop_prog_all0(0, addr_space);
+	DDRTOP_bist_prog0(0, addr_space);
 }
 #endif
