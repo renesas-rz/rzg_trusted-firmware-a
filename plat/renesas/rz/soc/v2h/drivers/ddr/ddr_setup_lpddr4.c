@@ -13,20 +13,19 @@
 extern const uint32_t param_phyinit_swizzle[][2];
 extern const uint32_t param_phyinit_c[][2];
 extern const uint32_t param_phyinit_i[][2];
-extern const uint32_t phyinit_1d[];
-extern const uint32_t phyinit_2d[];
-extern const uint32_t param_phyinit_f_1d_0[][2];
-extern const uint32_t param_phyinit_f_2d_0[][2];
+extern const uint16_t param_phyinit_1d_dat0[];
+extern const uint16_t param_phyinit_2d_dat0[];
+extern const uint16_t param_phyinit_1d_dat1[];
+extern const uint16_t param_phyinit_2d_dat1[];
 extern const uint32_t param_setup_mc[][2];
 
 extern const uint32_t param_phyinit_swizzle_size;
 extern const uint32_t param_phyinit_c_size;
 extern const uint32_t param_phyinit_i_size;
-extern const uint32_t phyinit_1d_size;
-extern const uint32_t phyinit_2d_size;
-extern const uint32_t param_phyinit_f_1d_0_size;
-extern const uint32_t param_phyinit_f_2d_0_size;
-
+extern const uint32_t param_phyinit_1d_dat0_size;
+extern const uint32_t param_phyinit_2d_dat0_size;
+extern const uint32_t param_phyinit_1d_dat1_size;
+extern const uint32_t param_phyinit_2d_dat1_size;
 extern const uint32_t param_setup_mc_size;
 
 
@@ -81,15 +80,23 @@ void phyinit_load_1d_image(void)
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x0);
 
-	for (i = 0x0; i <= 0x3fff; i++)	{
-		dwc_ddrphy_apb_wr((uint32_t)(0x50000+i), (uint32_t)(phyinit_1d[i]));
+	for (i = 0x0; i <= param_phyinit_1d_dat0_size; i++)	{
+		dwc_ddrphy_apb_wr((uint32_t)(0x50000+i), (uint32_t)(param_phyinit_1d_dat0[i]));
+	}
+
+	for (i = i; i <= 0x4000; i++)	{
+		dwc_ddrphy_apb_wr((uint32_t)(0x50000+i), (uint32_t)0x0);
 	}
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
 
-	for (i = 0; i < param_phyinit_f_1d_0_size; i++) {
-		dwc_ddrphy_apb_wr(param_phyinit_f_1d_0[i][0], param_phyinit_f_1d_0[i][1]);
+	dwc_ddrphy_apb_wr(0x0d0000, 0x0);
+
+	for (i = 0; i < param_phyinit_1d_dat1_size; i++) {
+		dwc_ddrphy_apb_wr((uint32_t)(0x54000+i), (uint32_t)(param_phyinit_1d_dat1[i]));
 	}
+
+	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
 }
 
 void phyinit_exec_1d_image(void)
@@ -214,15 +221,23 @@ void phyinit_load_2d_image(void)
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x0);
 
-	for (i = 0x0; i <= 0x3fff; i++) {
-		dwc_ddrphy_apb_wr((uint32_t)(0x50000 + i), (uint32_t)(phyinit_2d[i]));
+	for (i = 0x0; i <= param_phyinit_2d_dat0_size; i++) {
+		dwc_ddrphy_apb_wr((uint32_t)(0x50000 + i), (uint32_t)(param_phyinit_2d_dat0[i]));
+	}
+
+	for (i = i; i <= 0x4000; i++)	{
+		dwc_ddrphy_apb_wr((uint32_t)(0x50000+i), (uint32_t)0x0);
 	}
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
 
-	for (i = 0; i < param_phyinit_f_2d_0_size; i++) {
-		dwc_ddrphy_apb_wr(param_phyinit_f_2d_0[i][0], param_phyinit_f_2d_0[i][1]);
+	dwc_ddrphy_apb_wr(0x0d0000, 0x0);
+
+	for (i = 0; i < param_phyinit_2d_dat1_size; i++) {
+		dwc_ddrphy_apb_wr((uint32_t)(0x54000+i), (uint32_t)(param_phyinit_2d_dat1[i]));
 	}
+
+	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
 }
 
 void phyinit_exec_2d_image(void)
