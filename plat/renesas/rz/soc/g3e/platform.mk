@@ -31,6 +31,7 @@ BL2_SOURCES				+=	plat/renesas/rz/soc/g3e/bl2_plat_setup.c			\
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/g3e/bl31_plat_setup.c		\
 							plat/renesas/rz/soc/g3e/plat_pm.c				\
+							plat/renesas/rz/soc/g3e/drivers/wdt.c			\
 							plat/renesas/rz/soc/g3e/rz_plat_sip_handler.c
 
 

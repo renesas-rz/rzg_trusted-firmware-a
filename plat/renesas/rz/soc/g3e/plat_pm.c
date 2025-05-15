@@ -14,11 +14,13 @@
 #include <common/bl_common.h>
 
 #include "cpg_regs.h"
+#include <cpg.h>
 #include "pwrc.h"
 #include "rz_private.h"
 #include "rz_soc_def.h"
 #include "sys_regs.h"
 #include "syc.h"
+#include "wdt.h"
 
 
 #define LO_REG							(0U)
@@ -42,6 +44,13 @@ typedef struct {
 } mailbox_t;
 
 uintptr_t	gp_warm_ep;
+
+const uint32_t cores_reset_vector[PLATFORM_CORE_COUNT][2] = {
+		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
+		{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
+		{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
+		{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
+	};
 
 static void rz_program_trusted_mailbox(u_register_t mpidr, uintptr_t address)
 {
@@ -87,12 +96,6 @@ static int rz_validate_power_state(unsigned int power_state, psci_power_state_t 
 
 static int rzg3e_pwr_domain_on(u_register_t mpidr)
 {
-	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
-		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
-		{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
-		{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
-		{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
-	};
 
 	const CPG_CORE_PWR pch[PLATFORM_CORE_COUNT] = {
 		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ0, CPG_LP_CA55_CTL2_COREACCEPT0, CPG_LP_CA55_CTL2_CORESTATE0_ON_MASK },
@@ -119,8 +122,8 @@ static int rzg3e_pwr_domain_on(u_register_t mpidr)
 	rz_program_trusted_mailbox(mpidr, gp_warm_ep);
 
 	/*  Start the core */
-	mmio_write_32(rval[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
-	mmio_write_32(rval[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
+	mmio_write_32(cores_reset_vector[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
+	mmio_write_32(cores_reset_vector[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
 
 	/* Assert PORESET */
 	mmio_write_32(CPG_RST_0, (0x00010000 << coreid));
@@ -228,6 +231,33 @@ static void __dead2 rzg3e_system_off(void)
 	panic();
 }
 
+static void __dead2 rzg3e_system_reset(void)
+{
+	INFO("RZ/G3E System Reset\n");
+
+	cpg_reset_wdt1();
+
+	for (int i = 0; i < PLATFORM_CORE_COUNT; i++) {
+		mmio_write_32(cores_reset_vector[i][LO_REG], 0x00000000);
+		mmio_write_32(cores_reset_vector[i][HI_REG], 0x00000000);
+	}
+
+	cpg_setup_wdt1();
+
+	console_flush();
+
+	/* Issue Barrier instruction */
+	isb();
+	dsb();
+
+	wdt_system_reset();
+
+	for (;;) {
+
+	}
+	panic();
+}
+
 
 const plat_psci_ops_t rzg3e_plat_psci_ops = {
 	/*****PSCI Common function*****/
@@ -241,6 +271,8 @@ const plat_psci_ops_t rzg3e_plat_psci_ops = {
 	.pwr_domain_off						= rzg3e_pwr_domain_off,
 	/*****PSCI_SYSTEM_OFF*****/
 	.system_off							= rzg3e_system_off,
+	/*****PSCI_SYSTEM_RESET*****/
+	.system_reset						= rzg3e_system_reset,
 	/*****PSCI_SYSTEM_SUSPEND_AARCH64*****/
 	#if PLAT_SYSTEM_SUSPEND
 	.pwr_domain_suspend					= rz_pwr_domain_suspend,

@@ -10,7 +10,9 @@
 #include <common/bl_common.h>
 #include <lib/xlat_tables/xlat_tables_compat.h>
 #include <plat/common/common_def.h>
+#include <drivers/generic_delay_timer.h>
 #include <scifa.h>
+#include <syc.h>
 
 #include "plat_tzc_def.h"
 #include "rz_private.h"
@@ -46,6 +48,11 @@ void bl31_early_platform_setup2(u_register_t arg0,
 
 	console_set_scope(&rzg3e_bl31_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
+
+	syc_init(RZG3E_SYC_INCK_HZ);
+
+		/* initialize Timer */
+	generic_delay_timer_init();
 
 	/* copy bl2_to_bl31_params_mem_t*/
 	memcpy(&from_bl2, (void *)PARAMS_BASE, sizeof(from_bl2));
