@@ -156,7 +156,7 @@ echo "Step 2 Passed - Removed code that should be removed for all releases"
 #######################################################################################################################
 # Step 3: Remove references to devices.
 #######################################################################################################################
-all_unreleased_devices_list="n2h,t2h,g3s,v2h,v2n,g3e,g2l,g2lc,g2ul,v2l"
+all_unreleased_devices_list="n2h,t2h,g3s,v2h,v2n,g3e,g2l,g2lc,g2ul,v2l,g3l"
 
 IFS=' ' read -ra array_keep <<< "$list_devices_to_keep"
 IFS=',' read -ra array_remove <<< "$all_unreleased_devices_list"
@@ -193,6 +193,9 @@ else
 
 		#remove files specific to device type
 		case $device_for_removal in
+		"g3l")
+			echo ""
+			;;
 		"n2h")
 			echo ""
 			;;

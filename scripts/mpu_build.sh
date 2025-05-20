@@ -40,6 +40,28 @@ PIPELINE_TYPE	: $PIPELINE_TYPE
 ERROR_MSG   	: $ERROR_MSG
 BL33			: $BL33"
 
+################################################## g3l_build ##########################################################
+# 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
+#	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
+# 2. Build command for building g3l, these are run via the run_command function.
+#######################################################################################################################
+g3l_build()
+{
+	U_BOOT_FILE=""
+	if [[ "$BOARD" = "dev_1" ]] && [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		U_BOOT_FILE="../../u-boot/g3l-dev-1-u-boot.bin"
+	elif [[ "$BOARD" = "dev_1" ]]; then
+		U_BOOT_FILE="../u-boot/g3l-dev-1-u-boot.bin"
+	else
+		echo "Invalid G3L board: Board doesn't exist"
+		exit 1
+	fi
+
+	check_file_exists "$U_BOOT_FILE"
+
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$U_BOOT_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
+}
+
 ################################################## n2h_build ##########################################################
 # 1. For release and merge gateway pipelines, the current path would be within the workspace directory rather than the
 #	 default runner tf-a directory. Hence, the path to u-boot would be different for these two cases.
@@ -480,7 +502,9 @@ final_job_status_check()
 
 ################################################## Build execution #######################################################
 # Linux specific execution
-if [ "$PLAT" = "n2h" ] && [ "$TARGET_OS" != "windows" ]; then
+if [ "$PLAT" = "g3l" ] && [ "$TARGET_OS" != "windows" ]; then
+	g3l_build
+elif [ "$PLAT" = "n2h" ] && [ "$TARGET_OS" != "windows" ]; then
 	n2h_build
 elif [ "$PLAT" = "t2h" ] && [ "$TARGET_OS" != "windows" ]; then
 	t2h_build
@@ -502,6 +526,8 @@ elif [ "$PLAT" = "v2l" ] && [ "$TARGET_OS" != "windows" ]; then
 	v2l_build
 
 # Windows specific execution
+elif [ "$PLAT" = "g3l" ] && [ "$TARGET_OS" = "windows" ]; then
+	tfa_build_windows
 elif [ "$PLAT" = "n2h" ] && [ "$TARGET_OS" = "windows" ]; then
 	tfa_build_windows
 elif [ "$PLAT" = "t2h" ] && [ "$TARGET_OS" = "windows" ]; then

@@ -935,6 +935,11 @@
 	 "filter": true
 	},
 	{"kind": "file",
+	 "name": "/docs/plat/rz-g3l.rst",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
 	 "name": "/docs/plat/rz-g3s.rst",
 	 "all_issue_codes": true,
 	 "filter": true
@@ -3895,6 +3900,11 @@
 	 "filter": true
 	},
 	{"kind": "file",
+	 "name": "/gitlab-ci/dev_mpu_build/g3l-gitlab-ci.yml",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
 	 "name": "/gitlab-ci/dev_mpu_build/g3s-gitlab-ci.yml",
 	 "all_issue_codes": true,
 	 "filter": true
@@ -3916,6 +3926,11 @@
 	},
 	{"kind": "file",
 	 "name": "/gitlab-ci/tag_mpu_build/g3e-gitlab-ci.yml",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/gitlab-ci/tag_mpu_build/g3l-gitlab-ci.yml",
 	 "all_issue_codes": true,
 	 "filter": true
 	},
@@ -16156,6 +16171,16 @@
 	},
 	{"kind": "file",
 	 "name": "/plat/renesas/rz/board/g3e_smarc/rz_board.mk",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/board/g3l_dev_1/ddr_param_def_lpddr4.c",
+	 "all_issue_codes": true,
+	 "filter": true
+	},
+	{"kind": "file",
+	 "name": "/plat/renesas/rz/board/g3l_dev_1/rz_board.mk",
 	 "all_issue_codes": true,
 	 "filter": true
 	},

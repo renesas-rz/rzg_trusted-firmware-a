@@ -31,7 +31,10 @@ include:
     rules:
       - if: $CHECKPATCH_AND_BUILD == "true"
   # Linux MPU builds
-  - local: gitlab-ci/jobs/plat_jobs/n2h-gitlab-ci.yml
+  - local: gitlab-ci/plat_jobs/g3l-gitlab-ci.yml
+    rules:
+      - if: $CHECKPATCH_AND_BUILD == "true"
+  - local: gitlab-ci/plat_jobs/n2h-gitlab-ci.yml
     rules:
       - if: $CHECKPATCH_AND_BUILD == "true"
   - local: gitlab-ci/jobs/plat_jobs/t2h-gitlab-ci.yml
@@ -70,6 +73,9 @@ include:
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
   - local: gitlab-ci/klocwork_mpu_build/g2ul-gitlab-ci.yml
+    rules:
+      - if: $RUN_KLOCWORK_BUILD == "true"
+  - local: gitlab-ci/klocwork_mpu_build/g3l-gitlab-ci.yml
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
   - local: gitlab-ci/klocwork_mpu_build/n2h-gitlab-ci.yml
