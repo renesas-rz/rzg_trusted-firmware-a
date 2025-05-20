@@ -106,6 +106,15 @@ uint32_t sys_get_platform_part_number(void)
 	return part_number;
 }
 
+uint32_t sys_get_platform_product_version(void)
+{
+	uint32_t product_version = 0U;
+
+	(void)r_otp_read(OTP_PRODUCT_VER_ADDR, &product_version, OTP_PRODUCT_VER_LEN);
+
+	return product_version;
+}
+
 uint32_t sys_get_platform_core_count(void)
 {
 	uint32_t core_count = 0U;	/* Zero is an impossible value for the core count */

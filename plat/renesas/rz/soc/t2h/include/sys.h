@@ -28,6 +28,7 @@ extern void sys_safetybase_unlock(uint32_t unlock_mask);
 extern void sys_safetybase_lock(uint32_t lock_mask);
 extern uint64_t sys_get_platform_chipid(void);
 extern uint32_t sys_get_platform_part_number(void);
+extern uint32_t sys_get_platform_product_version(void);
 extern uint32_t sys_get_platform_core_count(void);
 extern bool sys_check_platform_core_count(void);
 

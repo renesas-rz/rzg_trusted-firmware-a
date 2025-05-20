@@ -147,4 +147,30 @@ void bl2_platform_setup(void)
 
 	/* initialize DDR */
 	ddr_setup();
+
+	uint32_t md_mon_val = mmio_read_32(MD_MON);
+
+	NOTICE("BL2: MD_MON: 0X%x\n", md_mon_val);
+
+	if ((md_mon_val & 0x00007000) == 0x00000000) {
+		NOTICE("BL2: BOOT MODE: xSPI0 x1\n");
+	} else if ((md_mon_val & 0x00007000) == 0x00001000) {
+		NOTICE("BL2: BOOT MODE: xSPI0 x8\n");
+	} else if ((md_mon_val & 0x00007000) == 0x00002000) {
+		NOTICE("BL2: BOOT MODE: xSPI1\n");
+	} else if ((md_mon_val & 0x00007000) == 0x00003000) {
+		NOTICE("BL2: BOOT MODE: eSD\n");
+	} else if ((md_mon_val & 0x00007000) == 0x00004000) {
+		NOTICE("BL2: BOOT MODE: eMMC\n");
+	} else if ((md_mon_val & 0x00007000) == 0x00005000) {
+		NOTICE("BL2: BOOT MODE: SCI (UART)\n");
+	} else if ((md_mon_val & 0x00007000) == 0x00006000) {
+		NOTICE("BL2: BOOT MODE: USB\n");
+	} else {
+		ERROR("BL2: INCORRECT BOOT MODE SETTINGS\n");
+		panic();
+	}
+
+	NOTICE("BL2: PART NUMBER: 0X%x\n", sys_get_platform_part_number());
+	NOTICE("BL2: PRODUCT VERSION: 0X%x\n", sys_get_platform_product_version());
 }
