@@ -156,4 +156,8 @@ void bl2_platform_setup(void)
 #endif /* DEBUG_FPGA */
 
 	rz_io_setup();
+
+	NOTICE("BL2: SYS_LSI_MODE: 0x%x\n", mmio_read_32(SYS_LSI_MODE));
+	NOTICE("BL2: SYS_LSI_DEVID: 0x%x\n", mmio_read_32(SYS_LSI_DEVID));
+	NOTICE("BL2: SYS_LSI_PRR: 0x%x\n", mmio_read_32(SYS_LSI_PRR));
 }
