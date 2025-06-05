@@ -13,19 +13,22 @@
 #include <plat/common/platform.h>
 
 #include <cpg_regs.h>
+#include <cpg.h>
 #include <sys_regs.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 #include <common/bl_common.h>
+#include <wdt.h>
 
 uintptr_t	gp_warm_ep;
 
-static int rzg2l_pwr_domain_on(u_register_t mpidr)
-{
-	const uint32_t rval[2][2] = {
+const uint32_t cores_reset_vector[2][2] = {
 		{ SYS_CA55_CFG_RVAL0, SYS_CA55_CFG_RVAH0 },
 		{ SYS_CA55_CFG_RVAL1, SYS_CA55_CFG_RVAH1 }
 	};
+
+static int rzg2l_pwr_domain_on(u_register_t mpidr)
+{
 	const uint32_t pch[2][2] = {
 		{ CPG_CORE0_PCHCTL, CPG_CORE0_PCHMON },
 		{ CPG_CORE1_PCHCTL, CPG_CORE1_PCHMON }
@@ -46,8 +49,8 @@ static int rzg2l_pwr_domain_on(u_register_t mpidr)
 	}
 
 	/*  Start the core */
-	mmio_write_32(rval[coreid][0], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
-	mmio_write_32(rval[coreid][1], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
+	mmio_write_32(cores_reset_vector[coreid][0], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
+	mmio_write_32(cores_reset_vector[coreid][1], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
 
 	/* Assert PORESET */
 	mmio_write_32(CPG_RST_CA55, (0x00010000 << coreid));
@@ -110,11 +113,42 @@ static void __dead2 rzg2l_system_off(void)
 	panic();
 }
 
+static void __dead2 rzg2l_system_reset(void)
+{
+	INFO("RZ/G2L System Reset\n");
+
+	cpg_reset_wdt0();
+
+	for (int i = 0; i < PLATFORM_CORE_COUNT; i++) {
+		mmio_write_32(cores_reset_vector[i][0], 0x00000000);
+		mmio_write_32(cores_reset_vector[i][1], 0x00000000);
+	}
+
+	cpg_setup_wdt0();
+
+	console_flush();
+
+	/* Issue Barrier instruction */
+	isb();
+	dsb();
+
+	wdt_system_reset();
+
+	for (;;) {
+
+	}
+
+	panic();
+}
+
 const plat_psci_ops_t rzg2l_plat_psci_ops = {
 	.pwr_domain_on						= rzg2l_pwr_domain_on,
 	.pwr_domain_on_finish				= rzg2l_pwr_domain_on_finish,
 	.pwr_domain_off						= rzg2l_pwr_domain_off,
+	/*****PSCI_SYSTEM_OFF*****/
 	.system_off							= rzg2l_system_off,
+	/*****PSCI_SYSTEM_RESET*****/
+	.system_reset						= rzg2l_system_reset,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,

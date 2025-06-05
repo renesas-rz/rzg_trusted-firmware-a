@@ -17,6 +17,24 @@
 #define CPG_T_CLK		(0)
 #define CPG_T_RST		(1)
 
+#define	CPG_PLL2_INDEX					(0)
+#define	CPG_PLL3_INDEX					(1)
+#define	CPG_PLL5_INDEX					(2)
+
+#define CPG_SEL_PLL1_ON_OFF					(0)
+#define CPG_SEL_PLL2_1_ON_OFF				(1)
+#define CPG_SEL_PLL2_2_ON_OFF				(2)
+#define CPG_SEL_PLL3_1_ON_OFF				(3)
+#define CPG_SEL_PLL3_2_ON_OFF				(4)
+#define CPG_SEL_PLL3_3_ON_OFF				(5)
+#define CPG_SEL_PLL5_1_ON_OFF				(6)
+#define CPG_SEL_PLL5_3_ON_OFF				(7)
+#define CPG_SEL_PLL5_4_ON_OFF				(8)
+#define CPG_SEL_PLL6_1_ON_OFF				(9)
+#define CPG_SEL_GPU1_1_ON_OFF				(10)
+#define CPG_SEL_GPU1_2_ON_OFF				(11)
+#define CPG_SEL_GPU2_ON_OFF					(12)
+
 typedef struct {
 	uintptr_t reg;
 	uintptr_t mon;
@@ -63,10 +81,6 @@ static CPG_PLL_SETDATA_146 cpg_pll6_setdata = {
 	{ CPG_PLL6_STBY, 0x00010001 }, /* SSC OFF */
 };
 
-#define	CPG_PLL2_INDEX					(0)
-#define	CPG_PLL3_INDEX					(1)
-#define	CPG_PLL5_INDEX					(2)
-
 static const CPG_SETUP_DATA early_setup_tbl[] = {
 	{
 		(uintptr_t)CPG_CLKON_SYC,
@@ -77,6 +91,38 @@ static const CPG_SETUP_DATA early_setup_tbl[] = {
 	{
 		(uintptr_t)CPG_RST_SYC,
 		(uintptr_t)CPG_RSTMON_SYC,
+		0x00010001,
+		CPG_T_RST
+	}
+};
+
+static CPG_SETUP_DATA cpg_clk_rst_wdt_on_tbl[] = {
+	{		/* WDT */
+		(uintptr_t)CPG_CLKON_WDT,
+		(uintptr_t)CPG_CLKMON_WDT,
+		0x00030003,
+		CPG_T_CLK
+	},
+
+	{		/* WDT */
+		(uintptr_t)CPG_RST_WDT,
+		(uintptr_t)CPG_RSTMON_WDT,
+		0x00010001,
+		CPG_T_RST
+	}
+};
+
+static CPG_SETUP_DATA cpg_clk_rst_wdt_off_tbl[] = {
+	{		/* WDT */
+		(uintptr_t)CPG_CLKON_WDT,
+		(uintptr_t)CPG_CLKMON_WDT,
+		0x00030000,
+		CPG_T_CLK
+	},
+
+	{		/* WDT */
+		(uintptr_t)CPG_RST_WDT,
+		(uintptr_t)CPG_RSTMON_WDT,
 		0x00010001,
 		CPG_T_RST
 	}
@@ -484,20 +530,6 @@ static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
 	{ (uintptr_t)CPG_PL2SDHI_DSEL,          0x00110022 },
 };
 
-#define CPG_SEL_PLL1_ON_OFF					(0)
-#define CPG_SEL_PLL2_1_ON_OFF				(1)
-#define CPG_SEL_PLL2_2_ON_OFF				(2)
-#define CPG_SEL_PLL3_1_ON_OFF				(3)
-#define CPG_SEL_PLL3_2_ON_OFF				(4)
-#define CPG_SEL_PLL3_3_ON_OFF				(5)
-#define CPG_SEL_PLL5_1_ON_OFF				(6)
-#define CPG_SEL_PLL5_3_ON_OFF				(7)
-#define CPG_SEL_PLL5_4_ON_OFF				(8)
-#define CPG_SEL_PLL6_1_ON_OFF				(9)
-#define CPG_SEL_GPU1_1_ON_OFF				(10)
-#define CPG_SEL_GPU1_2_ON_OFF				(11)
-#define CPG_SEL_GPU2_ON_OFF					(12)
-
 static CPG_REG_SETTING cpg_sel_pll1_on_off[] = {
 	{(uintptr_t)CPG_CLKON_CA55, 0x00010001 }
 };
@@ -873,6 +905,21 @@ void cpg_wdtrst_sel_setup(void)
 					WDTRST_SEL_WDTRSTSEL0 |
 					WDTRST_SEL_WDTRSTSEL1 |
 					WDTRST_SEL_WDTRSTSEL2);
+}
+
+void cpg_reset_wdt0(void)
+{
+	/* WDT reset apply */
+	cpg_ctrl_clkrst(&cpg_clk_rst_wdt_off_tbl[0], ARRAY_SIZE(cpg_clk_rst_wdt_off_tbl));
+	udelay(1);
+
+	cpg_ctrl_clkrst(&cpg_clk_rst_wdt_on_tbl[0], ARRAY_SIZE(cpg_clk_rst_wdt_on_tbl));
+	udelay(1);
+}
+
+void cpg_setup_wdt0(void)
+{
+	mmio_write_32(CPG_WDTRST_SEL, mmio_read_32(CPG_WDTRST_SEL) | WDTRST_SEL_WDTRSTSEL0);
 }
 
 void cpg_setup(void)

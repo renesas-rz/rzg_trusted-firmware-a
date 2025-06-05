@@ -12,4 +12,7 @@ void cpg_setup(void);
 void cpg_active_ddr(void (*disable_phy)(void));
 void cpg_reset_ddr_mc(void);
 
+void cpg_reset_wdt0(void);
+void cpg_setup_wdt0(void);
+
 #endif /* __CPG_H__ */
