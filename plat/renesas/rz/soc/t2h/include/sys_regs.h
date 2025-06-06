@@ -114,27 +114,6 @@
 /* CMTW Module Registers */
 #define CMTW_CMWCR                          (CMTW_BASE + 0x04)
 
-/* PCIE Module Registers */
-#define PCI_RC_REQDATA0                     (PCIE_REG_BASE + 0x80)
-
-/* RTC Module Registers */
-#define RTCA0CTL0                           (RTC_BASE)
-
-/* I2C Module Registers */
-#define I2C0_ICCR1                          (I2C_BASE)
-
-/* SPI Module Registers */
-#define SPI0_SSLP                           (SPI_BASE  + 0x10)
-
-/* LCDC Module Registers */
-#define LCDC_VI6_SRESET                     (LCDC_BASE + 0x20028)
-
-/* Ethernet Related Module Registers */
-#define GMAC_TRGSEL                         (GMAC_BASE + 0x10400)
-#define ETHSW_REVISION                      (ETHSW_BASE)
-#define ESC_REVISION                        (ESC_BASE  + 0x1)
-#define ETHSS_PRCMD                         (ETHSS_BASE)
-
 /* xSPI0 */
 #define MRCTLA_MRCTLA04						UL(4)
 /* xSPI1 */
