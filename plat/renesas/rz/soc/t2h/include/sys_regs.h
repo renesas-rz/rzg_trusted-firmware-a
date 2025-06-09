@@ -112,7 +112,7 @@
 #define USB_HCHCCA                          (USB_BASE  + 0x18)
 
 /* CMTW Module Registers */
-#define CMTW_CMWCR                          (CMTW_BASE + 0x04)
+#define CMTW_CMWCNT                         (CMTW_BASE + 0x10)
 
 /* xSPI0 */
 #define MRCTLA_MRCTLA04						UL(4)
