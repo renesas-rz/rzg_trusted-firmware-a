@@ -28,145 +28,168 @@ static void cpg_mstop_sdhi0(void)
 {
 	volatile uint32_t dummy;
 
+	/* Enable write to System Registers */
+	sys_safetybase_unlock(PRCRx_SYS_CTRL);
+	/* Set bit to ensure SDHI0 is in Bus Stop Request State */
+	mmio_write_32(SSTPCR1, mmio_read_32(SSTPCR1) | (SSTPCR1_SDHI0_REQ_MSK));
+	while (SSTPCR1_SDHI0_ACK_MSK != (mmio_read_32(SSTPCR1) & SSTPCR1_SDHI0_ACK_MSK)) {
+		/* nothing */
+	}
+	/* Disable write to System Registers */
+	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
 	/* Enable write to Module Stop */
 	sys_base_unlock(PRCRx_LOW_POWER);
-
 	/* Clear bit to release SDHI0 from Module Stop State */
 	mmio_write_32(MSTPCRM, mmio_read_32(MSTPCRM) & (~BIT_32(MSTPCRM_MSTPCRM12)));
 	/* Dummy read MSTPCRM register once */
 	dummy = mmio_read_32(MSTPCRM);
-	/* Dummy read SD_CMD register 7 times (SD_CMD chosen arbitarily) */
-	uint8_t i;
-	for (i = 0; i < 7; i++) {
-		dummy = mmio_read_32(SDHI0_SD_CMD);
-	}
-	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
-	(void)dummy;
-
-	/* Disable write to Module Stop Register */
-	sys_base_lock(PRCRx_LOW_POWER);
 
 	/* Enable write to System Registers */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
-
 	/* Clear bit to release SDHI0 from Bus Stop Request State */
 	mmio_write_32(SSTPCR1, mmio_read_32(SSTPCR1) & (~SSTPCR1_SDHI0_REQ_MSK));
 	while (0U != (mmio_read_32(SSTPCR1) & SSTPCR1_SDHI0_ACK_MSK)) {
 		/* nothing */
 	}
-
 	/* Disable write to System Registers */
 	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
+	/* Dummy read SD_CMD register 7 times (SD_CMD chosen arbitarily) */
+	uint32_t i;
+	for (i = 0; i < (uint32_t)0x7; i++) {
+		dummy = mmio_read_32(SDHI0_SD_CMD);
+	}
+	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
+	(void)dummy;
+	/* Disable write to Module Stop Register */
+	sys_base_lock(PRCRx_LOW_POWER);
 }
 
 static void cpg_mstop_sdhi1(void)
 {
 	volatile uint32_t dummy;
 
+	/* Enable write to System Registers */
+	sys_safetybase_unlock(PRCRx_SYS_CTRL);
+	/* Set bit to ensure SDHI1 is in Bus Stop Request State */
+	mmio_write_32(SSTPCR1, mmio_read_32(SSTPCR1) | (SSTPCR1_SDHI1_REQ_MSK));
+	while (SSTPCR1_SDHI1_ACK_MSK != (mmio_read_32(SSTPCR1) & SSTPCR1_SDHI1_ACK_MSK)) {
+		/* nothing */
+	}
+	/* Disable write to System Registers */
+	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
 	/* Enable write to Module Stop */
 	sys_base_unlock(PRCRx_LOW_POWER);
-
 	/* Clear bit to release SDHI1 from Module Stop State */
 	mmio_write_32(MSTPCRM, mmio_read_32(MSTPCRM) & (~BIT_32(MSTPCRM_MSTPCRM13)));
 	/* Dummy read MSTPCRM register once */
 	dummy = mmio_read_32(MSTPCRM);
-	/* Dummy read SD_CMD register 7 times (SD_CMD chosen arbitarily) */
-	uint8_t i;
-	for (i = 0; i < 7; i++) {
-		dummy = mmio_read_32(SDHI1_SD_CMD);
-	}
-	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
-	(void)dummy;
-
-	/* Disable write to Module Stop Register */
-	sys_base_lock(PRCRx_LOW_POWER);
 
 	/* Enable write to System Registers */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
-
 	/* Clear bit to release SDHI1 from Bus Stop Request State */
 	mmio_write_32(SSTPCR1, mmio_read_32(SSTPCR1) & (~SSTPCR1_SDHI1_REQ_MSK));
 	while (0U != (mmio_read_32(SSTPCR1) & SSTPCR1_SDHI1_ACK_MSK)) {
 		/* nothing */
 	}
-
 	/* Disable write to System Registers */
 	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
+	/* Dummy read SD_CMD register 7 times (SD_CMD chosen arbitarily) */
+	uint32_t i;
+	for (i = 0; i < (uint32_t)0x7; i++) {
+		dummy = mmio_read_32(SDHI1_SD_CMD);
+	}
+	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
+	(void)dummy;
+	/* Disable write to Module Stop Register */
+	sys_base_lock(PRCRx_LOW_POWER);
 }
 
 static void cpg_mstop_xspi0(void)
 {
 	volatile uint32_t dummy;
 
+	/* Enable write to System Registers */
+	sys_safetybase_unlock(PRCRx_SYS_CTRL);
+	/* Set bit to ensure xSPI0 is in Bus Stop Request State */
+	mmio_write_32(SSTPCR6, mmio_read_32(SSTPCR6) | SSTPCR6_XSPI0_REQ_MSK);
+	while (SSTPCR6_XSPI0_ACK_MSK != (mmio_read_32(SSTPCR6) & SSTPCR6_XSPI0_ACK_MSK)) {
+		/* nothing */
+	}
+	/* Disable write to System Registers */
+	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
 	/* Enable write to Module Stop */
 	sys_base_unlock(PRCRx_LOW_POWER);
-
-	/* Clear bit to release XSPI from Module Stop State */
+	/* Clear bit to release xSPI0 from Module Stop State */
 	mmio_write_32(MSTPCRA, mmio_read_32(MSTPCRA) & (~BIT_32(MSTPCRA_MSTPCRA04)));
 	/* Dummy read MSTPCRA register once */
 	dummy = mmio_read_32(MSTPCRA);
-	/* Dummy read WRAPCFG register 7 times (WRAPCFG chosen arbitarily) */
-	uint8_t i;
-	for (i = 0; i < 7; i++) {
-		dummy = mmio_read_32(XSPI0_WRAPCFG);
-	}
-	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
-	(void)dummy;
-
-	/* Disable write to Module Stop Register */
-	sys_base_lock(PRCRx_LOW_POWER);
 
 	/* Enable write to System Registers */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
-
-	/* Clear bit to release XSPI from Bus Stop Request State */
+	/* Clear bit to release xSPI0 from Bus Stop Request State */
 	mmio_write_32(SSTPCR6, mmio_read_32(SSTPCR6) & ~SSTPCR6_XSPI0_REQ_MSK);
 	while (0U != (mmio_read_32(SSTPCR6) & SSTPCR6_XSPI0_ACK_MSK)) {
 		/* nothing */
 	}
-	/* Dummy read from a xSPI0 register*/
-	dummy = mmio_read_32(XSPI0_WRAPCFG);
-
 	/* Disable write to System Registers */
 	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
+	/* Dummy read WRAPCFG register 7 times (WRAPCFG chosen arbitarily) */
+	uint32_t i;
+	for (i = 0; i < (uint32_t)0x7; i++) {
+		dummy = mmio_read_32(XSPI0_WRAPCFG);
+	}
+	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
+	(void)dummy;
+	/* Disable write to Module Stop Register */
+	sys_base_lock(PRCRx_LOW_POWER);
 }
 
 static void cpg_mstop_xspi1(void)
 {
 	volatile uint32_t dummy;
 
+	/* Enable write to System Registers */
+	sys_safetybase_unlock(PRCRx_SYS_CTRL);
+	/* Set bit to ensure xSPI1 is in Bus Stop Request State */
+	mmio_write_32(SSTPCR6, mmio_read_32(SSTPCR6) | SSTPCR6_XSPI1_REQ_MSK);
+	while (SSTPCR6_XSPI1_ACK_MSK != (mmio_read_32(SSTPCR6) & SSTPCR6_XSPI1_ACK_MSK)) {
+		/* nothing */
+	}
+	/* Disable write to System Registers */
+	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
 	/* Enable write to Module Stop */
 	sys_base_unlock(PRCRx_LOW_POWER);
-
-	/* Clear bit to release XSPI from Module Stop State */
-	mmio_write_32(MSTPCRA, mmio_read_32(MSTPCRA) & (~BIT_32(MSTPCRA_MSTPCRA05)));
+	/* Clear bit to release xSPI1 from Module Stop State */
+	mmio_write_32(MSTPCRA, mmio_read_32(MSTPCRA) & (~BIT_32(MSTPCRA_MSTPCRA04)));
 	/* Dummy read MSTPCRA register once */
 	dummy = mmio_read_32(MSTPCRA);
-	/* Dummy read WRAPCFG register 7 times (WRAPCFG chosen arbitarily) */
-	uint8_t i;
-	for (i = 0; i < 7; i++) {
-		dummy = mmio_read_32(XSPI1_WRAPCFG);
-	}
-	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
-	(void)dummy;
-
-	/* Disable write to Module Stop Register */
-	sys_base_lock(PRCRx_LOW_POWER);
 
 	/* Enable write to System Registers */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
-
-	/* Clear bit to release XSPI from Bus Stop Request State */
+	/* Clear bit to release xSPI1 from Bus Stop Request State */
 	mmio_write_32(SSTPCR6, mmio_read_32(SSTPCR6) & ~SSTPCR6_XSPI1_REQ_MSK);
 	while (0U != (mmio_read_32(SSTPCR6) & SSTPCR6_XSPI1_ACK_MSK)) {
 		/* nothing */
 	}
-
-	/* Dummy read from a xSPI1 register */
-	dummy = mmio_read_32(XSPI1_WRAPCFG);
-
 	/* Disable write to System Registers */
 	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
+	/* Dummy read WRAPCFG register 7 times (WRAPCFG chosen arbitarily) */
+	uint32_t i;
+	for (i = 0; i < (uint32_t)0x7; i++) {
+		dummy = mmio_read_32(XSPI1_WRAPCFG);
+	}
+	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
+	(void)dummy;
+	/* Disable write to Module Stop Register */
+	sys_base_lock(PRCRx_LOW_POWER);
 }
 
 static void cpg_mstop_scif(void)
@@ -181,8 +204,8 @@ static void cpg_mstop_scif(void)
 	/* Dummy read MSTPCRA register once */
 	dummy = mmio_read_32(MSTPCRA);
 	/* Dummy read CCR0 register 7 times (CCR0 chosen arbitarily) */
-	uint8_t i;
-	for (i = 0; i < 7; i++) {
+	uint32_t i;
+	for (i = 0; i < (uint32_t)0x7; i++) {
 		dummy = mmio_read_32(RZT2H_SCIF_BASE + SCI_CCR0_OFFSET);
 	}
 	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
@@ -204,8 +227,8 @@ static void cpg_mstop_usb(void)
 	/* Dummy read MSTPCRE register once */
 	dummy = mmio_read_32(MSTPCRE);
 	/* Dummy read HCHCCA register 7 times (HCHCCA chosen arbitarily) */
-	uint8_t i;
-	for (i = 0; i < 7; i++) {
+	uint32_t i;
+	for (i = 0; i < (uint32_t)0x7; i++) {
 		dummy = mmio_read_32(USB_HCHCCA);
 	}
 	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
@@ -227,9 +250,9 @@ static void cpg_mstop_cmtw(void)
 	/* Dummy read MSTPCRD register once */
 	dummy = mmio_read_32(MSTPCRD);
 	/* Dummy read CMWCR register 7 times (CMWCR chosen arbitarily) */
-	uint8_t i;
-	for (i = 0; i < 7; i++) {
-		dummy = mmio_read_32(CMTW_CMWCR);
+	uint32_t i;
+	for (i = 0; i < (uint32_t)0x7; i++) {
+		dummy = mmio_read_32(CMTW_CMWCNT);
 	}
 	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
 	(void)dummy;
