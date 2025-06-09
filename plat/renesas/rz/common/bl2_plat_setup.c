@@ -25,22 +25,12 @@
 #include <rz_soc_def.h>
 #include <rz_private.h>
 #include <drivers/delay_timer.h>
+#include <libfdt.h>
 
-static const mmap_region_t rzg2l_mmap[] = {
-#if TRUSTED_BOARD_BOOT
-	MAP_REGION_FLAT(RZG2L_BOOT_ROM_BASE, RZG2L_BOOT_ROM_SIZE,
-			MT_MEMORY | MT_RO | MT_SECURE),
-#endif
-	MAP_REGION_FLAT(RZG2L_SRAM_BASE, RZG2L_SRAM_SIZE,
-			MT_MEMORY | MT_RW | MT_SECURE),
-	MAP_REGION_FLAT(RZG2L_DEVICE_BASE, RZG2L_DEVICE_SIZE,
-			MT_DEVICE | MT_RW | MT_SECURE),
-	MAP_REGION_FLAT(RZG2L_SPIROM_BASE, RZG2L_SPIROM_SIZE,
-			MT_MEMORY | MT_RO | MT_SECURE),
-	MAP_REGION_FLAT(RZG2L_DDR1_BASE, RZG2L_DDR1_SIZE,
-			MT_MEMORY | MT_RW | MT_SECURE),
-	{0}
-};
+
+/* FDT with DRAM configuration */
+uint64_t fdt_blob[PAGE_SIZE_4KB / sizeof(uint64_t)];
+static void *fdt = (void *)fdt_blob;
 
 static console_t rzg2l_bl31_console;
 
@@ -76,6 +66,70 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	}
 
 	return 0;
+}
+
+void bl2_init_fdt(void)
+{
+	int ret;
+
+	memset((void *)FDT_BASE, 0, FDT_SIZE);
+
+	/* Set up FDT */
+	ret = fdt_create_empty_tree(fdt, sizeof(fdt_blob));
+	if (ret != 0) {
+		NOTICE("BL2: Cannot allocate FDT for U-Boot (ret=%i)\n", ret);
+		panic();
+	}
+
+	fdt_setprop_u32(fdt, 0, "#address-cells", 2);
+	fdt_setprop_u32(fdt, 0, "#size-cells", 2);
+
+	switch (mmio_read_32(SYS_LSI_DEVID) & 0x0FFFFFFF) {
+	case 0x841C447:
+		switch (mmio_read_32(0x11861178)) {
+		case 0:
+			NOTICE("BL2: RZ/G2L\n");
+			fdt_appendprop_string(fdt, 0, "compatible", "renesas,smarc-rzg2l");
+			fdt_appendprop_string(fdt, 0, "compatible", "renesas,r9a07g044l2");
+			break;
+		case 1:
+			NOTICE("BL2: RZ/G2LC\n");
+			fdt_appendprop_string(fdt, 0, "compatible", "renesas,smarc-rzg2lc");
+			fdt_appendprop_string(fdt, 0, "compatible", "renesas,r9a07g044c2");
+			break;
+		default:
+			NOTICE("BL2: Unknown RZ/G2L variant\n");
+			panic();
+		}
+		break;
+	case 0x8450447:
+		switch (mmio_read_32(0x11861178)) {
+		case 0:
+			NOTICE("BL2: RZ/G2UL Type 1\n");
+			fdt_appendprop_string(fdt, 0, "compatible", "renesas,smarc-rzg2ul");
+			fdt_appendprop_string(fdt, 0, "compatible", "renesas,r9a07g043u11");
+			break;
+		case 1:
+			NOTICE("BL2: RZ/G2UL Type 2 (unsupported)\n");
+			panic();
+			break;
+		default:
+			NOTICE("BL2: Unknown RZ/G2UL variant\n");
+			panic();
+		}
+		break;
+	case 0x8447447:
+		NOTICE("BL2: RZ/V2L\n");
+		fdt_appendprop_string(fdt, 0, "compatible", "renesas,smarc-rzv2l");
+		fdt_appendprop_string(fdt, 0, "compatible", "renesas,r9a07g054l2");
+		break;
+	default:
+		NOTICE("BL2: Unknown SoC\n");
+		panic();
+	}
+
+	memcpy((void *)FDT_BASE, fdt_blob, sizeof(fdt_blob));
+	flush_dcache_range((uintptr_t)FDT_BASE, (size_t)FDT_SIZE);
 }
 
 void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
@@ -125,8 +179,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	if (!ret)
 		panic();
 
-	console_set_scope(&rzg2l_bl31_console,
-			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
+	console_set_scope(&rzg2l_bl31_console, CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 }
 
 void bl2_el3_plat_arch_setup(void)
@@ -138,6 +191,22 @@ void bl2_el3_plat_arch_setup(void)
 			MT_CODE | MT_SECURE),
 		MAP_REGION_FLAT(BL_RO_DATA_BASE, BL_RO_DATA_END - BL_RO_DATA_BASE,
 			MT_RO_DATA | MT_SECURE),
+		{0}
+	};
+
+	static const mmap_region_t rzg2l_mmap[] = {
+	#if TRUSTED_BOARD_BOOT
+		MAP_REGION_FLAT(RZG2L_BOOT_ROM_BASE, RZG2L_BOOT_ROM_SIZE,
+				MT_MEMORY | MT_RO | MT_SECURE),
+	#endif
+		MAP_REGION_FLAT(RZG2L_SRAM_BASE, RZG2L_SRAM_SIZE,
+				MT_MEMORY | MT_RW | MT_SECURE),
+		MAP_REGION_FLAT(RZG2L_DEVICE_BASE, RZG2L_DEVICE_SIZE,
+				MT_DEVICE | MT_RW | MT_SECURE),
+		MAP_REGION_FLAT(RZG2L_SPIROM_BASE, RZG2L_SPIROM_SIZE,
+				MT_MEMORY | MT_RO | MT_SECURE),
+		MAP_REGION_FLAT(RZG2L_DDR1_BASE, RZG2L_DDR1_SIZE,
+				MT_MEMORY | MT_RW | MT_SECURE),
 		{0}
 	};
 
@@ -154,6 +223,8 @@ void bl2_platform_setup(void)
 	/* initialize DDR */
 	ddr_setup();
 #endif /* DEBUG_FPGA */
+
+	bl2_init_fdt();
 
 	rz_io_setup();
 

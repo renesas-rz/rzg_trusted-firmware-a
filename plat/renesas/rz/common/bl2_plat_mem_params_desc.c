@@ -6,6 +6,7 @@
 
 #include <common/desc_image_load.h>
 #include <plat/common/platform.h>
+#include <lib/xlat_tables/xlat_tables_defs.h>
 #include <rz_soc_def.h>
 
 #if (RZG2L_BL33_EXECUTION_EL == 0)
@@ -13,6 +14,8 @@
 #else
 #define BL33_MODE MODE_EL2
 #endif
+
+extern uint64_t fdt_blob[PAGE_SIZE_4KB / sizeof(uint64_t)];
 
 static bl_mem_params_node_t bl2_mem_params_descs[] = {
 	{
@@ -61,7 +64,9 @@ static bl_mem_params_node_t bl2_mem_params_descs[] = {
 		.ep_info.spsr = SPSR_64(BL33_MODE, MODE_SP_ELX,
 			DISABLE_ALL_EXCEPTIONS),
 		.ep_info.pc = BL33_BASE,
-
+#if RZG2L
+		.ep_info.args.arg1 = FDT_BASE,
+#endif
 		SET_STATIC_PARAM_HEAD(image_info, PARAM_EP, VERSION_2,
 			image_info_t, 0),
 		.image_info.image_max_size =

@@ -73,6 +73,10 @@
 #define BL33_BASE				(0x50000000)
 #define BL33_LIMIT				(BL33_BASE + 0x08000000)
 
+#define FDT_SIZE				UL(0x1000)
+#define FDT_BASE				BL33_LIMIT
+#define FDT_LIMIT				(FDT_SIZE + FDT_BASE)
+
 /*******************************************************************************
  * Platform specific page table and MMU setup constants
  ******************************************************************************/
