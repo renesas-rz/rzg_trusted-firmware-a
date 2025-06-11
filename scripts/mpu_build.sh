@@ -48,7 +48,12 @@ BL33			: $BL33"
 g3l_build()
 {
 	U_BOOT_FILE=""
-	if [[ "$BOARD" = "dev_1" ]] && [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+	if [[ "$BOARD" = "smarc" ]] && [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		pwd
+		U_BOOT_FILE="../../u-boot/g3l-smarc-u-boot.bin"
+	elif [[ "$BOARD" = "smarc" ]]; then
+		U_BOOT_FILE="../u-boot/g3l-smarc-u-boot.bin"
+	elif [[ "$BOARD" = "dev_1" ]] && [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
 		U_BOOT_FILE="../../u-boot/g3l-dev-1-u-boot.bin"
 	elif [[ "$BOARD" = "dev_1" ]]; then
 		U_BOOT_FILE="../u-boot/g3l-dev-1-u-boot.bin"
