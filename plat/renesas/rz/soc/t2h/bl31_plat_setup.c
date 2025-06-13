@@ -76,6 +76,9 @@ void bl31_plat_arch_setup(void)
 
 void bl31_platform_setup(void)
 {
+	/* Setup TZC-400 */
+	plat_security_setup();
+
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
