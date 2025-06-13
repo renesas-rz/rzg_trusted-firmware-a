@@ -7,7 +7,7 @@
 #ifndef __OTP_REGS_H__
 #define __OTP_REGS_H__
 
-#include "../drivers/auth/rsip/inc/rsip_drv.h"
+#include "rsip_drv.h"
 
 #define OTP_ANTI_RB_VER_ADDR						(0x203U)
 #define OTP_ANTI_RB_SETTING_ADDR					(0x201U)
