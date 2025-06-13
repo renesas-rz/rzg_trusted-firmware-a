@@ -18,6 +18,7 @@
 #include <cpg.h>
 #include <syc.h>
 #include <sys.h>
+#include <sys_regs.h>
 #include <scifa.h>
 #include <pwrc.h>
 #include <plat_tzc_def.h>
@@ -184,6 +185,9 @@ void bl2_platform_setup(void)
 	rz_io_setup();
 
 	plat_ddr_setup();
+
+	NOTICE("BL2: SYS_LSI_MODE: 0x%x\n", mmio_read_32(SYS_LSI_MODE));
+	NOTICE("BL2: SYS_LSI_DEVID: 0x%x\n", mmio_read_32(SYS_LSI_DEVID));
 }
 
 void bl2_el3_plat_prepare_exit(void)
