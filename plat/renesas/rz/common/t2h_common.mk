@@ -20,7 +20,9 @@ PLAT_DDR_ECC					:= 0
 PLATFORM_CORE_COUNT				:= 4
 USE_BOOTROM_XSPI_PARAMS			:= 0
 INIT_UNUSED_NS_EL2				:= 1
-
+SECURE_RTC						:= 0
+ 
+$(eval $(call add_define,SECURE_RTC))
 $(eval $(call add_define,PLAT_SOC_RZT2H))
 $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,DEBUG_FPGA))
