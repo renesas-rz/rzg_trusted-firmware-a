@@ -5,7 +5,8 @@
 #
 
 #Set the platform and SOC specific header files 1st
-PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/${PLAT}/include
+PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/${PLAT}/include \
+					-Iplat/renesas/rz/soc/${PLAT}/drivers/auth/rsip/inc
 FIP_ALIGN		:=	16
 
 include plat/renesas/rz/common/t2h_common.mk
