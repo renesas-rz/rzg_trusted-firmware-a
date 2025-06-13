@@ -138,6 +138,9 @@
 
 #define RZ_SOC_DDR_PHY_BASE					RZT2H_DDR_PHY_BASE
 #define RZ_SOC_DDR_MC_BASE					RZT2H_DDR_MEMC_BASE
+#define RZ_SOC_OTP_BASE_PRODUCTID			(RZT2H_OTP_BASE + 0x1D9)	/* OTP_PN (Part Number) */
+
+#define RZ_SOC_OTP_BASE_CHIPID				(RZT2H_OTP_BASE + 0x0E5)	/* OTP_UID, 64 bits*/	/* TOOO: KTG: In email dated 10/5/2023 it was stated that CHIPID(s) should be obtained by reading OTP_UID. However I do not understand how 64bit unique ID value is mapped into 1, 2 or 4 CHIPIDs */
 
 #define SYS_BASE							RZT2H_SYSC_BASE
 #define SYS_NS_BASE							RZT2H_SYSC_NS_BASE

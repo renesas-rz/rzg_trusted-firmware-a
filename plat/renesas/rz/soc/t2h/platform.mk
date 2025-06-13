@@ -13,7 +13,8 @@ include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
 PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/${PLAT}/plat_security.c			\
 							plat/renesas/rz/soc/${PLAT}/plat_storage.c			\
-							plat/renesas/rz/soc/${PLAT}/drivers/sys.c
+							plat/renesas/rz/soc/${PLAT}/drivers/sys.c			\
+							plat/renesas/rz/soc/${PLAT}/drivers/otp/otp.c
 
 BL2_SOURCES				+=	plat/renesas/rz/soc/${PLAT}/bl2_plat_setup.c		\
 							plat/renesas/rz/soc/${PLAT}/drivers/cpg.c			\
