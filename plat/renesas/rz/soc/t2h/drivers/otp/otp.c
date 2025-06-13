@@ -50,6 +50,7 @@ uint32_t otp_read_anti_rb_version(uint32_t *version)
 	return result;
 }
 
+#if TRUSTED_BOARD_BOOT
 /***********************************************************************************************************************
 * Function Name: otp_read_rotpk_hash
 * Description  : Get hash.
@@ -104,3 +105,4 @@ uint32_t otp_read_decrypt_key(uint32_t key_id, uint32_t *key, uint32_t key_size)
 
 	return result;
 }
+#endif
