@@ -175,7 +175,7 @@ Flash Procedure for xSPI
 	3. Write the FIP srecord to the device SPI flash
 		a. Enter: XLS2
 		b. Program Top Address: 0x00000
-		c. QSPI Save Address: 0x60000
+		c. QSPI Save Address: 0x20000
 		d. Send the FIP srecord
 
 Flash Procedure for EMMC
@@ -202,7 +202,7 @@ Flash Procedure for EMMC
 	4. Write the FIP srecord to the device
 		a. Use the Flash Writer's command EM_W.
 		b. Partition Select: 1
-		c. Input Start Address in sector: 300
+		c. Input Start Address in sector: 100
 		d. Input Program Start Address: 0
 		e. Send the FIP srecord file
 
