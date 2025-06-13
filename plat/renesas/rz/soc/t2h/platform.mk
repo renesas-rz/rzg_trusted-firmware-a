@@ -27,6 +27,9 @@ BL31_SOURCES			+=	plat/renesas/rz/soc/${PLAT}/bl31_plat_setup.c		\
 DDR_SOURCES				+=	plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr.c		\
 							plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr_misc.c
 
+ifneq (${ENABLE_STACK_PROTECTOR},0)
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/${PLAT}/rz_stack_protector.c
+endif
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
 	PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/${PLAT}/drivers/auth/rsip/cip.c	\
