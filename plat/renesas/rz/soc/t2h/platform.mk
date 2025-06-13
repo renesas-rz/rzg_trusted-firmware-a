@@ -28,6 +28,14 @@ DDR_SOURCES				+=	plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr.c		\
 							plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr_misc.c
 
 
+ifneq (${TRUSTED_BOARD_BOOT},0)
+	PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/${PLAT}/drivers/auth/rsip/cip.c	\
+								plat/renesas/rz/soc/${PLAT}/drivers/auth/sblib/crypto_sblib.c
+
+include plat/renesas/rz/soc/${PLAT}/drivers/auth/rsip/rsip.mk
+include plat/renesas/rz/soc/${PLAT}/drivers/auth/sblib/sblib.mk
+endif
+
 .PHONY: pkg
 pkg:
 	#Get Bl2 filesize and align to 0x200 (512) bytes
