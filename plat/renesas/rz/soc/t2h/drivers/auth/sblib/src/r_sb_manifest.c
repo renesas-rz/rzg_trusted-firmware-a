@@ -1,21 +1,8 @@
-/***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* www.renesas.com/disclaimer
-*
-* Copyright (C) 2019-2021 Renesas Electronics Corporation. All rights reserved.
-***********************************************************************************************************************/
+/*
+ * Copyright (C) 2019-2021, Renesas Electronics Corporation. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /***********************************************************************************************************************
 * \file             : r_sb_manifest.c
 * \par version      : 1.00
@@ -23,19 +10,6 @@
 * \par Device(s)    : None(Independ devices)
 * \par Description  : This file implements the Manifest module APIs.
 ***********************************************************************************************************************/
-/**********************************************************************************************************************
-* History : Version           DD.MM.YYYY Description
-*         : 1.00              24.08.2020 First Release.
-*         : FSBL Custom 1.00  27.10.2021 First Release.
-**********************************************************************************************************************/
-
-/* PRQA S 0310, 3305 ++ # D002 Cast to a fixed Manifest format */
-/* PRQA S 1532 ++ # D007 Since files are grouped by function, they are called from different files. */
-/* PRQA S 3383, 3384 ++ # D014 Processing ends before wraparound */
-/* PRQA S 3384 ++ # D015 Never wraps around */
-/* PRQA S 3383, 3384 ++ # D016 Never wraps around */
-/* PRQA S 3383 ++ # D017 Never wraps around */
-/* PRQA S 5002 ++ # D018 Exception according to file nomenclature */
 
 /*!***********************************************************
  * \addtogroup  SBLIBManifest
