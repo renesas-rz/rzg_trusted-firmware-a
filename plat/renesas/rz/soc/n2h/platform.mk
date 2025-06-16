@@ -5,7 +5,8 @@
 #
 
 #Set the platform and SOC specific header files 1st
-PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/t2h/include
+PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/t2h/include \
+					-Iplat/renesas/rz/soc/t2h/drivers/auth/rsip/inc
 FIP_ALIGN		:=	16
 
 include plat/renesas/rz/common/n2h_common.mk
@@ -13,7 +14,8 @@ include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
 
 PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/t2h/plat_security.c			\
 							plat/renesas/rz/soc/t2h/plat_storage.c			\
-							plat/renesas/rz/soc/t2h/drivers/sys.c
+							plat/renesas/rz/soc/t2h/drivers/sys.c			\
+							plat/renesas/rz/soc/t2h/drivers/otp/otp.c
 
 BL2_SOURCES				+=	plat/renesas/rz/soc/t2h/bl2_plat_setup.c		\
 							plat/renesas/rz/soc/t2h/drivers/cpg.c			\
@@ -26,6 +28,17 @@ BL31_SOURCES			+=	plat/renesas/rz/soc/t2h/bl31_plat_setup.c		\
 DDR_SOURCES				+=	plat/renesas/rz/soc/t2h/drivers/ddr/ddr.c		\
 							plat/renesas/rz/soc/t2h/drivers/ddr/ddr_misc.c
 
+ifneq (${ENABLE_STACK_PROTECTOR},0)
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/t2h/rz_stack_protector.c
+endif
+
+ifneq (${TRUSTED_BOARD_BOOT},0)
+	PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/t2h/drivers/auth/rsip/cip.c	\
+								plat/renesas/rz/soc/t2h/drivers/auth/sblib/crypto_sblib.c
+
+include plat/renesas/rz/soc/t2h/drivers/auth/rsip/rsip.mk
+include plat/renesas/rz/soc/t2h/drivers/auth/sblib/sblib.mk
+endif
 
 .PHONY: pkg
 pkg:

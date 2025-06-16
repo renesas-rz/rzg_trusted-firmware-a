@@ -20,7 +20,9 @@ PLAT_DDR_ECC					:= 0
 PLATFORM_CORE_COUNT				:= 4
 USE_BOOTROM_XSPI_PARAMS			:= 0
 INIT_UNUSED_NS_EL2				:= 1
-
+SECURE_RTC						:= 0
+ 
+$(eval $(call add_define,SECURE_RTC))
 $(eval $(call add_define,PLAT_SOC_RZN2H))
 $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,DEBUG_FPGA))
@@ -28,6 +30,11 @@ $(eval $(call add_define,PLAT_EMMC_WRITE_ENABLE))
 $(eval $(call add_define,PLAT_DDR_ECC))
 $(eval $(call add_define,PLATFORM_CORE_COUNT))
 $(eval $(call add_define,USE_BOOTROM_XSPI_PARAMS))
+
+# This option gets enabled automatically if the TRUSTED_BOARD_BOOT
+# is set via root Makefile, but Renesas support Trusted-Boot without
+# Crypto module.
+override CRYPTO_SUPPORT			:= 0
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1
@@ -123,7 +130,6 @@ ifneq (${TRUSTED_BOARD_BOOT},0)
 
 	# Include RZ TBB sources
 	AUTH_SOURCES		+=	plat/renesas/rz/common/drivers/auth/auth_mod.c				\
-							plat/renesas/rz/common/drivers/auth/sblib/crypto_sblib.c	\
 							plat/renesas/rz/common/drivers/auth/sblib/sblib_parser.c
 
 	BL2_SOURCES		+=	${AUTH_SOURCES}
