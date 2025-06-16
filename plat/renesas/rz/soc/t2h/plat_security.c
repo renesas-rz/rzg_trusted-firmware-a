@@ -116,7 +116,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -128,7 +128,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -150,7 +150,7 @@ static void plat_tzc_xspi_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 
@@ -158,7 +158,7 @@ static void plat_tzc_xspi_setup(void)
 			/* Region 1: Setup for XSPI0 */
 			.base = RZT2H_XSPI0_MEMORY_MAP_BASE,
 			.end  = RZT2H_XSPI0_MEMORY_MAP_BASE + RZT2H_XSPI_MEMORY_MAP_SIZE - 1ULL,
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -166,7 +166,7 @@ static void plat_tzc_xspi_setup(void)
 			/* Region 2: Setup for XSPI1 */
 			.base = RZT2H_XSPI1_MEMORY_MAP_BASE,
 			.end  = RZT2H_XSPI1_MEMORY_MAP_BASE + RZT2H_XSPI_MEMORY_MAP_SIZE - 1ULL,
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -183,7 +183,7 @@ static void plat_tzc_pci_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_PRIV
 		},
 
@@ -197,10 +197,10 @@ static void plat_tzc_r52_tcm_setup(void)
 {
 	const arm_tzc_regions_info_t r52_tzc_regions[] = {
 		{
-			/* Default Region 0: Complete access */
+			/* Default Region 0: Lockdown */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 
@@ -217,7 +217,7 @@ static void plat_tzc_bsc_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_PRIV
 		},
 
