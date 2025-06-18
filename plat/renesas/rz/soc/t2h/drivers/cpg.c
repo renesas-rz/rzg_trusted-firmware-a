@@ -215,52 +215,6 @@ static void cpg_mstop_scif(void)
 	sys_base_lock(PRCRx_LOW_POWER);
 }
 
-static void cpg_mstop_usb(void)
-{
-	volatile uint32_t dummy;
-
-	/* Enable write to Module Stop */
-	sys_base_unlock(PRCRx_LOW_POWER);
-
-	/* Clear bit to release USB from Module Stop State	*/
-	mmio_write_32(MSTPCRE, mmio_read_32(MSTPCRE) & (~BIT_32(MSTPCRE_MSTPCRE08)));
-	/* Dummy read MSTPCRE register once */
-	dummy = mmio_read_32(MSTPCRE);
-	/* Dummy read HCHCCA register 7 times (HCHCCA chosen arbitarily) */
-	uint32_t i;
-	for (i = 0; i < (uint32_t)0x7; i++) {
-		dummy = mmio_read_32(USB_HCHCCA);
-	}
-	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
-	(void)dummy;
-
-	/* Disable write to Module Stop Register */
-	sys_base_lock(PRCRx_LOW_POWER);
-}
-
-static void cpg_mstop_cmtw(void)
-{
-	volatile uint32_t dummy;
-
-	/* Enable write to Module Stop */
-	sys_base_unlock(PRCRx_LOW_POWER);
-
-	/* Clear bit to release CMTW Unit 0 from Module Stop State */
-	mmio_write_32(MSTPCRD, mmio_read_32(MSTPCRD) & (~BIT_32(MSTPCRD_MSTPCRD05)));
-	/* Dummy read MSTPCRD register once */
-	dummy = mmio_read_32(MSTPCRD);
-	/* Dummy read CMWCR register 7 times (CMWCR chosen arbitarily) */
-	uint32_t i;
-	for (i = 0; i < (uint32_t)0x7; i++) {
-		dummy = mmio_read_32(CMTW_CMWCNT);
-	}
-	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
-	(void)dummy;
-
-	/* Disable write to Module Stop Register */
-	sys_base_lock(PRCRx_LOW_POWER);
-}
-
 static void cpg_mstop_gic(void)
 {
 	/* Enable write to System Registers */
@@ -278,13 +232,11 @@ static void cpg_mstop_gic(void)
 
 static void cpg_mstop_setup(void)
 {
-	cpg_mstop_cmtw();
 	cpg_mstop_sdhi0();	/* eMMC */
 	cpg_mstop_sdhi1();	/* eSD */
 	cpg_mstop_xspi0();
 	cpg_mstop_xspi1();
 	cpg_mstop_scif();
-	cpg_mstop_usb();
 	cpg_mstop_gic();
 }
 
@@ -366,29 +318,10 @@ static void cpg_reset_xspi1(void)
 	sys_base_lock(PRCRx_LOW_POWER);
 }
 
-static void cpg_reset_eth(void)
-{
-	volatile uint32_t dummy;
-
-	/* Enable write to Module Stop and Reset Registers */
-	sys_base_unlock(PRCRx_LOW_POWER);
-
-	/* Clear bit to release XSPI from Module Reset State */
-	mmio_write_32(MRCTLE, mmio_read_32(MRCTLE) & (~MRCTLE_ETHERNET_ALL_MSK));
-	/* Dummy read from MRCTLE */
-	dummy = mmio_read_32(MRCTLE);
-	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
-	(void)dummy;
-
-	/* Disable write to Module Stop and Reset Registers */
-	sys_base_lock(PRCRx_LOW_POWER);
-}
-
 static void cpg_reset_setup(void)
 {
 	cpg_reset_xspi0();
 	cpg_reset_xspi1();
-	cpg_reset_eth();
 }
 
 void cpg_set_ca55_1200mhz(void)
