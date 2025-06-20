@@ -126,8 +126,8 @@
  * 0x64000 has been chosen as FIP base as that leaves room at start of xSPI Flash
  * to store a 128K BL2 image.
  */
-#define RZG3L_BL2_SIZE_MAX				UL(0x00064000)
-#define RZG3L_FIP_SIZE_MAX				UL(0x0019B000)
+#define RZG3L_BL2_SIZE_MAX				UL(0x00060000)
+#define RZG3L_FIP_SIZE_MAX				UL(0x00200000)
 
 #define RZG3L_SPIROM_FIP_BASE			(RZG3L_SPIROM_BASE + RZG3L_BL2_SIZE_MAX)
 #define RZG3L_EMMC_FIP_BASE				(RZG3L_BL2_SIZE_MAX)
