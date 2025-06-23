@@ -167,7 +167,7 @@ static void cpg_mstop_xspi1(void)
 	/* Enable write to Module Stop */
 	sys_base_unlock(PRCRx_LOW_POWER);
 	/* Clear bit to release xSPI1 from Module Stop State */
-	mmio_write_32(MSTPCRA, mmio_read_32(MSTPCRA) & (~BIT_32(MSTPCRA_MSTPCRA04)));
+	mmio_write_32(MSTPCRA, mmio_read_32(MSTPCRA) & (~BIT_32(MSTPCRA_MSTPCRA05)));
 	/* Dummy read MSTPCRA register once */
 	dummy = mmio_read_32(MSTPCRA);
 
