@@ -667,6 +667,22 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 	},
 };
 
+static CPG_SETUP_DATA cpg_clk_rst_wdt0_ctrl_tbl[] = {
+	{		/* WDT */
+		(uintptr_t)CPG_CLKON_WDT,
+		(uintptr_t)CPG_CLKMON_WDT,
+		0x00030003,
+		CPG_T_CLK
+	},
+
+	{		/* WDT */
+		(uintptr_t)CPG_RST_WDT,
+		(uintptr_t)CPG_RSTMON_WDT,
+		0x00010001,
+		CPG_T_RST
+	}
+};
+
 static void cpg_sel_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
 {
 	int cnt;
@@ -774,6 +790,21 @@ static void cpg_pll_setup(void)
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
 	} while ((val & (PLL4_MON_PLL4_RESETB | PLL4_MON_PLL4_LOCK)) == 0);
+}
+
+void cpg_reset_wdt0(void)
+{
+	/* WDT reset apply */
+	cpg_clkrst_stop(&cpg_clk_rst_wdt0_ctrl_tbl[0], ARRAY_SIZE(cpg_clk_rst_wdt0_ctrl_tbl));
+	udelay(1);
+
+	cpg_clkrst_start(&cpg_clk_rst_wdt0_ctrl_tbl[0], ARRAY_SIZE(cpg_clk_rst_wdt0_ctrl_tbl));
+	udelay(1);
+}
+
+void cpg_setup_wdt0(void)
+{
+	mmio_write_32(CPG_WDTRST_SEL, mmio_read_32(CPG_WDTRST_SEL) | WDTRST_SEL_WDTRSTSEL0 | WDTRST_SEL_WDTRSTSEL0_WEN);
 }
 
 static void cpg_div_sel_static_setup(void)

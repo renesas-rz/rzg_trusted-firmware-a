@@ -14,10 +14,12 @@
 
 #include <syc.h>
 #include <pwrc.h>
+#include <cpg.h>
 #include <sys_regs.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 #include <common/bl_common.h>
+#include <wdt.h>
 
 #define SYSTEM_PWR_STATE(s)		((s)->pwr_domain_state[PLAT_MAX_PWR_LVL])
 #define CLUSTER_PWR_STATE(s)	((s)->pwr_domain_state[MPIDR_AFFLVL1])
@@ -128,6 +130,32 @@ static void __dead2 rz_system_off(void)
 	panic();
 }
 
+static void __dead2 rzg3s_system_reset(void)
+{
+	INFO("RZ/G3S System Reset\n");
+
+	cpg_reset_wdt0();
+
+	mmio_write_32(SYS_CA55_CFG_RVAH0, 0x00000000);
+	mmio_write_32(SYS_CA55_CFG_RVAL0, 0x00000000);
+
+	cpg_setup_wdt0();
+
+	console_flush();
+
+	/* Issue Barrier instruction */
+	isb();
+	dsb();
+
+	wdt_system_reset();
+
+	for (;;) {
+
+	}
+
+	panic();
+}
+
 const plat_psci_ops_t rz_plat_psci_ops = {
 	.cpu_standby						= rz_cpu_standby,
 	.pwr_domain_on						= NULL,
@@ -141,7 +169,10 @@ const plat_psci_ops_t rz_plat_psci_ops = {
 #if PLAT_SYSTEM_SUSPEND
 	.get_sys_suspend_power_state		= rz_get_sys_suspend_power_state,
 #endif /* PLAT_SYSTEM_SUSPEND */
+	/*****PSCI_SYSTEM_OFF*****/
 	.system_off							= rz_system_off,
+	/*****PSCI_SYSTEM_RESET*****/
+	.system_reset						= rzg3s_system_reset,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint, const plat_psci_ops_t **psci_ops)

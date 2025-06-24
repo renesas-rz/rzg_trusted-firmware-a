@@ -16,4 +16,7 @@ void cpg_suspend_setup(void);
 void cpg_resume_setup(void);
 void cpg_m33_setup(void);
 
+void cpg_reset_wdt0(void);
+void cpg_setup_wdt0(void);
+
 #endif /* __CPG_H__ */
