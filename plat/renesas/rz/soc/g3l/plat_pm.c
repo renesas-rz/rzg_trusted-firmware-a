@@ -14,11 +14,13 @@
 
 #include <syc.h>
 #include <pwrc.h>
+#include <cpg.h>
 #include <sys_regs.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 #include <common/bl_common.h>
 #include <cpg_regs.h>
+#include <wdt.h>
 
 #define LO_REG							(0U)
 #define HI_REG							(1U)
@@ -41,6 +43,13 @@ typedef struct {
 } mailbox_t;
 
 uintptr_t	gp_warm_ep;
+
+const uint32_t cores_reset_vector[PLATFORM_CORE_COUNT][2] = {
+		{ SYS_CA55_CFG_RVAL0, SYS_CA55_CFG_RVAH0 },
+		{ SYS_CA55_CFG_RVAL1, SYS_CA55_CFG_RVAH1 },
+		{ SYS_CA55_CFG_RVAL2, SYS_CA55_CFG_RVAH2 },
+		{ SYS_CA55_CFG_RVAL3, SYS_CA55_CFG_RVAH3 }
+	};
 
 static void rz_program_trusted_mailbox(u_register_t mpidr, uintptr_t address)
 {
@@ -154,13 +163,6 @@ static void __dead2 rz_system_off(void)
 
 static int rzg3l_pwr_domain_on(u_register_t mpidr)
 {
-	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
-		{ SYS_CA55_CFG_RVAL0, SYS_CA55_CFG_RVAH0 },
-		{ SYS_CA55_CFG_RVAL1, SYS_CA55_CFG_RVAH1 },
-		{ SYS_CA55_CFG_RVAL2, SYS_CA55_CFG_RVAH2 },
-		{ SYS_CA55_CFG_RVAL3, SYS_CA55_CFG_RVAH3 }
-	};
-
 	const CPG_CORE_PWR pch[PLATFORM_CORE_COUNT] = {
 		{ CPG_CORE0_PCHCTL, CPG_CORE0_PCHMON },
 		{ CPG_CORE1_PCHCTL, CPG_CORE1_PCHMON },
@@ -186,8 +188,8 @@ static int rzg3l_pwr_domain_on(u_register_t mpidr)
 	rz_program_trusted_mailbox(mpidr, gp_warm_ep);
 
 	/*  Start the core */
-	mmio_write_32(rval[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
-	mmio_write_32(rval[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
+	mmio_write_32(cores_reset_vector[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
+	mmio_write_32(cores_reset_vector[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
 
 	/* Assert PORESET */
 	mmio_write_32(CPG_RST_CA55, (0x00010000 << coreid));
@@ -242,6 +244,34 @@ static void rzg3l_pwr_domain_off(const psci_power_state_t *state)
 	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
 }
 
+static void __dead2 rzg3l_system_reset(void)
+{
+	INFO("RZ/G3L System Reset\n");
+
+	cpg_reset_wdt0();
+
+	for (int i = 0; i < PLATFORM_CORE_COUNT; i++) {
+		mmio_write_32(cores_reset_vector[i][LO_REG], 0x00000000);
+		mmio_write_32(cores_reset_vector[i][HI_REG], 0x00000000);
+	}
+
+	cpg_setup_wdt0();
+
+	console_flush();
+
+	/* Issue Barrier instruction */
+	isb();
+	dsb();
+
+	wdt_system_reset();
+
+	for (;;) {
+
+	}
+
+	panic();
+}
+
 const plat_psci_ops_t rz_plat_psci_ops = {
 	.cpu_standby						= rz_cpu_standby,
 	.pwr_domain_on						= rzg3l_pwr_domain_on,
@@ -255,7 +285,10 @@ const plat_psci_ops_t rz_plat_psci_ops = {
 #if PLAT_SYSTEM_SUSPEND
 	.get_sys_suspend_power_state		= rz_get_sys_suspend_power_state,
 #endif /* PLAT_SYSTEM_SUSPEND */
+	/*****PSCI_SYSTEM_OFF*****/
 	.system_off							= rz_system_off,
+	/*****PSCI_SYSTEM_RESET*****/
+	.system_reset						= rzg3l_system_reset,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint, const plat_psci_ops_t **psci_ops)

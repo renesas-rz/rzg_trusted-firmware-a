@@ -120,6 +120,8 @@ BL31_SOURCES			+=	plat/common/plat_gicv3.c								\
 							plat/renesas/rz/common/plat_topology.c					\
 							plat/renesas/rz/common/plat_gic.c						\
 							plat/renesas/rz/common/rz_sip_svc.c						\
+							${RZ_TIMER_SOURCES}										\
+							plat/renesas/rz/soc/g3l/drivers/wdt.c					\
 							${GICV3_SOURCES}
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
