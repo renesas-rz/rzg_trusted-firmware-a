@@ -48,9 +48,9 @@
   before_script:
     - if [[ "$PIPELINE_TYPE" == "release"  || "$PIPELINE_TYPE" == "merge" ]]; then
     - cd "../workspace/tf-a"
-    - export CROSS_COMPILE=../../compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-elf-
+    - export CROSS_COMPILE=../../compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
     - else
-    - export CROSS_COMPILE=../compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-elf-
+    - export CROSS_COMPILE=../compiler/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
     - fi
     - make PLAT=$PLAT realclean BOARD=$BOARD
   script:
