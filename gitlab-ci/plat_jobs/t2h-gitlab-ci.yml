@@ -93,7 +93,7 @@ rzt2h-release-stack-protector-0:
     BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
-    ERROR_MSG: "unrecognized command line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
+    ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
   extends:
     - .linux_mpu_build_failure_job_template
 
