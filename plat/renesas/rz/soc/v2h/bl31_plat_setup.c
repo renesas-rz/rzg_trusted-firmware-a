@@ -16,6 +16,8 @@
 #include <rz_private.h>
 #include <rz_soc_def.h>
 #include <pwrc.h>
+#include <drivers/generic_delay_timer.h>
+#include <syc.h>
 
 static console_t rzv2h_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
@@ -28,7 +30,7 @@ IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_BASE__, BL31_PMUSRAM_BASE);
 
 void plat_copy_code_to_system_ram(void)
 {
-#if (PLAT_EXTRA_LD_SCRIPT && PLAT_SYSTEM_SUSPEND)
+#ifdef PLAT_EXTRA_LD_SCRIPT
 	int ret __attribute__ ((unused));
 	uint32_t attr;
 	const uintptr_t pmu_code_load = BL31_PMUSRAM_BASE;
@@ -71,6 +73,11 @@ void bl31_early_platform_setup2(u_register_t arg0,
 
 	console_set_scope(&rzv2h_bl31_console,
 			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
+
+	syc_init(RZV2H_SYC_INCK_HZ);
+
+		/* initialize Timer */
+	generic_delay_timer_init();
 
 	/* copy bl2_to_bl31_params_mem_t*/
 	memcpy(&from_bl2, (void *)PARAMS_BASE, sizeof(from_bl2));

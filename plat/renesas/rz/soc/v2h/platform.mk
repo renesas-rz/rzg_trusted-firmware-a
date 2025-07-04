@@ -29,6 +29,7 @@ BL2_SOURCES				+=	plat/renesas/rz/soc/v2h/bl2_plat_setup.c		\
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/v2h/bl31_plat_setup.c		\
 							plat/renesas/rz/soc/v2h/plat_pm.c				\
+							plat/renesas/rz/soc/v2h/drivers/wdt.c			\
 							plat/renesas/rz/soc/v2h/rz_plat_sip_handler.c
 
 .PHONY: bptool_make bptool_clean

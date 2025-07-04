@@ -16,7 +16,7 @@
 #define RZV2H_ASRAM_BASE			UL(0x08100000)
 #define RZV2H_R8SRAM_BASE			UL(0x08180000)
 #define RZV2H_DEVICE_BASE			UL(0x10000000)
-#define RZV2H_ELC					UL(0x10400000)
+#define RZV2H_ICU					UL(0x10400000)
 #define RZV2H_GPIO_BASE				UL(0x10410000)
 #define RZV2H_CPG_BASE				UL(0x10420000)
 #define RZV2H_SYSC_BASE				UL(0x10430000)
@@ -156,15 +156,15 @@
 #define SYS_PCIE_REG_OFFSET_END		UL(0x1054)						/* Offset corresponds to register SYS_PCIE_MODE_CH1 */
 
 /* Error Interrupt CM33 Status Register k */
-#define RZV2H_ELC_ERINTM33CTL(k)	(RZV2H_ELC + 0x0304 + ((k) * 0x004))
+#define RZV2H_ICU_ERINTM33CTL(k)	(RZV2H_ICU + 0x0304 + ((k) * 0x004))
 
 /* Error Interrupt CM33 Status Clear Register k */
-#define RZV2H_ELC_ERINTM33CLR(k)	(RZV2H_ELC + 0x0314 + ((k) * 0x004))
+#define RZV2H_ICU_ERINTM33CLR(k)	(RZV2H_ICU + 0x0314 + ((k) * 0x004))
 
 /* Error Interrupt CA55 Status Register k */
-#define RZV2H_ELC_ERINTA55CTL(k)	(RZV2H_ELC + 0x0338 + ((k) * 0x004))
+#define RZV2H_ICU_ERINTA55CTL(k)	(RZV2H_ICU + 0x0338 + ((k) * 0x004))
 
 /* Error Interrupt CA55 Status Clear Register k */
-#define RZV2H_ELC_ERINTA55CLR(k)	(RZV2H_ELC + 0x0348 + ((k) * 0x004))
+#define RZV2H_ICU_ERINTA55CLR(k)	(RZV2H_ICU + 0x0348 + ((k) * 0x004))
 
 #endif /* __RZ_SOC_DEF_H__ */

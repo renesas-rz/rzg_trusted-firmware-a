@@ -16,4 +16,7 @@ void cpg_ddr1_part2(void);
 void cpg_prepare_suspend(void);
 void cpg_ddr_pwrokin_off(uint8_t base);
 
+void cpg_reset_wdt1(void);
+void cpg_setup_wdt1(void);
+
 #endif /* __CPG_H__ */

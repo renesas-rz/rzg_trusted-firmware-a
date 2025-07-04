@@ -12,11 +12,13 @@
 #include <lib/bakery_lock.h>
 #include <plat/common/platform.h>
 
+#include <cpg.h>
 #include <cpg_regs.h>
 #include <sys_regs.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 #include <common/bl_common.h>
+#include "wdt.h"
 
 #include <pwrc.h>
 #include <ddr.h>
@@ -40,6 +42,13 @@ typedef struct {
 } mailbox_t;
 
 uintptr_t	gp_warm_ep;
+
+const uint32_t cores_reset_vector[PLATFORM_CORE_COUNT][2] = {
+		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
+		{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
+		{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
+		{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
+	};
 
 static void rz_program_trusted_mailbox(u_register_t mpidr, uintptr_t address)
 {
@@ -198,17 +207,48 @@ static void __dead2 rzv2h_system_off(void)
 	panic();
 }
 
+static void __dead2 rzv2h_system_reset(void)
+{
+	INFO("RZ/V2H System Reset\n");
+
+	cpg_reset_wdt1();
+
+	for (int i = 0; i < PLATFORM_CORE_COUNT; i++) {
+		mmio_write_32(cores_reset_vector[i][LO_REG], 0x00000000);
+		mmio_write_32(cores_reset_vector[i][HI_REG], 0x00000000);
+	}
+
+	cpg_setup_wdt1();
+
+	console_flush();
+
+	/* Issue Barrier instruction */
+	isb();
+	dsb();
+
+	wdt_system_reset();
+
+	for (;;) {
+
+	}
+
+	panic();
+}
+
 const plat_psci_ops_t rzv2h_plat_psci_ops = {
 	.pwr_domain_on						= rzv2h_pwr_domain_on,
 	.pwr_domain_on_finish				= rzv2h_pwr_domain_on_finish,
 	.pwr_domain_off						= rzv2h_pwr_domain_off,
-	.system_off							= rzv2h_system_off,
 	.pwr_domain_suspend					= rzv2h_pwr_domain_suspend,
 	.pwr_domain_suspend_finish			= rzv2h_pwr_domain_suspend_finish,
 	.pwr_domain_pwr_down_wfi			= rzv2h_pwr_domain_pwr_down_wfi,
 #if PLAT_SYSTEM_SUSPEND
 	.get_sys_suspend_power_state		= rzv2h_get_sys_suspend_power_state,
 #endif /* PLAT_SYSTEM_SUSPEND */
+	/*****PSCI_SYSTEM_OFF*****/
+	.system_off							= rzv2h_system_off,
+	/*****PSCI_SYSTEM_RESET*****/
+	.system_reset						= rzv2h_system_reset,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,
