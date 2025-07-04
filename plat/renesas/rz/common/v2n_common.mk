@@ -23,6 +23,7 @@ INIT_UNUSED_NS_EL2				:= 1
 
 ifneq (${PLAT_SYSTEM_SUSPEND},0)
 override PLAT_SYSTEM_SUSPEND	:= 1
+$(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
 endif
 
 $(eval $(call add_define,PLAT_SOC_RZV2N))
@@ -30,7 +31,6 @@ $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PLAT_DDR_ECC))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
-$(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
 
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1

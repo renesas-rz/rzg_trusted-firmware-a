@@ -9,6 +9,8 @@
 #include <lib/mmio.h>
 #include <drivers/delay_timer.h>
 #include <rz_soc_def.h>
+#include <common/debug.h>
+#include <lib/utils_def.h>
 
 
 #define	CPG_OFF							(0)
@@ -16,6 +18,9 @@
 
 #define CPG_T_CLK						(0)
 #define CPG_T_RST						(1)
+
+#define CLK_RST_ENABLE				(0xFFFFFFFF)
+#define CLK_RST_DISABLE				(0xFFFF0000)
 
 /*
  * Write given MSTOP register to remove module stops of bits in given 'val'. Corrosponding MSTOP bit
@@ -1500,6 +1505,35 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 
 };
 
+static CPG_SETUP_DATA cpg_wdt1_clk_rst_tbl[] = {
+	{
+		.reg =  {
+				.addr = (uintptr_t)CPG_CLKON_4,
+				.val  = 0x0006000,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_CLKMON_2,
+				.val  = 0x0006000,
+				},
+
+		.type = CPG_T_CLK
+	},
+	{
+		.reg =  {
+				.addr = (uintptr_t)CPG_RST_7,
+				.val  = 0x00000040,
+				},
+
+		.mon =  {
+				.addr = (uintptr_t)CPG_RSTMON_3,
+				.val  = 0x00000080,
+				},
+
+		.type = CPG_T_RST
+	}
+};
+
 static CPG_REG_SETTING cpg_static_select_tbl[] = {
 	{ (uintptr_t)CPG_CSDIV0,				0x00000000 },
 	{ (uintptr_t)CPG_CSDIV1,				0x00000000 },
@@ -1513,7 +1547,7 @@ static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
 	{ (uintptr_t)CPG_CDDIV4,				0x01110111 },
 };
 
-static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
+static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num, uint32_t ip_control_mask)
 {
 	int i;
 	uint32_t mask;
@@ -1524,6 +1558,8 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 		 * Upper 16bits are enables for lower 16bits so write the upper 16bits with same value as lower value
 		 */
 		uint32_t val = (array->reg.val & 0xFFFF) | ((array->reg.val & 0xFFFF) << 16);
+
+		val = ip_control_mask & val;
 
 		mmio_write_32(array->reg.addr, val);
 
@@ -1536,7 +1572,8 @@ static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num)
 		cmp  = mask;
 		if (array->type == CPG_T_RST)
 			cmp = ~cmp;
-
+		if (CLK_RST_DISABLE == ip_control_mask)
+			cmp = ~cmp;
 		while ((mmio_read_32(array->mon.addr) & mask) != (cmp & mask))
 			;
 	}
@@ -1755,17 +1792,17 @@ static CPG_SETUP_DATA cpg_clk_sr2_tbl[] = {
 
 void cpg_prepare_suspend(void)
 {
-	cpg_ctrl_clkrst(&cpg_clk_sr2_tbl[0], ARRAY_SIZE(cpg_clk_sr2_tbl));
+	cpg_ctrl_clkrst(&cpg_clk_sr2_tbl[0], ARRAY_SIZE(cpg_clk_sr2_tbl), CLK_RST_ENABLE);
 }
 
 static void cpg_clk_on_setup(void)
 {
-	cpg_ctrl_clkrst(&cpg_clk_on_tbl[0], ARRAY_SIZE(cpg_clk_on_tbl));
+	cpg_ctrl_clkrst(&cpg_clk_on_tbl[0], ARRAY_SIZE(cpg_clk_on_tbl), CLK_RST_ENABLE);
 }
 
 static void cpg_reset_setup(void)
 {
-	cpg_ctrl_clkrst(&cpg_reset_tbl[0], ARRAY_SIZE(cpg_reset_tbl));
+	cpg_ctrl_clkrst(&cpg_reset_tbl[0], ARRAY_SIZE(cpg_reset_tbl), CLK_RST_ENABLE);
 }
 
 static void cpg_wdtrst_sel_setup(void)
@@ -1777,26 +1814,26 @@ static void cpg_wdtrst_sel_setup(void)
 	uint32_t ca33_w01, ca33_w23, ca55_w01, ca55_w23;
 
 	/* Clear bit 28 interrupt source for both M33 and CA55 */
-	mmio_write_32(RZV2N_ELC_ERINTM33CLR(0), 0x10000000);
-	mmio_write_32(RZV2N_ELC_ERINTA55CLR(0), 0x10000000);
+	mmio_write_32(RZV2N_ICU_ERINTM33CLR(0), 0x10000000);
+	mmio_write_32(RZV2N_ICU_ERINTA55CLR(0), 0x10000000);
 
-	ca33_w01 = mmio_read_32(RZV2N_ELC_ERINTM33CTL(0));
-	ca33_w23 = mmio_read_32(RZV2N_ELC_ERINTM33CTL(1));
-	ca55_w01 = mmio_read_32(RZV2N_ELC_ERINTA55CTL(0));
-	ca55_w23 = mmio_read_32(RZV2N_ELC_ERINTA55CTL(1));
+	ca33_w01 = mmio_read_32(RZV2N_ICU_ERINTM33CTL(0));
+	ca33_w23 = mmio_read_32(RZV2N_ICU_ERINTM33CTL(1));
+	ca55_w01 = mmio_read_32(RZV2N_ICU_ERINTA55CTL(0));
+	ca55_w23 = mmio_read_32(RZV2N_ICU_ERINTA55CTL(1));
 
 	/* Checking ICU interrupt WDT CM33 */
 	if ((ca33_w01 == 0x40000000) || (ca33_w01 == 0x80000000) ||
 			(ca33_w23 == 0x00000001) || (ca33_w23 == 0x00000002)) {
 		/* ERINTM33CLR0 bit for clear 28-31 */
-		mmio_write_32(RZV2N_ELC_ERINTM33CLR(0), 0xF0000000);
+		mmio_write_32(RZV2N_ICU_ERINTM33CLR(0), 0xF0000000);
 	}
 
 	/* Checking ICU interrupt WDT CA55 */
 	if ((ca55_w01 == 0x40000000) || (ca55_w01 == 0x80000000) ||
 			(ca55_w23 == 0x00000001) || (ca55_w23 == 0x00000002)) {
 		/* ERINTA55CLR0 bit for clear 28-31 */
-		mmio_write_32(RZV2N_ELC_ERINTA55CLR(0), 0xF0000000);
+		mmio_write_32(RZV2N_ICU_ERINTA55CLR(0), 0xF0000000);
 	}
 
 	/* Add in the WEN bits for the selected bits */
@@ -1805,6 +1842,28 @@ static void cpg_wdtrst_sel_setup(void)
 	mmio_write_32(CPG_ERRORRST_SEL2, val);
 }
 
+void cpg_reset_wdt1(void)
+{
+	/* WDT reset apply */
+	cpg_ctrl_clkrst(&cpg_wdt1_clk_rst_tbl[0], ARRAY_SIZE(cpg_wdt1_clk_rst_tbl), CLK_RST_DISABLE);
+	udelay(1);
+
+	/* Release MSTOP  incase this is not yet used */
+	REMOVE_MSTOPS_W(CPG_BUS_1_MSTOP, CPG_BUS_1_MSTOP_WDT1);
+	udelay(1);
+
+	cpg_ctrl_clkrst(&cpg_wdt1_clk_rst_tbl[0], ARRAY_SIZE(cpg_wdt1_clk_rst_tbl), CLK_RST_ENABLE);
+	udelay(1);
+
+	mmio_write_32(RZV2N_ICU_ERINTA55CLR(0), 0x10000000);
+}
+
+void cpg_setup_wdt1(void)
+{
+	mmio_write_32(CPG_ERRORRST_SEL1, 0x000A000A);
+	mmio_write_32(CPG_ERRORRST_SEL2, 0x00020002);
+	mmio_write_32(CPG_ERROR_RST2, 0x00020002);
+}
 
 void cpg_ddr_part1(void)
 {

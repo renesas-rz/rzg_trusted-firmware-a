@@ -13,7 +13,7 @@
 #define RZV2N_SRAM0_BASE			UL(0x08000000)
 #define RZV2N_SRAM2_BASE			UL(0x08100000)
 #define RZV2N_DEVICE_BASE			UL(0x10000000)
-#define RZV2N_ELC					UL(0x10400000)
+#define RZV2N_ICU					UL(0x10400000)
 #define RZV2N_GPIO_BASE				UL(0x10410000)
 #define RZV2N_CPG_BASE				UL(0x10420000)
 #define RZV2N_SYSC_BASE				UL(0x10430000)
@@ -144,15 +144,15 @@
 #define SYS_TSU_REG_OFFSET_END		UL(0x0334)
 
 /* Error Interrupt CM33 Status Register k */
-#define RZV2N_ELC_ERINTM33CTL(k)	(RZV2N_ELC + 0x0304 + ((k) * 0x004))
+#define RZV2N_ICU_ERINTM33CTL(k)	(RZV2N_ICU + 0x0304 + ((k) * 0x004))
 
 /* Error Interrupt CM33 Status Clear Register k */
-#define RZV2N_ELC_ERINTM33CLR(k)	(RZV2N_ELC + 0x0314 + ((k) * 0x004))
+#define RZV2N_ICU_ERINTM33CLR(k)	(RZV2N_ICU + 0x0314 + ((k) * 0x004))
 
 /* Error Interrupt CA55 Status Register k */
-#define RZV2N_ELC_ERINTA55CTL(k)	(RZV2N_ELC + 0x0338 + ((k) * 0x004))
+#define RZV2N_ICU_ERINTA55CTL(k)	(RZV2N_ICU + 0x0338 + ((k) * 0x004))
 
 /* Error Interrupt CA55 Status Clear Register k */
-#define RZV2N_ELC_ERINTA55CLR(k)	(RZV2N_ELC + 0x0348 + ((k) * 0x004))
+#define RZV2N_ICU_ERINTA55CLR(k)	(RZV2N_ICU + 0x0348 + ((k) * 0x004))
 
 #endif /* __RZ_SOC_DEF_H__ */
