@@ -129,8 +129,7 @@ static inline void r_sb_cmn_fc_ci_init(void)
 static inline sb_bool_t r_sb_cmn_fc_is_sb_flow_correct(void)
 {
     const uint32_t flow_counter = g_sb_flow_counter;
-    return ((SB_PRV_CMN_FC_SECUREBOOT_INIT + SB_PRV_CMN_FC_SECUREBOOT_TOTAL_CNT) == flow_counter) ?
-            SB_PRV_TRUE : SB_PRV_FALSE;
+    return ((SB_PRV_CMN_FC_SECUREBOOT_INIT + SB_PRV_CMN_FC_SECUREBOOT_TOTAL_CNT) == flow_counter) ? SB_PRV_TRUE : SB_PRV_FALSE;
 }
 /**********************************************************************************************************************
 * End of function r_sb_cmn_fc_is_sb_flow_correct()
@@ -154,8 +153,7 @@ static inline sb_bool_t r_sb_cmn_fc_is_sb_flow_correct(void)
 static inline sb_bool_t r_sb_cmn_fc_is_ci_flow_correct(void)
 {
     const uint32_t flow_counter = g_sb_flow_counter;
-    return ((SB_PRV_CMN_FC_CHECKINTEGRITY_INIT + SB_PRV_CMN_FC_CHECKINTEGRITY_TOTAL_CNT) == flow_counter) ?
-            SB_PRV_TRUE : SB_PRV_FALSE;
+    return ((SB_PRV_CMN_FC_CHECKINTEGRITY_INIT + SB_PRV_CMN_FC_CHECKINTEGRITY_TOTAL_CNT) == flow_counter) ? SB_PRV_TRUE : SB_PRV_FALSE;
 }
 /**********************************************************************************************************************
 * End of function r_sb_cmn_fc_is_ci_flow_correct()
