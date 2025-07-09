@@ -26,23 +26,22 @@
 /* return value */
 #define CIP_DRV_RET_PASS                      ((cip_drv_ret_t)0x55555555UL) /* Successful completion */
 #define CIP_DRV_RET_SAME_IMAGE_VERSION        ((cip_drv_ret_t)0x55005501UL) /* The same version as the current
-                                                                               image version was entered */
+																				image version was entered */
 #define CIP_DRV_RET_FAIL                      ((cip_drv_ret_t)0xAAAA0001UL) /* Abnormal termination */
 #define CIP_DRV_RET_RESOURCE_CONFLICT         ((cip_drv_ret_t)0xAAAA0002UL) /* Resource collision occurs because
-                                                                               resources required for this process are
-                                                                               used by other processes */
+																				resources required for this process are
+																				used by other processes */
 #define CIP_DRV_RET_RETRY                     ((cip_drv_ret_t)0xAAAA0003UL) /* Retryable error */
 #define CIP_DRV_RET_AUTH_FAIL                 ((cip_drv_ret_t)0xAAAA0004UL) /* Verification failed */
 #define CIP_DRV_RET_UNSUPPORTED_ALGORITHM     ((cip_drv_ret_t)0xAAAA0005UL) /* Unsupported algorithm */
 #define CIP_DRV_RET_LOWER_IMAGE_VERSION       ((cip_drv_ret_t)0xAAAA0006UL) /* A version lower than the current
-                                                                               image version has been entered */
+																				image version has been entered */
 #define CIP_DRV_RET_PARAM_ERROR               ((cip_drv_ret_t)0xAAAA0007UL) /* Parameter error */
 #define CIP_DRV_RET_CRC_MISMATCH              ((cip_drv_ret_t)0xAAAA0008UL) /* CRC mismatch */
 
 /* Root of Trust type */
 #define CIP_DRV_KEY_CERT_PK_CMP_SRC_ROT       (0UL)
 #define CIP_DRV_KEY_CERT_PK_CMP_SRC_IMG_PK    (1UL)
-
 
 /* HASH algorithm */
 #define CIP_DRV_HASH_ALGO_NONE              (0UL)
@@ -131,81 +130,76 @@
 typedef uint32_t cip_drv_ret_t;
 
 /* MAC verification parameter */
-typedef struct
-{
-    uint32_t            mac_algo;
-    const uint32_t *    p_mac;
-    uint32_t            mac_len;
-    const uint32_t *    p_code_cert;
-    uint32_t            code_cert_len;
-    const uint32_t *    p_img;
-    uint32_t            img_len;
-    uint32_t            is_save_img_pk;
-    const uint32_t *    p_sign_pk;
-    uint32_t            sign_pk_len;
+typedef struct {
+	uint32_t mac_algo;
+	const uint32_t *p_mac;
+	uint32_t mac_len;
+	const uint32_t *p_code_cert;
+	uint32_t code_cert_len;
+	const uint32_t *p_img;
+	uint32_t img_len;
+	uint32_t is_save_img_pk;
+	const uint32_t *p_sign_pk;
+	uint32_t sign_pk_len;
 } st_cip_drv_mac_param_t;
 
 /* Certificate chain verification KeyCert parameter */
-typedef struct
-{
-    uint32_t            key_cert_pk_cmp_src;
-    uint32_t            img_pk_hash_algo;
-    const uint32_t *    p_img_pk_hash;
-    uint32_t            img_pk_hash_len;
-    uint32_t            sign_algo;
-    uint32_t            sign_hash_algo;
-    uint32_t            sign_scheme;
-    const uint32_t *    p_sign_pk;
-    uint32_t            sign_pk_len;
-    const uint32_t *    p_sign;
-    uint32_t            sign_len;
-    const uint32_t *    p_key_cert;
-    uint32_t            key_cert_sign_len;
+typedef struct {
+	uint32_t key_cert_pk_cmp_src;
+	uint32_t img_pk_hash_algo;
+	const uint32_t *p_img_pk_hash;
+	uint32_t img_pk_hash_len;
+	uint32_t sign_algo;
+	uint32_t sign_hash_algo;
+	uint32_t sign_scheme;
+	const uint32_t *p_sign_pk;
+	uint32_t sign_pk_len;
+	const uint32_t *p_sign;
+	uint32_t sign_len;
+	const uint32_t *p_key_cert;
+	uint32_t key_cert_sign_len;
 } st_cip_drv_cc_key_cert_param_t;
 
 /* Certificate chain verification CodeCert parameter */
-typedef struct
-{
-    uint32_t            sign_algo;
-    uint32_t            sign_hash_algo;
-    uint32_t            sign_scheme;
-    const uint32_t *    p_sign_pk;
-    uint32_t            sign_pk_len;
-    const uint32_t *    p_sign;
-    uint32_t            sign_len;
-    const uint32_t *    p_code_cert;
-    uint32_t            code_cert_len;
-    uint32_t            code_cert_sign_len;
-    const uint32_t *    p_img;
-    uint32_t            img_len;
-    uint32_t            img_hash_algo;
-    const uint32_t *    p_img_hash;
-    uint32_t            img_hash_len;
-    uint32_t            is_save_img_pk;
+typedef struct {
+	uint32_t sign_algo;
+	uint32_t sign_hash_algo;
+	uint32_t sign_scheme;
+	const uint32_t *p_sign_pk;
+	uint32_t sign_pk_len;
+	const uint32_t *p_sign;
+	uint32_t sign_len;
+	const uint32_t *p_code_cert;
+	uint32_t code_cert_len;
+	uint32_t code_cert_sign_len;
+	const uint32_t *p_img;
+	uint32_t img_len;
+	uint32_t img_hash_algo;
+	const uint32_t *p_img_hash;
+	uint32_t img_hash_len;
+	uint32_t is_save_img_pk;
 } st_cip_drv_cc_code_cert_param_t;
 
 /* image cipher parameter */
-typedef struct
-{
-    uint32_t            timing;
-    const uint32_t *    p_img_src;
-    uint32_t *          p_img_dst;
-    uint32_t            img_len;
-    uint32_t            cipher_algo;
-    uint32_t            cipher_mode;
-    uint32_t            key_select;
-    uint32_t            iv_select;
-    const uint32_t *    p_iv;
-    uint32_t            iv_len;
+typedef struct {
+	uint32_t timing;
+	const uint32_t *p_img_src;
+	uint32_t *p_img_dst;
+	uint32_t img_len;
+	uint32_t cipher_algo;
+	uint32_t cipher_mode;
+	uint32_t key_select;
+	uint32_t iv_select;
+	const uint32_t *p_iv;
+	uint32_t iv_len;
 } st_cip_drv_cipher_img_param_t;
 
 /* CRC check parameter */
-typedef struct
-{
-    uint32_t         crc_algo;
-    const uint32_t * p_crc;
-    const uint32_t * p_img;
-    uint32_t         img_len;
+typedef struct {
+	uint32_t crc_algo;
+	const uint32_t *p_crc;
+	const uint32_t *p_img;
+	uint32_t img_len;
 } st_cip_drv_crc_param_t;
 
 /*=====================================================================================================================
@@ -215,21 +209,21 @@ typedef struct
 /*=====================================================================================================================
  Public global functions
 =====================================================================================================================*/
-extern cip_drv_ret_t R_CIP_DRV_PrcDeriveMacKeyFromHuk (void);
-extern cip_drv_ret_t R_CIP_DRV_PrcVerifyMac (const st_cip_drv_mac_param_t * const p_mac_param,
-                                            const st_cip_drv_cipher_img_param_t * const p_dec_img_param);
-extern cip_drv_ret_t R_CIP_DRV_PrcVerifyCertChain (const st_cip_drv_cc_key_cert_param_t * const p_cc_key_cert_param,
-                                                    const st_cip_drv_cc_code_cert_param_t * const p_cc_code_cert_param,
-                                                    const st_cip_drv_cipher_img_param_t * const p_dec_img_param);
-extern cip_drv_ret_t R_CIP_DRV_PrcCheckIntegrity (const st_cip_drv_cc_key_cert_param_t *  const p_cc_key_cert_param,
-                                                    const st_cip_drv_cc_code_cert_param_t * const p_cc_code_cert_param,
-                                                    const st_cip_drv_cipher_img_param_t * const p_dec_tmp_img_param,
-                                                    const st_cip_drv_cipher_img_param_t * const p_enc_img_param,
-                                                    const uint32_t mac_algo, uint32_t * const p_tag);
-extern cip_drv_ret_t R_CIP_DRV_PrcDecryptImage (const st_cip_drv_cipher_img_param_t * const p_dec_img_param);
-extern cip_drv_ret_t R_CIP_DRV_CheckImageVersion (const uint32_t image_version,
-                                                    const uint32_t build_num);
-extern cip_drv_ret_t R_CIP_DRV_PrcCheckCRC (const st_cip_drv_crc_param_t * const p_crc_code_cert_param);
+extern cip_drv_ret_t R_CIP_DRV_PrcDeriveMacKeyFromHuk(void);
+extern cip_drv_ret_t R_CIP_DRV_PrcVerifyMac(const st_cip_drv_mac_param_t *const p_mac_param,
+											const st_cip_drv_cipher_img_param_t *const p_dec_img_param);
+extern cip_drv_ret_t R_CIP_DRV_PrcVerifyCertChain(const st_cip_drv_cc_key_cert_param_t *const p_cc_key_cert_param,
+												  const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param,
+												  const st_cip_drv_cipher_img_param_t *const p_dec_img_param);
+extern cip_drv_ret_t R_CIP_DRV_PrcCheckIntegrity(const st_cip_drv_cc_key_cert_param_t *const p_cc_key_cert_param,
+												 const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param,
+												 const st_cip_drv_cipher_img_param_t *const p_dec_tmp_img_param,
+												 const st_cip_drv_cipher_img_param_t *const p_enc_img_param,
+												 const uint32_t mac_algo, uint32_t *const p_tag);
+extern cip_drv_ret_t R_CIP_DRV_PrcDecryptImage(const st_cip_drv_cipher_img_param_t *const p_dec_img_param);
+extern cip_drv_ret_t R_CIP_DRV_CheckImageVersion(const uint32_t image_version,
+												 const uint32_t build_num);
+extern cip_drv_ret_t R_CIP_DRV_PrcCheckCRC(const st_cip_drv_crc_param_t *const p_crc_code_cert_param);
 #endif /* R_CIP_DRV_API_H */
 /*=====================================================================================================================
  End of File

@@ -121,26 +121,23 @@
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_mani_set_key_cert_st(const uint8_t* const p_key_cert, st_sb_key_cert_t* const p_key_cert_st)
+sb_ret_t r_sb_mani_set_key_cert_st(const uint8_t *const p_key_cert, st_sb_key_cert_t *const p_key_cert_st)
 {
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    if ((NULL != p_key_cert) && (NULL != p_key_cert_st))
-    {
-        /* Casting from pointer to pointer is no problem */
-        p_key_cert_st->p_header = (const st_sb_key_cert_header_t*)p_key_cert;
-        /* Casts that do not exceed the size of the type are fine */
-        p_key_cert_st->tlv_len = *(const uint32_t*)(&p_key_cert[SB_PRV_MANI_TLV_LEN_OFFSET]);
-        p_key_cert_st->p_tlv_top = &p_key_cert[SB_PRV_MANI_TLV_TOP_OFFSET];
+	if ((NULL != p_key_cert) && (NULL != p_key_cert_st)) {
+		/* Casting from pointer to pointer is no problem */
+		p_key_cert_st->p_header = (const st_sb_key_cert_header_t *)p_key_cert;
+		/* Casts that do not exceed the size of the type are fine */
+		p_key_cert_st->tlv_len = *(const uint32_t *)(&p_key_cert[SB_PRV_MANI_TLV_LEN_OFFSET]);
+		p_key_cert_st->p_tlv_top = &p_key_cert[SB_PRV_MANI_TLV_TOP_OFFSET];
 
-        ret = SB_RET_SUCCESS;
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+		ret = SB_RET_SUCCESS;
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_mani_set_key_cert_st()
@@ -184,26 +181,23 @@ sb_ret_t r_sb_mani_set_key_cert_st(const uint8_t* const p_key_cert, st_sb_key_ce
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_mani_set_code_cert_st(const uint8_t* const p_code_cert, st_sb_code_cert_t* const p_code_cert_st)
+sb_ret_t r_sb_mani_set_code_cert_st(const uint8_t *const p_code_cert, st_sb_code_cert_t *const p_code_cert_st)
 {
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    if ((NULL != p_code_cert) && (NULL != p_code_cert_st))
-    {
-        /* Casting from pointer to pointer is no problem */
-        p_code_cert_st->p_header = (const st_sb_code_cert_header_t*)p_code_cert;
-        /* Casts that do not exceed the size of the type are fine */
-        p_code_cert_st->tlv_len = *(const uint32_t*)(&p_code_cert[SB_PRV_MANI_TLV_LEN_OFFSET]);
-        p_code_cert_st->p_tlv_top = &p_code_cert[SB_PRV_MANI_TLV_TOP_OFFSET];
+	if ((NULL != p_code_cert) && (NULL != p_code_cert_st)) {
+		/* Casting from pointer to pointer is no problem */
+		p_code_cert_st->p_header = (const st_sb_code_cert_header_t *)p_code_cert;
+		/* Casts that do not exceed the size of the type are fine */
+		p_code_cert_st->tlv_len = *(const uint32_t *)(&p_code_cert[SB_PRV_MANI_TLV_LEN_OFFSET]);
+		p_code_cert_st->p_tlv_top = &p_code_cert[SB_PRV_MANI_TLV_TOP_OFFSET];
 
-        ret = SB_RET_SUCCESS;
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+		ret = SB_RET_SUCCESS;
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_mani_set_code_cert_st()
@@ -247,27 +241,24 @@ sb_ret_t r_sb_mani_set_code_cert_st(const uint8_t* const p_code_cert, st_sb_code
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_mani_set_mac_tlv_st(const uint8_t* const p_mac_tlv, st_sb_tlv_t* const p_mac_tlv_st)
+sb_ret_t r_sb_mani_set_mac_tlv_st(const uint8_t *const p_mac_tlv, st_sb_tlv_t *const p_mac_tlv_st)
 {
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    if ((NULL != p_mac_tlv) && (NULL != p_mac_tlv_st))
-    {
-        /* Casts that do not exceed the size of the type are fine */
-        p_mac_tlv_st->type = ((*(const uint32_t*)p_mac_tlv) & SB_PRV_TLV_TL_TYPE_MASK);
-        /* Same cast as above */
-        p_mac_tlv_st->byte_len = ((*(const uint32_t*)p_mac_tlv) & SB_PRV_TLV_TL_LEN_MASK) * SB_PRV_BYTES_OF_WORD;
-        /* Casting from pointer to pointer is no problem */
-        p_mac_tlv_st->p_val = (const uint32_t*)&p_mac_tlv[SB_PRV_TLV_TL_SIZE];
+	if ((NULL != p_mac_tlv) && (NULL != p_mac_tlv_st)) {
+		/* Casts that do not exceed the size of the type are fine */
+		p_mac_tlv_st->type = ((*(const uint32_t *)p_mac_tlv) & SB_PRV_TLV_TL_TYPE_MASK);
+		/* Same cast as above */
+		p_mac_tlv_st->byte_len = ((*(const uint32_t *)p_mac_tlv) & SB_PRV_TLV_TL_LEN_MASK) * SB_PRV_BYTES_OF_WORD;
+		/* Casting from pointer to pointer is no problem */
+		p_mac_tlv_st->p_val = (const uint32_t *)&p_mac_tlv[SB_PRV_TLV_TL_SIZE];
 
-        ret = SB_RET_SUCCESS;
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+		ret = SB_RET_SUCCESS;
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_mani_set_mac_tlv_st()
@@ -325,59 +316,44 @@ sb_ret_t r_sb_mani_set_mac_tlv_st(const uint8_t* const p_mac_tlv, st_sb_tlv_t* c
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_mani_chk_key_cert(const st_sb_key_cert_t* const p_key_cert_st, const uint32_t key_cert_len_max)
+sb_ret_t r_sb_mani_chk_key_cert(const st_sb_key_cert_t *const p_key_cert_st, const uint32_t key_cert_len_max)
 {
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    /* Check NULL */
-    if ((NULL != p_key_cert_st) && (NULL != p_key_cert_st->p_header))
-    {
-        /* Check magic */
-        if (SB_PRV_KEY_CERT_HEADER_MAGIC == p_key_cert_st->p_header->magic)
-        {
-            /* Check version */
-            if (SB_PRV_KEY_CERT_HEADER_VERSION == p_key_cert_st->p_header->manifest_version)
-            {
-                /* Check TLV len max */
-                if ((key_cert_len_max >= SB_MANIFEST_LEN_MIN) && (key_cert_len_max <= SB_MANIFEST_LEN_MAX))
-                {
-                    /* Check TLV len */
-                    if (p_key_cert_st->tlv_len <= ((key_cert_len_max - SB_PRV_MANI_HEADER_SIZE) -
-                                                    SB_PRV_MANI_TLV_LEN_SIZE))
-                    {
-                        /* All checks passed. Set ret to the success code */
-                        ret = SB_RET_SUCCESS;
-                    }
-                    else
-                    {
-                        /* Invalid TLV len */
-                        ret = SB_RET_ERR_MANI_OUT_OF_RANGE_LEN;
-                    }
-                }
-                else
-                {
-                    /* Invalid TLV len max */
-                    ret = SB_RET_ERR_INVALID_ARG;
-                }
-            }
-            else
-            {
-                /* Invalid version */
-                ret = SB_RET_ERR_MANI_UNSUPPORTED_VERSION;
-            }
-        }
-        else
-        {
-            /* Invalid magic */
-            ret = SB_RET_ERR_MANI_INVALID_MAGIC;
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+	/* Check NULL */
+	if ((NULL != p_key_cert_st) && (NULL != p_key_cert_st->p_header)) {
+		/* Check magic */
+		if (SB_PRV_KEY_CERT_HEADER_MAGIC == p_key_cert_st->p_header->magic) {
+			/* Check version */
+			if (SB_PRV_KEY_CERT_HEADER_VERSION == p_key_cert_st->p_header->manifest_version) {
+				/* Check TLV len max */
+				if ((key_cert_len_max >= SB_MANIFEST_LEN_MIN) && (key_cert_len_max <= SB_MANIFEST_LEN_MAX)) {
+					/* Check TLV len */
+					if (p_key_cert_st->tlv_len <= ((key_cert_len_max - SB_PRV_MANI_HEADER_SIZE) -
+												   SB_PRV_MANI_TLV_LEN_SIZE)) {
+						/* All checks passed. Set ret to the success code */
+						ret = SB_RET_SUCCESS;
+					} else {
+						/* Invalid TLV len */
+						ret = SB_RET_ERR_MANI_OUT_OF_RANGE_LEN;
+					}
+				} else {
+					/* Invalid TLV len max */
+					ret = SB_RET_ERR_INVALID_ARG;
+				}
+			} else {
+				/* Invalid version */
+				ret = SB_RET_ERR_MANI_UNSUPPORTED_VERSION;
+			}
+		} else {
+			/* Invalid magic */
+			ret = SB_RET_ERR_MANI_INVALID_MAGIC;
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_mani_chk_key_cert()
@@ -445,77 +421,56 @@ sb_ret_t r_sb_mani_chk_key_cert(const st_sb_key_cert_t* const p_key_cert_st, con
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_mani_chk_code_cert(const st_sb_code_cert_t* const p_code_cert_st, const uint32_t code_cert_len_max)
+sb_ret_t r_sb_mani_chk_code_cert(const st_sb_code_cert_t *const p_code_cert_st, const uint32_t code_cert_len_max)
 {
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    /* Check NULL */
-    if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header))
-    {
-        /* Check magic */
-        if (SB_PRV_CODE_CERT_HEADER_MAGIC == p_code_cert_st->p_header->magic)
-        {
-            /* Check version */
-            if (SB_PRV_CODE_CERT_HEADER_VERSION == p_code_cert_st->p_header->manifest_version)
-            {
-                /* Check image alignment */
-                if ((p_code_cert_st->p_header->dest_addr & SB_PRV_REMAINDER_DIV4) == 0UL)
-                {
-                    /* Check image length */
-                    if ((p_code_cert_st->p_header->img_len & SB_PRV_REMAINDER_DIV16) == 0UL)
-                    {
-                        /* Check TLV len max */
-                        if ((code_cert_len_max >= SB_MANIFEST_LEN_MIN) && (code_cert_len_max <= SB_MANIFEST_LEN_MAX))
-                        {
-                            /* Check TLV len */
-                            if (p_code_cert_st->tlv_len <= ((code_cert_len_max - SB_PRV_MANI_HEADER_SIZE) -
-                                                            SB_PRV_MANI_TLV_LEN_SIZE))
-                            {
-                                /* All checks passed. Set ret to the success code */
-                                ret = SB_RET_SUCCESS;
-                            }
-                            else
-                            {
-                                /* Invalid TLV len */
-                                ret = SB_RET_ERR_MANI_OUT_OF_RANGE_LEN;
-                            }
-                        }
-                        else
-                        {
-                            /* Invalid TLV len max */
-                            ret = SB_RET_ERR_INVALID_ARG;
-                        }
-                    }
-                    else
-                    {
-                        /* Invalid image length */
-                        ret = SB_RET_ERR_MANI_INVALID_IMAGE_LEN;
-                    }
-                }
-                else
-                {
-                    /* Invalid image alignment */
-                    ret = SB_RET_ERR_INVALID_ALIGNMENT;
-                }
-            }
-            else
-            {
-                /* Invalid version */
-                ret = SB_RET_ERR_MANI_UNSUPPORTED_VERSION;
-            }
-        }
-        else
-        {
-            /* Invalid magic */
-            ret = SB_RET_ERR_MANI_INVALID_MAGIC;
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+	/* Check NULL */
+	if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header)) {
+		/* Check magic */
+		if (SB_PRV_CODE_CERT_HEADER_MAGIC == p_code_cert_st->p_header->magic) {
+			/* Check version */
+			if (SB_PRV_CODE_CERT_HEADER_VERSION == p_code_cert_st->p_header->manifest_version) {
+				/* Check image alignment */
+				if ((p_code_cert_st->p_header->dest_addr & SB_PRV_REMAINDER_DIV4) == 0UL) {
+					/* Check image length */
+					if ((p_code_cert_st->p_header->img_len & SB_PRV_REMAINDER_DIV16) == 0UL) {
+						/* Check TLV len max */
+						if ((code_cert_len_max >= SB_MANIFEST_LEN_MIN) && (code_cert_len_max <= SB_MANIFEST_LEN_MAX)) {
+							/* Check TLV len */
+							if (p_code_cert_st->tlv_len <= ((code_cert_len_max - SB_PRV_MANI_HEADER_SIZE) -
+															SB_PRV_MANI_TLV_LEN_SIZE)) {
+								/* All checks passed. Set ret to the success code */
+								ret = SB_RET_SUCCESS;
+							} else {
+								/* Invalid TLV len */
+								ret = SB_RET_ERR_MANI_OUT_OF_RANGE_LEN;
+							}
+						} else {
+							/* Invalid TLV len max */
+							ret = SB_RET_ERR_INVALID_ARG;
+						}
+					} else {
+						/* Invalid image length */
+						ret = SB_RET_ERR_MANI_INVALID_IMAGE_LEN;
+					}
+				} else {
+					/* Invalid image alignment */
+					ret = SB_RET_ERR_INVALID_ALIGNMENT;
+				}
+			} else {
+				/* Invalid version */
+				ret = SB_RET_ERR_MANI_UNSUPPORTED_VERSION;
+			}
+		} else {
+			/* Invalid magic */
+			ret = SB_RET_ERR_MANI_INVALID_MAGIC;
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_mani_chk_code_cert()
@@ -589,84 +544,69 @@ sb_ret_t r_sb_mani_chk_code_cert(const st_sb_code_cert_t* const p_code_cert_st, 
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_mani_parse_tlvs(const uint8_t* const p_top, const uint32_t tlv_len, const uint32_t num_of_search_type,
-                                const st_sb_search_tlv_type_t* const p_search_types, st_sb_tlv_t* const p_tlvs)
+sb_ret_t r_sb_mani_parse_tlvs(const uint8_t *const p_top, const uint32_t tlv_len, const uint32_t num_of_search_type,
+							  const st_sb_search_tlv_type_t *const p_search_types, st_sb_tlv_t *const p_tlvs)
 {
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    uint32_t offset;
-    uint32_t search_i;
-    uint32_t type;
-    uint32_t byte_len;
-    uint32_t hit_cnt;
+	uint32_t offset;
+	uint32_t search_i;
+	uint32_t type;
+	uint32_t byte_len;
+	uint32_t hit_cnt;
 
-    if ((NULL != p_top) && (NULL != p_search_types) && (NULL != p_tlvs))
-    {
-        /* Initialize before parse */
-        offset = 0UL;
-        hit_cnt = 0UL;
-        for (search_i = 0UL; search_i < num_of_search_type; search_i++)
-        {
-            p_tlvs[search_i].p_val = NULL;
-        }
+	if ((NULL != p_top) && (NULL != p_search_types) && (NULL != p_tlvs)) {
+		/* Initialize before parse */
+		offset = 0UL;
+		hit_cnt = 0UL;
+		for (search_i = 0UL; search_i < num_of_search_type; search_i++) {
+			p_tlvs[search_i].p_val = NULL;
+		}
 
-        while ((hit_cnt < num_of_search_type) && (offset < tlv_len))
-        {
-            /* Get Type&Length field */
-            /* Casts that do not exceed the size of the type are fine */
-            type = ((*(const uint32_t*)(&p_top[offset])) & SB_PRV_TLV_TL_TYPE_MASK);
-            /* Same cast as above */
-            byte_len = ((*(const uint32_t*)(&p_top[offset])) & SB_PRV_TLV_TL_LEN_MASK) * SB_PRV_BYTES_OF_WORD;
+		while ((hit_cnt < num_of_search_type) && (offset < tlv_len)) {
+			/* Get Type&Length field */
+			/* Casts that do not exceed the size of the type are fine */
+			type = ((*(const uint32_t *)(&p_top[offset])) & SB_PRV_TLV_TL_TYPE_MASK);
+			/* Same cast as above */
+			byte_len = ((*(const uint32_t *)(&p_top[offset])) & SB_PRV_TLV_TL_LEN_MASK) * SB_PRV_BYTES_OF_WORD;
 
-            /* Search type table */
-            search_i = 0UL;
-            while (search_i < num_of_search_type)
-            {
-                if ((type & p_search_types[search_i].mask) ==
-                    (p_search_types[search_i].type & p_search_types[search_i].mask))
-                {
-                    if (NULL == p_tlvs[search_i].p_val)
-                    {
-                        p_tlvs[search_i].type = type;
-                        p_tlvs[search_i].byte_len = byte_len;
-                        /* Casting from pointer to pointer is no problem */
-                        p_tlvs[search_i].p_val  = (const uint32_t*)(&p_top[offset + SB_PRV_TLV_TL_SIZE]);
-                        hit_cnt++;
-                    }
-                    else
-                    {
-                        /* Target type already found. Do nothing */
-                    }
-                    break;
-                }
-                else
-                {
-                    /* Do nothing */
-                }
-                search_i++;
-            }
+			/* Search type table */
+			search_i = 0UL;
+			while (search_i < num_of_search_type) {
+				if ((type & p_search_types[search_i].mask) ==
+					(p_search_types[search_i].type & p_search_types[search_i].mask)) {
+					if (NULL == p_tlvs[search_i].p_val) {
+						p_tlvs[search_i].type = type;
+						p_tlvs[search_i].byte_len = byte_len;
+						/* Casting from pointer to pointer is no problem */
+						p_tlvs[search_i].p_val = (const uint32_t *)(&p_top[offset + SB_PRV_TLV_TL_SIZE]);
+						hit_cnt++;
+					} else {
+						/* Target type already found. Do nothing */
+					}
+					break;
+				} else {
+					/* Do nothing */
+				}
+				search_i++;
+			}
 
-            /* Next TLV */
-            offset += (SB_PRV_TLV_TL_SIZE + byte_len);
-        }
+			/* Next TLV */
+			offset += (SB_PRV_TLV_TL_SIZE + byte_len);
+		}
 
-        /* Check TLV total length over */
-        if (offset > tlv_len)
-        {
-            ret = SB_RET_ERR_MANI_TLV_INVALID_LEN;
-        }
-        else
-        {
-            /* Set ret to the success code */
-            ret = SB_RET_SUCCESS;
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+		/* Check TLV total length over */
+		if (offset > tlv_len) {
+			ret = SB_RET_ERR_MANI_TLV_INVALID_LEN;
+		} else {
+			/* Set ret to the success code */
+			ret = SB_RET_SUCCESS;
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_mani_parse_tlvs()

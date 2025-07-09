@@ -16,7 +16,7 @@
 #error "TRUSTED_BOARD_BOOT must be enabled"
 #endif
 
-volatile uint32_t * gp_sce;
+volatile uint32_t *gp_sce;
 
 void cip_init(void)
 {
@@ -38,7 +38,7 @@ void cip_rng(uintptr_t buffer, size_t len)
 
 	cip_init();
 
-	for (size_t i = 0; i < len; i+= sizeof(random)) {
+	for (size_t i = 0; i < len; i += sizeof(random)) {
 		R_SCE_RandomNumberGenerate(random);
 		memcpy((void *)(buffer + i), random, MIN(len - i, sizeof(random)));
 	}

@@ -43,13 +43,12 @@
  *********************************************************************************************************************/
 STATIC cip_drv_ret_t rsip_validate_addr(const uint32_t *const addr, const uint32_t alignment)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    if (false == is_aligned((uintptr_t) addr, alignment))
-    {
-        ret_val = CIP_DRV_RET_PARAM_ERROR;
-    }
-    return ret_val;
+	if (false == is_aligned((uintptr_t)addr, alignment)) {
+		ret_val = CIP_DRV_RET_PARAM_ERROR;
+	}
+	return ret_val;
 } /* End of function rsip_validate_addr() */
 
 /**********************************************************************************************************************
@@ -65,13 +64,12 @@ STATIC cip_drv_ret_t rsip_validate_addr(const uint32_t *const addr, const uint32
  *********************************************************************************************************************/
 STATIC cip_drv_ret_t rsip_validate_size(const uint32_t size, const uint32_t alignment)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    if ((0 == size) || (false == is_aligned(size, alignment)))
-    {
-        ret_val = CIP_DRV_RET_PARAM_ERROR;
-    }
-    return ret_val;
+	if ((0 == size) || (false == is_aligned(size, alignment))) {
+		ret_val = CIP_DRV_RET_PARAM_ERROR;
+	}
+	return ret_val;
 } /* End of function rsip_validate_size() */
 
 /**********************************************************************************************************************
@@ -87,17 +85,15 @@ STATIC cip_drv_ret_t rsip_validate_size(const uint32_t size, const uint32_t alig
  *********************************************************************************************************************/
 STATIC cip_drv_ret_t rsip_validate_keyselect(const uint32_t key_select)
 {
-    /* Supports external registered key only */
-    if (CIP_DRV_CIPHER_INFO_KEY_SEL_INSTALLED != (key_select & CIP_DRV_KEY_SELECT_MASK))
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    /* Support key id 0 to 4 */
-    if (CIP_DRV_MAX_KEY_INDEX < (key_select & CIP_DRV_KEY_INDEX_MASK))
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    return CIP_DRV_RET_PASS;
+	/* Supports external registered key only */
+	if (CIP_DRV_CIPHER_INFO_KEY_SEL_INSTALLED != (key_select & CIP_DRV_KEY_SELECT_MASK)) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	/* Support key id 0 to 4 */
+	if (CIP_DRV_MAX_KEY_INDEX < (key_select & CIP_DRV_KEY_INDEX_MASK)) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	return CIP_DRV_RET_PASS;
 } /* End of function rsip_validate_keyselect() */
 
 /**********************************************************************************************************************
@@ -116,16 +112,14 @@ STATIC cip_drv_ret_t rsip_validate_keyselect(const uint32_t key_select)
  *********************************************************************************************************************/
 STATIC cip_drv_ret_t rsip_validate_iv(const uint32_t iv_select, const uint32_t *const iv, const uint32_t iv_len)
 {
-    /* Supports specified iv length and iv_select only */
-    if (CIP_DRV_CIPHER_INFO_IV_SEL_STORED_CODE_CERT != iv_select)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    if ((NULL == iv) || (HW_SCE_AES_CBC_IV_BYTE_SIZE != iv_len))
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    return rsip_validate_addr(iv, 4);
+	/* Supports specified iv length and iv_select only */
+	if (CIP_DRV_CIPHER_INFO_IV_SEL_STORED_CODE_CERT != iv_select) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	if ((NULL == iv) || (HW_SCE_AES_CBC_IV_BYTE_SIZE != iv_len)) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	return rsip_validate_addr(iv, 4);
 } /* End of function rsip_validate_iv() */
 
 /**********************************************************************************************************************
@@ -143,14 +137,13 @@ STATIC cip_drv_ret_t rsip_validate_iv(const uint32_t iv_select, const uint32_t *
  *********************************************************************************************************************/
 STATIC cip_drv_ret_t rsip_validate_cipher(const uint32_t cipher_algo, const uint32_t cipher_mode)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    /* Supports AES128-CBC mode only */
-    if ((CIP_DRV_CIPHER_ALGO_AES128 != cipher_algo) || (CIP_DRV_CIPHER_MODE_CBC != cipher_mode))
-    {
-        ret_val = CIP_DRV_RET_UNSUPPORTED_ALGORITHM;
-    }
-    return ret_val;
+	/* Supports AES128-CBC mode only */
+	if ((CIP_DRV_CIPHER_ALGO_AES128 != cipher_algo) || (CIP_DRV_CIPHER_MODE_CBC != cipher_mode)) {
+		ret_val = CIP_DRV_RET_UNSUPPORTED_ALGORITHM;
+	}
+	return ret_val;
 } /* End of function rsip_validate_cipher() */
 
 /**********************************************************************************************************************
@@ -171,17 +164,15 @@ STATIC cip_drv_ret_t rsip_validate_cipher(const uint32_t cipher_algo, const uint
  *                    not supported algorithm
  *********************************************************************************************************************/
 STATIC cip_drv_ret_t rsip_validate_verify_keycert(const uint32_t img_pk_hash_algo, const uint32_t sign_algo,
-        const uint32_t sign_hash_algo, const uint32_t sign_scheme)
+												  const uint32_t sign_hash_algo, const uint32_t sign_scheme)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    /* Supports specified algorithm only */
-    if ((CIP_DRV_HASH_ALGO_SHA2_256 != img_pk_hash_algo) || (CIP_DRV_SIGN_ALGO_ECDSA_P256 != sign_algo)
-            || (CIP_DRV_HASH_ALGO_SHA2_256 != sign_hash_algo) || (CIP_DRV_SCHEME_NONE != sign_scheme))
-    {
-        ret_val = CIP_DRV_RET_UNSUPPORTED_ALGORITHM;
-    }
-    return ret_val;
+	/* Supports specified algorithm only */
+	if ((CIP_DRV_HASH_ALGO_SHA2_256 != img_pk_hash_algo) || (CIP_DRV_SIGN_ALGO_ECDSA_P256 != sign_algo) || (CIP_DRV_HASH_ALGO_SHA2_256 != sign_hash_algo) || (CIP_DRV_SCHEME_NONE != sign_scheme)) {
+		ret_val = CIP_DRV_RET_UNSUPPORTED_ALGORITHM;
+	}
+	return ret_val;
 } /* End of function rsip_validate_verify_keycert() */
 
 /**********************************************************************************************************************
@@ -202,18 +193,15 @@ STATIC cip_drv_ret_t rsip_validate_verify_keycert(const uint32_t img_pk_hash_alg
  *                    not supported algorithm
  *********************************************************************************************************************/
 STATIC cip_drv_ret_t rsip_validate_verify_codecert(const uint32_t img_hash_algo, const uint32_t sign_algo,
-        const uint32_t sign_hash_algo, const uint32_t sign_scheme)
+												   const uint32_t sign_hash_algo, const uint32_t sign_scheme)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    /* Supports specified algorithm only */
-    if (((CIP_DRV_HASH_ALGO_SHA2_256 != img_hash_algo) && (CIP_DRV_HASH_ALGO_NONE != img_hash_algo))
-            || (CIP_DRV_SIGN_ALGO_ECDSA_P256 != sign_algo) || (CIP_DRV_HASH_ALGO_SHA2_256 != sign_hash_algo)
-            || (CIP_DRV_SCHEME_NONE != sign_scheme))
-    {
-        ret_val = CIP_DRV_RET_UNSUPPORTED_ALGORITHM;
-    }
-    return ret_val;
+	/* Supports specified algorithm only */
+	if (((CIP_DRV_HASH_ALGO_SHA2_256 != img_hash_algo) && (CIP_DRV_HASH_ALGO_NONE != img_hash_algo)) || (CIP_DRV_SIGN_ALGO_ECDSA_P256 != sign_algo) || (CIP_DRV_HASH_ALGO_SHA2_256 != sign_hash_algo) || (CIP_DRV_SCHEME_NONE != sign_scheme)) {
+		ret_val = CIP_DRV_RET_UNSUPPORTED_ALGORITHM;
+	}
+	return ret_val;
 } /* End of function rsip_validate_verify_codecert() */
 
 /**********************************************************************************************************************
@@ -231,38 +219,31 @@ STATIC cip_drv_ret_t rsip_validate_verify_codecert(const uint32_t img_hash_algo,
  *********************************************************************************************************************/
 cip_drv_ret_t cip_drv_check_dec_param(const st_cip_drv_cipher_img_param_t *const dec_param)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    if (NULL == dec_param)
-    {
-        ret_val = CIP_DRV_RET_PARAM_ERROR;
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_keyselect(dec_param->key_select);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_addr(dec_param->p_img_src, 4);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_addr(dec_param->p_img_dst, 4);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_size(dec_param->img_len, 4);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_cipher(dec_param->cipher_algo, dec_param->cipher_mode);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_iv(dec_param->iv_select, dec_param->p_iv, dec_param->iv_len);
-    }
+	if (NULL == dec_param) {
+		ret_val = CIP_DRV_RET_PARAM_ERROR;
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_keyselect(dec_param->key_select);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_addr(dec_param->p_img_src, 4);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_addr(dec_param->p_img_dst, 4);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_size(dec_param->img_len, 4);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_cipher(dec_param->cipher_algo, dec_param->cipher_mode);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_iv(dec_param->iv_select, dec_param->p_iv, dec_param->iv_len);
+	}
 
-    return ret_val;
+	return ret_val;
 } /* End of function cip_drv_check_dec_param() */
 
 /**********************************************************************************************************************
@@ -279,96 +260,79 @@ cip_drv_ret_t cip_drv_check_dec_param(const st_cip_drv_cipher_img_param_t *const
  *                    not supported algorithm
  *********************************************************************************************************************/
 cip_drv_ret_t cip_drv_check_verify_param(const st_cip_drv_cc_key_cert_param_t *const p_cc_key_cert_param,
-        const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param,
-        const st_cip_drv_cipher_img_param_t *const p_dec_img_param)
+										 const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param,
+										 const st_cip_drv_cipher_img_param_t *const p_dec_img_param)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    if ((NULL == p_cc_key_cert_param) || (NULL == p_cc_code_cert_param))
-    {
-        ret_val = CIP_DRV_RET_PARAM_ERROR;
-    }
+	if ((NULL == p_cc_key_cert_param) || (NULL == p_cc_code_cert_param)) {
+		ret_val = CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    /* key cert check */
+	/* key cert check */
 
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        /* Support CIP_DRV_KEY_CERT_PK_CMP_SRC_ROT only */
-        if (CIP_DRV_KEY_CERT_PK_CMP_SRC_ROT != p_cc_key_cert_param->key_cert_pk_cmp_src)
-        {
-            ret_val = CIP_DRV_RET_PARAM_ERROR;
-        }
-    }
+	if (CIP_DRV_RET_PASS == ret_val) {
+		/* Support CIP_DRV_KEY_CERT_PK_CMP_SRC_ROT only */
+		if (CIP_DRV_KEY_CERT_PK_CMP_SRC_ROT != p_cc_key_cert_param->key_cert_pk_cmp_src) {
+			ret_val = CIP_DRV_RET_PARAM_ERROR;
+		}
+	}
 
-    /* Check algo */
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_verify_keycert(p_cc_key_cert_param->img_pk_hash_algo, p_cc_key_cert_param->sign_algo,
-                p_cc_key_cert_param->sign_hash_algo, p_cc_key_cert_param->sign_scheme);
-    }
-    /* Check alignment */
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_addr(p_cc_key_cert_param->p_img_pk_hash, 4);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_addr(p_cc_key_cert_param->p_sign_pk, 4);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_addr(p_cc_key_cert_param->p_sign, 4);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_addr(p_cc_key_cert_param->p_key_cert, 4);
-    }
-    /* Check size */
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_size(p_cc_key_cert_param->img_pk_hash_len, 4);
-    }
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        if (HW_SCE_ECC_P256_KEY_SIZE != p_cc_key_cert_param->sign_pk_len)
-        {
-            ret_val = CIP_DRV_RET_PARAM_ERROR;
-        }
-        if (HW_SCE_ECDSA_DATA_BYTE_SIZE != p_cc_key_cert_param->sign_len)
-        {
-            ret_val = CIP_DRV_RET_PARAM_ERROR;
-        }
-    }
+	/* Check algo */
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_verify_keycert(p_cc_key_cert_param->img_pk_hash_algo, p_cc_key_cert_param->sign_algo,
+											   p_cc_key_cert_param->sign_hash_algo, p_cc_key_cert_param->sign_scheme);
+	}
+	/* Check alignment */
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_addr(p_cc_key_cert_param->p_img_pk_hash, 4);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_addr(p_cc_key_cert_param->p_sign_pk, 4);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_addr(p_cc_key_cert_param->p_sign, 4);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_addr(p_cc_key_cert_param->p_key_cert, 4);
+	}
+	/* Check size */
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_size(p_cc_key_cert_param->img_pk_hash_len, 4);
+	}
+	if (CIP_DRV_RET_PASS == ret_val) {
+		if (HW_SCE_ECC_P256_KEY_SIZE != p_cc_key_cert_param->sign_pk_len) {
+			ret_val = CIP_DRV_RET_PARAM_ERROR;
+		}
+		if (HW_SCE_ECDSA_DATA_BYTE_SIZE != p_cc_key_cert_param->sign_len) {
+			ret_val = CIP_DRV_RET_PARAM_ERROR;
+		}
+	}
 
-    /* code cert check */
+	/* code cert check */
 
-    /* Check Algo */
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        ret_val = rsip_validate_verify_codecert(p_cc_code_cert_param->img_hash_algo, p_cc_code_cert_param->sign_algo,
-                p_cc_code_cert_param->sign_hash_algo,
-                p_cc_code_cert_param->sign_scheme);
-    }
+	/* Check Algo */
+	if (CIP_DRV_RET_PASS == ret_val) {
+		ret_val = rsip_validate_verify_codecert(p_cc_code_cert_param->img_hash_algo, p_cc_code_cert_param->sign_algo,
+												p_cc_code_cert_param->sign_hash_algo,
+												p_cc_code_cert_param->sign_scheme);
+	}
 
-    if (CIP_DRV_RET_PASS == ret_val)
-    {
-        /* Support no save img pk only */
-        if (0 != p_cc_code_cert_param->is_save_img_pk)
-        {
-            ret_val = CIP_DRV_RET_PARAM_ERROR;
-        }
+	if (CIP_DRV_RET_PASS == ret_val) {
+		/* Support no save img pk only */
+		if (0 != p_cc_code_cert_param->is_save_img_pk) {
+			ret_val = CIP_DRV_RET_PARAM_ERROR;
+		}
 
-        /* check size */
-        if (HW_SCE_ECC_P256_KEY_SIZE != p_cc_code_cert_param->sign_pk_len)
-        {
-            ret_val = CIP_DRV_RET_PARAM_ERROR;
-        }
-        if (HW_SCE_ECDSA_DATA_BYTE_SIZE != p_cc_code_cert_param->sign_len)
-        {
-            ret_val = CIP_DRV_RET_PARAM_ERROR;
-        }
-    }
-    return ret_val;
+		/* check size */
+		if (HW_SCE_ECC_P256_KEY_SIZE != p_cc_code_cert_param->sign_pk_len) {
+			ret_val = CIP_DRV_RET_PARAM_ERROR;
+		}
+		if (HW_SCE_ECDSA_DATA_BYTE_SIZE != p_cc_code_cert_param->sign_len) {
+			ret_val = CIP_DRV_RET_PARAM_ERROR;
+		}
+	}
+	return ret_val;
 } /* End of function cip_drv_check_verify_param() */
 
 /**********************************************************************************************************************
@@ -383,41 +347,32 @@ cip_drv_ret_t cip_drv_check_verify_param(const st_cip_drv_cc_key_cert_param_t *c
  * Return Value : .
  *********************************************************************************************************************/
 cip_drv_ret_t cip_drv_calc_hash_and_pk_pos(const st_cip_drv_cc_key_cert_param_t *const p_cc_key_cert_param,
-        const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param, uint32_t * kcert_pk_offset,
-        uint32_t * imgpk_hash_offset, uint32_t * ccert_pk_offset, uint32_t * image_hash_offset)
+										   const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param, uint32_t *kcert_pk_offset,
+										   uint32_t *imgpk_hash_offset, uint32_t *ccert_pk_offset, uint32_t *image_hash_offset)
 {
-    if ((uint64_t) p_cc_key_cert_param->p_sign_pk <= (uint64_t) p_cc_key_cert_param->p_key_cert)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    *kcert_pk_offset = (uint32_t)(
-            (uint64_t) p_cc_key_cert_param->p_sign_pk - (uint64_t) p_cc_key_cert_param->p_key_cert);
+	if ((uint64_t)p_cc_key_cert_param->p_sign_pk <= (uint64_t)p_cc_key_cert_param->p_key_cert) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	*kcert_pk_offset = (uint32_t)((uint64_t)p_cc_key_cert_param->p_sign_pk - (uint64_t)p_cc_key_cert_param->p_key_cert);
 
-    if ((uint64_t) p_cc_key_cert_param->p_img_pk_hash <= (uint64_t) p_cc_key_cert_param->p_key_cert)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    *imgpk_hash_offset = (uint32_t)(
-            (uint64_t) p_cc_key_cert_param->p_img_pk_hash - (uint64_t) p_cc_key_cert_param->p_key_cert);
+	if ((uint64_t)p_cc_key_cert_param->p_img_pk_hash <= (uint64_t)p_cc_key_cert_param->p_key_cert) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	*imgpk_hash_offset = (uint32_t)((uint64_t)p_cc_key_cert_param->p_img_pk_hash - (uint64_t)p_cc_key_cert_param->p_key_cert);
 
-    if ((uint64_t) p_cc_code_cert_param->p_sign_pk <= (uint64_t) p_cc_code_cert_param->p_code_cert)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    *ccert_pk_offset = (uint32_t)(
-            (uint64_t) p_cc_code_cert_param->p_sign_pk - (uint64_t) p_cc_code_cert_param->p_code_cert);
+	if ((uint64_t)p_cc_code_cert_param->p_sign_pk <= (uint64_t)p_cc_code_cert_param->p_code_cert) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	*ccert_pk_offset = (uint32_t)((uint64_t)p_cc_code_cert_param->p_sign_pk - (uint64_t)p_cc_code_cert_param->p_code_cert);
 
-    if (NULL != p_cc_code_cert_param->p_img_hash)
-    {
-        if ((uint64_t)(p_cc_code_cert_param->p_img_hash) <= (uint64_t)(p_cc_code_cert_param->p_code_cert))
-        {
-            return CIP_DRV_RET_PARAM_ERROR;
-        }
-        *image_hash_offset = (uint32_t)(
-                (uint64_t) p_cc_code_cert_param->p_img_hash - (uint64_t) p_cc_code_cert_param->p_code_cert);
-    }
+	if (NULL != p_cc_code_cert_param->p_img_hash) {
+		if ((uint64_t)(p_cc_code_cert_param->p_img_hash) <= (uint64_t)(p_cc_code_cert_param->p_code_cert)) {
+			return CIP_DRV_RET_PARAM_ERROR;
+		}
+		*image_hash_offset = (uint32_t)((uint64_t)p_cc_code_cert_param->p_img_hash - (uint64_t)p_cc_code_cert_param->p_code_cert);
+	}
 
-    return CIP_DRV_RET_PASS;
+	return CIP_DRV_RET_PASS;
 }
 /**********************************************************************************************************************
  End of function cip_drv_calc_hash_and_pk_pos

@@ -130,72 +130,59 @@
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_CHECK_CRC == 1U)
-sb_ret_t r_sb_crc_check_crc(const st_sb_code_cert_t* const p_code_cert_st)
+sb_ret_t r_sb_crc_check_crc(const st_sb_code_cert_t *const p_code_cert_st)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t                            ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    cip_drv_ret_t                       cip_ret = CIP_DRV_RET_FAIL;
-    st_cip_drv_crc_param_t              crc_param;
-    volatile uintptr_t                  img_addr;
-    st_sb_tlv_t                         crc_tlvs[SB_PRV_TLV_CRC_NUM];
-    const st_sb_search_tlv_type_t       search_tlv_crc[SB_PRV_TLV_CRC_NUM] =
-    {
-        {SB_PRV_TLV_CRC_IMG_TYPE, SB_PRV_TLV_CRC_IMG_MASK}
-    };
+	cip_drv_ret_t cip_ret = CIP_DRV_RET_FAIL;
+	st_cip_drv_crc_param_t crc_param;
+	volatile uintptr_t img_addr;
+	st_sb_tlv_t crc_tlvs[SB_PRV_TLV_CRC_NUM];
+	const st_sb_search_tlv_type_t search_tlv_crc[SB_PRV_TLV_CRC_NUM] = {
+			{SB_PRV_TLV_CRC_IMG_TYPE, SB_PRV_TLV_CRC_IMG_MASK}};
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
 
-    if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header))
-    {
-        ret = r_sb_mani_parse_tlvs(p_code_cert_st->p_tlv_top, p_code_cert_st->tlv_len, SB_PRV_TLV_CRC_NUM,
-                                    search_tlv_crc, crc_tlvs);
-        if (SB_RET_SUCCESS == ret)
-        {
-            /* Clear ret */
-            ret = SB_RET_ERR_INTERNAL_FAIL;
+	if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header)) {
+		ret = r_sb_mani_parse_tlvs(p_code_cert_st->p_tlv_top, p_code_cert_st->tlv_len, SB_PRV_TLV_CRC_NUM,
+								   search_tlv_crc, crc_tlvs);
+		if (SB_RET_SUCCESS == ret) {
+			/* Clear ret */
+			ret = SB_RET_ERR_INTERNAL_FAIL;
 
-            if (NULL != crc_tlvs[SB_PRV_TLV_CRC_IDX].p_val)
-            {
-                /* Assign the address set in dest_addr once to a uintptr_t type variable
-                    (32/64bit MPU countermeasures) */
-                img_addr = p_code_cert_st->p_header->dest_addr;
+			if (NULL != crc_tlvs[SB_PRV_TLV_CRC_IDX].p_val) {
+				/* Assign the address set in dest_addr once to a uintptr_t type variable
+					(32/64bit MPU countermeasures) */
+				img_addr = p_code_cert_st->p_header->dest_addr;
 
-                /* Set CRC parameters */
-                crc_param.crc_algo  = (crc_tlvs[SB_PRV_TLV_CRC_IDX].type & SB_PRV_TLV_TYPE_CLS_CRC_POLY_MASK)
-                                    >> SB_PRV_TLV_TYPE_CLS_CRC_POLY_POS;
-                crc_param.img_len   = p_code_cert_st->p_header->img_len;
-                crc_param.p_crc     = crc_tlvs[SB_PRV_TLV_CRC_IDX].p_val;
+				/* Set CRC parameters */
+				crc_param.crc_algo = (crc_tlvs[SB_PRV_TLV_CRC_IDX].type & SB_PRV_TLV_TYPE_CLS_CRC_POLY_MASK) >> SB_PRV_TLV_TYPE_CLS_CRC_POLY_POS;
+				crc_param.img_len = p_code_cert_st->p_header->img_len;
+				crc_param.p_crc = crc_tlvs[SB_PRV_TLV_CRC_IDX].p_val;
 
-                /* Cast a uintptr_t type variable to a uint32_t* type pointer */
-                crc_param.p_img     = (const uint32_t*)img_addr;
+				/* Cast a uintptr_t type variable to a uint32_t* type pointer */
+				crc_param.p_img = (const uint32_t *)img_addr;
 
-                /* Calculate and check CRC */
-                /* Call SB-Driver API */
-                cip_ret = R_CIP_DRV_PrcCheckCRC(&crc_param);
-                ret     = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-            }
-            else
-            {
-                ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-            }
-        }
-        else
-        {
-            /* Do nothing */
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+				/* Calculate and check CRC */
+				/* Call SB-Driver API */
+				cip_ret = R_CIP_DRV_PrcCheckCRC(&crc_param);
+				ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+			} else {
+				ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+			}
+		} else {
+			/* Do nothing */
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
-
+	return ret;
 }
 #endif /* (SB_CFG_CHECK_CRC == 1U) */
 /**********************************************************************************************************************

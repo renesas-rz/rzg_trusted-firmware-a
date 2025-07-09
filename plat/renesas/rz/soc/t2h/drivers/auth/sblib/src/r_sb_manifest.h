@@ -193,7 +193,7 @@
 #define SB_PRV_TLV_TYPE_CLS_IV_UT_POS              (24UL)                                 /**< Use Type Bit Position */
 #define SB_PRV_TLV_TYPE_CLS_IV_UT_IMG_CIPHER       (0x0UL << (SB_PRV_TLV_TYPE_CLS_IV_UT_POS)) /**< Image Cipher IV */
 #define SB_PRV_TLV_TYPE_CLS_IV_UT_TMP_IMG_DEC      (0x1UL << (SB_PRV_TLV_TYPE_CLS_IV_UT_POS)) /**< Temporary
-                                                                                                   Image Cipher IV */
+																									Image Cipher IV */
 #define SB_PRV_TLV_TYPE_CLS_IV_UT_MAX              (0xFUL << (SB_PRV_TLV_TYPE_CLS_IV_UT_POS)) /**< Use Type full bit */
 #define SB_PRV_TLV_TYPE_CLS_IV_UT_MASK             (SB_PRV_TLV_TYPE_CLS_IV_UT_MAX)            /**< Use Type mask */
 /*! \}*/
@@ -334,19 +334,17 @@
  * \addtogroup SBLIBManifestTypesInternal
  * \{******************************************************************/
 /** Key Certificate structure */
-typedef struct
-{
-    const st_sb_key_cert_header_t * p_header;    /**< Header information address */
-    uint32_t                        tlv_len;     /**< TLV length */
-    const uint8_t *                 p_tlv_top;   /**< Start address of TLV field */
+typedef struct {
+	const st_sb_key_cert_header_t *p_header; /**< Header information address */
+	uint32_t tlv_len;                        /**< TLV length */
+	const uint8_t *p_tlv_top;                /**< Start address of TLV field */
 } st_sb_key_cert_t;
 
 /** Image Cipher Info value structure */
-typedef struct
-{
-    uint32_t key_sel;                       /**< Specify the key used for encrypting / decrypting images */
-    uint32_t iv_sel;                        /**< Specify the IV to be used for image encryption / decryption */
-    uint32_t dest_addr;                     /**< Image output destination address after decryption */
+typedef struct {
+	uint32_t key_sel;   /**< Specify the key used for encrypting / decrypting images */
+	uint32_t iv_sel;    /**< Specify the IV to be used for image encryption / decryption */
+	uint32_t dest_addr; /**< Image output destination address after decryption */
 } st_sb_img_cip_info_val_t;
 /*! \}*/
 
@@ -357,16 +355,16 @@ typedef struct
 /*=====================================================================================================================
  Public global functions
 =====================================================================================================================*/
-extern sb_ret_t r_sb_mani_set_key_cert_st (const uint8_t * const p_key_cert, st_sb_key_cert_t * const p_key_cert_st);
-extern sb_ret_t r_sb_mani_set_code_cert_st (const uint8_t * const p_code_cert,
-                                            st_sb_code_cert_t * const p_code_cert_st);
-extern sb_ret_t r_sb_mani_set_mac_tlv_st (const uint8_t * const p_mac_tlv, st_sb_tlv_t* const p_mac_tlv_st);
-extern sb_ret_t r_sb_mani_chk_key_cert (const st_sb_key_cert_t * const p_key_cert_st, const uint32_t key_cert_len_max);
-extern sb_ret_t r_sb_mani_chk_code_cert (const st_sb_code_cert_t * const p_code_cert_st,
-                                        const uint32_t code_cert_len_max);
-extern sb_ret_t r_sb_mani_parse_tlvs (const uint8_t * const p_top, const uint32_t tlv_len,
-                                    const uint32_t num_of_search_type,
-                                    const st_sb_search_tlv_type_t * const p_search_types, st_sb_tlv_t * const p_tlvs);
+extern sb_ret_t r_sb_mani_set_key_cert_st(const uint8_t *const p_key_cert, st_sb_key_cert_t *const p_key_cert_st);
+extern sb_ret_t r_sb_mani_set_code_cert_st(const uint8_t *const p_code_cert,
+										   st_sb_code_cert_t *const p_code_cert_st);
+extern sb_ret_t r_sb_mani_set_mac_tlv_st(const uint8_t *const p_mac_tlv, st_sb_tlv_t *const p_mac_tlv_st);
+extern sb_ret_t r_sb_mani_chk_key_cert(const st_sb_key_cert_t *const p_key_cert_st, const uint32_t key_cert_len_max);
+extern sb_ret_t r_sb_mani_chk_code_cert(const st_sb_code_cert_t *const p_code_cert_st,
+										const uint32_t code_cert_len_max);
+extern sb_ret_t r_sb_mani_parse_tlvs(const uint8_t *const p_top, const uint32_t tlv_len,
+									 const uint32_t num_of_search_type,
+									 const st_sb_search_tlv_type_t *const p_search_types, st_sb_tlv_t *const p_tlvs);
 
 #endif /* R_SB_MANIFEST_H */
 /*=====================================================================================================================

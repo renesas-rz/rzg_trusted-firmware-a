@@ -10,7 +10,7 @@
 void crypto_sblib_init(void);
 
 int crypto_sblib_auth(void *data_ptr, size_t len,
-				const void *key_cert, unsigned int key_cert_len,
-				const void *content_cert, unsigned int content_cert_len);
+					  const void *key_cert, unsigned int key_cert_len,
+					  const void *content_cert, unsigned int content_cert_len);
 
 #endif /* CRYPTO_SBLIB_H */

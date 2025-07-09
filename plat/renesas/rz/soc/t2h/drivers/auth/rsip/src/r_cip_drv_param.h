@@ -43,10 +43,10 @@
  *********************************************************************************************************************/
 extern cip_drv_ret_t cip_drv_check_dec_param(const st_cip_drv_cipher_img_param_t *const dec_param);
 extern cip_drv_ret_t cip_drv_check_verify_param(const st_cip_drv_cc_key_cert_param_t *const p_cc_key_cert_param,
-        const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param,
-        const st_cip_drv_cipher_img_param_t *const p_dec_img_param);
+												const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param,
+												const st_cip_drv_cipher_img_param_t *const p_dec_img_param);
 extern cip_drv_ret_t cip_drv_calc_hash_and_pk_pos(const st_cip_drv_cc_key_cert_param_t *const p_cc_key_cert_param,
-        const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param, uint32_t * kcert_pk_offset,
-        uint32_t * imgpk_hash_offset, uint32_t * ccert_pk_offset, uint32_t * image_hash_offset);
+												  const st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param, uint32_t *kcert_pk_offset,
+												  uint32_t *imgpk_hash_offset, uint32_t *ccert_pk_offset, uint32_t *image_hash_offset);
 
 #endif /* R_CIP_DRV_PARAM_H */

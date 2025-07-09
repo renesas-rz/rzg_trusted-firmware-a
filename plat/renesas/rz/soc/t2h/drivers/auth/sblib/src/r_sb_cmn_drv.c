@@ -76,13 +76,13 @@
 /*=====================================================================================================================
  Private function prototypes
 =====================================================================================================================*/
-static uint32_t cmn_drv_get_hash_algo (const uint32_t type);
-static uint32_t cmn_drv_get_sign_hash_algo (const uint32_t type);
-static uint32_t cmn_drv_get_sign_algo (const uint32_t type);
-static uint32_t cmn_drv_get_sign_scheme (const uint32_t type, const uint32_t sign_algo);
-static uint32_t cmn_drv_get_mac_algo (const uint32_t type);
-static uint32_t cmn_drv_get_img_cip_info_algo (const uint32_t type);
-static uint32_t cmn_drv_get_img_cip_info_mode (const uint32_t type);
+static uint32_t cmn_drv_get_hash_algo(const uint32_t type);
+static uint32_t cmn_drv_get_sign_hash_algo(const uint32_t type);
+static uint32_t cmn_drv_get_sign_algo(const uint32_t type);
+static uint32_t cmn_drv_get_sign_scheme(const uint32_t type, const uint32_t sign_algo);
+static uint32_t cmn_drv_get_mac_algo(const uint32_t type);
+static uint32_t cmn_drv_get_img_cip_info_algo(const uint32_t type);
+static uint32_t cmn_drv_get_img_cip_info_mode(const uint32_t type);
 
 /*=====================================================================================================================
  Public function definitions
@@ -159,81 +159,70 @@ static uint32_t cmn_drv_get_img_cip_info_mode (const uint32_t type);
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_cmn_drv_set_cc_key_cert_param(const st_sb_key_cert_t* const p_key_cert_st,
-                                            const st_sb_tlv_t* const p_img_pk_hash_tlv,
-                                            const st_sb_tlv_t* const p_sign_pk_tlv,
-                                            const st_sb_tlv_t* const p_sign_tlv,
-                                            st_cip_drv_cc_key_cert_param_t* const p_cc_key_cert_param)
+sb_ret_t r_sb_cmn_drv_set_cc_key_cert_param(const st_sb_key_cert_t *const p_key_cert_st,
+											const st_sb_tlv_t *const p_img_pk_hash_tlv,
+											const st_sb_tlv_t *const p_sign_pk_tlv,
+											const st_sb_tlv_t *const p_sign_tlv,
+											st_cip_drv_cc_key_cert_param_t *const p_cc_key_cert_param)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    uint32_t key_algo;
+	uint32_t key_algo;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if ((NULL != p_key_cert_st) && (NULL != p_img_pk_hash_tlv) && (NULL != p_sign_pk_tlv) &&
-        (NULL != p_sign_tlv) && (NULL != p_cc_key_cert_param))
-    {
-        key_algo = cmn_drv_get_sign_algo(p_sign_pk_tlv->type);
-        if ((p_sign_pk_tlv->type & SB_PRV_TLV_TYPE_CLS_SIGN_UT_MASK) == SB_PRV_TLV_TYPE_CLS_KEY_UT_OEM_ROOT_PK)
-        {
-            p_cc_key_cert_param->key_cert_pk_cmp_src = CIP_DRV_KEY_CERT_PK_CMP_SRC_ROT;
-        }
-        else
-        {
-            p_cc_key_cert_param->key_cert_pk_cmp_src = CIP_DRV_KEY_CERT_PK_CMP_SRC_IMG_PK;
-        }
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_key_cert_st) && (NULL != p_img_pk_hash_tlv) && (NULL != p_sign_pk_tlv) &&
+		(NULL != p_sign_tlv) && (NULL != p_cc_key_cert_param)) {
+		key_algo = cmn_drv_get_sign_algo(p_sign_pk_tlv->type);
+		if ((p_sign_pk_tlv->type & SB_PRV_TLV_TYPE_CLS_SIGN_UT_MASK) == SB_PRV_TLV_TYPE_CLS_KEY_UT_OEM_ROOT_PK) {
+			p_cc_key_cert_param->key_cert_pk_cmp_src = CIP_DRV_KEY_CERT_PK_CMP_SRC_ROT;
+		} else {
+			p_cc_key_cert_param->key_cert_pk_cmp_src = CIP_DRV_KEY_CERT_PK_CMP_SRC_IMG_PK;
+		}
 
-        p_cc_key_cert_param->img_pk_hash_algo = cmn_drv_get_hash_algo(p_img_pk_hash_tlv->type);
-        p_cc_key_cert_param->p_img_pk_hash = p_img_pk_hash_tlv->p_val;
-        p_cc_key_cert_param->img_pk_hash_len = p_img_pk_hash_tlv->byte_len;
-        p_cc_key_cert_param->sign_algo = cmn_drv_get_sign_algo(p_sign_tlv->type);
-        p_cc_key_cert_param->sign_hash_algo = cmn_drv_get_sign_hash_algo(p_sign_tlv->type);
-        p_cc_key_cert_param->sign_scheme = cmn_drv_get_sign_scheme(p_sign_tlv->type, p_cc_key_cert_param->sign_algo);
-        p_cc_key_cert_param->p_sign_pk = p_sign_pk_tlv->p_val;
-        p_cc_key_cert_param->sign_pk_len = p_sign_pk_tlv->byte_len;
-        p_cc_key_cert_param->p_sign = p_sign_tlv->p_val;
-        p_cc_key_cert_param->sign_len = p_sign_tlv->byte_len;
-        p_cc_key_cert_param->p_key_cert = (const uint32_t*)p_key_cert_st->p_header; /* Casting from pointer to
-                                                                                    pointer is no problem */
-        /* Key Cert signature length = Key Cert length - Key Cert signature TLV length */
-        p_cc_key_cert_param->key_cert_sign_len = (SB_PRV_MANI_HEADER_SIZE + SB_PRV_MANI_TLV_LEN_SIZE +
-                                            p_key_cert_st->tlv_len) - (SB_PRV_TLV_TL_SIZE + p_sign_tlv->byte_len);
+		p_cc_key_cert_param->img_pk_hash_algo = cmn_drv_get_hash_algo(p_img_pk_hash_tlv->type);
+		p_cc_key_cert_param->p_img_pk_hash = p_img_pk_hash_tlv->p_val;
+		p_cc_key_cert_param->img_pk_hash_len = p_img_pk_hash_tlv->byte_len;
+		p_cc_key_cert_param->sign_algo = cmn_drv_get_sign_algo(p_sign_tlv->type);
+		p_cc_key_cert_param->sign_hash_algo = cmn_drv_get_sign_hash_algo(p_sign_tlv->type);
+		p_cc_key_cert_param->sign_scheme = cmn_drv_get_sign_scheme(p_sign_tlv->type, p_cc_key_cert_param->sign_algo);
+		p_cc_key_cert_param->p_sign_pk = p_sign_pk_tlv->p_val;
+		p_cc_key_cert_param->sign_pk_len = p_sign_pk_tlv->byte_len;
+		p_cc_key_cert_param->p_sign = p_sign_tlv->p_val;
+		p_cc_key_cert_param->sign_len = p_sign_tlv->byte_len;
+		p_cc_key_cert_param->p_key_cert = (const uint32_t *)p_key_cert_st->p_header; /* Casting from pointer to
+																					 pointer is no problem */
+		/* Key Cert signature length = Key Cert length - Key Cert signature TLV length */
+		p_cc_key_cert_param->key_cert_sign_len = (SB_PRV_MANI_HEADER_SIZE + SB_PRV_MANI_TLV_LEN_SIZE +
+												  p_key_cert_st->tlv_len) -
+												 (SB_PRV_TLV_TL_SIZE + p_sign_tlv->byte_len);
 
-        /* Check algorithm */
-        if ((SB_PRV_RET_UNSUPPORTED_ALGO == key_algo) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_key_cert_param->img_pk_hash_algo) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_key_cert_param->sign_algo) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_key_cert_param->sign_hash_algo) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_key_cert_param->sign_scheme))
-        {
-            /* Unsupported algorithm */
-            ret = SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM;
-        }
-        else
-        {
-            if (p_cc_key_cert_param->sign_algo != key_algo)
-            {
-                /* There is a wrong combination of signature algorithms */
-                ret = SB_RET_ERR_MANI_MISMATCH_SIGN_ALGORITHM;
-            }
-            else
-            {
-                /* Set ret to the success code */
-                ret = SB_RET_SUCCESS;
-            }
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+		/* Check algorithm */
+		if ((SB_PRV_RET_UNSUPPORTED_ALGO == key_algo) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_key_cert_param->img_pk_hash_algo) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_key_cert_param->sign_algo) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_key_cert_param->sign_hash_algo) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_key_cert_param->sign_scheme)) {
+			/* Unsupported algorithm */
+			ret = SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM;
+		} else {
+			if (p_cc_key_cert_param->sign_algo != key_algo) {
+				/* There is a wrong combination of signature algorithms */
+				ret = SB_RET_ERR_MANI_MISMATCH_SIGN_ALGORITHM;
+			} else {
+				/* Set ret to the success code */
+				ret = SB_RET_SUCCESS;
+			}
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_cmn_drv_set_cc_key_cert_param()
@@ -327,103 +316,87 @@ sb_ret_t r_sb_cmn_drv_set_cc_key_cert_param(const st_sb_key_cert_t* const p_key_
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_cmn_drv_set_cc_code_cert_param(const st_sb_code_cert_t* const p_code_cert_st,
-                                                const uint32_t img_addr,
-                                                const st_sb_tlv_t* const p_sign_pk_tlv,
-                                                const st_sb_tlv_t* const p_sign_tlv,
-                                                const st_sb_tlv_t* const p_img_hash_tlv,
-                                                st_cip_drv_cc_code_cert_param_t* const p_cc_code_cert_param)
+sb_ret_t r_sb_cmn_drv_set_cc_code_cert_param(const st_sb_code_cert_t *const p_code_cert_st,
+											 const uint32_t img_addr,
+											 const st_sb_tlv_t *const p_sign_pk_tlv,
+											 const st_sb_tlv_t *const p_sign_tlv,
+											 const st_sb_tlv_t *const p_img_hash_tlv,
+											 st_cip_drv_cc_code_cert_param_t *const p_cc_code_cert_param)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    volatile uintptr_t tmp_img_addr;
-    uint32_t           key_algo;
+	volatile uintptr_t tmp_img_addr;
+	uint32_t key_algo;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_sign_pk_tlv) &&
-        (NULL != p_sign_tlv) && (NULL != p_cc_code_cert_param))
-    {
-        key_algo = cmn_drv_get_sign_algo(p_sign_pk_tlv->type);
-        p_cc_code_cert_param->sign_algo = cmn_drv_get_sign_algo(p_sign_tlv->type);
-        p_cc_code_cert_param->sign_hash_algo = cmn_drv_get_sign_hash_algo(p_sign_tlv->type);
-        p_cc_code_cert_param->sign_scheme = cmn_drv_get_sign_scheme(p_sign_tlv->type,
-                                                                    p_cc_code_cert_param->sign_algo);
-        p_cc_code_cert_param->p_sign_pk = p_sign_pk_tlv->p_val;
-        p_cc_code_cert_param->sign_pk_len = p_sign_pk_tlv->byte_len;
-        p_cc_code_cert_param->p_sign = p_sign_tlv->p_val;
-        p_cc_code_cert_param->sign_len = p_sign_tlv->byte_len;
-        p_cc_code_cert_param->p_code_cert = (const uint32_t*)p_code_cert_st->p_header; /* Casting from pointer
-                                                                                        to pointer is no problem */
-        p_cc_code_cert_param->code_cert_len = SB_PRV_MANI_HEADER_SIZE + SB_PRV_MANI_TLV_LEN_SIZE +
-                                                p_code_cert_st->tlv_len;
-        p_cc_code_cert_param->code_cert_sign_len = p_cc_code_cert_param->code_cert_len
-                                                    - (SB_PRV_TLV_TL_SIZE + p_sign_tlv->byte_len);
-        /* Assign the address set in dest_addr once to a uintptr_t type variable
-            (32/64bit MPU countermeasures) */
-        tmp_img_addr = img_addr;
-        p_cc_code_cert_param->p_img = (const uint32_t*)tmp_img_addr; /* Casts that do not exceed
-                                                                        the size of the type are fine */
-        p_cc_code_cert_param->img_len = p_code_cert_st->p_header->img_len;
-        if (NULL != p_img_hash_tlv)
-        {
-            p_cc_code_cert_param->img_hash_algo = cmn_drv_get_hash_algo(p_img_hash_tlv->type);
-            p_cc_code_cert_param->p_img_hash = p_img_hash_tlv->p_val;
-            p_cc_code_cert_param->img_hash_len = p_img_hash_tlv->byte_len;
-        }
-        else
-        {
-            p_cc_code_cert_param->img_hash_algo = CIP_DRV_HASH_ALGO_NONE;
-            p_cc_code_cert_param->p_img_hash = NULL;
-            p_cc_code_cert_param->img_hash_len = 0UL;
-        }
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_sign_pk_tlv) &&
+		(NULL != p_sign_tlv) && (NULL != p_cc_code_cert_param)) {
+		key_algo = cmn_drv_get_sign_algo(p_sign_pk_tlv->type);
+		p_cc_code_cert_param->sign_algo = cmn_drv_get_sign_algo(p_sign_tlv->type);
+		p_cc_code_cert_param->sign_hash_algo = cmn_drv_get_sign_hash_algo(p_sign_tlv->type);
+		p_cc_code_cert_param->sign_scheme = cmn_drv_get_sign_scheme(p_sign_tlv->type,
+																	p_cc_code_cert_param->sign_algo);
+		p_cc_code_cert_param->p_sign_pk = p_sign_pk_tlv->p_val;
+		p_cc_code_cert_param->sign_pk_len = p_sign_pk_tlv->byte_len;
+		p_cc_code_cert_param->p_sign = p_sign_tlv->p_val;
+		p_cc_code_cert_param->sign_len = p_sign_tlv->byte_len;
+		p_cc_code_cert_param->p_code_cert = (const uint32_t *)p_code_cert_st->p_header; /* Casting from pointer
+																						 to pointer is no problem */
+		p_cc_code_cert_param->code_cert_len = SB_PRV_MANI_HEADER_SIZE + SB_PRV_MANI_TLV_LEN_SIZE +
+											  p_code_cert_st->tlv_len;
+		p_cc_code_cert_param->code_cert_sign_len = p_cc_code_cert_param->code_cert_len - (SB_PRV_TLV_TL_SIZE + p_sign_tlv->byte_len);
+		/* Assign the address set in dest_addr once to a uintptr_t type variable
+			(32/64bit MPU countermeasures) */
+		tmp_img_addr = img_addr;
+		p_cc_code_cert_param->p_img = (const uint32_t *)tmp_img_addr; /* Casts that do not exceed
+																		 the size of the type are fine */
+		p_cc_code_cert_param->img_len = p_code_cert_st->p_header->img_len;
+		if (NULL != p_img_hash_tlv) {
+			p_cc_code_cert_param->img_hash_algo = cmn_drv_get_hash_algo(p_img_hash_tlv->type);
+			p_cc_code_cert_param->p_img_hash = p_img_hash_tlv->p_val;
+			p_cc_code_cert_param->img_hash_len = p_img_hash_tlv->byte_len;
+		} else {
+			p_cc_code_cert_param->img_hash_algo = CIP_DRV_HASH_ALGO_NONE;
+			p_cc_code_cert_param->p_img_hash = NULL;
+			p_cc_code_cert_param->img_hash_len = 0UL;
+		}
 #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) /* (Use only when SB_CFG_SB_CERT_CHAIN_USE_IMG_PK is Enable) */
-        if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_SAVE_IMG_PK) != 0UL)
-        {
-            p_cc_code_cert_param->is_save_img_pk = 1UL;
-        }
-        else
-        {
-            p_cc_code_cert_param->is_save_img_pk = 0UL;
-        }
+		if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_SAVE_IMG_PK) != 0UL) {
+			p_cc_code_cert_param->is_save_img_pk = 1UL;
+		} else {
+			p_cc_code_cert_param->is_save_img_pk = 0UL;
+		}
 #else  /* !(SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
-        p_cc_code_cert_param->is_save_img_pk = 0UL;
+		p_cc_code_cert_param->is_save_img_pk = 0UL;
 #endif /* !(SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
 
-        /* Check algorithm */
-        if ((SB_PRV_RET_UNSUPPORTED_ALGO == key_algo) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_code_cert_param->sign_algo) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_code_cert_param->sign_hash_algo) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_code_cert_param->sign_scheme) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_code_cert_param->img_hash_algo))
-        {
-            /* Unsupported algorithm */
-            ret = SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM;
-        }
-        else
-        {
-            if (p_cc_code_cert_param->sign_algo != key_algo)
-            {
-                /* There is a wrong combination of signature algorithms */
-                ret = SB_RET_ERR_MANI_MISMATCH_SIGN_ALGORITHM;
-            }
-            else
-            {
-                /* Set ret to the success code */
-                ret = SB_RET_SUCCESS;
-            }
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+		/* Check algorithm */
+		if ((SB_PRV_RET_UNSUPPORTED_ALGO == key_algo) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_code_cert_param->sign_algo) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_code_cert_param->sign_hash_algo) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_code_cert_param->sign_scheme) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cc_code_cert_param->img_hash_algo)) {
+			/* Unsupported algorithm */
+			ret = SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM;
+		} else {
+			if (p_cc_code_cert_param->sign_algo != key_algo) {
+				/* There is a wrong combination of signature algorithms */
+				ret = SB_RET_ERR_MANI_MISMATCH_SIGN_ALGORITHM;
+			} else {
+				/* Set ret to the success code */
+				ret = SB_RET_SUCCESS;
+			}
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_cmn_drv_set_cc_code_cert_param()
@@ -500,94 +473,75 @@ sb_ret_t r_sb_cmn_drv_set_cc_code_cert_param(const st_sb_code_cert_t* const p_co
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_cmn_drv_set_mac_param(const st_sb_code_cert_t* const p_code_cert_st,
-                                    const st_sb_tlv_t* const p_mac_tlv,
-                                    const st_sb_tlv_t* const p_sign_pk_tlv,
-                                    st_cip_drv_mac_param_t* const p_mac_param)
+sb_ret_t r_sb_cmn_drv_set_mac_param(const st_sb_code_cert_t *const p_code_cert_st,
+									const st_sb_tlv_t *const p_mac_tlv,
+									const st_sb_tlv_t *const p_sign_pk_tlv,
+									st_cip_drv_mac_param_t *const p_mac_param)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret       = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    sb_ret_t           ret_ck_pk = SB_RET_ERR_INTERNAL_FAIL;
-    volatile uintptr_t img_addr;
+	sb_ret_t ret_ck_pk = SB_RET_ERR_INTERNAL_FAIL;
+	volatile uintptr_t img_addr;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_mac_tlv) && (NULL != p_mac_param))
-    {
-        p_mac_param->mac_algo = cmn_drv_get_mac_algo(p_mac_tlv->type);
-        p_mac_param->p_mac = p_mac_tlv->p_val;
-        p_mac_param->mac_len = p_mac_tlv->byte_len;
-        p_mac_param->p_code_cert = (const uint32_t*)p_code_cert_st->p_header; /* Casting from pointer to pointer
-                                                                                 is no problem */
-        p_mac_param->code_cert_len = SB_PRV_MANI_HEADER_SIZE + SB_PRV_MANI_TLV_LEN_SIZE + p_code_cert_st->tlv_len;
-        /* Assign the address set in dest_addr once to a uintptr_t type variable
-            (32/64bit MPU countermeasures) */
-        img_addr = p_code_cert_st->p_header->dest_addr;
-        p_mac_param->p_img = (const uint32_t*)img_addr; /* Casts that do not exceed
-                                                           the size of the type are fine */
-        p_mac_param->img_len = p_code_cert_st->p_header->img_len;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_mac_tlv) && (NULL != p_mac_param)) {
+		p_mac_param->mac_algo = cmn_drv_get_mac_algo(p_mac_tlv->type);
+		p_mac_param->p_mac = p_mac_tlv->p_val;
+		p_mac_param->mac_len = p_mac_tlv->byte_len;
+		p_mac_param->p_code_cert = (const uint32_t *)p_code_cert_st->p_header; /* Casting from pointer to pointer
+																				  is no problem */
+		p_mac_param->code_cert_len = SB_PRV_MANI_HEADER_SIZE + SB_PRV_MANI_TLV_LEN_SIZE + p_code_cert_st->tlv_len;
+		/* Assign the address set in dest_addr once to a uintptr_t type variable
+			(32/64bit MPU countermeasures) */
+		img_addr = p_code_cert_st->p_header->dest_addr;
+		p_mac_param->p_img = (const uint32_t *)img_addr; /* Casts that do not exceed
+															the size of the type are fine */
+		p_mac_param->img_len = p_code_cert_st->p_header->img_len;
 #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) /* (Use only when SB_CFG_SB_CERT_CHAIN_USE_IMG_PK is Enable) */
-        if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_SAVE_IMG_PK) != 0UL)
-        {
-            p_mac_param->is_save_img_pk = 1UL;
-        }
-        else
-        {
-            p_mac_param->is_save_img_pk = 0UL;
-        }
+		if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_SAVE_IMG_PK) != 0UL) {
+			p_mac_param->is_save_img_pk = 1UL;
+		} else {
+			p_mac_param->is_save_img_pk = 0UL;
+		}
 #else  /* !(SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
-        p_mac_param->is_save_img_pk = 0UL;
+		p_mac_param->is_save_img_pk = 0UL;
 #endif /* !(SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
-        if (1UL == p_mac_param->is_save_img_pk)
-        {
-            if (NULL != p_sign_pk_tlv)
-            {
-                p_mac_param->p_sign_pk      = p_sign_pk_tlv->p_val;
-                p_mac_param->sign_pk_len    = p_sign_pk_tlv->byte_len;
-                ret_ck_pk                   = SB_RET_SUCCESS;
-            }
-            else
-            {
-                /* If there is a argument, return SB_RET_ERR_INTERNAL_FAIL */
-            }
-        }
-        else
-        {
-            p_mac_param->p_sign_pk      = NULL;
-            p_mac_param->sign_pk_len    = 0UL;
-            ret_ck_pk                   = SB_RET_SUCCESS;
-        }
+		if (1UL == p_mac_param->is_save_img_pk) {
+			if (NULL != p_sign_pk_tlv) {
+				p_mac_param->p_sign_pk = p_sign_pk_tlv->p_val;
+				p_mac_param->sign_pk_len = p_sign_pk_tlv->byte_len;
+				ret_ck_pk = SB_RET_SUCCESS;
+			} else {
+				/* If there is a argument, return SB_RET_ERR_INTERNAL_FAIL */
+			}
+		} else {
+			p_mac_param->p_sign_pk = NULL;
+			p_mac_param->sign_pk_len = 0UL;
+			ret_ck_pk = SB_RET_SUCCESS;
+		}
 
-        /* Check algorithm */
-        if (SB_RET_SUCCESS == ret_ck_pk)
-        {
-            if (SB_PRV_RET_UNSUPPORTED_ALGO == p_mac_param->mac_algo)
-            {
-                /* Unsupported algorithm */
-                ret = SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM;
-            }
-            else
-            {
-                /* Set ret to the success code */
-                ret = SB_RET_SUCCESS;
-            }
-        }
-        else
-        {
-            /* return SB_RET_ERR_INTERNAL_FAIL */
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+		/* Check algorithm */
+		if (SB_RET_SUCCESS == ret_ck_pk) {
+			if (SB_PRV_RET_UNSUPPORTED_ALGO == p_mac_param->mac_algo) {
+				/* Unsupported algorithm */
+				ret = SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM;
+			} else {
+				/* Set ret to the success code */
+				ret = SB_RET_SUCCESS;
+			}
+		} else {
+			/* return SB_RET_ERR_INTERNAL_FAIL */
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
-
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_cmn_drv_set_mac_param()
@@ -664,91 +618,79 @@ sb_ret_t r_sb_cmn_drv_set_mac_param(const st_sb_code_cert_t* const p_code_cert_s
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t r_sb_cmn_drv_set_cipher_img_param(const st_sb_code_cert_t* const p_code_cert_st,
-                                            const st_sb_tlv_t* const p_img_cip_info,
-                                            const st_sb_tlv_t* const p_img_cip_iv,
-                                            const sb_bool_t          is_overwrite_image,
-                                            const uint32_t           timing,
-                                            st_cip_drv_cipher_img_param_t* const p_cipher_img_param)
+sb_ret_t r_sb_cmn_drv_set_cipher_img_param(const st_sb_code_cert_t *const p_code_cert_st,
+										   const st_sb_tlv_t *const p_img_cip_info,
+										   const st_sb_tlv_t *const p_img_cip_iv,
+										   const sb_bool_t is_overwrite_image,
+										   const uint32_t timing,
+										   st_cip_drv_cipher_img_param_t *const p_cipher_img_param)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    const    st_sb_img_cip_info_val_t * p_img_cip_info_val;
-    volatile uintptr_t                  img_addr;
+	const st_sb_img_cip_info_val_t *p_img_cip_info_val;
+	volatile uintptr_t img_addr;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_img_cip_info) &&
-        (NULL != p_cipher_img_param) && (NULL != p_img_cip_iv))
-    {
-        /* Set common parameters */
-        p_cipher_img_param->timing = timing;
-        /* Assign the address set in dest_addr once to a uintptr_t type variable
-            (32/64bit MPU countermeasures) */
-        img_addr = p_code_cert_st->p_header->dest_addr;
-        /* Casts that do not exceed the size of the type are fine */
-        p_cipher_img_param->p_img_src = (const uint32_t*)img_addr;
-        p_cipher_img_param->img_len   = p_code_cert_st->p_header->img_len;
-        p_cipher_img_param->p_iv  = p_img_cip_iv->p_val;
-        p_cipher_img_param->iv_len  = p_img_cip_iv->byte_len;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_img_cip_info) &&
+		(NULL != p_cipher_img_param) && (NULL != p_img_cip_iv)) {
+		/* Set common parameters */
+		p_cipher_img_param->timing = timing;
+		/* Assign the address set in dest_addr once to a uintptr_t type variable
+			(32/64bit MPU countermeasures) */
+		img_addr = p_code_cert_st->p_header->dest_addr;
+		/* Casts that do not exceed the size of the type are fine */
+		p_cipher_img_param->p_img_src = (const uint32_t *)img_addr;
+		p_cipher_img_param->img_len = p_code_cert_st->p_header->img_len;
+		p_cipher_img_param->p_iv = p_img_cip_iv->p_val;
+		p_cipher_img_param->iv_len = p_img_cip_iv->byte_len;
 
-        if (NULL == p_img_cip_info->p_val)
-        {
-            /* Overwrite image */
-            p_cipher_img_param->p_img_dst   = (uint32_t*)img_addr;
+		if (NULL == p_img_cip_info->p_val) {
+			/* Overwrite image */
+			p_cipher_img_param->p_img_dst = (uint32_t *)img_addr;
 
-            /* Use Device default parameters */
-            p_cipher_img_param->cipher_algo = CIP_DRV_CIPHER_ALGO_NONE;
-            p_cipher_img_param->cipher_mode = CIP_DRV_CIPHER_MODE_NONE;
-            p_cipher_img_param->key_select  = CIP_DRV_CIPHER_INFO_KEY_SEL_DEFAULT;
-            p_cipher_img_param->iv_select   = CIP_DRV_CIPHER_INFO_IV_SEL_DEFAULT;
-        }
-        else
-        {
-            /* Use TLV parameters */
-            p_img_cip_info_val = (const st_sb_img_cip_info_val_t*)(p_img_cip_info->p_val); /* Casting from pointer
-                                                                                            to pointer is no problem */
-            p_cipher_img_param->cipher_algo = cmn_drv_get_img_cip_info_algo(p_img_cip_info->type);
-            p_cipher_img_param->cipher_mode = cmn_drv_get_img_cip_info_mode(p_img_cip_info->type);
-            p_cipher_img_param->key_select  = p_img_cip_info_val->key_sel;
-            p_cipher_img_param->iv_select   = p_img_cip_info_val->iv_sel;
-            if (SB_PRV_TRUE == is_overwrite_image)
-            {
-                /* Casts that do not exceed the size of the type are fine */
-                p_cipher_img_param->p_img_dst   = (uint32_t*)img_addr;
-            }
-            else
-            {
-                /* Assign the address set in dest_addr once to a uintptr_t type variable
-                    (32/64bit MPU countermeasures) */
-                img_addr = p_img_cip_info_val->dest_addr;
-                /* Casts that do not exceed the size of the type are fine */
-                p_cipher_img_param->p_img_dst   = (uint32_t*)img_addr;
-            }
-        }
-        /* Check algorithm */
-        if ((SB_PRV_RET_UNSUPPORTED_ALGO == p_cipher_img_param->cipher_algo) ||
-            (SB_PRV_RET_UNSUPPORTED_ALGO == p_cipher_img_param->cipher_mode))
-        {
-            /* Unsupported algorithm */
-            ret = SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM;
-        }
-        else
-        {
-            /* Set ret to the success code */
-            ret = SB_RET_SUCCESS;
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+			/* Use Device default parameters */
+			p_cipher_img_param->cipher_algo = CIP_DRV_CIPHER_ALGO_NONE;
+			p_cipher_img_param->cipher_mode = CIP_DRV_CIPHER_MODE_NONE;
+			p_cipher_img_param->key_select = CIP_DRV_CIPHER_INFO_KEY_SEL_DEFAULT;
+			p_cipher_img_param->iv_select = CIP_DRV_CIPHER_INFO_IV_SEL_DEFAULT;
+		} else {
+			/* Use TLV parameters */
+			p_img_cip_info_val = (const st_sb_img_cip_info_val_t *)(p_img_cip_info->p_val); /* Casting from pointer
+																							 to pointer is no problem */
+			p_cipher_img_param->cipher_algo = cmn_drv_get_img_cip_info_algo(p_img_cip_info->type);
+			p_cipher_img_param->cipher_mode = cmn_drv_get_img_cip_info_mode(p_img_cip_info->type);
+			p_cipher_img_param->key_select = p_img_cip_info_val->key_sel;
+			p_cipher_img_param->iv_select = p_img_cip_info_val->iv_sel;
+			if (SB_PRV_TRUE == is_overwrite_image) {
+				/* Casts that do not exceed the size of the type are fine */
+				p_cipher_img_param->p_img_dst = (uint32_t *)img_addr;
+			} else {
+				/* Assign the address set in dest_addr once to a uintptr_t type variable
+					(32/64bit MPU countermeasures) */
+				img_addr = p_img_cip_info_val->dest_addr;
+				/* Casts that do not exceed the size of the type are fine */
+				p_cipher_img_param->p_img_dst = (uint32_t *)img_addr;
+			}
+		}
+		/* Check algorithm */
+		if ((SB_PRV_RET_UNSUPPORTED_ALGO == p_cipher_img_param->cipher_algo) ||
+			(SB_PRV_RET_UNSUPPORTED_ALGO == p_cipher_img_param->cipher_mode)) {
+			/* Unsupported algorithm */
+			ret = SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM;
+		} else {
+			/* Set ret to the success code */
+			ret = SB_RET_SUCCESS;
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_cmn_drv_set_cipher_img_param()
@@ -821,81 +763,72 @@ sb_ret_t r_sb_cmn_drv_set_cipher_img_param(const st_sb_code_cert_t* const p_code
  *********************************************************************************************************************/
 sb_ret_t r_sb_cmn_drv_get_sb_ret_from_cip_ret(const cip_drv_ret_t cip_ret)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    volatile sb_ret_t tmp_ret = SB_RET_ERR_INTERNAL_FAIL;
+	volatile sb_ret_t tmp_ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    switch (cip_ret)
-    {
-        case CIP_DRV_RET_PASS:
-            tmp_ret = (SB_RET_SUCCESS & SB_PRV_RET_UPPER_MASK);
-            break;
-        case CIP_DRV_RET_SAME_IMAGE_VERSION:
-            tmp_ret = (SB_RET_SAME_IMAGE_VERSION & SB_PRV_RET_UPPER_MASK);
-            break;
-        case CIP_DRV_RET_AUTH_FAIL:
-            tmp_ret = SB_RET_ERR_CRYPTO_AUTH_FAIL;
-            break;
-        case CIP_DRV_RET_UNSUPPORTED_ALGORITHM:
-            tmp_ret = SB_RET_ERR_CRYPTO_UNSUPPORTED_ALGORITHM;
-            break;
-        case CIP_DRV_RET_RESOURCE_CONFLICT:
-            tmp_ret = SB_RET_ERR_CRYPTO_RESOURCE_CONFLICT;
-            break;
-        case CIP_DRV_RET_LOWER_IMAGE_VERSION:
-            tmp_ret = SB_RET_ERR_LOWER_IMAGE_VERSION;
-            break;
-        case CIP_DRV_RET_PARAM_ERROR:
-            tmp_ret = SB_RET_ERR_CRYPTO_PARAM_ERR;
-            break;
-        case CIP_DRV_RET_CRC_MISMATCH:
-            tmp_ret = SB_RET_ERR_CRC_MISMATCH;
-            break;
-        default:
-            tmp_ret = SB_RET_ERR_CRYPTO_FAIL;
-            break;
-    }
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	switch (cip_ret) {
+	case CIP_DRV_RET_PASS:
+		tmp_ret = (SB_RET_SUCCESS & SB_PRV_RET_UPPER_MASK);
+		break;
+	case CIP_DRV_RET_SAME_IMAGE_VERSION:
+		tmp_ret = (SB_RET_SAME_IMAGE_VERSION & SB_PRV_RET_UPPER_MASK);
+		break;
+	case CIP_DRV_RET_AUTH_FAIL:
+		tmp_ret = SB_RET_ERR_CRYPTO_AUTH_FAIL;
+		break;
+	case CIP_DRV_RET_UNSUPPORTED_ALGORITHM:
+		tmp_ret = SB_RET_ERR_CRYPTO_UNSUPPORTED_ALGORITHM;
+		break;
+	case CIP_DRV_RET_RESOURCE_CONFLICT:
+		tmp_ret = SB_RET_ERR_CRYPTO_RESOURCE_CONFLICT;
+		break;
+	case CIP_DRV_RET_LOWER_IMAGE_VERSION:
+		tmp_ret = SB_RET_ERR_LOWER_IMAGE_VERSION;
+		break;
+	case CIP_DRV_RET_PARAM_ERROR:
+		tmp_ret = SB_RET_ERR_CRYPTO_PARAM_ERR;
+		break;
+	case CIP_DRV_RET_CRC_MISMATCH:
+		tmp_ret = SB_RET_ERR_CRC_MISMATCH;
+		break;
+	default:
+		tmp_ret = SB_RET_ERR_CRYPTO_FAIL;
+		break;
+	}
 
-    switch (cip_ret)
-    {
-        case CIP_DRV_RET_PASS:
-            tmp_ret |= (SB_RET_SUCCESS & SB_PRV_RET_LOWER_MASK);
-            break;
-        case CIP_DRV_RET_SAME_IMAGE_VERSION:
-            tmp_ret |= (SB_RET_SAME_IMAGE_VERSION & SB_PRV_RET_LOWER_MASK);
-            break;
-        default:
-            /* In case of error, do nothing because the return value has already been set */
-            break;
-    }
+	switch (cip_ret) {
+	case CIP_DRV_RET_PASS:
+		tmp_ret |= (SB_RET_SUCCESS & SB_PRV_RET_LOWER_MASK);
+		break;
+	case CIP_DRV_RET_SAME_IMAGE_VERSION:
+		tmp_ret |= (SB_RET_SAME_IMAGE_VERSION & SB_PRV_RET_LOWER_MASK);
+		break;
+	default:
+		/* In case of error, do nothing because the return value has already been set */
+		break;
+	}
 
-    /* Check route is passed */
-    ret = tmp_ret;
-    if ((ret & SB_PRV_RET_ERROR_BITS) != SB_PRV_RET_ERROR_BITS)
-    {
-        if ((SB_RET_SUCCESS == ret) || (SB_RET_SAME_IMAGE_VERSION == ret))
-        {
-            /* In case of two SUCCESS route is passed. Do nothing */
-        }
-        else
-        {
-            /* In case of only one SUCCESS route is passed, set INTERNAL_FAIL to ret */
-            ret = SB_RET_ERR_INTERNAL_FAIL;
+	/* Check route is passed */
+	ret = tmp_ret;
+	if ((ret & SB_PRV_RET_ERROR_BITS) != SB_PRV_RET_ERROR_BITS) {
+		if ((SB_RET_SUCCESS == ret) || (SB_RET_SAME_IMAGE_VERSION == ret)) {
+			/* In case of two SUCCESS route is passed. Do nothing */
+		} else {
+			/* In case of only one SUCCESS route is passed, set INTERNAL_FAIL to ret */
+			ret = SB_RET_ERR_INTERNAL_FAIL;
+		}
+	} else {
+		/* In case of ERROR route is passed. Do nothing */
+	}
 
-        }
-    }
-    else
-    {
-        /* In case of ERROR route is passed. Do nothing */
-    }
-
-    return ret;
+	return ret;
 }
 /**********************************************************************************************************************
 * End of function r_sb_cmn_drv_get_sb_ret_from_cip_ret()
@@ -955,48 +888,47 @@ sb_ret_t r_sb_cmn_drv_get_sb_ret_from_cip_ret(const cip_drv_ret_t cip_ret)
  *********************************************************************************************************************/
 uint32_t r_sb_cmn_drv_get_mac_algo_from_sb_mac_type(const e_sb_mac_type_t mac_type)
 {
-    uint32_t mac_algo = CIP_DRV_MAC_ALGO_NONE;
+	uint32_t mac_algo = CIP_DRV_MAC_ALGO_NONE;
 
-    switch (mac_type)
-    {
-        case SB_MAC_TYPE_HMAC_SHA2_224:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_224;
-            break;
-        case SB_MAC_TYPE_HMAC_SHA2_256:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_256;
-            break;
-        case SB_MAC_TYPE_HMAC_SHA2_384:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_384;
-            break;
-        case SB_MAC_TYPE_HMAC_SHA2_512:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_512;
-            break;
-        case SB_MAC_TYPE_HMAC_SHA3_224:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_224;
-            break;
-        case SB_MAC_TYPE_HMAC_SHA3_256:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_256;
-            break;
-        case SB_MAC_TYPE_HMAC_SHA3_384:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_384;
-            break;
-        case SB_MAC_TYPE_HMAC_SHA3_512:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_512;
-            break;
-        case SB_MAC_TYPE_CMAC_AES_128:
-            mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_128;
-            break;
-        case SB_MAC_TYPE_CMAC_AES_192:
-            mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_192;
-            break;
-        case SB_MAC_TYPE_CMAC_AES_256:
-            mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_256;
-            break;
-        default: /* In the default case, return CIP_DRV_MAC_ALGO_NONE */
-            break;
-    }
+	switch (mac_type) {
+	case SB_MAC_TYPE_HMAC_SHA2_224:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_224;
+		break;
+	case SB_MAC_TYPE_HMAC_SHA2_256:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_256;
+		break;
+	case SB_MAC_TYPE_HMAC_SHA2_384:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_384;
+		break;
+	case SB_MAC_TYPE_HMAC_SHA2_512:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_512;
+		break;
+	case SB_MAC_TYPE_HMAC_SHA3_224:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_224;
+		break;
+	case SB_MAC_TYPE_HMAC_SHA3_256:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_256;
+		break;
+	case SB_MAC_TYPE_HMAC_SHA3_384:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_384;
+		break;
+	case SB_MAC_TYPE_HMAC_SHA3_512:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_512;
+		break;
+	case SB_MAC_TYPE_CMAC_AES_128:
+		mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_128;
+		break;
+	case SB_MAC_TYPE_CMAC_AES_192:
+		mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_192;
+		break;
+	case SB_MAC_TYPE_CMAC_AES_256:
+		mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_256;
+		break;
+	default: /* In the default case, return CIP_DRV_MAC_ALGO_NONE */
+		break;
+	}
 
-    return mac_algo;
+	return mac_algo;
 }
 /**********************************************************************************************************************
 * End of function r_sb_cmn_drv_get_mac_algo_from_sb_mac_type()
@@ -1052,39 +984,38 @@ uint32_t r_sb_cmn_drv_get_mac_algo_from_sb_mac_type(const e_sb_mac_type_t mac_ty
  *********************************************************************************************************************/
 static uint32_t cmn_drv_get_hash_algo(const uint32_t type)
 {
-    uint32_t hash_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
+	uint32_t hash_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
 
-    switch (type & SB_PRV_TLV_TYPE_CRYPTO_ALGO_MASK)
-    {
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA2_224:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA2_224;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA2_256:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA2_256;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA2_384:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA2_384;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA2_512:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA2_512;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA3_224:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA3_224;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA3_256:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA3_256;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA3_384:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA3_384;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA3_512:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA3_512;
-            break;
-        default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
-            break;
-    }
+	switch (type & SB_PRV_TLV_TYPE_CRYPTO_ALGO_MASK) {
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA2_224:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA2_224;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA2_256:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA2_256;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA2_384:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA2_384;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA2_512:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA2_512;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA3_224:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA3_224;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA3_256:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA3_256;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA3_384:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA3_384;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_SHA3_512:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA3_512;
+		break;
+	default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
+		break;
+	}
 
-    return hash_algo;
+	return hash_algo;
 }
 /**********************************************************************************************************************
 * End of function cmn_drv_get_hash_algo()
@@ -1137,39 +1068,38 @@ static uint32_t cmn_drv_get_hash_algo(const uint32_t type)
  *********************************************************************************************************************/
 static uint32_t cmn_drv_get_sign_hash_algo(const uint32_t type)
 {
-    uint32_t hash_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
+	uint32_t hash_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
 
-    switch (type & SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_MASK)
-    {
-        case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA2_224:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA2_224;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA2_256:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA2_256;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA2_384:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA2_384;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA2_512:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA2_512;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA3_224:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA3_224;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA3_256:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA3_256;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA3_384:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA3_384;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA3_512:
-            hash_algo = CIP_DRV_HASH_ALGO_SHA3_512;
-            break;
-        default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
-            break;
-    }
+	switch (type & SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_MASK) {
+	case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA2_224:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA2_224;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA2_256:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA2_256;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA2_384:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA2_384;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA2_512:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA2_512;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA3_224:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA3_224;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA3_256:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA3_256;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA3_384:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA3_384;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_SIGN_HASH_ALGO_SHA3_512:
+		hash_algo = CIP_DRV_HASH_ALGO_SHA3_512;
+		break;
+	default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
+		break;
+	}
 
-    return hash_algo;
+	return hash_algo;
 }
 /**********************************************************************************************************************
 * End of function cmn_drv_get_sign_hash_algo()
@@ -1238,63 +1168,62 @@ static uint32_t cmn_drv_get_sign_hash_algo(const uint32_t type)
  *********************************************************************************************************************/
 static uint32_t cmn_drv_get_sign_algo(const uint32_t type)
 {
-    uint32_t sign_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
+	uint32_t sign_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
 
-    switch (type & SB_PRV_TLV_TYPE_CRYPTO_ALGO_MASK)
-    {
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P192:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P192;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P224:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P224;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P256:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P256;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P384:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P384;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P521:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P521;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP192R1:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP192R1;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP224R1:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP224R1;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP256R1:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP256R1;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP384R1:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP384R1;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP512R1:
-            sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP512R1;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CURVE25519:
-            sign_algo = CIP_DRV_SIGN_ALGO_EDDSA_ED25519;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CURVE448:
-            sign_algo = CIP_DRV_SIGN_ALGO_EDDSA_ED448;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_RSA1024:
-            sign_algo = CIP_DRV_SIGN_ALGO_RSA1024;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_RSA2048:
-            sign_algo = CIP_DRV_SIGN_ALGO_RSA2048;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_RSA3072:
-            sign_algo = CIP_DRV_SIGN_ALGO_RSA3072;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_RSA4096:
-            sign_algo = CIP_DRV_SIGN_ALGO_RSA4096;
-            break;
-        default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
-            break;
-    }
+	switch (type & SB_PRV_TLV_TYPE_CRYPTO_ALGO_MASK) {
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P192:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P192;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P224:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P224;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P256:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P256;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P384:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P384;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_P521:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_P521;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP192R1:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP192R1;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP224R1:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP224R1;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP256R1:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP256R1;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP384R1:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP384R1;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_ECC_BP512R1:
+		sign_algo = CIP_DRV_SIGN_ALGO_ECDSA_BP512R1;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CURVE25519:
+		sign_algo = CIP_DRV_SIGN_ALGO_EDDSA_ED25519;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CURVE448:
+		sign_algo = CIP_DRV_SIGN_ALGO_EDDSA_ED448;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_RSA1024:
+		sign_algo = CIP_DRV_SIGN_ALGO_RSA1024;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_RSA2048:
+		sign_algo = CIP_DRV_SIGN_ALGO_RSA2048;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_RSA3072:
+		sign_algo = CIP_DRV_SIGN_ALGO_RSA3072;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_RSA4096:
+		sign_algo = CIP_DRV_SIGN_ALGO_RSA4096;
+		break;
+	default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
+		break;
+	}
 
-    return sign_algo;
+	return sign_algo;
 }
 /**********************************************************************************************************************
 * End of function cmn_drv_get_sign_algo()
@@ -1341,29 +1270,25 @@ static uint32_t cmn_drv_get_sign_algo(const uint32_t type)
  *********************************************************************************************************************/
 static uint32_t cmn_drv_get_sign_scheme(const uint32_t type, const uint32_t sign_algo)
 {
-    uint32_t sign_scheme = SB_PRV_RET_UNSUPPORTED_ALGO;
+	uint32_t sign_scheme = SB_PRV_RET_UNSUPPORTED_ALGO;
 
-    if ((CIP_DRV_SIGN_ALGO_RSA1024 == sign_algo) || (CIP_DRV_SIGN_ALGO_RSA2048 == sign_algo) ||
-        (CIP_DRV_SIGN_ALGO_RSA3072 == sign_algo) || (CIP_DRV_SIGN_ALGO_RSA4096 == sign_algo))
-    {
-        switch (type & SB_PRV_TLV_TYPE_CLS_SIGN_SCHEME_MASK)
-        {
-            case SB_PRV_TLV_TYPE_CLS_SIGN_SCHEME_RSASSA_PKCS1_V1_5:
-                sign_scheme = CIP_DRV_SCHEME_RSASSA_PKCS1_V1_5;
-                break;
-            case SB_PRV_TLV_TYPE_CLS_SIGN_SCHEME_RSASSA_PSS:
-                sign_scheme = CIP_DRV_SCHEME_RSASSA_PSS;
-                break;
-            default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
-                break;
-        }
-    }
-    else
-    {
-        sign_scheme = CIP_DRV_SCHEME_NONE;
-    }
+	if ((CIP_DRV_SIGN_ALGO_RSA1024 == sign_algo) || (CIP_DRV_SIGN_ALGO_RSA2048 == sign_algo) ||
+		(CIP_DRV_SIGN_ALGO_RSA3072 == sign_algo) || (CIP_DRV_SIGN_ALGO_RSA4096 == sign_algo)) {
+		switch (type & SB_PRV_TLV_TYPE_CLS_SIGN_SCHEME_MASK) {
+		case SB_PRV_TLV_TYPE_CLS_SIGN_SCHEME_RSASSA_PKCS1_V1_5:
+			sign_scheme = CIP_DRV_SCHEME_RSASSA_PKCS1_V1_5;
+			break;
+		case SB_PRV_TLV_TYPE_CLS_SIGN_SCHEME_RSASSA_PSS:
+			sign_scheme = CIP_DRV_SCHEME_RSASSA_PSS;
+			break;
+		default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
+			break;
+		}
+	} else {
+		sign_scheme = CIP_DRV_SCHEME_NONE;
+	}
 
-    return sign_scheme;
+	return sign_scheme;
 }
 /**********************************************************************************************************************
 * End of function cmn_drv_get_sign_scheme()
@@ -1423,48 +1348,47 @@ static uint32_t cmn_drv_get_sign_scheme(const uint32_t type, const uint32_t sign
  *********************************************************************************************************************/
 static uint32_t cmn_drv_get_mac_algo(const uint32_t type)
 {
-    uint32_t mac_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
+	uint32_t mac_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
 
-    switch (type & SB_PRV_TLV_TYPE_CRYPTO_ALGO_MASK)
-    {
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA2_224:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_224;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA2_256:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_256;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA2_384:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_384;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA2_512:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_512;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA3_224:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_224;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA3_256:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_256;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA3_384:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_384;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA3_512:
-            mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_512;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CMAC_AES128:
-            mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_128;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CMAC_AES192:
-            mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_192;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CMAC_AES256:
-            mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_256;
-            break;
-        default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
-            break;
-    }
+	switch (type & SB_PRV_TLV_TYPE_CRYPTO_ALGO_MASK) {
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA2_224:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_224;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA2_256:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_256;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA2_384:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_384;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA2_512:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA2_512;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA3_224:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_224;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA3_256:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_256;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA3_384:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_384;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_HMAC_SHA3_512:
+		mac_algo = CIP_DRV_MAC_ALGO_HMAC_SHA3_512;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CMAC_AES128:
+		mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_128;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CMAC_AES192:
+		mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_192;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_CMAC_AES256:
+		mac_algo = CIP_DRV_MAC_ALGO_CMAC_AES_256;
+		break;
+	default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
+		break;
+	}
 
-    return mac_algo;
+	return mac_algo;
 }
 /**********************************************************************************************************************
 * End of function cmn_drv_get_mac_algo()
@@ -1507,24 +1431,23 @@ static uint32_t cmn_drv_get_mac_algo(const uint32_t type)
  *********************************************************************************************************************/
 static uint32_t cmn_drv_get_img_cip_info_algo(const uint32_t type)
 {
-    uint32_t cip_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
+	uint32_t cip_algo = SB_PRV_RET_UNSUPPORTED_ALGO;
 
-    switch (type & SB_PRV_TLV_TYPE_CRYPTO_ALGO_MASK)
-    {
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_AES128:
-            cip_algo = CIP_DRV_CIPHER_ALGO_AES128;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_AES192:
-            cip_algo = CIP_DRV_CIPHER_ALGO_AES192;
-            break;
-        case SB_PRV_TLV_TYPE_CRYPTO_ALGO_AES256:
-            cip_algo = CIP_DRV_CIPHER_ALGO_AES256;
-            break;
-        default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
-            break;
-    }
+	switch (type & SB_PRV_TLV_TYPE_CRYPTO_ALGO_MASK) {
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_AES128:
+		cip_algo = CIP_DRV_CIPHER_ALGO_AES128;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_AES192:
+		cip_algo = CIP_DRV_CIPHER_ALGO_AES192;
+		break;
+	case SB_PRV_TLV_TYPE_CRYPTO_ALGO_AES256:
+		cip_algo = CIP_DRV_CIPHER_ALGO_AES256;
+		break;
+	default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
+		break;
+	}
 
-    return cip_algo;
+	return cip_algo;
 }
 /**********************************************************************************************************************
 * End of function cmn_drv_get_img_cip_info_algo()
@@ -1571,30 +1494,29 @@ static uint32_t cmn_drv_get_img_cip_info_algo(const uint32_t type)
  *********************************************************************************************************************/
 static uint32_t cmn_drv_get_img_cip_info_mode(const uint32_t type)
 {
-    uint32_t cip_mode = SB_PRV_RET_UNSUPPORTED_ALGO;
+	uint32_t cip_mode = SB_PRV_RET_UNSUPPORTED_ALGO;
 
-    switch (type & SB_PRV_TLV_TYPE_CLS_ICI_MODE_MASK)
-    {
-        case SB_PRV_TLV_TYPE_CLS_ICI_MODE_ECB:
-            cip_mode = CIP_DRV_CIPHER_MODE_ECB;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_ICI_MODE_CBC:
-            cip_mode = CIP_DRV_CIPHER_MODE_CBC;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_ICI_MODE_CFB:
-            cip_mode = CIP_DRV_CIPHER_MODE_CFB;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_ICI_MODE_OFB:
-            cip_mode = CIP_DRV_CIPHER_MODE_OFB;
-            break;
-        case SB_PRV_TLV_TYPE_CLS_ICI_MODE_CTR:
-            cip_mode = CIP_DRV_CIPHER_MODE_CTR;
-            break;
-        default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
-            break;
-    }
+	switch (type & SB_PRV_TLV_TYPE_CLS_ICI_MODE_MASK) {
+	case SB_PRV_TLV_TYPE_CLS_ICI_MODE_ECB:
+		cip_mode = CIP_DRV_CIPHER_MODE_ECB;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_ICI_MODE_CBC:
+		cip_mode = CIP_DRV_CIPHER_MODE_CBC;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_ICI_MODE_CFB:
+		cip_mode = CIP_DRV_CIPHER_MODE_CFB;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_ICI_MODE_OFB:
+		cip_mode = CIP_DRV_CIPHER_MODE_OFB;
+		break;
+	case SB_PRV_TLV_TYPE_CLS_ICI_MODE_CTR:
+		cip_mode = CIP_DRV_CIPHER_MODE_CTR;
+		break;
+	default: /* In the default case, return SB_PRV_RET_UNSUPPORTED_ALGO */
+		break;
+	}
 
-    return cip_mode;
+	return cip_mode;
 }
 /**********************************************************************************************************************
 * End of function cmn_drv_get_img_cip_info_mode()

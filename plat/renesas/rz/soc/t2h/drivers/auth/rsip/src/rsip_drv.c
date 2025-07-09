@@ -53,13 +53,13 @@ STATIC uint32_t s_sha256_private_id;
  *********************************************************************************************************************/
 cip_drv_ret_t R_SCE_Open(void)
 {
-    s_private_id_counter = 0;
-    s_aes128cbcdec_private_id = 0;
-    s_sha256_private_id = 0;
+	s_private_id_counter = 0;
+	s_aes128cbcdec_private_id = 0;
+	s_sha256_private_id = 0;
 
-    gp_sce = (uint32_t *) RZT2H_RSIP_BASE;
+	gp_sce = (uint32_t *)RZT2H_RSIP_BASE;
 
-    return CIP_DRV_RET_PASS;
+	return CIP_DRV_RET_PASS;
 }
 /**********************************************************************************************************************
  End of function R_SCE_Open
@@ -72,7 +72,7 @@ cip_drv_ret_t R_SCE_Open(void)
  *********************************************************************************************************************/
 cip_drv_ret_t R_SCE_Close(void)
 {
-    return CIP_DRV_RET_PASS;
+	return CIP_DRV_RET_PASS;
 }
 /**********************************************************************************************************************
  End of function R_SCE_Close
@@ -96,40 +96,39 @@ cip_drv_ret_t R_SCE_Close(void)
  *              : ccert_pk_offset
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_VerifyManifestImageSign(uint32_t * image, uint32_t image_len, uint32_t * rotpk_hash,
-        uint32_t * kcert,
-        uint32_t kcert_len, uint32_t * kcert_sign, uint32_t kcert_pk_offset, uint32_t imgpk_hash_offset,
-        uint32_t imgpk_hash_len, uint32_t * ccert, uint32_t ccert_len, uint32_t * ccert_sign, uint32_t ccert_pk_offset)
+cip_drv_ret_t R_SCE_VerifyManifestImageSign(uint32_t *image, uint32_t image_len, uint32_t *rotpk_hash,
+											uint32_t *kcert,
+											uint32_t kcert_len, uint32_t *kcert_sign, uint32_t kcert_pk_offset, uint32_t imgpk_hash_offset,
+											uint32_t imgpk_hash_len, uint32_t *ccert, uint32_t ccert_len, uint32_t *ccert_sign, uint32_t ccert_pk_offset)
 {
-    uint32_t kcert_length[1];
-    uint32_t ccert_length[1];
-    uint32_t kcert_pk_ofs[PUB_KEY_POS_NUM];
-    uint32_t ccert_pk_ofs[PUB_KEY_POS_NUM];
-    uint32_t imgpk_hash_ofs[IMG_HASH_POS_NUM];
+	uint32_t kcert_length[1];
+	uint32_t ccert_length[1];
+	uint32_t kcert_pk_ofs[PUB_KEY_POS_NUM];
+	uint32_t ccert_pk_ofs[PUB_KEY_POS_NUM];
+	uint32_t imgpk_hash_ofs[IMG_HASH_POS_NUM];
 
-    if (0 == imgpk_hash_len)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	if (0 == imgpk_hash_len) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    kcert_length[0] = bswap32(kcert_len);
-    ccert_length[0] = bswap32(ccert_len);
+	kcert_length[0] = bswap32(kcert_len);
+	ccert_length[0] = bswap32(ccert_len);
 
-    kcert_pk_ofs[0] = bswap32(kcert_pk_offset);
-    kcert_pk_ofs[1] = bswap32(kcert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE - 1);
-    kcert_pk_ofs[2] = bswap32(kcert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE);
-    kcert_pk_ofs[3] = bswap32(kcert_pk_offset + (HW_SCE_ECC_P256_KEY_PARAM_SIZE * 2) - 1);
+	kcert_pk_ofs[0] = bswap32(kcert_pk_offset);
+	kcert_pk_ofs[1] = bswap32(kcert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE - 1);
+	kcert_pk_ofs[2] = bswap32(kcert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE);
+	kcert_pk_ofs[3] = bswap32(kcert_pk_offset + (HW_SCE_ECC_P256_KEY_PARAM_SIZE * 2) - 1);
 
-    ccert_pk_ofs[0] = bswap32(ccert_pk_offset);
-    ccert_pk_ofs[1] = bswap32(ccert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE - 1);
-    ccert_pk_ofs[2] = bswap32(ccert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE);
-    ccert_pk_ofs[3] = bswap32(ccert_pk_offset + (HW_SCE_ECC_P256_KEY_PARAM_SIZE * 2) - 1);
+	ccert_pk_ofs[0] = bswap32(ccert_pk_offset);
+	ccert_pk_ofs[1] = bswap32(ccert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE - 1);
+	ccert_pk_ofs[2] = bswap32(ccert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE);
+	ccert_pk_ofs[3] = bswap32(ccert_pk_offset + (HW_SCE_ECC_P256_KEY_PARAM_SIZE * 2) - 1);
 
-    imgpk_hash_ofs[0] = bswap32(imgpk_hash_offset);
-    imgpk_hash_ofs[1] = bswap32(imgpk_hash_offset + imgpk_hash_len - 1);
+	imgpk_hash_ofs[0] = bswap32(imgpk_hash_offset);
+	imgpk_hash_ofs[1] = bswap32(imgpk_hash_offset + imgpk_hash_len - 1);
 
-    return R_SCE_VerifyManifestPrivate(kcert, kcert_length, kcert_sign, kcert_pk_ofs, imgpk_hash_ofs, rotpk_hash,
-            ccert, ccert_length, ccert_sign, ccert_pk_ofs, NULL, image, image_len >> 2);
+	return R_SCE_VerifyManifestPrivate(kcert, kcert_length, kcert_sign, kcert_pk_ofs, imgpk_hash_ofs, rotpk_hash,
+									   ccert, ccert_length, ccert_sign, ccert_pk_ofs, NULL, image, image_len >> 2);
 }
 /**********************************************************************************************************************
  End of function R_SCE_VerifyManifestImageSign
@@ -155,46 +154,45 @@ cip_drv_ret_t R_SCE_VerifyManifestImageSign(uint32_t * image, uint32_t image_len
  *              : image_hash_len
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_VerifyManifestImageHash(uint32_t * image, uint32_t image_len, uint32_t * rotpk_hash,
-        uint32_t * kcert,
-        uint32_t kcert_len, uint32_t * kcert_sign, uint32_t kcert_pk_offset, uint32_t imgpk_hash_offset,
-        uint32_t imgpk_hash_len, uint32_t * ccert, uint32_t ccert_len, uint32_t * ccert_sign, uint32_t ccert_pk_offset,
-        uint32_t image_hash_offset, uint32_t image_hash_len)
+cip_drv_ret_t R_SCE_VerifyManifestImageHash(uint32_t *image, uint32_t image_len, uint32_t *rotpk_hash,
+											uint32_t *kcert,
+											uint32_t kcert_len, uint32_t *kcert_sign, uint32_t kcert_pk_offset, uint32_t imgpk_hash_offset,
+											uint32_t imgpk_hash_len, uint32_t *ccert, uint32_t ccert_len, uint32_t *ccert_sign, uint32_t ccert_pk_offset,
+											uint32_t image_hash_offset, uint32_t image_hash_len)
 {
-    uint32_t kcert_length[1];
-    uint32_t ccert_length[1];
-    uint32_t kcert_pk_ofs[PUB_KEY_POS_NUM];
-    uint32_t ccert_pk_ofs[PUB_KEY_POS_NUM];
-    uint32_t imgpk_hash_ofs[IMG_HASH_POS_NUM];
-    uint32_t image_hash_ofs[IMG_HASH_POS_NUM];
+	uint32_t kcert_length[1];
+	uint32_t ccert_length[1];
+	uint32_t kcert_pk_ofs[PUB_KEY_POS_NUM];
+	uint32_t ccert_pk_ofs[PUB_KEY_POS_NUM];
+	uint32_t imgpk_hash_ofs[IMG_HASH_POS_NUM];
+	uint32_t image_hash_ofs[IMG_HASH_POS_NUM];
 
-    if ((0 == imgpk_hash_len) || (0 == image_hash_offset))
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	if ((0 == imgpk_hash_len) || (0 == image_hash_offset)) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    kcert_length[0] = bswap32(kcert_len);
-    ccert_length[0] = bswap32(ccert_len);
+	kcert_length[0] = bswap32(kcert_len);
+	ccert_length[0] = bswap32(ccert_len);
 
-    kcert_pk_ofs[0] = bswap32(kcert_pk_offset);
-    kcert_pk_ofs[1] = bswap32(kcert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE - 1);
-    kcert_pk_ofs[2] = bswap32(kcert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE);
-    kcert_pk_ofs[3] = bswap32(kcert_pk_offset + (HW_SCE_ECC_P256_KEY_PARAM_SIZE * 2) - 1);
+	kcert_pk_ofs[0] = bswap32(kcert_pk_offset);
+	kcert_pk_ofs[1] = bswap32(kcert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE - 1);
+	kcert_pk_ofs[2] = bswap32(kcert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE);
+	kcert_pk_ofs[3] = bswap32(kcert_pk_offset + (HW_SCE_ECC_P256_KEY_PARAM_SIZE * 2) - 1);
 
-    ccert_pk_ofs[0] = bswap32(ccert_pk_offset);
-    ccert_pk_ofs[1] = bswap32(ccert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE - 1);
-    ccert_pk_ofs[2] = bswap32(ccert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE);
-    ccert_pk_ofs[3] = bswap32(ccert_pk_offset + (HW_SCE_ECC_P256_KEY_PARAM_SIZE * 2) - 1);
+	ccert_pk_ofs[0] = bswap32(ccert_pk_offset);
+	ccert_pk_ofs[1] = bswap32(ccert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE - 1);
+	ccert_pk_ofs[2] = bswap32(ccert_pk_offset + HW_SCE_ECC_P256_KEY_PARAM_SIZE);
+	ccert_pk_ofs[3] = bswap32(ccert_pk_offset + (HW_SCE_ECC_P256_KEY_PARAM_SIZE * 2) - 1);
 
-    imgpk_hash_ofs[0] = bswap32(imgpk_hash_offset);
-    imgpk_hash_ofs[1] = bswap32(imgpk_hash_offset + imgpk_hash_len - 1);
+	imgpk_hash_ofs[0] = bswap32(imgpk_hash_offset);
+	imgpk_hash_ofs[1] = bswap32(imgpk_hash_offset + imgpk_hash_len - 1);
 
-    image_hash_ofs[0] = bswap32(image_hash_offset);
-    image_hash_ofs[1] = bswap32(image_hash_offset + image_hash_len - 1);
+	image_hash_ofs[0] = bswap32(image_hash_offset);
+	image_hash_ofs[1] = bswap32(image_hash_offset + image_hash_len - 1);
 
-    return R_SCE_VerifyManifestPrivate(kcert, kcert_length, kcert_sign, kcert_pk_ofs, imgpk_hash_ofs, rotpk_hash,
-            ccert, ccert_length, ccert_sign, ccert_pk_ofs, image_hash_ofs, image,
-            image_len >> 2);
+	return R_SCE_VerifyManifestPrivate(kcert, kcert_length, kcert_sign, kcert_pk_ofs, imgpk_hash_ofs, rotpk_hash,
+									   ccert, ccert_length, ccert_sign, ccert_pk_ofs, image_hash_ofs, image,
+									   image_len >> 2);
 }
 /**********************************************************************************************************************
  End of function R_SCE_VerifyManifestImageHash
@@ -208,17 +206,17 @@ cip_drv_ret_t R_SCE_VerifyManifestImageHash(uint32_t * image, uint32_t image_len
  *              : initial_vector
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_AES128CBC_DecryptInit(st_sce_aes_handle_t * handle, st_sce_aes_wrapped_key_t * wrapped_key,
-        uint32_t * initial_vector)
+cip_drv_ret_t R_SCE_AES128CBC_DecryptInit(st_sce_aes_handle_t *handle, st_sce_aes_wrapped_key_t *wrapped_key,
+										  uint32_t *initial_vector)
 {
-    memset(handle, 0, sizeof(st_sce_aes_handle_t));
-    handle->flag_call_init = CALL_ONLY_UPDATE_FINAL;
-    s_private_id_counter++;
-    s_aes128cbcdec_private_id = s_private_id_counter;
-    handle->id = s_aes128cbcdec_private_id;
-    memcpy(handle->current_initial_vector, initial_vector, sizeof(handle->current_initial_vector));
+	memset(handle, 0, sizeof(st_sce_aes_handle_t));
+	handle->flag_call_init = CALL_ONLY_UPDATE_FINAL;
+	s_private_id_counter++;
+	s_aes128cbcdec_private_id = s_private_id_counter;
+	handle->id = s_aes128cbcdec_private_id;
+	memcpy(handle->current_initial_vector, initial_vector, sizeof(handle->current_initial_vector));
 
-    return R_SCE_Aes128CbcDecryptInitPrivate(wrapped_key, handle->current_initial_vector);
+	return R_SCE_Aes128CbcDecryptInitPrivate(wrapped_key, handle->current_initial_vector);
 }
 /**********************************************************************************************************************
  End of function R_SCE_AES128CBC_DecryptInit
@@ -233,29 +231,27 @@ cip_drv_ret_t R_SCE_AES128CBC_DecryptInit(st_sce_aes_handle_t * handle, st_sce_a
  *              : cipher_length
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_AES128CBC_DecryptUpdate(st_sce_aes_handle_t * handle, uint32_t * cipher, uint32_t * plain,
-        uint32_t cipher_length)
+cip_drv_ret_t R_SCE_AES128CBC_DecryptUpdate(st_sce_aes_handle_t *handle, uint32_t *cipher, uint32_t *plain,
+											uint32_t cipher_length)
 {
-    if (CALL_ONLY_INIT == handle->flag_call_init)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	if (CALL_ONLY_INIT == handle->flag_call_init) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    if (handle->id != s_aes128cbcdec_private_id)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	if (handle->id != s_aes128cbcdec_private_id) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    handle->current_input_data_size = cipher_length;
-    memcpy(handle->last_1_block_as_fraction,
-            (((void*) cipher + ((cipher_length / HW_SCE_AES_BLOCK_BYTE_SIZE) * HW_SCE_AES_BLOCK_BYTE_SIZE))),
-            (cipher_length % HW_SCE_AES_BLOCK_BYTE_SIZE));
+	handle->current_input_data_size = cipher_length;
+	memcpy(handle->last_1_block_as_fraction,
+		   (((void *)cipher + ((cipher_length / HW_SCE_AES_BLOCK_BYTE_SIZE) * HW_SCE_AES_BLOCK_BYTE_SIZE))),
+		   (cipher_length % HW_SCE_AES_BLOCK_BYTE_SIZE));
 
-    R_SCE_Aes128CbcDecryptUpdatePrivate(cipher, plain, cipher_length >> 2);
-    memcpy(handle->current_initial_vector, (((void*) plain + (cipher_length - HW_SCE_AES_BLOCK_BYTE_SIZE))),
-    HW_SCE_AES_CBC_IV_BYTE_SIZE);
+	R_SCE_Aes128CbcDecryptUpdatePrivate(cipher, plain, cipher_length >> 2);
+	memcpy(handle->current_initial_vector, (((void *)plain + (cipher_length - HW_SCE_AES_BLOCK_BYTE_SIZE))),
+		   HW_SCE_AES_CBC_IV_BYTE_SIZE);
 
-    return CIP_DRV_RET_PASS;
+	return CIP_DRV_RET_PASS;
 }
 /**********************************************************************************************************************
  End of function R_SCE_AES128CBC_DecryptUpdate
@@ -269,22 +265,20 @@ cip_drv_ret_t R_SCE_AES128CBC_DecryptUpdate(st_sce_aes_handle_t * handle, uint32
  *              : plain_length
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_AES128CBC_DecryptFinal(st_sce_aes_handle_t * handle, uint32_t * plain, uint32_t * plain_length)
+cip_drv_ret_t R_SCE_AES128CBC_DecryptFinal(st_sce_aes_handle_t *handle, uint32_t *plain, uint32_t *plain_length)
 {
-    if (CALL_ONLY_INIT == handle->flag_call_init)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	if (CALL_ONLY_INIT == handle->flag_call_init) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    handle->flag_call_init = CALL_ONLY_INIT;
-    if (handle->id != s_aes128cbcdec_private_id)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	handle->flag_call_init = CALL_ONLY_INIT;
+	if (handle->id != s_aes128cbcdec_private_id) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    memset(handle, 0, sizeof(st_sce_aes_handle_t));
+	memset(handle, 0, sizeof(st_sce_aes_handle_t));
 
-    return R_SCE_Aes128CbcDecryptFinalPrivate(plain, plain_length);
+	return R_SCE_Aes128CbcDecryptFinalPrivate(plain, plain_length);
 }
 /**********************************************************************************************************************
  End of function R_SCE_AES128CBC_DecryptFinal
@@ -297,17 +291,17 @@ cip_drv_ret_t R_SCE_AES128CBC_DecryptFinal(st_sce_aes_handle_t * handle, uint32_
  *              : message_length
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_SHA256_Init(st_sce_sha_md5_handle_t * handle, uint32_t message_length)
+cip_drv_ret_t R_SCE_SHA256_Init(st_sce_sha_md5_handle_t *handle, uint32_t message_length)
 {
-    memset(handle, 0, sizeof(st_sce_sha_md5_handle_t));
-    handle->flag_call_init = CALL_ONLY_UPDATE_FINAL;
-    s_private_id_counter++;
-    s_sha256_private_id = s_private_id_counter;
-    handle->id = s_sha256_private_id;
-    handle->all_received_length = message_length;
-    memset(handle->sha_buffer, 0, sizeof(handle->sha_buffer));
+	memset(handle, 0, sizeof(st_sce_sha_md5_handle_t));
+	handle->flag_call_init = CALL_ONLY_UPDATE_FINAL;
+	s_private_id_counter++;
+	s_sha256_private_id = s_private_id_counter;
+	handle->id = s_sha256_private_id;
+	handle->all_received_length = message_length;
+	memset(handle->sha_buffer, 0, sizeof(handle->sha_buffer));
 
-    return R_SCE_Sha256InitPrivate(handle, message_length);
+	return R_SCE_Sha256InitPrivate(handle, message_length);
 }
 /**********************************************************************************************************************
  End of function R_SCE_SHA256_Init
@@ -321,48 +315,39 @@ cip_drv_ret_t R_SCE_SHA256_Init(st_sce_sha_md5_handle_t * handle, uint32_t messa
  *              : message_length
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_SHA256_Update(st_sce_sha_md5_handle_t * handle, uint32_t * message, uint32_t message_length)
+cip_drv_ret_t R_SCE_SHA256_Update(st_sce_sha_md5_handle_t *handle, uint32_t *message, uint32_t message_length)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    if (NULL == handle)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    if (CALL_ONLY_INIT == handle->flag_call_init)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    if (handle->id != s_sha256_private_id)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    if (handle->all_received_length != message_length)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    if (NULL == message)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	if (NULL == handle) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	if (CALL_ONLY_INIT == handle->flag_call_init) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	if (handle->id != s_sha256_private_id) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	if (handle->all_received_length != message_length) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	if (NULL == message) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    if (message_length > SHA_BLOCK8_LEN)
-    {
-        uint32_t input_length = ((message_length - SHA_BLOCK8_LEN) / SHA_BLOCK8_LEN) * SHA_BLOCK8_LEN;
-        ret_val = R_SCE_Sha256UpdatePrivate(handle, message, input_length >> 2);
-        if (CIP_DRV_RET_PASS == ret_val)
-        {
-            handle->buffering_length = message_length - input_length;
-            memcpy(handle->sha_buffer, (((void*) message) + input_length), handle->buffering_length);
-        }
-    }
-    else
-    {
-        handle->buffering_length = message_length;
-        memcpy(handle->sha_buffer, message, handle->buffering_length);
-    }
+	if (message_length > SHA_BLOCK8_LEN) {
+		uint32_t input_length = ((message_length - SHA_BLOCK8_LEN) / SHA_BLOCK8_LEN) * SHA_BLOCK8_LEN;
+		ret_val = R_SCE_Sha256UpdatePrivate(handle, message, input_length >> 2);
+		if (CIP_DRV_RET_PASS == ret_val) {
+			handle->buffering_length = message_length - input_length;
+			memcpy(handle->sha_buffer, (((void *)message) + input_length), handle->buffering_length);
+		}
+	} else {
+		handle->buffering_length = message_length;
+		memcpy(handle->sha_buffer, message, handle->buffering_length);
+	}
 
-    return ret_val;
+	return ret_val;
 }
 /**********************************************************************************************************************
  End of function R_SCE_SHA256_Update
@@ -376,39 +361,35 @@ cip_drv_ret_t R_SCE_SHA256_Update(st_sce_sha_md5_handle_t * handle, uint32_t * m
  *              : digest_length
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_SHA256_Final(st_sce_sha_md5_handle_t * handle, uint32_t * digest, uint32_t * digest_length)
+cip_drv_ret_t R_SCE_SHA256_Final(st_sce_sha_md5_handle_t *handle, uint32_t *digest, uint32_t *digest_length)
 {
-    cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
+	cip_drv_ret_t ret_val = CIP_DRV_RET_PASS;
 
-    if (NULL == handle)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    if (CALL_ONLY_INIT == handle->flag_call_init)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	if (NULL == handle) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	if (CALL_ONLY_INIT == handle->flag_call_init) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    handle->flag_call_init = CALL_ONLY_INIT;
-    if (handle->id != s_sha256_private_id)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
-    if ((NULL == digest) || (NULL == digest_length))
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	handle->flag_call_init = CALL_ONLY_INIT;
+	if (handle->id != s_sha256_private_id) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
+	if ((NULL == digest) || (NULL == digest_length)) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    ret_val = R_SCE_Sha256FinalPrivate(handle,
-            handle->sha_buffer,
-            handle->buffering_length >> 2,
-            digest,
-            digest_length);
-    handle->all_received_length = 0;
-    handle->buffering_length = 0;
-    memset(handle->sha_buffer, 0, sizeof(handle->sha_buffer));
+	ret_val = R_SCE_Sha256FinalPrivate(handle,
+									   handle->sha_buffer,
+									   handle->buffering_length >> 2,
+									   digest,
+									   digest_length);
+	handle->all_received_length = 0;
+	handle->buffering_length = 0;
+	memset(handle->sha_buffer, 0, sizeof(handle->sha_buffer));
 
-    return ret_val;
+	return ret_val;
 }
 /**********************************************************************************************************************
  End of function R_SCE_SHA256_Final
@@ -420,14 +401,13 @@ cip_drv_ret_t R_SCE_SHA256_Final(st_sce_sha_md5_handle_t * handle, uint32_t * di
  * Argument     : random
  * Return Value : .
  *********************************************************************************************************************/
-cip_drv_ret_t R_SCE_RandomNumberGenerate(uint32_t * random)
+cip_drv_ret_t R_SCE_RandomNumberGenerate(uint32_t *random)
 {
-    if (NULL == random)
-    {
-        return CIP_DRV_RET_PARAM_ERROR;
-    }
+	if (NULL == random) {
+		return CIP_DRV_RET_PARAM_ERROR;
+	}
 
-    return R_SCE_RandomNumberGeneratePrivate(random);
+	return R_SCE_RandomNumberGeneratePrivate(random);
 }
 /**********************************************************************************************************************
  End of function R_SCE_RandomNumberGenerate

@@ -16,12 +16,12 @@
 
 int32_t notify_dec_image_info_callback(uintptr_t dec_base, size_t dec_size)
 {
-    return 0;
+	return 0;
 }
 
 int crypto_sblib_auth(void *data_ptr, size_t len,
-				const void *key_cert, unsigned int key_cert_len,
-				const void *content_cert, unsigned int content_cert_len)
+					  const void *key_cert, unsigned int key_cert_len,
+					  const void *content_cert, unsigned int content_cert_len)
 {
 	sb_ret_t rc;
 

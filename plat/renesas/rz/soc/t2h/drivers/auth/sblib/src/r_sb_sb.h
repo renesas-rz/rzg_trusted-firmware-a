@@ -34,13 +34,13 @@
 /*=====================================================================================================================
  Public global functions
 =====================================================================================================================*/
-extern sb_ret_t r_sb_sb_verify_cert_chain (const st_sb_key_cert_t * const p_key_cert_st,
-                                            const st_sb_code_cert_t * const p_code_cert_st);
-extern sb_ret_t r_sb_sb_verify_mac (const st_sb_code_cert_t * const p_code_cert_st,
-                                    const st_sb_tlv_t * const p_mac_tlv);
-extern sb_ret_t r_sb_sb_check_integrity (const st_sb_key_cert_t * const p_key_cert_st,
-                                        const st_sb_code_cert_t * const p_code_cert_st,
-                                        const e_sb_mac_type_t mac_type, uint32_t * const p_tag);
+extern sb_ret_t r_sb_sb_verify_cert_chain(const st_sb_key_cert_t *const p_key_cert_st,
+										  const st_sb_code_cert_t *const p_code_cert_st);
+extern sb_ret_t r_sb_sb_verify_mac(const st_sb_code_cert_t *const p_code_cert_st,
+								   const st_sb_tlv_t *const p_mac_tlv);
+extern sb_ret_t r_sb_sb_check_integrity(const st_sb_key_cert_t *const p_key_cert_st,
+										const st_sb_code_cert_t *const p_code_cert_st,
+										const e_sb_mac_type_t mac_type, uint32_t *const p_tag);
 #endif /* R_SB_SB_H */
 /*=====================================================================================================================
  End of File

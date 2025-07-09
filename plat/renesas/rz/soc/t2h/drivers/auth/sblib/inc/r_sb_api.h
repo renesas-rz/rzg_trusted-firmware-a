@@ -53,8 +53,8 @@
 /*! \{*/
 #define SB_RET_SUCCESS                          ((sb_ret_t)0x55555555UL)  /**< API succeeded */
 #define SB_RET_SAME_IMAGE_VERSION               ((sb_ret_t)0x55005501UL)  /**< An image of the same version as the
-                                                                               current version is input
-                                                                               (verification completed successfully) */
+																				current version is input
+																				(verification completed successfully) */
 #define SB_RET_ERR_INTERNAL_FAIL                ((sb_ret_t)0xAAAA0000UL)  /**< A internal failure */
 #define SB_RET_ERR_INVALID_ARG                  ((sb_ret_t)0xAAAA0001UL)  /**< An invalid argument was entered */
 #define SB_RET_ERR_UNSUPPORTED_FUNCTION         ((sb_ret_t)0xAAAA0002UL)  /**< Unsupported function executed */
@@ -64,13 +64,13 @@
 #define SB_RET_ERR_MANI_OUT_OF_RANGE_LEN        ((sb_ret_t)0xAAAA0102UL)  /**< Out of range TLV Length is set */
 #define SB_RET_ERR_MANI_TLV_FIELD_ERR           ((sb_ret_t)0xAAAA0103UL)  /**< Missing required TLV field */
 #define SB_RET_ERR_MANI_TLV_INVALID_LEN         ((sb_ret_t)0xAAAA0104UL)  /**< The length exceeding the end of
-                                                                               the manifest is specified in Length
-                                                                               of the TLV field */
+																				the manifest is specified in Length
+																				of the TLV field */
 #define SB_RET_ERR_MANI_INVALID_IMAGE_LEN       ((sb_ret_t)0xAAAA0105UL)  /**< An invalid image length is set */
 #define SB_RET_ERR_MANI_MISMATCH_SIGN_ALGORITHM ((sb_ret_t)0xAAAA0106UL)  /**< There is a wrong combination of
-                                                                               signature algorithms */
+																				signature algorithms */
 #define SB_RET_ERR_MANI_UNSUPPORTED_ALGORITHM   ((sb_ret_t)0xAAAA0107UL)  /**< An algorithm was specified that
-                                                                               the manifest does not support */
+																				the manifest does not support */
 #define SB_RET_ERR_CRYPTO_FAIL                  ((sb_ret_t)0xAAAA0200UL)  /**< Cryptographic processing failure */
 #define SB_RET_ERR_CRYPTO_AUTH_FAIL             ((sb_ret_t)0xAAAA0201UL)  /**< Verification failed */
 #define SB_RET_ERR_CRYPTO_UNSUPPORTED_ALGORITHM ((sb_ret_t)0xAAAA0202UL)  /**< Unsupported algorithm */
@@ -78,7 +78,7 @@
 #define SB_RET_ERR_CRYPTO_PARAM_ERR             ((sb_ret_t)0xAAAA0204UL)  /**< Parameter error */
 #define SB_RET_ERR_CRC_MISMATCH                 ((sb_ret_t)0xAAAA0300UL)  /**< CRC mismatch */
 #define SB_RET_ERR_LOWER_IMAGE_VERSION          ((sb_ret_t)0xAAAA0400UL)  /**< Image version lower than the current
-                                                                               image version is installed */
+																				image version is installed */
 /*! \}*/
 
 /** Manifest size definition */
@@ -100,23 +100,22 @@
 /*!*********************************************************
  * \addtogroup  SBLIBCommonTypes
  * \{*******************************************************/
-typedef uint32_t sb_ret_t;                  /**< SB-Lib return type */
+typedef uint32_t sb_ret_t; /**< SB-Lib return type */
 
 /** MAC type value enumeration */
-typedef enum
-{
-    SB_MAC_TYPE_NONE = 0,                   /**< Type not used */
-    SB_MAC_TYPE_HMAC_SHA2_224,              /**< HMAC SHA2-224 */
-    SB_MAC_TYPE_HMAC_SHA2_256,              /**< HMAC SHA2-256 */
-    SB_MAC_TYPE_HMAC_SHA2_384,              /**< HMAC SHA2-384 */
-    SB_MAC_TYPE_HMAC_SHA2_512,              /**< HMAC SHA2-512 */
-    SB_MAC_TYPE_HMAC_SHA3_224,              /**< HMAC SHA3-224 */
-    SB_MAC_TYPE_HMAC_SHA3_256,              /**< HMAC SHA3-256 */
-    SB_MAC_TYPE_HMAC_SHA3_384,              /**< HMAC SHA3-384 */
-    SB_MAC_TYPE_HMAC_SHA3_512,              /**< HMAC SHA3-512 */
-    SB_MAC_TYPE_CMAC_AES_128,               /**< CMAC AES-128 */
-    SB_MAC_TYPE_CMAC_AES_192,               /**< CMAC AES-192 */
-    SB_MAC_TYPE_CMAC_AES_256                /**< CMAC AES-256 */
+typedef enum {
+	SB_MAC_TYPE_NONE = 0,      /**< Type not used */
+	SB_MAC_TYPE_HMAC_SHA2_224, /**< HMAC SHA2-224 */
+	SB_MAC_TYPE_HMAC_SHA2_256, /**< HMAC SHA2-256 */
+	SB_MAC_TYPE_HMAC_SHA2_384, /**< HMAC SHA2-384 */
+	SB_MAC_TYPE_HMAC_SHA2_512, /**< HMAC SHA2-512 */
+	SB_MAC_TYPE_HMAC_SHA3_224, /**< HMAC SHA3-224 */
+	SB_MAC_TYPE_HMAC_SHA3_256, /**< HMAC SHA3-256 */
+	SB_MAC_TYPE_HMAC_SHA3_384, /**< HMAC SHA3-384 */
+	SB_MAC_TYPE_HMAC_SHA3_512, /**< HMAC SHA3-512 */
+	SB_MAC_TYPE_CMAC_AES_128,  /**< CMAC AES-128 */
+	SB_MAC_TYPE_CMAC_AES_192,  /**< CMAC AES-192 */
+	SB_MAC_TYPE_CMAC_AES_256   /**< CMAC AES-256 */
 } e_sb_mac_type_t;
 
 /*! \}*/
@@ -125,48 +124,43 @@ typedef enum
  * \addtogroup  SBLIBManifestTypes
  * \{*******************************************************/
 /** Key Certificate header structure */
-typedef struct
-{
-    uint32_t    magic;                                          /**< Magic number unique to KeyCertificate */
-    uint32_t    manifest_version;                               /**< Manifest version */
-    uint32_t    flags;                                          /**< KeyCertificate flag (Unused in V.1.00) */
-    uint32_t    reserved[SB_KEY_CERT_RESERVED_WORD_SIZE];   /**< Unused area */
+typedef struct {
+	uint32_t magic;                                    /**< Magic number unique to KeyCertificate */
+	uint32_t manifest_version;                         /**< Manifest version */
+	uint32_t flags;                                    /**< KeyCertificate flag (Unused in V.1.00) */
+	uint32_t reserved[SB_KEY_CERT_RESERVED_WORD_SIZE]; /**< Unused area */
 } st_sb_key_cert_header_t;
 
 /** Code Certificate header structure */
-typedef struct
-{
-    uint32_t    magic;                      /**< Magic number unique to CodeCertificate */
-    uint32_t    manifest_version;           /**< Manifest version */
-    uint32_t    flags;                      /**< CodeCertificate flag */
-    uint32_t    load_addr;                  /**< Image storage address */
-    uint32_t    dest_addr;                  /**< Image expansion destination address */
-    uint32_t    img_len;                    /**< Image byte size */
-    uint32_t    img_version;                /**< Image version */
-    uint32_t    build_num;                  /**< Image build number */
+typedef struct {
+	uint32_t magic;            /**< Magic number unique to CodeCertificate */
+	uint32_t manifest_version; /**< Manifest version */
+	uint32_t flags;            /**< CodeCertificate flag */
+	uint32_t load_addr;        /**< Image storage address */
+	uint32_t dest_addr;        /**< Image expansion destination address */
+	uint32_t img_len;          /**< Image byte size */
+	uint32_t img_version;      /**< Image version */
+	uint32_t build_num;        /**< Image build number */
 } st_sb_code_cert_header_t;
 
 /** TLV type of search result */
-typedef struct
-{
-    uint32_t         type;                  /**< TLV type */
-    uint32_t         byte_len;              /**< TLV value length */
-    const uint32_t * p_val;                 /**< TLV value field Address */
+typedef struct {
+	uint32_t type;         /**< TLV type */
+	uint32_t byte_len;     /**< TLV value length */
+	const uint32_t *p_val; /**< TLV value field Address */
 } st_sb_tlv_t;
 
 /** TLV type search condition structure */
-typedef struct
-{
-    uint32_t type;                          /**< TLV type to search */
-    uint32_t mask;                          /**< TLV type mask range */
+typedef struct {
+	uint32_t type; /**< TLV type to search */
+	uint32_t mask; /**< TLV type mask range */
 } st_sb_search_tlv_type_t;
 
 /** Code Certificate structure */
-typedef struct
-{
-    const st_sb_code_cert_header_t * p_header;   /**< Header information address */
-    uint32_t                         tlv_len;    /**< TLV length */
-    const uint8_t *                  p_tlv_top;  /**< Start address of TLV field */
+typedef struct {
+	const st_sb_code_cert_header_t *p_header; /**< Header information address */
+	uint32_t tlv_len;                         /**< TLV length */
+	const uint8_t *p_tlv_top;                 /**< Start address of TLV field */
 } st_sb_code_cert_t;
 
 /*! \}*/
@@ -370,11 +364,11 @@ typedef struct
  * Note: The call graph below dose not include SB-Driver APIs.
  * \callgraph
  *********************************************************************************************************************/
-extern sb_ret_t R_SB_SecureBoot (const uint8_t * const p_key_cert,
-                                const uint32_t key_cert_len_max,
-                                const uint8_t * const p_code_cert,
-                                const uint32_t code_cert_len_max,
-                                const uint8_t * const p_mac_tlv);
+extern sb_ret_t R_SB_SecureBoot(const uint8_t *const p_key_cert,
+								const uint32_t key_cert_len_max,
+								const uint8_t *const p_code_cert,
+								const uint32_t code_cert_len_max,
+								const uint8_t *const p_mac_tlv);
 
 /**********************************************************************************************************************
 * Function Name : R_SB_CheckIntegrity
@@ -525,12 +519,12 @@ extern sb_ret_t R_SB_SecureBoot (const uint8_t * const p_key_cert,
  * Note: The call graph below dose not include SB-Driver APIs.
  * \callgraph
  *********************************************************************************************************************/
-extern sb_ret_t R_SB_CheckIntegrity (const uint8_t * const p_key_cert,
-                                    const uint32_t key_cert_len_max,
-                                    const uint8_t * const p_code_cert,
-                                    const uint32_t code_cert_len_max,
-                                    const e_sb_mac_type_t mac_type,
-                                    uint32_t* const p_tag);
+extern sb_ret_t R_SB_CheckIntegrity(const uint8_t *const p_key_cert,
+									const uint32_t key_cert_len_max,
+									const uint8_t *const p_code_cert,
+									const uint32_t code_cert_len_max,
+									const e_sb_mac_type_t mac_type,
+									uint32_t *const p_tag);
 
 /**********************************************************************************************************************
 * Function Name : R_SB_CheckCRC
@@ -609,8 +603,8 @@ extern sb_ret_t R_SB_CheckIntegrity (const uint8_t * const p_key_cert,
  * Note: The call graph below dose not include SB-Driver APIs.
  * \callgraph
  *********************************************************************************************************************/
-extern sb_ret_t R_SB_CheckCRC (const uint8_t * const p_code_cert,
-                                const uint32_t code_cert_len_max);
+extern sb_ret_t R_SB_CheckCRC(const uint8_t *const p_code_cert,
+							  const uint32_t code_cert_len_max);
 
 /**********************************************************************************************************************
 * Function Name : R_SB_GetVersion
@@ -646,7 +640,7 @@ extern sb_ret_t R_SB_CheckCRC (const uint8_t * const p_code_cert,
  *
  * \callgraph
  *********************************************************************************************************************/
-extern sb_ret_t R_SB_GetVersion (uint32_t * const p_major, uint32_t * const p_minor);
+extern sb_ret_t R_SB_GetVersion(uint32_t *const p_major, uint32_t *const p_minor);
 
 /**********************************************************************************************************************
 * Function Name : R_SB_ParseManiTLVs
@@ -691,8 +685,8 @@ extern sb_ret_t R_SB_GetVersion (uint32_t * const p_major, uint32_t * const p_mi
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t R_SB_ParseManiTLVs (const uint8_t * const p_top, const uint32_t tlv_len, const uint32_t num_of_search_type,
-                                const st_sb_search_tlv_type_t search_types[], st_sb_tlv_t tlvs[]);
+sb_ret_t R_SB_ParseManiTLVs(const uint8_t *const p_top, const uint32_t tlv_len, const uint32_t num_of_search_type,
+							const st_sb_search_tlv_type_t search_types[], st_sb_tlv_t tlvs[]);
 
 /**********************************************************************************************************************
 * Function Name : R_SB_GetCodeCertInfo
@@ -746,8 +740,8 @@ sb_ret_t R_SB_ParseManiTLVs (const uint8_t * const p_top, const uint32_t tlv_len
  *
  * \callgraph
  *********************************************************************************************************************/
-sb_ret_t R_SB_GetCodeCertInfo (const uint8_t * const p_code_cert, const uint32_t code_cert_len_max,
-                            st_sb_code_cert_t * const p_code_cert_st);
+sb_ret_t R_SB_GetCodeCertInfo(const uint8_t *const p_code_cert, const uint32_t code_cert_len_max,
+							  st_sb_code_cert_t *const p_code_cert_st);
 
 #endif /* R_SB_API_H */
 /*=====================================================================================================================

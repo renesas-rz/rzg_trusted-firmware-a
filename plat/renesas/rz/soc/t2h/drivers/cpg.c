@@ -395,23 +395,23 @@ void cpg_disable_mpu_protect(void)
 	/* Disable all MPU */
 	sys_safetybase_unlock(PRCRx_SYS_CTRL);
 
-	mmio_write_32(0x81291400, 0);	//MPU 0 - GMAC Unit 1
-	mmio_write_32(0x81291500, 0);	//MPU 1 - GMAC Unit 2
-	mmio_write_32(0x81291600, 0);	//MPU 2 - USB Host
-	mmio_write_32(0x81291700, 0);	//MPU 3 - USB function
-	mmio_write_32(0x81291800, 0);	//MPU 4 - SDHI Unit 0
-	mmio_write_32(0x81291900, 0);	//MPU 5 - SDHI Unit 1
-	mmio_write_32(0x81291a00, 0);	//MPU 6 - LCD Controller
-	mmio_write_32(0x81291b00, 0);	//MPU 7 - PCIE Unit 0
-	mmio_write_32(0x81291c00, 0);	//MPU 8 - PCIE Unit 1
-	mmio_write_32(0x81291d00, 0);	//MPU 9 - PCIE Unit 2
+	mmio_write_32(0x81291400, 0); // MPU 0 - GMAC Unit 1
+	mmio_write_32(0x81291500, 0); // MPU 1 - GMAC Unit 2
+	mmio_write_32(0x81291600, 0); // MPU 2 - USB Host
+	mmio_write_32(0x81291700, 0); // MPU 3 - USB function
+	mmio_write_32(0x81291800, 0); // MPU 4 - SDHI Unit 0
+	mmio_write_32(0x81291900, 0); // MPU 5 - SDHI Unit 1
+	mmio_write_32(0x81291a00, 0); // MPU 6 - LCD Controller
+	mmio_write_32(0x81291b00, 0); // MPU 7 - PCIE Unit 0
+	mmio_write_32(0x81291c00, 0); // MPU 8 - PCIE Unit 1
+	mmio_write_32(0x81291d00, 0); // MPU 9 - PCIE Unit 2
 
-	mmio_write_32(0x81290400, 0);	//MPU 10 - DMAC Unit 0
-	mmio_write_32(0x81290500, 0);	//MPU 11 - DMAC Unit 1
-	mmio_write_32(0x81290600, 0);	//MPU 12 - DMAC Unit 2
-	mmio_write_32(0x81290700, 0);	//MPU 13 - GMAC Unit 0
-	mmio_write_32(0x81290800, 0);	//MPU 14 - SHOSTIF
-	mmio_write_32(0x81290900, 0);	//MPU 15 - CoreSight AXI-AP
+	mmio_write_32(0x81290400, 0); // MPU 10 - DMAC Unit 0
+	mmio_write_32(0x81290500, 0); // MPU 11 - DMAC Unit 1
+	mmio_write_32(0x81290600, 0); // MPU 12 - DMAC Unit 2
+	mmio_write_32(0x81290700, 0); // MPU 13 - GMAC Unit 0
+	mmio_write_32(0x81290800, 0); // MPU 14 - SHOSTIF
+	mmio_write_32(0x81290900, 0); // MPU 15 - CoreSight AXI-AP
 
 	sys_safetybase_lock(PRCRx_SYS_CTRL);
 }

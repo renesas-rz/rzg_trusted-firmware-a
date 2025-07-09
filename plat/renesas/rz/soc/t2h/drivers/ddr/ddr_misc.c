@@ -21,7 +21,6 @@ void decode_major_message(uint32_t mail, uint8_t sel_train)
 	;
 }
 
-
 void ddrtop_mc_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask)
 {
 	uint32_t tmp_data;

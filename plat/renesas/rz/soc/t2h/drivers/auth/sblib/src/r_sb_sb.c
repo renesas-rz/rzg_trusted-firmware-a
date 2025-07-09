@@ -126,7 +126,7 @@
 #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) /* (Use only when SB_CFG_SB_CERT_CHAIN_USE_IMG_PK is Enable) */
 #define SB_PRV_TLV_MAC_KEY_IMG_PK_IDX               (2U)  /**< Index number of Image public key */
 #define SB_PRV_TLV_MAC_NUM                          (3U)  /**< Number of Code Certificate TLVs for MAC verify */
-#else /* #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
+#else  /* #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
 #define SB_PRV_TLV_MAC_NUM                          (2U)  /**< Number of Code Certificate TLVs for MAC verify */
 #endif /* #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
 /*! \}*/
@@ -161,33 +161,33 @@
  Private function prototypes
 =====================================================================================================================*/
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-static sb_ret_t sb_decrypt_img (const st_sb_code_cert_t * const p_code_cert_st, const st_sb_tlv_t* const p_img_cip_info,
-                                const st_sb_tlv_t * const p_img_cip_iv, const uint32_t timing);
+static sb_ret_t sb_decrypt_img(const st_sb_code_cert_t *const p_code_cert_st, const st_sb_tlv_t *const p_img_cip_info,
+							   const st_sb_tlv_t *const p_img_cip_iv, const uint32_t timing);
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
 
 #if (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U)
-static sb_ret_t sb_check_cert_chain_tlv (const st_sb_tlv_t * const p_key_cert_tlvs,
-                                        const st_sb_tlv_t * const p_code_cert_tlvs);
+static sb_ret_t sb_check_cert_chain_tlv(const st_sb_tlv_t *const p_key_cert_tlvs,
+										const st_sb_tlv_t *const p_code_cert_tlvs);
 #endif /* (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U) */
 
 #if (SB_CFG_CHECK_INTEGRITY == 1U)
-static sb_ret_t sb_check_check_integrity_tlv (const st_sb_tlv_t * const p_key_cert_tlvs,
-                                            const st_sb_tlv_t * const p_code_cert_tlvs);
+static sb_ret_t sb_check_check_integrity_tlv(const st_sb_tlv_t *const p_key_cert_tlvs,
+											 const st_sb_tlv_t *const p_code_cert_tlvs);
 #endif /* (SB_CFG_CHECK_INTEGRITY == 1U) */
 
 #if (SB_CFG_SB_MAC_VERIFICATION == 1U)
-static sb_ret_t sb_check_mac_tlv (const st_sb_tlv_t * const p_mac_tlv, const st_sb_tlv_t * const p_img_pk_tlv);
+static sb_ret_t sb_check_mac_tlv(const st_sb_tlv_t *const p_mac_tlv, const st_sb_tlv_t *const p_img_pk_tlv);
 #endif /* (SB_CFG_SB_MAC_VERIFICATION == 1U) */
 
 #if (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U) || (SB_CFG_CHECK_INTEGRITY == 1U)
-static sb_ret_t sb_get_cc_tlv (const st_sb_key_cert_t * const p_key_cert_st,
-                                const st_sb_code_cert_t * const p_code_cert_st,
-                                const st_sb_search_tlv_type_t * const p_search_tlv_key_cert,
-                                const uint32_t search_tlv_key_cert_num,
-                                const st_sb_search_tlv_type_t * const p_search_tlv_code_cert,
-                                const uint32_t search_tlv_code_cert_num,
-                                st_sb_tlv_t * const p_key_cert_tlvs,
-                                st_sb_tlv_t * const p_code_cert_tlvs);
+static sb_ret_t sb_get_cc_tlv(const st_sb_key_cert_t *const p_key_cert_st,
+							  const st_sb_code_cert_t *const p_code_cert_st,
+							  const st_sb_search_tlv_type_t *const p_search_tlv_key_cert,
+							  const uint32_t search_tlv_key_cert_num,
+							  const st_sb_search_tlv_type_t *const p_search_tlv_code_cert,
+							  const uint32_t search_tlv_code_cert_num,
+							  st_sb_tlv_t *const p_key_cert_tlvs,
+							  st_sb_tlv_t *const p_code_cert_tlvs);
 #endif /* (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U) || (SB_CFG_CHECK_INTEGRITY == 1U) */
 
 /*=====================================================================================================================
@@ -353,285 +353,236 @@ static sb_ret_t sb_get_cc_tlv (const st_sb_key_cert_t * const p_key_cert_st,
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U)
-sb_ret_t r_sb_sb_verify_cert_chain(const st_sb_key_cert_t* const p_key_cert_st,
-                                    const st_sb_code_cert_t* const p_code_cert_st)
+sb_ret_t r_sb_sb_verify_cert_chain(const st_sb_key_cert_t *const p_key_cert_st,
+								   const st_sb_code_cert_t *const p_code_cert_st)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    cip_drv_ret_t cip_ret = CIP_DRV_RET_FAIL;
-    st_sb_tlv_t   key_cert_tlvs[SB_PRV_TLV_KEY_CERT_NUM];
-    st_sb_tlv_t   code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_NUM];
-    st_cip_drv_cc_key_cert_param_t key_cert_param;
-    st_cip_drv_cc_code_cert_param_t code_cert_param;
+	cip_drv_ret_t cip_ret = CIP_DRV_RET_FAIL;
+	st_sb_tlv_t key_cert_tlvs[SB_PRV_TLV_KEY_CERT_NUM];
+	st_sb_tlv_t code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_NUM];
+	st_cip_drv_cc_key_cert_param_t key_cert_param;
+	st_cip_drv_cc_code_cert_param_t code_cert_param;
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-    st_cip_drv_cipher_img_param_t dec_img_param;
+	st_cip_drv_cipher_img_param_t dec_img_param;
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-    const st_cip_drv_cipher_img_param_t * p_dec_img_param = NULL;
-    const st_sb_tlv_t *                   p_key_cert_signer_pk_tlv;
-    const st_sb_tlv_t *                   p_code_cert_sign_tlv;
-    const st_sb_tlv_t *                   p_img_hash_tlv;
-    uint32_t                              img_addr;
+	const st_cip_drv_cipher_img_param_t *p_dec_img_param = NULL;
+	const st_sb_tlv_t *p_key_cert_signer_pk_tlv;
+	const st_sb_tlv_t *p_code_cert_sign_tlv;
+	const st_sb_tlv_t *p_img_hash_tlv;
+	uint32_t img_addr;
 
-    const st_sb_search_tlv_type_t search_tlv_key_cert[SB_PRV_TLV_KEY_CERT_NUM] =
-    {
-        {SB_PRV_TLV_KEY_OEM_ROOT_PK_TYPE,   SB_PRV_TLV_KEY_MASK},   /* KEY_CERT_KEY_OEM_ROOT_PK_IDX */
-        {SB_PRV_TLV_KEY_IMG_PK_TYPE,        SB_PRV_TLV_KEY_MASK},   /* KEY_CERT_KEY_IMG_PK_IDX */
-        {SB_PRV_TLV_HASH_IMG_PK_TYPE,       SB_PRV_TLV_HASH_MASK},  /* KEY_CERT_HASH_IMG_PK_IDX */
-        {SB_PRV_TLV_SIGN_CERT_TYPE,         SB_PRV_TLV_SIGN_MASK},  /* KEY_CERT_SIGN_CERT_IDX */
-    };
+	const st_sb_search_tlv_type_t search_tlv_key_cert[SB_PRV_TLV_KEY_CERT_NUM] = {
+			{SB_PRV_TLV_KEY_OEM_ROOT_PK_TYPE, SB_PRV_TLV_KEY_MASK}, /* KEY_CERT_KEY_OEM_ROOT_PK_IDX */
+			{SB_PRV_TLV_KEY_IMG_PK_TYPE, SB_PRV_TLV_KEY_MASK},      /* KEY_CERT_KEY_IMG_PK_IDX */
+			{SB_PRV_TLV_HASH_IMG_PK_TYPE, SB_PRV_TLV_HASH_MASK},    /* KEY_CERT_HASH_IMG_PK_IDX */
+			{SB_PRV_TLV_SIGN_CERT_TYPE, SB_PRV_TLV_SIGN_MASK},      /* KEY_CERT_SIGN_CERT_IDX */
+		};
 
-    const st_sb_search_tlv_type_t search_tlv_code_cert[SB_PRV_TLV_CC_CODE_CERT_NUM] =
-    {
-        {SB_PRV_TLV_KEY_IMG_PK_TYPE,        SB_PRV_TLV_KEY_MASK},   /* SB_CODE_CERT_KEY_IMG_PK_IDX */
-        {SB_PRV_TLV_HASH_IMG_TYPE,          SB_PRV_TLV_HASH_MASK},  /* SB_CODE_CERT_HASH_IMG_IDX */
-        {SB_PRV_TLV_HASH_ENCIMG_TYPE,       SB_PRV_TLV_HASH_MASK},  /* SB_CODE_CERT_HASH_ENCIMG_IDX */
-        {SB_PRV_TLV_IMG_CIP_INFO_TYPE,      SB_PRV_TLV_ICI_MASK},   /* SB_CODE_CERT_IMG_CIP_INFO_IDX */
-        {SB_PRV_TLV_IMG_CIP_IV_TYPE,        SB_PRV_TLV_IV_MASK},    /* SB_CODE_CERT_IMG_CIP_IV_IDX */
-        {SB_PRV_TLV_SIGN_CERT_TYPE,         SB_PRV_TLV_SIGN_MASK},  /* SB_CODE_CERT_SIGN_CERT_IDX */
-        {SB_PRV_TLV_SIGN_CERT_IMG_TYPE,     SB_PRV_TLV_SIGN_MASK},  /* SB_CODE_CERT_SIGN_IMG_IDX */
-        {SB_PRV_TLV_SIGN_CERT_ENCIMG_TYPE,  SB_PRV_TLV_SIGN_MASK},  /* SB_CODE_CERT_SIGN_ENCIMG_IDX */
-    };
+	const st_sb_search_tlv_type_t search_tlv_code_cert[SB_PRV_TLV_CC_CODE_CERT_NUM] = {
+			{SB_PRV_TLV_KEY_IMG_PK_TYPE, SB_PRV_TLV_KEY_MASK},        /* SB_CODE_CERT_KEY_IMG_PK_IDX */
+			{SB_PRV_TLV_HASH_IMG_TYPE, SB_PRV_TLV_HASH_MASK},         /* SB_CODE_CERT_HASH_IMG_IDX */
+			{SB_PRV_TLV_HASH_ENCIMG_TYPE, SB_PRV_TLV_HASH_MASK},      /* SB_CODE_CERT_HASH_ENCIMG_IDX */
+			{SB_PRV_TLV_IMG_CIP_INFO_TYPE, SB_PRV_TLV_ICI_MASK},      /* SB_CODE_CERT_IMG_CIP_INFO_IDX */
+			{SB_PRV_TLV_IMG_CIP_IV_TYPE, SB_PRV_TLV_IV_MASK},         /* SB_CODE_CERT_IMG_CIP_IV_IDX */
+			{SB_PRV_TLV_SIGN_CERT_TYPE, SB_PRV_TLV_SIGN_MASK},        /* SB_CODE_CERT_SIGN_CERT_IDX */
+			{SB_PRV_TLV_SIGN_CERT_IMG_TYPE, SB_PRV_TLV_SIGN_MASK},    /* SB_CODE_CERT_SIGN_IMG_IDX */
+			{SB_PRV_TLV_SIGN_CERT_ENCIMG_TYPE, SB_PRV_TLV_SIGN_MASK}, /* SB_CODE_CERT_SIGN_ENCIMG_IDX */
+		};
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if ((NULL != p_key_cert_st) && (NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header))
-    {
-        /* Image address use destination address of code certificate header */
-        img_addr = p_code_cert_st->p_header->dest_addr;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_key_cert_st) && (NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header)) {
+		/* Image address use destination address of code certificate header */
+		img_addr = p_code_cert_st->p_header->dest_addr;
 
-        /* Get TLVs */
-        ret = sb_get_cc_tlv(p_key_cert_st, p_code_cert_st,
-                            search_tlv_key_cert, SB_PRV_TLV_KEY_CERT_NUM,
-                            search_tlv_code_cert, SB_PRV_TLV_CC_CODE_CERT_NUM,
-                            key_cert_tlvs, code_cert_tlvs);
-        if (SB_RET_SUCCESS == ret)
-        {
-            /* Clear ret */
-            ret = SB_RET_ERR_INTERNAL_FAIL;
+		/* Get TLVs */
+		ret = sb_get_cc_tlv(p_key_cert_st, p_code_cert_st,
+							search_tlv_key_cert, SB_PRV_TLV_KEY_CERT_NUM,
+							search_tlv_code_cert, SB_PRV_TLV_CC_CODE_CERT_NUM,
+							key_cert_tlvs, code_cert_tlvs);
+		if (SB_RET_SUCCESS == ret) {
+			/* Clear ret */
+			ret = SB_RET_ERR_INTERNAL_FAIL;
 
-            /* Check cert chain tlv */
-            ret = sb_check_cert_chain_tlv(key_cert_tlvs, code_cert_tlvs);
-            if (SB_RET_SUCCESS == ret)
-            {
-                /* Clear ret */
-                ret = SB_RET_ERR_INTERNAL_FAIL;
+			/* Check cert chain tlv */
+			ret = sb_check_cert_chain_tlv(key_cert_tlvs, code_cert_tlvs);
+			if (SB_RET_SUCCESS == ret) {
+				/* Clear ret */
+				ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                /* Select kye cert signer public key TLV */
-                p_key_cert_signer_pk_tlv = (NULL == key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) ?
-                                            (&key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX]) :
-                                            (&key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX]);
+				/* Select kye cert signer public key TLV */
+				p_key_cert_signer_pk_tlv = (NULL == key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) ? (&key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX]) : (&key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX]);
 
-                /* Select code cert sign TVL and image hash TLV */
-                if (NULL != code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val)
-                {
-                    p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX];
-                    p_img_hash_tlv = (NULL == code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX].p_val) ?
-                                                (&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX]) :
-                                                (&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX]);
-                }
-                else if (NULL != code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX].p_val)
-                {
-                    p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX];
-                    p_img_hash_tlv = NULL;  /* Does not use image hash TLV */
-                }
-                else    /* NULL != code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX].p_val */
-                {
-                    p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX];
-                    p_img_hash_tlv = NULL;  /* Does not use image hash TLV */
-                }
+				/* Select code cert sign TVL and image hash TLV */
+				if (NULL != code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val) {
+					p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX];
+					p_img_hash_tlv = (NULL == code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX].p_val) ? (&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX]) : (&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX]);
+				} else if (NULL != code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX].p_val) {
+					p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX];
+					p_img_hash_tlv = NULL; /* Does not use image hash TLV */
+				} else                     /* NULL != code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX].p_val */ {
+					p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX];
+					p_img_hash_tlv = NULL; /* Does not use image hash TLV */
+				}
 
-                /* Decrypt before signature */
-                if (((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL) &&
-                    (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX]) == p_code_cert_sign_tlv) ||
-                    (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX]) == p_code_cert_sign_tlv) &&
-                    ((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX]) == p_img_hash_tlv))))
-                {
+				/* Decrypt before signature */
+				if (((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL) &&
+					(((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX]) == p_code_cert_sign_tlv) ||
+					 (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX]) == p_code_cert_sign_tlv) &&
+					  ((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX]) == p_img_hash_tlv)))) {
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-                    /* Image cipher flag ON and code certificate signing target is not a cryptographic image */
-                    ret = sb_decrypt_img(p_code_cert_st,
-                                            &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_INFO_IDX],
-                                            &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_IV_IDX],
-                                            CIP_DRV_CIPHER_TIMING_BEFORE_VERIFY);
+					/* Image cipher flag ON and code certificate signing target is not a cryptographic image */
+					ret = sb_decrypt_img(p_code_cert_st,
+										 &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_INFO_IDX],
+										 &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_IV_IDX],
+										 CIP_DRV_CIPHER_TIMING_BEFORE_VERIFY);
 
-                    /* Set decyrpted timing in dec_img_param */
-                    dec_img_param.timing = CIP_DRV_CIPHER_TIMING_BEFORE_VERIFY;
-                    p_dec_img_param = &dec_img_param;
+					/* Set decyrpted timing in dec_img_param */
+					dec_img_param.timing = CIP_DRV_CIPHER_TIMING_BEFORE_VERIFY;
+					p_dec_img_param = &dec_img_param;
 
-                    if (NULL != code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_INFO_IDX].p_val)
-                    {
-                        /* Image address use destination address of image ciphre info */
-                        img_addr = ((const st_sb_img_cip_info_val_t*)
-                                    code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_INFO_IDX].p_val)->dest_addr;
-                    }
-                    else
-                    {
-                        /* Do nothing */
-                    }
+					if (NULL != code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_INFO_IDX].p_val) {
+						/* Image address use destination address of image ciphre info */
+						img_addr = ((const st_sb_img_cip_info_val_t *)
+										code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_INFO_IDX]
+											.p_val)
+									   ->dest_addr;
+					} else {
+						/* Do nothing */
+					}
 #else  /* !(SB_CFG_IMAGE_ENC_DEC == 1U) */
-                    /* Code decryption not supported */
-                    ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
+					/* Code decryption not supported */
+					ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-                }
-                else
-                {
-                    /* Set ret to the success code */
-                    ret = SB_RET_SUCCESS;
-                }
-                if (SB_RET_SUCCESS == ret)
-                {
-                    /* Clear ret */
-                    ret = SB_RET_ERR_INTERNAL_FAIL;
+				} else {
+					/* Set ret to the success code */
+					ret = SB_RET_SUCCESS;
+				}
+				if (SB_RET_SUCCESS == ret) {
+					/* Clear ret */
+					ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                    /* Set key certificate driver parameters */
-                    ret = r_sb_cmn_drv_set_cc_key_cert_param(p_key_cert_st,
-                                                            &key_cert_tlvs[SB_PRV_TLV_KEY_CERT_HASH_IMG_PK_IDX],
-                                                            p_key_cert_signer_pk_tlv,
-                                                            &key_cert_tlvs[SB_PRV_TLV_KEY_CERT_SIGN_CERT_IDX],
-                                                            &key_cert_param);
-                    if (SB_RET_SUCCESS == ret)
-                    {
-                        /* Clear ret */
-                        ret = SB_RET_ERR_INTERNAL_FAIL;
+					/* Set key certificate driver parameters */
+					ret = r_sb_cmn_drv_set_cc_key_cert_param(p_key_cert_st,
+															 &key_cert_tlvs[SB_PRV_TLV_KEY_CERT_HASH_IMG_PK_IDX],
+															 p_key_cert_signer_pk_tlv,
+															 &key_cert_tlvs[SB_PRV_TLV_KEY_CERT_SIGN_CERT_IDX],
+															 &key_cert_param);
+					if (SB_RET_SUCCESS == ret) {
+						/* Clear ret */
+						ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                        /* Set code certificate driver parameters */
-                        ret = r_sb_cmn_drv_set_cc_code_cert_param(p_code_cert_st,
-                                                                img_addr,
-                                                                &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_KEY_IMG_PK_IDX],
-                                                                p_code_cert_sign_tlv,
-                                                                p_img_hash_tlv,
-                                                                &code_cert_param);
-                        /* Verification with certificate chain */
-                        if (SB_RET_SUCCESS == ret)
-                        {
-                            /* Clear ret */
-                            cip_ret = CIP_DRV_RET_FAIL;
-                            ret = SB_RET_ERR_INTERNAL_FAIL;
+						/* Set code certificate driver parameters */
+						ret = r_sb_cmn_drv_set_cc_code_cert_param(p_code_cert_st,
+																  img_addr,
+																  &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_KEY_IMG_PK_IDX],
+																  p_code_cert_sign_tlv,
+																  p_img_hash_tlv,
+																  &code_cert_param);
+						/* Verification with certificate chain */
+						if (SB_RET_SUCCESS == ret) {
+							/* Clear ret */
+							cip_ret = CIP_DRV_RET_FAIL;
+							ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                            /* Add verify count to flow counter */
-                            r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+							/* Add verify count to flow counter */
+							r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
 
-                            /* If the image is not decrypted, add the counter value
-                            When decrypt, add flow counter after decrypting
-                            This process is glitch countermeasure
-                            This must be done before verification */
+							/* If the image is not decrypted, add the counter value
+							When decrypt, add flow counter after decrypting
+							This process is glitch countermeasure
+							This must be done before verification */
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-                            if (((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC)
-                                != 0UL) &&
-                                (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX]) == p_code_cert_sign_tlv) ||
-                                (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX]) == p_code_cert_sign_tlv) &&
-                                ((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX]) == p_img_hash_tlv))))
-                            {
-                                /* Not added here, since it is added after decrypting */
+							if (((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL) &&
+								(((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX]) == p_code_cert_sign_tlv) ||
+								 (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX]) == p_code_cert_sign_tlv) &&
+								  ((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX]) == p_img_hash_tlv)))) {
+								/* Not added here, since it is added after decrypting */
 
-                                /* Set decyrpted timing in dec_img_param */
-                                dec_img_param.timing = CIP_DRV_CIPHER_TIMING_AFTER_VERIFY;
-                                p_dec_img_param = &dec_img_param;
-                            }
-                            else
-                            {
-                                r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
-                            }
+								/* Set decyrpted timing in dec_img_param */
+								dec_img_param.timing = CIP_DRV_CIPHER_TIMING_AFTER_VERIFY;
+								p_dec_img_param = &dec_img_param;
+							} else {
+								r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+							}
 #else  /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-                            r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+							r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-                            /* Call SB-Driver API */
-                            cip_ret = R_CIP_DRV_PrcVerifyCertChain(&key_cert_param, &code_cert_param, p_dec_img_param);
-                            ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-                            r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
-                            if (SB_RET_SUCCESS == ret)
-                            {
-                                /* Clear ret */
-                                cip_ret = CIP_DRV_RET_FAIL;
-                                ret = SB_RET_ERR_INTERNAL_FAIL;
+							/* Call SB-Driver API */
+							cip_ret = R_CIP_DRV_PrcVerifyCertChain(&key_cert_param, &code_cert_param, p_dec_img_param);
+							ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+							r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+							if (SB_RET_SUCCESS == ret) {
+								/* Clear ret */
+								cip_ret = CIP_DRV_RET_FAIL;
+								ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                                /* Add verify count to flow counter */
-                                r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+								/* Add verify count to flow counter */
+								r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
 
-                                /* Check image version */
-                                cip_ret = R_CIP_DRV_CheckImageVersion(p_code_cert_st->p_header->img_version,
-                                                                        p_code_cert_st->p_header->build_num);
-                                ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-                                r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
-                                if ((SB_RET_SUCCESS == ret) || (SB_RET_SAME_IMAGE_VERSION == ret))
-                                {
-                                    /* In the case of secure boot, it is only necessary to use the same version
-                                        or higher, so set SUCCESS to ret */
-                                    ret = SB_RET_SUCCESS;
+								/* Check image version */
+								cip_ret = R_CIP_DRV_CheckImageVersion(p_code_cert_st->p_header->img_version,
+																	  p_code_cert_st->p_header->build_num);
+								ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+								r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+								if ((SB_RET_SUCCESS == ret) || (SB_RET_SAME_IMAGE_VERSION == ret)) {
+									/* In the case of secure boot, it is only necessary to use the same version
+										or higher, so set SUCCESS to ret */
+									ret = SB_RET_SUCCESS;
 
-                                    /* Decrypt after signature */
-                                    if (((p_code_cert_st->p_header->flags
-                                            & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC)
-                                        != 0UL) &&
-                                        (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX]) ==
-                                            p_code_cert_sign_tlv) ||
-                                        (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX]) ==
-                                            p_code_cert_sign_tlv) &&
-                                        ((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX]) ==
-                                            p_img_hash_tlv)))
-                                    )
-                                    {
+									/* Decrypt after signature */
+									if (((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL) &&
+										(((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX]) ==
+										  p_code_cert_sign_tlv) ||
+										 (((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX]) ==
+										   p_code_cert_sign_tlv) &&
+										  ((&code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX]) ==
+										   p_img_hash_tlv)))) {
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-                                        /* Image cipher flag ON and code certificate signing target
-                                            is a cryptographic image */
-                                        ret = sb_decrypt_img(p_code_cert_st,
-                                                            &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_INFO_IDX],
-                                                            &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_IV_IDX],
-                                                            CIP_DRV_CIPHER_TIMING_AFTER_VERIFY);
-                                        r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+										/* Image cipher flag ON and code certificate signing target
+											is a cryptographic image */
+										ret = sb_decrypt_img(p_code_cert_st,
+															 &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_INFO_IDX],
+															 &code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_IMG_CIP_IV_IDX],
+															 CIP_DRV_CIPHER_TIMING_AFTER_VERIFY);
+										r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
 #else  /* !(SB_CFG_IMAGE_ENC_DEC == 1U) */
-                                        /* Code decryption not supported */
-                                        ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
+										/* Code decryption not supported */
+										ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-                                    }
-                                    else
-                                    {
-                                        /* Do nothing */
-                                    }
-                                }
-                                else
-                                {
-                                    /* Do nothing */
-                                }
-                            }
-                            else
-                            {
-                                /* Do nothing */
-                            }
-                        }
-                        else
-                        {
-                            /* Do nothing */
-                        }
-                    }
-                    else
-                    {
-                        /* Do nothing */
-                    }
-                }
-                else
-                {
-                    /* Do nothing */
-                }
-            }
-            else
-            {
-                /* Do nothing */
-            }
-        }
-        else
-        {
-            /* Do nothing */
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
-    return ret;
+									} else {
+										/* Do nothing */
+									}
+								} else {
+									/* Do nothing */
+								}
+							} else {
+								/* Do nothing */
+							}
+						} else {
+							/* Do nothing */
+						}
+					} else {
+						/* Do nothing */
+					}
+				} else {
+					/* Do nothing */
+				}
+			} else {
+				/* Do nothing */
+			}
+		} else {
+			/* Do nothing */
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
+	return ret;
 }
 #endif /* (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U) */
 /**********************************************************************************************************************
@@ -763,175 +714,147 @@ sb_ret_t r_sb_sb_verify_cert_chain(const st_sb_key_cert_t* const p_key_cert_st,
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_SB_MAC_VERIFICATION == 1U)
-sb_ret_t r_sb_sb_verify_mac(const st_sb_code_cert_t* const p_code_cert_st,
-                            const st_sb_tlv_t* const p_mac_tlv)
+sb_ret_t r_sb_sb_verify_mac(const st_sb_code_cert_t *const p_code_cert_st,
+							const st_sb_tlv_t *const p_mac_tlv)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    cip_drv_ret_t cip_ret = CIP_DRV_RET_FAIL;
+	cip_drv_ret_t cip_ret = CIP_DRV_RET_FAIL;
 
-    st_cip_drv_mac_param_t mac_param;
+	st_cip_drv_mac_param_t mac_param;
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-    st_cip_drv_cipher_img_param_t dec_img_param;
+	st_cip_drv_cipher_img_param_t dec_img_param;
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-    const st_cip_drv_cipher_img_param_t * p_dec_img_param = NULL;
-    const st_sb_tlv_t *                   p_sign_pk = NULL;
-    st_sb_tlv_t                           mac_tlvs[SB_PRV_TLV_MAC_NUM];
+	const st_cip_drv_cipher_img_param_t *p_dec_img_param = NULL;
+	const st_sb_tlv_t *p_sign_pk = NULL;
+	st_sb_tlv_t mac_tlvs[SB_PRV_TLV_MAC_NUM];
 
-    const st_sb_search_tlv_type_t search_tlv_mac[SB_PRV_TLV_MAC_NUM] =
-    {
-        {SB_PRV_TLV_IMG_CIP_INFO_TYPE, SB_PRV_TLV_ICI_MASK},    /* MAC_IMG_CIP_INFO_IDX */
-        {SB_PRV_TLV_IMG_CIP_IV_TYPE,   SB_PRV_TLV_IV_MASK},     /* MAC_IMG_CIP_IV_IDX */
-#if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) /* (Use only when SB_CFG_SB_CERT_CHAIN_USE_IMG_PK is Enable) */
-        {SB_PRV_TLV_KEY_IMG_PK_TYPE,   SB_PRV_TLV_KEY_MASK},    /* MAC_KEY_IMG_PK_IDX */
-#endif /* (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
-    };
+	const st_sb_search_tlv_type_t search_tlv_mac[SB_PRV_TLV_MAC_NUM] = {
+		{SB_PRV_TLV_IMG_CIP_INFO_TYPE, SB_PRV_TLV_ICI_MASK}, /* MAC_IMG_CIP_INFO_IDX */
+		{SB_PRV_TLV_IMG_CIP_IV_TYPE, SB_PRV_TLV_IV_MASK},    /* MAC_IMG_CIP_IV_IDX */
+#if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U)                  /* (Use only when SB_CFG_SB_CERT_CHAIN_USE_IMG_PK is Enable) */
+		{SB_PRV_TLV_KEY_IMG_PK_TYPE, SB_PRV_TLV_KEY_MASK},   /* MAC_KEY_IMG_PK_IDX */
+#endif                                                       /* (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
+	};
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
 
-    if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_mac_tlv))
-    {
-        ret = r_sb_mani_parse_tlvs(p_code_cert_st->p_tlv_top, p_code_cert_st->tlv_len, SB_PRV_TLV_MAC_NUM,
-                                    search_tlv_mac, mac_tlvs);
-        if (SB_RET_SUCCESS == ret)
-        {
-            /* Clear ret */
-            ret = SB_RET_ERR_INTERNAL_FAIL;
+	if ((NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_mac_tlv)) {
+		ret = r_sb_mani_parse_tlvs(p_code_cert_st->p_tlv_top, p_code_cert_st->tlv_len, SB_PRV_TLV_MAC_NUM,
+								   search_tlv_mac, mac_tlvs);
+		if (SB_RET_SUCCESS == ret) {
+			/* Clear ret */
+			ret = SB_RET_ERR_INTERNAL_FAIL;
 
 #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) /* (Use only when SB_CFG_SB_CERT_CHAIN_USE_IMG_PK is Enable) */
-            p_sign_pk = &mac_tlvs[SB_PRV_TLV_MAC_KEY_IMG_PK_IDX];
+			p_sign_pk = &mac_tlvs[SB_PRV_TLV_MAC_KEY_IMG_PK_IDX];
 #endif /* (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 1U) */
-            ret = sb_check_mac_tlv(p_mac_tlv, p_sign_pk);
-            if (SB_RET_SUCCESS == ret)
-            {
-                /* Clear ret */
-                ret = SB_RET_ERR_INTERNAL_FAIL;
+			ret = sb_check_mac_tlv(p_mac_tlv, p_sign_pk);
+			if (SB_RET_SUCCESS == ret) {
+				/* Clear ret */
+				ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                /* Set mac verification parameters */
-                ret = r_sb_cmn_drv_set_mac_param(p_code_cert_st, p_mac_tlv, p_sign_pk, &mac_param);
-                if (SB_RET_SUCCESS == ret)
-                {
-                    /* Clear ret */
-                    ret = SB_RET_ERR_INTERNAL_FAIL;
+				/* Set mac verification parameters */
+				ret = r_sb_cmn_drv_set_mac_param(p_code_cert_st, p_mac_tlv, p_sign_pk, &mac_param);
+				if (SB_RET_SUCCESS == ret) {
+					/* Clear ret */
+					ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                    /* Call Derive MAC Key from HUK */
-                    cip_ret = R_CIP_DRV_PrcDeriveMacKeyFromHuk();
-                    ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-                    if (SB_RET_SUCCESS == ret)
-                    {
-                        /* Clear ret */
-                        cip_ret = CIP_DRV_RET_FAIL;
-                        ret = SB_RET_ERR_INTERNAL_FAIL;
+					/* Call Derive MAC Key from HUK */
+					cip_ret = R_CIP_DRV_PrcDeriveMacKeyFromHuk();
+					ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+					if (SB_RET_SUCCESS == ret) {
+						/* Clear ret */
+						cip_ret = CIP_DRV_RET_FAIL;
+						ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                        /* Add verify count to flow counter */
-                        r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+						/* Add verify count to flow counter */
+						r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
 
-                        /* If the image is not decrypted, add the counter value
-                           When decrypt, add flow counter after decrypting
-                           This process is glitch countermeasure
-                           This must be done before verification */
+						/* If the image is not decrypted, add the counter value
+						   When decrypt, add flow counter after decrypting
+						   This process is glitch countermeasure
+						   This must be done before verification */
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-                        if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL)
-                        {
-                            /* Not added here, since it is added after decrypting */
+						if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL) {
+							/* Not added here, since it is added after decrypting */
 
-                                /* Set decyrpted timing in dec_img_param */
-                                dec_img_param.timing = CIP_DRV_CIPHER_TIMING_AFTER_VERIFY;
-                                p_dec_img_param = &dec_img_param;
-                        }
-                        else
-                        {
-                            r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
-                        }
+							/* Set decyrpted timing in dec_img_param */
+							dec_img_param.timing = CIP_DRV_CIPHER_TIMING_AFTER_VERIFY;
+							p_dec_img_param = &dec_img_param;
+						} else {
+							r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+						}
 #else  /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-                        r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+						r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
 
-                        /* Call Verify MAC */
-                        cip_ret = R_CIP_DRV_PrcVerifyMac(&mac_param, p_dec_img_param);
-                        ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-                        r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
-                        if (SB_RET_SUCCESS == ret)
-                        {
-                            /* Clear ret */
-                            cip_ret = CIP_DRV_RET_FAIL;
-                            ret = SB_RET_ERR_INTERNAL_FAIL;
+						/* Call Verify MAC */
+						cip_ret = R_CIP_DRV_PrcVerifyMac(&mac_param, p_dec_img_param);
+						ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+						r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+						if (SB_RET_SUCCESS == ret) {
+							/* Clear ret */
+							cip_ret = CIP_DRV_RET_FAIL;
+							ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                            /* Add verify count to flow counter */
-                            r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+							/* Add verify count to flow counter */
+							r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
 
-                            /* Check image version */
-                            cip_ret = R_CIP_DRV_CheckImageVersion(p_code_cert_st->p_header->img_version,
-                                                                    p_code_cert_st->p_header->build_num);
-                            ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-                            r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
-                            if ((SB_RET_SUCCESS == ret) || (SB_RET_SAME_IMAGE_VERSION == ret))
-                            {
-                                /* In the case of secure boot, it is only necessary to use the same version or higher,
-                                   so set SUCCESS to ret */
-                                ret = SB_RET_SUCCESS;
+							/* Check image version */
+							cip_ret = R_CIP_DRV_CheckImageVersion(p_code_cert_st->p_header->img_version,
+																  p_code_cert_st->p_header->build_num);
+							ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+							r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+							if ((SB_RET_SUCCESS == ret) || (SB_RET_SAME_IMAGE_VERSION == ret)) {
+								/* In the case of secure boot, it is only necessary to use the same version or higher,
+								   so set SUCCESS to ret */
+								ret = SB_RET_SUCCESS;
 
-                                /* Check image cipher flag */
-                                if ((p_code_cert_st->p_header->flags &
-                                    SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL)
-                                {
+								/* Check image cipher flag */
+								if ((p_code_cert_st->p_header->flags &
+									 SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL) {
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-                                /* Image cipher flag ON and code certificate signing target is a cryptographic image */
-                                    ret = sb_decrypt_img(p_code_cert_st, &mac_tlvs[SB_PRV_TLV_MAC_IMG_CIP_INFO_IDX],
-                                                                        &mac_tlvs[SB_PRV_TLV_MAC_IMG_CIP_IV_IDX],
-                                                                        CIP_DRV_CIPHER_TIMING_AFTER_VERIFY);
-                                    r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
-#else /* !(SB_CFG_IMAGE_ENC_DEC == 1U) */
-                                    /* Code decryption not supported */
-                                    ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
+									/* Image cipher flag ON and code certificate signing target is a cryptographic image */
+									ret = sb_decrypt_img(p_code_cert_st, &mac_tlvs[SB_PRV_TLV_MAC_IMG_CIP_INFO_IDX],
+														 &mac_tlvs[SB_PRV_TLV_MAC_IMG_CIP_IV_IDX],
+														 CIP_DRV_CIPHER_TIMING_AFTER_VERIFY);
+									r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_SECUREBOOT_CNT);
+#else  /* !(SB_CFG_IMAGE_ENC_DEC == 1U) */
+									/* Code decryption not supported */
+									ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-                                }
-                                else
-                                {
-                                    /* Do nothing */
-                                }
-                            }
-                            else
-                            {
-                                /* Do nothing */
-                            }
-                        }
-                        else
-                        {
-                            /* Do nothing */
-                        }
-                    }
-                    else
-                    {
-                        /* Do nothing */
-                    }
-                }
-                else
-                {
-                    /* Do nothing */
-                }
-            }
-            else
-            {
-                /* Do nothing */
-            }
-        }
-        else
-        {
-            /* Do nothing */
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+								} else {
+									/* Do nothing */
+								}
+							} else {
+								/* Do nothing */
+							}
+						} else {
+							/* Do nothing */
+						}
+					} else {
+						/* Do nothing */
+					}
+				} else {
+					/* Do nothing */
+				}
+			} else {
+				/* Do nothing */
+			}
+		} else {
+			/* Do nothing */
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 #endif /* (SB_CFG_SB_MAC_VERIFICATION == 1U) */
 /**********************************************************************************************************************
@@ -1081,257 +1004,214 @@ sb_ret_t r_sb_sb_verify_mac(const st_sb_code_cert_t* const p_code_cert_st,
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_CHECK_INTEGRITY == 1U)
-sb_ret_t r_sb_sb_check_integrity(const st_sb_key_cert_t* const p_key_cert_st,
-                                    const st_sb_code_cert_t* const p_code_cert_st,
-                                    const e_sb_mac_type_t mac_type, uint32_t* const p_tag)
+sb_ret_t r_sb_sb_check_integrity(const st_sb_key_cert_t *const p_key_cert_st,
+								 const st_sb_code_cert_t *const p_code_cert_st,
+								 const e_sb_mac_type_t mac_type, uint32_t *const p_tag)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    sb_ret_t                        ret_ver = SB_RET_ERR_LOWER_IMAGE_VERSION;   /* for version check */
-    cip_drv_ret_t                   cip_ret = CIP_DRV_RET_LOWER_IMAGE_VERSION;
-    uint32_t                        mac_algo;
-    st_sb_tlv_t                     key_cert_tlvs[SB_PRV_TLV_KEY_CERT_NUM];
-    st_sb_tlv_t                     code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_NUM];
-    const st_sb_tlv_t *             p_code_cert_sign_tlv;
-    const st_sb_tlv_t *             p_img_hash_tlv;
-    st_cip_drv_cc_key_cert_param_t  key_cert_param;
-    st_cip_drv_cc_code_cert_param_t code_cert_param;
-    st_cip_drv_cipher_img_param_t * p_img_param;
-    st_cip_drv_cipher_img_param_t * p_tmp_img_param;
+	sb_ret_t ret_ver = SB_RET_ERR_LOWER_IMAGE_VERSION; /* for version check */
+	cip_drv_ret_t cip_ret = CIP_DRV_RET_LOWER_IMAGE_VERSION;
+	uint32_t mac_algo;
+	st_sb_tlv_t key_cert_tlvs[SB_PRV_TLV_KEY_CERT_NUM];
+	st_sb_tlv_t code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_NUM];
+	const st_sb_tlv_t *p_code_cert_sign_tlv;
+	const st_sb_tlv_t *p_img_hash_tlv;
+	st_cip_drv_cc_key_cert_param_t key_cert_param;
+	st_cip_drv_cc_code_cert_param_t code_cert_param;
+	st_cip_drv_cipher_img_param_t *p_img_param;
+	st_cip_drv_cipher_img_param_t *p_tmp_img_param;
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-    st_cip_drv_cipher_img_param_t   img_param;
-    st_cip_drv_cipher_img_param_t   tmp_img_param;
+	st_cip_drv_cipher_img_param_t img_param;
+	st_cip_drv_cipher_img_param_t tmp_img_param;
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-    const st_sb_tlv_t *             p_key_cert_signer_pk_tlv;
+	const st_sb_tlv_t *p_key_cert_signer_pk_tlv;
 
-    const st_sb_search_tlv_type_t search_tlv_key_cert[SB_PRV_TLV_KEY_CERT_NUM] =
-    {
-        {SB_PRV_TLV_KEY_OEM_ROOT_PK_TYPE,   SB_PRV_TLV_KEY_MASK},   /* KEY_CERT_KEY_OEM_ROOT_PK_IDX */
-        {SB_PRV_TLV_KEY_IMG_PK_TYPE,        SB_PRV_TLV_KEY_MASK},   /* KEY_CERT_KEY_IMG_PK_IDX */
-        {SB_PRV_TLV_HASH_IMG_PK_TYPE,       SB_PRV_TLV_HASH_MASK},  /* KEY_CERT_HASH_IMG_PK_IDX */
-        {SB_PRV_TLV_SIGN_CERT_TYPE,         SB_PRV_TLV_SIGN_MASK}   /* KEY_CERT_SIGN_CERT_IDX */
-    };
+	const st_sb_search_tlv_type_t search_tlv_key_cert[SB_PRV_TLV_KEY_CERT_NUM] = {
+			{SB_PRV_TLV_KEY_OEM_ROOT_PK_TYPE, SB_PRV_TLV_KEY_MASK}, /* KEY_CERT_KEY_OEM_ROOT_PK_IDX */
+			{SB_PRV_TLV_KEY_IMG_PK_TYPE, SB_PRV_TLV_KEY_MASK},      /* KEY_CERT_KEY_IMG_PK_IDX */
+			{SB_PRV_TLV_HASH_IMG_PK_TYPE, SB_PRV_TLV_HASH_MASK},    /* KEY_CERT_HASH_IMG_PK_IDX */
+			{SB_PRV_TLV_SIGN_CERT_TYPE, SB_PRV_TLV_SIGN_MASK}       /* KEY_CERT_SIGN_CERT_IDX */
+		};
 
-    const st_sb_search_tlv_type_t search_tlv_code_cert[SB_PRV_TLV_CI_CODE_CERT_NUM] =
-    {
-        {SB_PRV_TLV_KEY_IMG_PK_TYPE,            SB_PRV_TLV_KEY_MASK},   /* CI_CODE_CERT_KEY_IMG_PK_IDX */
-        {SB_PRV_TLV_HASH_IMG_TYPE,              SB_PRV_TLV_HASH_MASK},  /* CI_CODE_CERT_HASH_IMG_IDX */
-        {SB_PRV_TLV_IMG_CIP_INFO_TYPE,          SB_PRV_TLV_ICI_MASK},   /* CI_CODE_CERT_IMG_CIP_INFO_IDX */
-        {SB_PRV_TLV_IMG_CIP_IV_TYPE,            SB_PRV_TLV_IV_MASK},    /* CI_CODE_CERT_IMG_CIP_IV_IDX */
-        {SB_PRV_TLV_CI_TMP_IMG_DEC_INFO_TYPE,   SB_PRV_TLV_ICI_MASK},   /* CI_CODE_CERT_TMP_IMG_DEC_INFO_IDX */
-        {SB_PRV_TLV_CI_TMP_IMG_DEC_IV_TYPE,     SB_PRV_TLV_IV_MASK},    /* CI_CODE_CERT_TMP_IMG_DEC_IV_IDX */
-        {SB_PRV_TLV_SIGN_CERT_TYPE,             SB_PRV_TLV_SIGN_MASK},  /* CI_CODE_CERT_SIGN_CERT_IDX */
-        {SB_PRV_TLV_SIGN_CERT_IMG_TYPE,         SB_PRV_TLV_SIGN_MASK}   /* CI_CODE_CERT_SIGN_IMG_IDX */
-    };
+	const st_sb_search_tlv_type_t search_tlv_code_cert[SB_PRV_TLV_CI_CODE_CERT_NUM] = {
+			{SB_PRV_TLV_KEY_IMG_PK_TYPE, SB_PRV_TLV_KEY_MASK},          /* CI_CODE_CERT_KEY_IMG_PK_IDX */
+			{SB_PRV_TLV_HASH_IMG_TYPE, SB_PRV_TLV_HASH_MASK},           /* CI_CODE_CERT_HASH_IMG_IDX */
+			{SB_PRV_TLV_IMG_CIP_INFO_TYPE, SB_PRV_TLV_ICI_MASK},        /* CI_CODE_CERT_IMG_CIP_INFO_IDX */
+			{SB_PRV_TLV_IMG_CIP_IV_TYPE, SB_PRV_TLV_IV_MASK},           /* CI_CODE_CERT_IMG_CIP_IV_IDX */
+			{SB_PRV_TLV_CI_TMP_IMG_DEC_INFO_TYPE, SB_PRV_TLV_ICI_MASK}, /* CI_CODE_CERT_TMP_IMG_DEC_INFO_IDX */
+			{SB_PRV_TLV_CI_TMP_IMG_DEC_IV_TYPE, SB_PRV_TLV_IV_MASK},    /* CI_CODE_CERT_TMP_IMG_DEC_IV_IDX */
+			{SB_PRV_TLV_SIGN_CERT_TYPE, SB_PRV_TLV_SIGN_MASK},          /* CI_CODE_CERT_SIGN_CERT_IDX */
+			{SB_PRV_TLV_SIGN_CERT_IMG_TYPE, SB_PRV_TLV_SIGN_MASK}       /* CI_CODE_CERT_SIGN_IMG_IDX */
+		};
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if ((NULL != p_key_cert_st) && (NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_tag))
-    {
-        /* Get TLVs */
-        ret = sb_get_cc_tlv(p_key_cert_st, p_code_cert_st,
-                            search_tlv_key_cert, SB_PRV_TLV_KEY_CERT_NUM,
-                            search_tlv_code_cert, SB_PRV_TLV_CI_CODE_CERT_NUM,
-                            key_cert_tlvs, code_cert_tlvs);
-        if (SB_RET_SUCCESS == ret)
-        {
-            /* Clear ret */
-            ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_key_cert_st) && (NULL != p_code_cert_st) && (NULL != p_code_cert_st->p_header) && (NULL != p_tag)) {
+		/* Get TLVs */
+		ret = sb_get_cc_tlv(p_key_cert_st, p_code_cert_st,
+							search_tlv_key_cert, SB_PRV_TLV_KEY_CERT_NUM,
+							search_tlv_code_cert, SB_PRV_TLV_CI_CODE_CERT_NUM,
+							key_cert_tlvs, code_cert_tlvs);
+		if (SB_RET_SUCCESS == ret) {
+			/* Clear ret */
+			ret = SB_RET_ERR_INTERNAL_FAIL;
 
-            /* Check cert chain tlv */
-            ret = sb_check_check_integrity_tlv(key_cert_tlvs, code_cert_tlvs);
-            if (SB_RET_SUCCESS == ret)
-            {
-                /* Clear ret */
-                ret = SB_RET_ERR_INTERNAL_FAIL;
+			/* Check cert chain tlv */
+			ret = sb_check_check_integrity_tlv(key_cert_tlvs, code_cert_tlvs);
+			if (SB_RET_SUCCESS == ret) {
+				/* Clear ret */
+				ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                /* Select kye cert signer public key TLV */
-                p_key_cert_signer_pk_tlv = (NULL == key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) ?
-                                            (&key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX]) :
-                                            (&key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX]);
+				/* Select kye cert signer public key TLV */
+				p_key_cert_signer_pk_tlv = (NULL == key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) ? (&key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX]) : (&key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX]);
 
-                /* Set key certificate driver parameters */
-                ret = r_sb_cmn_drv_set_cc_key_cert_param(p_key_cert_st,
-                                                            &key_cert_tlvs[SB_PRV_TLV_KEY_CERT_HASH_IMG_PK_IDX],
-                                                            p_key_cert_signer_pk_tlv,
-                                                            &key_cert_tlvs[SB_PRV_TLV_KEY_CERT_SIGN_CERT_IDX],
-                                                            &key_cert_param);
-                if (SB_RET_SUCCESS == ret)
-                {
-                    /* Clear ret */
-                    ret = SB_RET_ERR_INTERNAL_FAIL;
+				/* Set key certificate driver parameters */
+				ret = r_sb_cmn_drv_set_cc_key_cert_param(p_key_cert_st,
+														 &key_cert_tlvs[SB_PRV_TLV_KEY_CERT_HASH_IMG_PK_IDX],
+														 p_key_cert_signer_pk_tlv,
+														 &key_cert_tlvs[SB_PRV_TLV_KEY_CERT_SIGN_CERT_IDX],
+														 &key_cert_param);
+				if (SB_RET_SUCCESS == ret) {
+					/* Clear ret */
+					ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                    /* Set code certificate driver parameters */
-                    if (NULL != code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX].p_val)
-                    {
-                        p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX];
-                        p_img_hash_tlv = &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_HASH_IMG_IDX];
-                    }
-                    else  /* NULL != code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_IMG_IDX].p_val */
-                    {
-                        p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_IMG_IDX];
-                        p_img_hash_tlv = NULL;  /* Does not use image hash TLV */
-                    }
+					/* Set code certificate driver parameters */
+					if (NULL != code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX].p_val) {
+						p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX];
+						p_img_hash_tlv = &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_HASH_IMG_IDX];
+					} else /* NULL != code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_IMG_IDX].p_val */ {
+						p_code_cert_sign_tlv = &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_IMG_IDX];
+						p_img_hash_tlv = NULL; /* Does not use image hash TLV */
+					}
 
-                    /* Set code certificate driver parameters */
-                    ret = r_sb_cmn_drv_set_cc_code_cert_param(p_code_cert_st,
-                                                                p_code_cert_st->p_header->dest_addr,
-                                                                &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_KEY_IMG_PK_IDX],
-                                                                p_code_cert_sign_tlv,
-                                                                p_img_hash_tlv,
-                                                                &code_cert_param);
-                    if (SB_RET_SUCCESS == ret)
-                    {
-                        /* Clear ret */
-                        ret = SB_RET_ERR_INTERNAL_FAIL;
+					/* Set code certificate driver parameters */
+					ret = r_sb_cmn_drv_set_cc_code_cert_param(p_code_cert_st,
+															  p_code_cert_st->p_header->dest_addr,
+															  &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_KEY_IMG_PK_IDX],
+															  p_code_cert_sign_tlv,
+															  p_img_hash_tlv,
+															  &code_cert_param);
+					if (SB_RET_SUCCESS == ret) {
+						/* Clear ret */
+						ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                        /* Set driver parameters of image cipher */
-                        if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL)
-                        {
+						/* Set driver parameters of image cipher */
+						if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_IMG_CIPHER_ENC) != 0UL) {
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-                            p_img_param = &img_param;
-                            ret = r_sb_cmn_drv_set_cipher_img_param(p_code_cert_st,
-                                                            &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_IMG_CIP_INFO_IDX],
-                                                            &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_IMG_CIP_IV_IDX],
-                                                            SB_PRV_TRUE,
-                                                            CIP_DRV_CIPHER_TIMING_AFTER_VERIFY,
-                                                            p_img_param);
-#else /* !(SB_CFG_IMAGE_ENC_DEC == 1U) */
-                            /* Code decryption not supported */
-                            ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
+							p_img_param = &img_param;
+							ret = r_sb_cmn_drv_set_cipher_img_param(p_code_cert_st,
+																	&code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_IMG_CIP_INFO_IDX],
+																	&code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_IMG_CIP_IV_IDX],
+																	SB_PRV_TRUE,
+																	CIP_DRV_CIPHER_TIMING_AFTER_VERIFY,
+																	p_img_param);
+#else  /* !(SB_CFG_IMAGE_ENC_DEC == 1U) */
+							/* Code decryption not supported */
+							ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-                        }
-                        else
-                        {
-                            p_img_param = NULL;
+						} else {
+							p_img_param = NULL;
 
-                            /* Set ret to the success code */
-                            ret = SB_RET_SUCCESS;
-                        }
+							/* Set ret to the success code */
+							ret = SB_RET_SUCCESS;
+						}
 
-                        if (SB_RET_SUCCESS == ret)
-                        {
-                            /* Set driver parameters of temporary image decryption */
-                            if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_TMP_IMG_DEC) != 0UL)
-                            {
+						if (SB_RET_SUCCESS == ret) {
+							/* Set driver parameters of temporary image decryption */
+							if ((p_code_cert_st->p_header->flags & SB_PRV_CODE_CERT_HEADER_FLAGS_TMP_IMG_DEC) != 0UL) {
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-                                p_tmp_img_param = &tmp_img_param;
-                                ret = r_sb_cmn_drv_set_cipher_img_param(p_code_cert_st,
-                                                    &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_TMP_IMG_DEC_INFO_IDX],
-                                                    &code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_TMP_IMG_DEC_IV_IDX],
-                                                    SB_PRV_TRUE,
-                                                    CIP_DRV_CIPHER_TIMING_BEFORE_VERIFY,
-                                                    p_tmp_img_param);
-#else /* !(SB_CFG_IMAGE_ENC_DEC == 1U) */
-                                /* Code decryption not supported */
-                                ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
+								p_tmp_img_param = &tmp_img_param;
+								ret = r_sb_cmn_drv_set_cipher_img_param(p_code_cert_st,
+																		&code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_TMP_IMG_DEC_INFO_IDX],
+																		&code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_TMP_IMG_DEC_IV_IDX],
+																		SB_PRV_TRUE,
+																		CIP_DRV_CIPHER_TIMING_BEFORE_VERIFY,
+																		p_tmp_img_param);
+#else  /* !(SB_CFG_IMAGE_ENC_DEC == 1U) */
+								/* Code decryption not supported */
+								ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
-                            }
-                            else
-                            {
-                                p_tmp_img_param = NULL;
-                            }
+							} else {
+								p_tmp_img_param = NULL;
+							}
 
-                            if (SB_RET_SUCCESS == ret)
-                            {
-                                /* Clear ret */
-                                ret = SB_RET_ERR_INTERNAL_FAIL;
+							if (SB_RET_SUCCESS == ret) {
+								/* Clear ret */
+								ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                                /* Check image version */
-                                cip_ret = R_CIP_DRV_CheckImageVersion(p_code_cert_st->p_header->img_version,
-                                                                        p_code_cert_st->p_header->build_num);
-                                ret_ver = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+								/* Check image version */
+								cip_ret = R_CIP_DRV_CheckImageVersion(p_code_cert_st->p_header->img_version,
+																	  p_code_cert_st->p_header->build_num);
+								ret_ver = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
 
-                                /* Clear ret */
-                                cip_ret = CIP_DRV_RET_FAIL;
+								/* Clear ret */
+								cip_ret = CIP_DRV_RET_FAIL;
 
-                                if ((SB_RET_SUCCESS == ret_ver) || (SB_RET_SAME_IMAGE_VERSION == ret_ver))
-                                {
-                                    /* Call derive MAC Key from HUK */
-                                    cip_ret = R_CIP_DRV_PrcDeriveMacKeyFromHuk();
-                                    ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-                                    if (SB_RET_SUCCESS == ret)
-                                    {
-                                        /* get MAC algorithm */
-                                        mac_algo = r_sb_cmn_drv_get_mac_algo_from_sb_mac_type(mac_type);
+								if ((SB_RET_SUCCESS == ret_ver) || (SB_RET_SAME_IMAGE_VERSION == ret_ver)) {
+									/* Call derive MAC Key from HUK */
+									cip_ret = R_CIP_DRV_PrcDeriveMacKeyFromHuk();
+									ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+									if (SB_RET_SUCCESS == ret) {
+										/* get MAC algorithm */
+										mac_algo = r_sb_cmn_drv_get_mac_algo_from_sb_mac_type(mac_type);
 
-                                        /* Clear ret */
-                                        cip_ret = CIP_DRV_RET_AUTH_FAIL;
-                                        ret = SB_RET_ERR_INTERNAL_FAIL;
+										/* Clear ret */
+										cip_ret = CIP_DRV_RET_AUTH_FAIL;
+										ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                                        /* Add verify count to flow counter */
-                                        r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_CHECKINTEGRITY_CNT);
+										/* Add verify count to flow counter */
+										r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_CHECKINTEGRITY_CNT);
 
-                                        /* Call check integrity */
-                                        cip_ret = R_CIP_DRV_PrcCheckIntegrity(&key_cert_param,
-                                                                                &code_cert_param,
-                                                                                p_tmp_img_param,
-                                                                                p_img_param,
-                                                                                mac_algo,
-                                                                                p_tag);
-                                        ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-                                        r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_CHECKINTEGRITY_CNT);
-                                        if(SB_RET_SUCCESS == ret)
-                                        {
-                                            /* Set version check result(SUCCESS or SAME_IMAGE_VERSION) to ret */
-                                            ret = ret_ver;
-                                        }
-                                        else
-                                        {
-                                            /* Do nothing */
-                                        }
-                                    }
-                                    else
-                                    {
-                                        /* Do nothing */
-                                    }
-                                }
-                                else
-                                {
-                                    /* Set version check result to ret */
-                                    ret = ret_ver;
-                                }
-                            }
-                            else
-                            {
-                                /* Do nothing */
-                            }
-                        }
-                        else
-                        {
-                            /* Do nothing */
-                        }
-                    }
-                    else
-                    {
-                        /* Do nothing */
-                    }
-                }
-                else
-                {
-                    /* Do nothing */
-                }
-            }
-            else
-            {
-                /* Do nothing */
-            }
-        }
-        else
-        {
-            /* Do nothing */
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+										/* Call check integrity */
+										cip_ret = R_CIP_DRV_PrcCheckIntegrity(&key_cert_param,
+																			  &code_cert_param,
+																			  p_tmp_img_param,
+																			  p_img_param,
+																			  mac_algo,
+																			  p_tag);
+										ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+										r_sb_cmn_fc_add_counter(SB_PRV_CMN_FC_CHECKINTEGRITY_CNT);
+										if (SB_RET_SUCCESS == ret) {
+											/* Set version check result(SUCCESS or SAME_IMAGE_VERSION) to ret */
+											ret = ret_ver;
+										} else {
+											/* Do nothing */
+										}
+									} else {
+										/* Do nothing */
+									}
+								} else {
+									/* Set version check result to ret */
+									ret = ret_ver;
+								}
+							} else {
+								/* Do nothing */
+							}
+						} else {
+							/* Do nothing */
+						}
+					} else {
+						/* Do nothing */
+					}
+				} else {
+					/* Do nothing */
+				}
+			} else {
+				/* Do nothing */
+			}
+		} else {
+			/* Do nothing */
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
+	return ret;
 }
 #endif /* (SB_CFG_CHECK_INTEGRITY == 1U) */
 /**********************************************************************************************************************
@@ -1411,78 +1291,62 @@ sb_ret_t r_sb_sb_check_integrity(const st_sb_key_cert_t* const p_key_cert_st,
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_IMAGE_ENC_DEC == 1U)
-static sb_ret_t sb_decrypt_img(const st_sb_code_cert_t* const p_code_cert_st, const st_sb_tlv_t* const p_img_cip_info,
-                                const st_sb_tlv_t* const p_img_cip_iv, const uint32_t timing)
+static sb_ret_t sb_decrypt_img(const st_sb_code_cert_t *const p_code_cert_st, const st_sb_tlv_t *const p_img_cip_info,
+							   const st_sb_tlv_t *const p_img_cip_iv, const uint32_t timing)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    cip_drv_ret_t                    cip_ret = CIP_DRV_RET_FAIL;
-    st_cip_drv_cipher_img_param_t    img_param;
-    const st_sb_img_cip_info_val_t * p_img_cip_info_val;
+	cip_drv_ret_t cip_ret = CIP_DRV_RET_FAIL;
+	st_cip_drv_cipher_img_param_t img_param;
+	const st_sb_img_cip_info_val_t *p_img_cip_info_val;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if ((NULL != p_code_cert_st) && (NULL != p_img_cip_info) && (NULL != p_img_cip_iv))
-    {
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_code_cert_st) && (NULL != p_img_cip_info) && (NULL != p_img_cip_iv)) {
 
-        p_img_cip_info_val = (const st_sb_img_cip_info_val_t*)(p_img_cip_info->p_val); /* Casting from pointer
-                                                                                        to pointer is no problem */
-        if (NULL != p_img_cip_info_val)
-        {
-            /* Check image alignment */
-            if ((p_img_cip_info_val->dest_addr & SB_PRV_REMAINDER_DIV4) != 0UL)
-            {
-                /* Invalid image alignment */
-                ret = SB_RET_ERR_INVALID_ALIGNMENT;
-            }
-            else
-            {
-                /* Set ret to the success code */
-                ret = SB_RET_SUCCESS;
-            }
-        }
-        else
-        {
-            /* Set ret to the success code */
-            ret = SB_RET_SUCCESS;
-        }
+		p_img_cip_info_val = (const st_sb_img_cip_info_val_t *)(p_img_cip_info->p_val); /* Casting from pointer
+																						 to pointer is no problem */
+		if (NULL != p_img_cip_info_val) {
+			/* Check image alignment */
+			if ((p_img_cip_info_val->dest_addr & SB_PRV_REMAINDER_DIV4) != 0UL) {
+				/* Invalid image alignment */
+				ret = SB_RET_ERR_INVALID_ALIGNMENT;
+			} else {
+				/* Set ret to the success code */
+				ret = SB_RET_SUCCESS;
+			}
+		} else {
+			/* Set ret to the success code */
+			ret = SB_RET_SUCCESS;
+		}
 
-        if (SB_RET_SUCCESS == ret)
-        {
-            /* Clear ret */
-            ret = SB_RET_ERR_INTERNAL_FAIL;
+		if (SB_RET_SUCCESS == ret) {
+			/* Clear ret */
+			ret = SB_RET_ERR_INTERNAL_FAIL;
 
-            ret = r_sb_cmn_drv_set_cipher_img_param(p_code_cert_st, p_img_cip_info, p_img_cip_iv,
-                                                    SB_PRV_FALSE, timing, &img_param);
-            if (SB_RET_SUCCESS == ret)
-            {
-                /* Clear ret */
-                ret = SB_RET_ERR_INTERNAL_FAIL;
+			ret = r_sb_cmn_drv_set_cipher_img_param(p_code_cert_st, p_img_cip_info, p_img_cip_iv,
+													SB_PRV_FALSE, timing, &img_param);
+			if (SB_RET_SUCCESS == ret) {
+				/* Clear ret */
+				ret = SB_RET_ERR_INTERNAL_FAIL;
 
-                cip_ret = R_CIP_DRV_PrcDecryptImage(&img_param);
-                ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
-            }
-            else
-            {
-                /* Do nothing */
-            }
-        }
-        else
-        {
-            /* Do nothing */
-        }
-    }
-    else
-    {
-        /* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
-    }
+				cip_ret = R_CIP_DRV_PrcDecryptImage(&img_param);
+				ret = r_sb_cmn_drv_get_sb_ret_from_cip_ret(cip_ret);
+			} else {
+				/* Do nothing */
+			}
+		} else {
+			/* Do nothing */
+		}
+	} else {
+		/* If there are null arguments, return SB_RET_ERR_INTERNAL_FAIL */
+	}
 
-    return ret;
-
+	return ret;
 }
 #endif /* (SB_CFG_IMAGE_ENC_DEC == 1U) */
 /**********************************************************************************************************************
@@ -1565,101 +1429,77 @@ static sb_ret_t sb_decrypt_img(const st_sb_code_cert_t* const p_code_cert_st, co
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U)
-static sb_ret_t sb_check_cert_chain_tlv(const st_sb_tlv_t* const p_key_cert_tlvs,
-                                        const st_sb_tlv_t* const p_code_cert_tlvs)
+static sb_ret_t sb_check_cert_chain_tlv(const st_sb_tlv_t *const p_key_cert_tlvs,
+										const st_sb_tlv_t *const p_code_cert_tlvs)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if((NULL != p_key_cert_tlvs) && (NULL != p_code_cert_tlvs))
-    {
-        /*  Check requeste TLV in key cert */
-        if ((NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_HASH_IMG_PK_IDX].p_val) &&
-            (NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_SIGN_CERT_IDX].p_val))
-        {
-            /*  Check select TLV in key cert */
-            if (((NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) &&
-                (NULL == p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val))  ||
-                ((NULL == p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) &&
-                (NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val)) )
-            {
-                /*  Check requeste TLV in code cert */
-                if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_KEY_IMG_PK_IDX].p_val)
-                {
-                    /*  Check select TLV in code cert */
-                    if (((NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val) &&
-                        (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX].p_val) &&
-                        (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX].p_val))  ||
-                        ((NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val) &&
-                        (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX].p_val) &&
-                        (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX].p_val))  ||
-                        ((NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val) &&
-                        (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX].p_val) &&
-                        (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX].p_val)) )
-                    {
-                        if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val)
-                        {
-                            if (((NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX].p_val) &&
-                                (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX].p_val)) ||
-                                ((NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX].p_val) &&
-                                (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX].p_val)) )
-                            {
-                                /* TLV field OK. Set ret to the success code */
-                                ret = SB_RET_SUCCESS;
-                            }
-                            else
-                            {
-                                ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-                            }
-                        }
-                        else
-                        {
-                            /* TLV field OK. Set ret to the success code */
-                            ret = SB_RET_SUCCESS;
-                        }
-                    }
-                    else
-                    {
-                        ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-                    }
-                }
-                else
-                {
-                    ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-                }
-            }
-            else
-            {
-                ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-            }
-        }
-        else
-        {
-            ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-        }
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_key_cert_tlvs) && (NULL != p_code_cert_tlvs)) {
+		/*  Check requeste TLV in key cert */
+		if ((NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_HASH_IMG_PK_IDX].p_val) &&
+			(NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_SIGN_CERT_IDX].p_val)) {
+			/*  Check select TLV in key cert */
+			if (((NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) &&
+				 (NULL == p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val)) ||
+				((NULL == p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) &&
+				 (NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val))) {
+				/*  Check requeste TLV in code cert */
+				if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_KEY_IMG_PK_IDX].p_val) {
+					/*  Check select TLV in code cert */
+					if (((NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val) &&
+						 (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX].p_val) &&
+						 (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX].p_val)) ||
+						((NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val) &&
+						 (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX].p_val) &&
+						 (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX].p_val)) ||
+						((NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val) &&
+						 (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_IMG_IDX].p_val) &&
+						 (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_ENCIMG_IDX].p_val))) {
+						if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_SIGN_CERT_IDX].p_val) {
+							if (((NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX].p_val) &&
+								 (NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX].p_val)) ||
+								((NULL == p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_IMG_IDX].p_val) &&
+								 (NULL != p_code_cert_tlvs[SB_PRV_TLV_CC_CODE_CERT_HASH_ENCIMG_IDX].p_val))) {
+								/* TLV field OK. Set ret to the success code */
+								ret = SB_RET_SUCCESS;
+							} else {
+								ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+							}
+						} else {
+							/* TLV field OK. Set ret to the success code */
+							ret = SB_RET_SUCCESS;
+						}
+					} else {
+						ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+					}
+				} else {
+					ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+				}
+			} else {
+				ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+			}
+		} else {
+			ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+		}
 #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 0U)
-        if((SB_RET_SUCCESS == ret) &&
-            (NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val))
-        {
-            ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
-        }
-        else
-        {
-            /* Do nothing */
-        }
+		if ((SB_RET_SUCCESS == ret) &&
+			(NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val)) {
+			ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
+		} else {
+			/* Do nothing */
+		}
 #endif /* (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 0U) */
-    }
-    else
-    {
-        /* Since this function is only called from within the library, this route is not usually taken */
-    }
+	} else {
+		/* Since this function is only called from within the library, this route is not usually taken */
+	}
 
-    return ret;
+	return ret;
 }
 #endif /* (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U) */
 /**********************************************************************************************************************
@@ -1739,93 +1579,69 @@ static sb_ret_t sb_check_cert_chain_tlv(const st_sb_tlv_t* const p_key_cert_tlvs
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_CHECK_INTEGRITY == 1U)
-static sb_ret_t sb_check_check_integrity_tlv(const st_sb_tlv_t* const p_key_cert_tlvs,
-                                        const st_sb_tlv_t* const p_code_cert_tlvs)
+static sb_ret_t sb_check_check_integrity_tlv(const st_sb_tlv_t *const p_key_cert_tlvs,
+											 const st_sb_tlv_t *const p_code_cert_tlvs)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    if ((NULL != p_key_cert_tlvs) && (NULL != p_code_cert_tlvs))
-    {
-        /* Check request TLV in key cert */
-        if ((NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_HASH_IMG_PK_IDX].p_val) &&
-            (NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_SIGN_CERT_IDX].p_val))
-        {
-            /*  Check select TLV in key cert */
-            if (((NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) &&
-                (NULL == p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val))  ||
-                ((NULL == p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) &&
-                (NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val)) )
-            {
-                /*  Check requeste TLV in code cert */
-                if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_KEY_IMG_PK_IDX].p_val)
-                {
-                    /*  Check select TLV in code cert */
-                    if (((NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX].p_val) &&
-                        (NULL == p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_IMG_IDX].p_val))  ||
-                        ((NULL == p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX].p_val) &&
-                        (NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_IMG_IDX].p_val)) )
-                    {
-                        if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX].p_val)
-                        {
-                            if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_HASH_IMG_IDX].p_val)
-                            {
-                                /* TLV field OK. Set ret to the success code */
-                                ret = SB_RET_SUCCESS;
-                            }
-                            else
-                            {
-                                ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-                            }
-                        }
-                        else
-                        {
-                            /* TLV field OK. Set ret to the success code */
-                            ret = SB_RET_SUCCESS;
-                        }
-                    }
-                    else
-                    {
-                        ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-                    }
-                }
-                else
-                {
-                    ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-                }
-            }
-            else
-            {
-                ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-            }
-        }
-        else
-        {
-            ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-        }
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	if ((NULL != p_key_cert_tlvs) && (NULL != p_code_cert_tlvs)) {
+		/* Check request TLV in key cert */
+		if ((NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_HASH_IMG_PK_IDX].p_val) &&
+			(NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_SIGN_CERT_IDX].p_val)) {
+			/*  Check select TLV in key cert */
+			if (((NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) &&
+				 (NULL == p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val)) ||
+				((NULL == p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_OEM_ROOT_PK_IDX].p_val) &&
+				 (NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val))) {
+				/*  Check requeste TLV in code cert */
+				if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_KEY_IMG_PK_IDX].p_val) {
+					/*  Check select TLV in code cert */
+					if (((NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX].p_val) &&
+						 (NULL == p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_IMG_IDX].p_val)) ||
+						((NULL == p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX].p_val) &&
+						 (NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_IMG_IDX].p_val))) {
+						if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_SIGN_CERT_IDX].p_val) {
+							if (NULL != p_code_cert_tlvs[SB_PRV_TLV_CI_CODE_CERT_HASH_IMG_IDX].p_val) {
+								/* TLV field OK. Set ret to the success code */
+								ret = SB_RET_SUCCESS;
+							} else {
+								ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+							}
+						} else {
+							/* TLV field OK. Set ret to the success code */
+							ret = SB_RET_SUCCESS;
+						}
+					} else {
+						ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+					}
+				} else {
+					ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+				}
+			} else {
+				ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+			}
+		} else {
+			ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+		}
 #if (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 0U)
-        if((SB_RET_SUCCESS == ret) &&
-            (NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val))
-        {
-            ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
-        }
-        else
-        {
-            /* Do nothing */
-        }
+		if ((SB_RET_SUCCESS == ret) &&
+			(NULL != p_key_cert_tlvs[SB_PRV_TLV_KEY_CERT_KEY_IMG_PK_IDX].p_val)) {
+			ret = SB_RET_ERR_UNSUPPORTED_FUNCTION;
+		} else {
+			/* Do nothing */
+		}
 #endif /* (SB_CFG_SB_CERT_CHAIN_USE_IMG_PK == 0U) */
-    }
-    else
-    {
-        /* Since this function is only called from within the library, this route is not usually taken */
-    }
+	} else {
+		/* Since this function is only called from within the library, this route is not usually taken */
+	}
 
-    return ret;
+	return ret;
 }
 #endif /* (SB_CFG_CHECK_INTEGRITY == 1U) */
 /**********************************************************************************************************************
@@ -1877,52 +1693,40 @@ static sb_ret_t sb_check_check_integrity_tlv(const st_sb_tlv_t* const p_key_cert
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_SB_MAC_VERIFICATION == 1U)
-static sb_ret_t sb_check_mac_tlv(const st_sb_tlv_t* const p_mac_tlv, const st_sb_tlv_t* const p_img_pk_tlv)
+static sb_ret_t sb_check_mac_tlv(const st_sb_tlv_t *const p_mac_tlv, const st_sb_tlv_t *const p_img_pk_tlv)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    /* Check NULL argument excepted p_img_pk_tlv */
-    if (NULL != p_mac_tlv)
-    {
-        /*  Check MAC Type class and Use Type(Because MAC is an input from outside the library) */
-        if (((p_mac_tlv->type & SB_PRV_TLV_MAC_MASK) == SB_PRV_TLV_MAC_CERT_IMG_TYPE) ||
-            ((p_mac_tlv->type & SB_PRV_TLV_MAC_MASK) == SB_PRV_TLV_MAC_CERT_ENCIMG_TYPE))
-        {
-            if (NULL != p_img_pk_tlv)
-            {
-                if (NULL != p_img_pk_tlv->p_val)
-                {
-                    /* TLV field OK. Set ret to the success code */
-                    ret = SB_RET_SUCCESS;
-                }
-                else
-                {
-                    ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-                }
-            }
-            else
-            {
-                /* TLV field OK. Set ret to the success code */
-                ret = SB_RET_SUCCESS;
-            }
-        }
-        else
-        {
-            ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
-        }
-    }
-    else
-    {
-        /* Since this function is only called from within the library, this route is not usually taken */
-    }
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	/* Check NULL argument excepted p_img_pk_tlv */
+	if (NULL != p_mac_tlv) {
+		/*  Check MAC Type class and Use Type(Because MAC is an input from outside the library) */
+		if (((p_mac_tlv->type & SB_PRV_TLV_MAC_MASK) == SB_PRV_TLV_MAC_CERT_IMG_TYPE) ||
+			((p_mac_tlv->type & SB_PRV_TLV_MAC_MASK) == SB_PRV_TLV_MAC_CERT_ENCIMG_TYPE)) {
+			if (NULL != p_img_pk_tlv) {
+				if (NULL != p_img_pk_tlv->p_val) {
+					/* TLV field OK. Set ret to the success code */
+					ret = SB_RET_SUCCESS;
+				} else {
+					ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+				}
+			} else {
+				/* TLV field OK. Set ret to the success code */
+				ret = SB_RET_SUCCESS;
+			}
+		} else {
+			ret = SB_RET_ERR_MANI_TLV_FIELD_ERR;
+		}
+	} else {
+		/* Since this function is only called from within the library, this route is not usually taken */
+	}
 
-    return ret;
+	return ret;
 }
 #endif /* (SB_CFG_SB_MAC_VERIFICATION == 1U) */
 /**********************************************************************************************************************
@@ -1981,49 +1785,43 @@ static sb_ret_t sb_check_mac_tlv(const st_sb_tlv_t* const p_mac_tlv, const st_sb
  * \callgraph
  *********************************************************************************************************************/
 #if (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U) || (SB_CFG_CHECK_INTEGRITY == 1U)
-static sb_ret_t sb_get_cc_tlv(const st_sb_key_cert_t* const p_key_cert_st,
-                                const st_sb_code_cert_t* const p_code_cert_st,
-                                const st_sb_search_tlv_type_t* const p_search_tlv_key_cert,
-                                const uint32_t search_tlv_key_cert_num,
-                                const st_sb_search_tlv_type_t* const p_search_tlv_code_cert,
-                                const uint32_t search_tlv_code_cert_num,
-                                st_sb_tlv_t* const p_key_cert_tlvs,
-                                st_sb_tlv_t* const p_code_cert_tlvs)
+static sb_ret_t sb_get_cc_tlv(const st_sb_key_cert_t *const p_key_cert_st,
+							  const st_sb_code_cert_t *const p_code_cert_st,
+							  const st_sb_search_tlv_type_t *const p_search_tlv_key_cert,
+							  const uint32_t search_tlv_key_cert_num,
+							  const st_sb_search_tlv_type_t *const p_search_tlv_code_cert,
+							  const uint32_t search_tlv_code_cert_num,
+							  st_sb_tlv_t *const p_key_cert_tlvs,
+							  st_sb_tlv_t *const p_code_cert_tlvs)
 {
-    /*-----------------------------------------------------------------------------------------------------------------
-     Local variables
-    -----------------------------------------------------------------------------------------------------------------*/
-    sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Local variables
+	-----------------------------------------------------------------------------------------------------------------*/
+	sb_ret_t ret = SB_RET_ERR_INTERNAL_FAIL;
 
-    /*-----------------------------------------------------------------------------------------------------------------
-     Function body
-    -----------------------------------------------------------------------------------------------------------------*/
-    /* Check NULL argument */
-    if ((NULL != p_key_cert_st) && (NULL != p_code_cert_st) && (NULL != p_search_tlv_key_cert) &&
-        (NULL != p_search_tlv_code_cert) && (NULL != p_key_cert_tlvs) && (NULL != p_code_cert_tlvs))
-    {
-        /* Get Key cert TLVs */
-        ret = r_sb_mani_parse_tlvs(p_key_cert_st->p_tlv_top, p_key_cert_st->tlv_len, search_tlv_key_cert_num,
-                                p_search_tlv_key_cert, p_key_cert_tlvs);
-        if (SB_RET_SUCCESS == ret)
-        {
-            /* Clear ret */
-            ret = SB_RET_ERR_INTERNAL_FAIL;
+	/*-----------------------------------------------------------------------------------------------------------------
+	 Function body
+	-----------------------------------------------------------------------------------------------------------------*/
+	/* Check NULL argument */
+	if ((NULL != p_key_cert_st) && (NULL != p_code_cert_st) && (NULL != p_search_tlv_key_cert) &&
+		(NULL != p_search_tlv_code_cert) && (NULL != p_key_cert_tlvs) && (NULL != p_code_cert_tlvs)) {
+		/* Get Key cert TLVs */
+		ret = r_sb_mani_parse_tlvs(p_key_cert_st->p_tlv_top, p_key_cert_st->tlv_len, search_tlv_key_cert_num,
+								   p_search_tlv_key_cert, p_key_cert_tlvs);
+		if (SB_RET_SUCCESS == ret) {
+			/* Clear ret */
+			ret = SB_RET_ERR_INTERNAL_FAIL;
 
-            ret = r_sb_mani_parse_tlvs(p_code_cert_st->p_tlv_top, p_code_cert_st->tlv_len, search_tlv_code_cert_num,
-                                    p_search_tlv_code_cert, p_code_cert_tlvs);
-        }
-        else
-        {
-            /* Do nothing */
-        }
-    }
-    else
-    {
-        /* Since this function is only called from within the library, this route is not usually taken */
-    }
+			ret = r_sb_mani_parse_tlvs(p_code_cert_st->p_tlv_top, p_code_cert_st->tlv_len, search_tlv_code_cert_num,
+									   p_search_tlv_code_cert, p_code_cert_tlvs);
+		} else {
+			/* Do nothing */
+		}
+	} else {
+		/* Since this function is only called from within the library, this route is not usually taken */
+	}
 
-    return ret;
+	return ret;
 }
 #endif /* (SB_CFG_SB_CERT_CHAIN_VERIFICATION == 1U) || (SB_CFG_CHECK_INTEGRITY == 1U) */
 /**********************************************************************************************************************

@@ -15,7 +15,7 @@
 
 boot_mode_t sys_get_boot_mode(void)
 {
-	uint8_t boot_dev  = (mmio_read_32(MD_MON) >> MD_MON_MD0MON_BIT) & MD_MON_MDxMON_MSK;
+	uint8_t boot_dev = (mmio_read_32(MD_MON) >> MD_MON_MD0MON_BIT) & MD_MON_MDxMON_MSK;
 	boot_mode_t boot_mode;
 
 	switch (boot_dev) {
@@ -67,7 +67,6 @@ void sys_base_lock(uint32_t lock_mask)
 	/* Lock PRCRN bit(s) in given mask */
 	prcrn = mmio_read_32(PRCRN) & 0x0000000FU & (~lock_mask);
 	mmio_write_32(PRCRN, (prcrn | 0x0000A500U));
-
 }
 
 void sys_safetybase_unlock(uint32_t unlock_mask)
@@ -76,7 +75,7 @@ void sys_safetybase_unlock(uint32_t unlock_mask)
 
 	/* Unlock PRCRS bit(s) in given mask */
 	prcrs = mmio_read_32(PRCRS) & 0x0000000FU;
-	mmio_write_32(PRCRS, (prcrs  | 0x0000A500U | unlock_mask));
+	mmio_write_32(PRCRS, (prcrs | 0x0000A500U | unlock_mask));
 }
 
 void sys_safetybase_lock(uint32_t lock_mask)
@@ -117,7 +116,7 @@ uint32_t sys_get_platform_product_version(void)
 
 uint32_t sys_get_platform_core_count(void)
 {
-	uint32_t core_count = 0U;	/* Zero is an impossible value for the core count */
+	uint32_t core_count = 0U; /* Zero is an impossible value for the core count */
 	uint32_t part_number = sys_get_platform_part_number();
 
 	switch (part_number) {

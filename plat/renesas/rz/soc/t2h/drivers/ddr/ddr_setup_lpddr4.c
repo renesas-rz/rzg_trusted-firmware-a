@@ -55,7 +55,7 @@ void update_mc(void)
 {
 	uint32_t val;
 
-	ddrtop_mc_param_wr(INT_MASK_MASTER_ADDR, INT_MASK_MASTER_OFFSET+31, 1, 0);
+	ddrtop_mc_param_wr(INT_MASK_MASTER_ADDR, INT_MASK_MASTER_OFFSET + 31, 1, 0);
 
 	val = ddrtop_mc_param_rd(PCPCS_PD_EN_ADDR, PCPCS_PD_EN_OFFSET, PCPCS_PD_EN_WIDTH);
 	if (val == 1) {
@@ -91,8 +91,8 @@ void phyinit_load_1d_image(void)
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x0);
 
-	for (i = 0x0; i <= 0x3fff; i++)	{
-		dwc_ddrphy_apb_wr((uint32_t)(0x50000+i), (uint32_t)(phyinit_1d[i]));
+	for (i = 0x0; i <= 0x3fff; i++) {
+		dwc_ddrphy_apb_wr((uint32_t)(0x50000 + i), (uint32_t)(phyinit_1d[i]));
 	}
 
 	dwc_ddrphy_apb_wr(0x0d0000, 0x1);
@@ -130,69 +130,77 @@ void phyinit_exec_1d_image(void)
 
 	if (num_rank > 1) {
 		val = dwc_ddrphy_apb_rd(0x54013);
-		val0 = dwc_ddrphy_cdd_int((val>>0)&0xff);
-		val1 = dwc_ddrphy_cdd_int((val>>8)&0xff);
+		val0 = dwc_ddrphy_cdd_int((val >> 0) & 0xff);
+		val1 = dwc_ddrphy_cdd_int((val >> 8) & 0xff);
 		cdd_rr = val0;
 		cdd_rr = (val1 > cdd_rr) ? val1 : cdd_rr;
 
 		val = dwc_ddrphy_apb_rd(0x54014);
-		val0 = dwc_ddrphy_cdd_abs((val>>0)&0xff);
-		val1 = dwc_ddrphy_cdd_abs((val>>8)&0xff);
+		val0 = dwc_ddrphy_cdd_abs((val >> 0) & 0xff);
+		val1 = dwc_ddrphy_cdd_abs((val >> 8) & 0xff);
 		cdd_rw_abs = val0;
 		cdd_rw_abs = (val1 > cdd_rw_abs) ? val1 : cdd_rw_abs;
 
 		val = dwc_ddrphy_apb_rd(0x54015);
-		val0 = dwc_ddrphy_cdd_abs((val>>0)&0xff);
-		val1 = dwc_ddrphy_cdd_abs((val>>8)&0xff);
+		val0 = dwc_ddrphy_cdd_abs((val >> 0) & 0xff);
+		val1 = dwc_ddrphy_cdd_abs((val >> 8) & 0xff);
 		cdd_rw_abs = (val0 > cdd_rw_abs) ? val0 : cdd_rw_abs;
 		cdd_rw_abs = (val1 > cdd_rw_abs) ? val1 : cdd_rw_abs;
 
 		val = dwc_ddrphy_apb_rd(0x54018);
-		val0 = dwc_ddrphy_cdd_int((val>>0)&0xff);
-		val1 = dwc_ddrphy_cdd_int((val>>8)&0xff);
+		val0 = dwc_ddrphy_cdd_int((val >> 0) & 0xff);
+		val1 = dwc_ddrphy_cdd_int((val >> 8) & 0xff);
 		cdd_ww = val0;
 		cdd_ww = (val1 > cdd_ww) ? val1 : cdd_ww;
-		val0 = dwc_ddrphy_cdd_abs((val>>0)&0xff);
-		val1 = dwc_ddrphy_cdd_abs((val>>8)&0xff);
+		val0 = dwc_ddrphy_cdd_abs((val >> 0) & 0xff);
+		val1 = dwc_ddrphy_cdd_abs((val >> 8) & 0xff);
 		cdd_ww_abs = val0;
 		cdd_ww_abs = (val1 > cdd_ww_abs) ? val1 : cdd_ww_abs;
 
 		val = dwc_ddrphy_apb_rd(0x5402c);
-		val1 = dwc_ddrphy_cdd_int((val>>8)&0xff);
+		val1 = dwc_ddrphy_cdd_int((val >> 8) & 0xff);
 		cdd_rr = (val1 > cdd_rr) ? val1 : cdd_rr;
 
 		val = dwc_ddrphy_apb_rd(0x5402d);
-		val0 = dwc_ddrphy_cdd_int((val>>0)&0xff);
+		val0 = dwc_ddrphy_cdd_int((val >> 0) & 0xff);
 		cdd_rr = (val0 > cdd_rr) ? val0 : cdd_rr;
-		val1 = dwc_ddrphy_cdd_abs((val>>8)&0xff);
+		val1 = dwc_ddrphy_cdd_abs((val >> 8) & 0xff);
 		cdd_rw_abs = (val1 > cdd_rw_abs) ? val1 : cdd_rw_abs;
 
 		val = dwc_ddrphy_apb_rd(0x5402e);
-		val0 = dwc_ddrphy_cdd_abs((val>>0)&0xff);
-		val1 = dwc_ddrphy_cdd_abs((val>>8)&0xff);
+		val0 = dwc_ddrphy_cdd_abs((val >> 0) & 0xff);
+		val1 = dwc_ddrphy_cdd_abs((val >> 8) & 0xff);
 		cdd_rw_abs = (val0 > cdd_rw_abs) ? val0 : cdd_rw_abs;
 		cdd_rw_abs = (val1 > cdd_rw_abs) ? val1 : cdd_rw_abs;
 
 		val = dwc_ddrphy_apb_rd(0x5402f);
-		val0 = dwc_ddrphy_cdd_abs((val>>0)&0xff);
+		val0 = dwc_ddrphy_cdd_abs((val >> 0) & 0xff);
 		cdd_rw_abs = (val0 > cdd_rw_abs) ? val0 : cdd_rw_abs;
 
 		val = dwc_ddrphy_apb_rd(0x54031);
-		val1 = dwc_ddrphy_cdd_int((val>>8)&0xff);
+		val1 = dwc_ddrphy_cdd_int((val >> 8) & 0xff);
 		cdd_ww = (val1 > cdd_ww) ? val1 : cdd_ww;
-		val1 = dwc_ddrphy_cdd_abs((val>>8)&0xff);
+		val1 = dwc_ddrphy_cdd_abs((val >> 8) & 0xff);
 		cdd_ww_abs = (val1 > cdd_ww_abs) ? val1 : cdd_ww_abs;
 
 		val = dwc_ddrphy_apb_rd(0x54032);
-		val0 = dwc_ddrphy_cdd_int((val>>0)&0xff);
+		val0 = dwc_ddrphy_cdd_int((val >> 0) & 0xff);
 		cdd_ww = (val0 > cdd_ww) ? val0 : cdd_ww;
-		val0 = dwc_ddrphy_cdd_abs((val>>0)&0xff);
+		val0 = dwc_ddrphy_cdd_abs((val >> 0) & 0xff);
 		cdd_ww_abs = (val0 > cdd_ww_abs) ? val0 : cdd_ww_abs;
 
-		r2r_adr = R2R_DIFFCS_DLY_F0_ADDR; r2r_ofs = R2R_DIFFCS_DLY_F0_OFFSET; r2r_wid = R2R_DIFFCS_DLY_F0_WIDTH;
-		r2w_adr = R2W_DIFFCS_DLY_F0_ADDR; r2w_ofs = R2W_DIFFCS_DLY_F0_OFFSET; r2w_wid = R2W_DIFFCS_DLY_F0_WIDTH;
-		w2r_adr = W2R_DIFFCS_DLY_F0_ADDR; w2r_ofs = W2R_DIFFCS_DLY_F0_OFFSET; w2r_wid = W2R_DIFFCS_DLY_F0_WIDTH;
-		w2w_adr = W2W_DIFFCS_DLY_F0_ADDR; w2w_ofs = W2W_DIFFCS_DLY_F0_OFFSET; w2w_wid = W2W_DIFFCS_DLY_F0_WIDTH;
+		r2r_adr = R2R_DIFFCS_DLY_F0_ADDR;
+		r2r_ofs = R2R_DIFFCS_DLY_F0_OFFSET;
+		r2r_wid = R2R_DIFFCS_DLY_F0_WIDTH;
+		r2w_adr = R2W_DIFFCS_DLY_F0_ADDR;
+		r2w_ofs = R2W_DIFFCS_DLY_F0_OFFSET;
+		r2w_wid = R2W_DIFFCS_DLY_F0_WIDTH;
+		w2r_adr = W2R_DIFFCS_DLY_F0_ADDR;
+		w2r_ofs = W2R_DIFFCS_DLY_F0_OFFSET;
+		w2r_wid = W2R_DIFFCS_DLY_F0_WIDTH;
+		w2w_adr = W2W_DIFFCS_DLY_F0_ADDR;
+		w2w_ofs = W2W_DIFFCS_DLY_F0_OFFSET;
+		w2w_wid = W2W_DIFFCS_DLY_F0_WIDTH;
 
 		if (cdd_rr > 0) {
 			val = ddrtop_mc_param_rd(r2r_adr, r2r_ofs, r2r_wid);
@@ -266,10 +274,10 @@ void phyinit_load_eng_image(void)
 
 static int8_t dwc_ddrphy_cdd_int(uint8_t val)
 {
-	return (int8_t)((((val>>7)&0x1) == 1) ? -((0x7f^((val>>0)&0x7f)) + 1) : ((val>>0)&0x7f));
+	return (int8_t)((((val >> 7) & 0x1) == 1) ? -((0x7f ^ ((val >> 0) & 0x7f)) + 1) : ((val >> 0) & 0x7f));
 }
 
 static int8_t dwc_ddrphy_cdd_abs(uint8_t val)
 {
-	return (uint8_t)((((val>>7)&0x1) == 1) ?  ((0x7f^((val>>0)&0x7f)) + 1) : ((val>>0)&0x7f));
+	return (uint8_t)((((val >> 7) & 0x1) == 1) ? ((0x7f ^ ((val >> 0) & 0x7f)) + 1) : ((val >> 0) & 0x7f));
 }
