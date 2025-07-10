@@ -5,7 +5,7 @@
  */
 
 #include <stddef.h>
-
+#include <stdint.h>
 #include <platform_def.h>
 #include <drivers/auth_common.h>
 #include <drivers/auth/auth_mod.h>
@@ -21,14 +21,14 @@
 
 #ifdef IMAGE_BL2
 
-static unsigned char soc_fw_key_cert_buf[KEY_CERT_LEN];
-static unsigned char soc_fw_content_cert_buf[CONTENT_CERT_LEN];
+static uint32_t soc_fw_key_cert_buf[KEY_CERT_LEN / sizeof(uint32_t)];
+static uint32_t soc_fw_content_cert_buf[CONTENT_CERT_LEN / sizeof(uint32_t)];
 
-static unsigned char tos_fw_key_cert_buf[KEY_CERT_LEN];
-static unsigned char tos_fw_content_cert_buf[CONTENT_CERT_LEN];
+static uint32_t tos_fw_key_cert_buf[KEY_CERT_LEN / sizeof(uint32_t)];
+static uint32_t tos_fw_content_cert_buf[CONTENT_CERT_LEN / sizeof(uint32_t)];
 
-static unsigned char nt_fw_key_cert_buf[KEY_CERT_LEN];
-static unsigned char nt_fw_content_cert_buf[CONTENT_CERT_LEN];
+static uint32_t nt_fw_key_cert_buf[KEY_CERT_LEN / sizeof(uint32_t)];
+static uint32_t nt_fw_content_cert_buf[CONTENT_CERT_LEN / sizeof(uint32_t)];
 
 
 static auth_param_type_desc_t key_cert = AUTH_PARAM_TYPE_DESC(
