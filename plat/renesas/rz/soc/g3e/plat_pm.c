@@ -21,6 +21,7 @@
 #include "sys_regs.h"
 #include "syc.h"
 #include "wdt.h"
+#include <pfc_pmic.h>
 
 
 #define LO_REG							(0U)
@@ -182,7 +183,7 @@ static void rzg3e_pwr_domain_off(const psci_power_state_t *state)
 static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
 	unsigned long mpidr = read_mpidr_el1();
-
+	pfc_riic_pmic_setup();
 	if (CORE_PWR_STATE(target_state) != PLAT_MAX_OFF_STATE)
 		return;
 

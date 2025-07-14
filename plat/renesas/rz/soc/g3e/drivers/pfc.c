@@ -10,6 +10,7 @@
 #include <sys_regs.h>
 #include <sys.h>
 #include <lib/mmio.h>
+#include <pfc_pmic.h>
 
 #define PFC_SCIF_TBL_NUM	(1)
 #define PFC_XSPI_TBL_NUM	(3)
@@ -158,7 +159,7 @@ static PFC_REGS pfc_i2c_bus8_reg_tbl[PFC_RIIC_TBL_NUM] = {
 };
 #endif /* PLAT_SYSTEM_SUSPEND */
 
-static void pfc_riic_pmic_setup(void)
+void pfc_riic_pmic_setup(void)
 {
 #if PLAT_SYSTEM_SUSPEND
 	int cnt;
