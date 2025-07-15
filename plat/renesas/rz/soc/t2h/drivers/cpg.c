@@ -230,6 +230,29 @@ static void cpg_mstop_gic(void)
 	sys_safetybase_lock(PRCRx_SYS_CTRL);
 }
 
+static void cpg_mstop_ca55(void)
+{
+	volatile uint32_t dummy;
+
+	/* Enable write to Module Stop */
+	sys_safetybase_unlock(PRCRx_LOW_POWER);
+
+	/* Clear bit to release CA55 related modules from Module Stop State */
+	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN_CA55_ALL));
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	dummy = mmio_read_32(MSTPCRN);
+	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
+	(void)dummy;
+
+	/* Disable write to Module Stop Register */
+	sys_safetybase_lock(PRCRx_LOW_POWER);
+}
+
 static void cpg_mstop_setup(void)
 {
 	cpg_mstop_sdhi0();	/* eMMC */
@@ -238,6 +261,9 @@ static void cpg_mstop_setup(void)
 	cpg_mstop_xspi1();
 	cpg_mstop_scif();
 	cpg_mstop_gic();
+
+	/* For Linux only */
+	cpg_mstop_ca55();
 }
 
 static void cpg_pll_setup(void)
