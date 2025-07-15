@@ -35,12 +35,16 @@ static const struct {
 	/* Slave Access Control Register */
 	{SLVACCCTL0,  0xCFFFF3FFU, 0x00000000U},
 	{SLVACCCTL1,  0xFF3FF3FFU, 0x00000000U},
+#if SECURE_RTC
+	{SLVACCCTL2,  0x003F0F0FU, 0x00000200U},
+#else
 	{SLVACCCTL2,  0x003F0F0FU, 0x00000000U},
+#endif
 	{SLVACCCTL4,  0x0F0F0303U, 0x00000000U},
-	{SLVACCCTL5,  0xFFFF003FU, 0x00000000U},
+	{SLVACCCTL5,  0xFFFF003FU, 0x0000000AU},
 	{SLVACCCTL6,  0xFF3FFCFFU, 0x00000000U},
-	{SLVACCCTL7,  0xFFCC000FU, 0x08000000U},
-	{SLVACCCTL8,  0x0F3FFFF3U, 0x00000000U},
+	{SLVACCCTL7,  0xFFCC000FU, 0x0AC00000U},
+	{SLVACCCTL8,  0x0F3FFFF3U, 0x0000AAA0U},
 	{SLVACCCTL9,  0x0FFF0003U, 0x00000000U},
 };
 
@@ -109,9 +113,40 @@ void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_reg
 	tzc400_enable_filters();
 }
 
+#if IMAGE_BL2
 static void plat_tzc_ddr_setup(void)
 {
 	const arm_tzc_regions_info_t ddr_a_bus_tzc_regions[] = {
+#if TRUSTED_BOARD_BOOT
+		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+		},
+
+		{
+			.base = PLAT_FW_TZC_PROT_DRAM01_BASE,
+			.end  = PLAT_FW_TZC_PROT_DRAM01_END,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+
+		{
+			.base = PLAT_TEE_TZC_PROT_DRAM01_BASE,
+			.end  = PLAT_TEE_TZC_PROT_DRAM01_END,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+
+		{
+			.base = PLAT_TEE_TZC_PROT_DRAM01_END + 1,
+			.end  = ULL(0x3FFFFFFFF),
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
+		},
+#else
 		{
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
@@ -119,6 +154,7 @@ static void plat_tzc_ddr_setup(void)
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
+#endif /* TRUSTED_BOARD_BOOT */
 
 		{}
 	};
@@ -159,7 +195,7 @@ static void plat_tzc_xspi_setup(void)
 			.base = RZT2H_XSPI0_MEMORY_MAP_BASE,
 			.end  = RZT2H_XSPI0_MEMORY_MAP_BASE + RZT2H_XSPI_MEMORY_MAP_SIZE - 1ULL,
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_PRIV
 		},
 
 		{
@@ -180,7 +216,7 @@ static void plat_tzc_pci_setup(void)
 {
 	const arm_tzc_regions_info_t pci_tzc_regions[] = {
 		{
-			/* Default Region 0: Complete access */
+			/* Default Region 0: Restricted */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
@@ -197,7 +233,7 @@ static void plat_tzc_r52_tcm_setup(void)
 {
 	const arm_tzc_regions_info_t r52_tzc_regions[] = {
 		{
-			/* Default Region 0: Lockdown */
+			/* Default Region 0: Complete Access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
@@ -214,7 +250,7 @@ static void plat_tzc_bsc_setup(void)
 {
 	const arm_tzc_regions_info_t bsc_tzc_regions[] = {
 		{
-			/* Default Region 0: Complete access */
+			/* Default Region 0: Lock Down */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
@@ -226,7 +262,27 @@ static void plat_tzc_bsc_setup(void)
 
 	plat_tzc400_setup(RZT2H_TZC400_6, &bsc_tzc_regions[0]);
 }
+#endif
 
+#if IMAGE_BL31
+static void bl31_security_setup(void)
+{
+	const arm_tzc_regions_info_t sys_ram_tzc_regions[] = {
+		{
+			/* Default Region 0: Restricted */
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+		{}
+	};
+
+	plat_tzc400_setup(RZT2H_TZC400_5, &sys_ram_tzc_regions[0]);
+}
+#endif
+
+#if IMAGE_BL2
 static void bl2_security_setup(void)
 {
 	/* initialize TZC-400 */
@@ -239,8 +295,15 @@ static void bl2_security_setup(void)
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
 }
+#endif
 
 void plat_security_setup(void)
 {
+#if IMAGE_BL2
 	bl2_security_setup();
+#endif
+
+#if IMAGE_BL31
+	bl31_security_setup();
+#endif
 }
