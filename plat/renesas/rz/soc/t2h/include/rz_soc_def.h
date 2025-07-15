@@ -19,7 +19,6 @@
 
 #define RZT2H_R_BUS_NON_SAFETY_DEVICE_BASE	UL(0x80000000)
 #define RZT2H_SCIF_BASE						UL(0x80005000)
-#define RZT2H_CMTW_BASE                     UL(0X80081000)
 #define RZT2H_XSPI0_BASE					UL(0x801C0000)
 #define RZT2H_XSPI1_BASE					UL(0x801C1000)
 #define RZT2H_SYSC_BASE						UL(0x80280000)
@@ -50,7 +49,6 @@
 #define RZT2H_LLPP_DEVICE_BASE				UL(0x90000000)
 
 #define RZT2H_A_BUS_DEVICE_BASE				UL(0x92000000)
-#define RZT2H_USB_BASE                      UL(0x92040000)
 #define RZT2H_SDHI0_BASE					UL(0x92080000)
 #define RZT2H_SDHI1_BASE					UL(0x92090000)
 
@@ -149,9 +147,6 @@
 #define XSPI1_BASE							RZT2H_XSPI1_BASE
 
 #define OTP_BASE							RZT2H_OTP_BASE
-
-#define USB_BASE                            RZT2H_USB_BASE
-#define CMTW_BASE                           RZT2H_CMTW_BASE
 
 /* eMMC registers */
 #define MMC0_SD_BASE						RZT2H_SDHI0_BASE
