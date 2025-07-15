@@ -95,12 +95,6 @@ static int rzt2h_pwr_domain_on(u_register_t mpidr)
 
 static void rzt2h_pwr_domain_on_finish(const psci_power_state_t *target_state)
 {
-	unsigned long mpidr = read_mpidr_el1();
-	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
-
-	if (coreid >= PLATFORM_CORE_COUNT)
-		return;
-
 	plat_gic_pcpu_init();
 	plat_gic_cpuif_enable();
 }
