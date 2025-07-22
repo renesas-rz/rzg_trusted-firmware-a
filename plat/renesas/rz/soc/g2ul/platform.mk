@@ -21,3 +21,16 @@ endif
 
 $(eval $(call add_define,RZG2UL))
 $(eval $(call add_define,DEVICE_TYPE))
+
+.PHONY: bptool_make bptool_clean
+
+bptool: bptool_make
+distclean realclean clean: bptool_clean
+
+BPTOOLPATH		?=	tools/renesas/rz_boot_param
+
+bptool_make:
+	${Q}${MAKE} TRUSTED_BOARD_BOOT=${TRUSTED_BOARD_BOOT} --no-print-directory -C ${BPTOOLPATH}
+
+bptool_clean:
+	${Q}${MAKE} --no-print-directory -C ${BPTOOLPATH} clean
