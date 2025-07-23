@@ -20,6 +20,7 @@
 #include <plat/common/platform.h>
 #include <sys.h>
 #include <ddr.h>
+#include <emmc_def.h>
 
 uint32_t ddr_csr_table[RET_CSR_SIZE] __aligned(8);
 
@@ -111,7 +112,7 @@ void plat_ddr_setup(void)
 			ERROR("Failed to load DDR retention info.\n");
 			panic();
 		}
-
+		emmc_irqmask_suspend_restore();
 		ddr_retention_exit();
 	}
 }

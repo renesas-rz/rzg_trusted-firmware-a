@@ -5,6 +5,7 @@
  */
 
 #include <stddef.h>
+#include <common/debug.h>
 
 #include <lib/mmio.h>
 
@@ -15,6 +16,9 @@
 #include "emmc_def.h"
 
 st_mmc_base mmc_drv_obj;
+
+#define SD_INFO1_MASK_RESTORE 0x0001031dU
+#define SD_INFO2_MASK_RESTORE 0x00008b7fU
 
 EMMC_ERROR_CODE emmc_memcard_power(uint8_t mode)
 {
@@ -144,3 +148,16 @@ EMMC_ERROR_CODE emmc_init(void)
 
 	return result;
 }
+
+#if PLAT_SYSTEM_SUSPEND
+EMMC_ERROR_CODE emmc_irqmask_suspend_restore(void)
+{
+	INFO("emmc_irqmask_restore SD_INFO:0x%08x%08x SD_INFO_MASK:0x%08x%08x (before)\n",
+		GETR_32(SD_INFO2), GETR_32(SD_INFO1), GETR_32(SD_INFO2_MASK), GETR_32(SD_INFO1_MASK));
+	SETR_32(SD_INFO1_MASK, SD_INFO1_MASK_RESTORE);	/* all interrupt mask */
+	SETR_32(SD_INFO2_MASK, SD_INFO2_MASK_RESTORE);	/* all interrupt mask */
+	INFO("emmc_irqmask_restore SD_INFO:0x%08x%08x SD_INFO_MASK:0x%08x%08x (after)\n",
+		GETR_32(SD_INFO2), GETR_32(SD_INFO1), GETR_32(SD_INFO2_MASK), GETR_32(SD_INFO1_MASK));
+	return EMMC_SUCCESS;
+}
+#endif

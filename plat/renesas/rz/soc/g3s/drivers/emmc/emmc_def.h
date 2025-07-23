@@ -50,6 +50,8 @@ EMMC_ERROR_CODE emmc_erase_sector(uint32_t start_address,
 				  uint32_t end_address);
 uint32_t emmc_bit_field(uint8_t *data, uint32_t top, uint32_t bottom);
 
+EMMC_ERROR_CODE emmc_irqmask_suspend_restore(void);
+
 /** @brief interrupt service
  */
 uint32_t emmc_interrupt(void);
