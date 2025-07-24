@@ -72,13 +72,13 @@ tag_creation_job:
     - exit 1
     - fi
     - echo "RELEASE IS BASED OFF BRANCH $CI_COMMIT_REF_NAME"
-    - scripts/create_and_setup_release_branch.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$PLATFORM" "$TFA_VER" "$CI_COMMIT_REF_NAME"
+    - scripts/create_and_setup_release_branch.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "../workspace/tf-a" "$PLATFORM" "$TFA_VER" "$CI_COMMIT_REF_NAME"
     - cd ../workspace/tf-a
     - git checkout "${TFA_VER}/rz_rel_${BSP_NAME}.${BSP_RELEASE_NUM}"
     - git merge "${TFA_VER}/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
     - git branch --delete "${TFA_VER}/rz_rel_feat_rm_dev_${BSP_NAME}.${BSP_RELEASE_NUM}"
     - cd ../../tf-a
-    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "" "$TAG_NAME" "$TFA_VER"
+    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "../workspace/tf-a" "$TAG_NAME" "$TFA_VER"
 
 ############################################# tag_deployment_job ######################################################
 # 1. Tag would be pushed to repository only if PUSH_TAG pipeline variable is set to true and the tag is NOT already
