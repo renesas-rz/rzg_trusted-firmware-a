@@ -9,6 +9,7 @@
 #include <arch_helpers.h>
 #include <assert.h>
 #include <common/bl_common.h>
+#include <common/debug.h>
 #include <common/desc_image_load.h>
 #include <drivers/generic_delay_timer.h>
 #include <lib/xlat_tables/xlat_tables_compat.h>
@@ -172,4 +173,8 @@ void bl2_platform_setup(void)
 
 	/* initialize DDR */
 	plat_ddr_setup();
+
+	NOTICE("BL2: SYS_LSI_MODE: 0x%x\n", mmio_read_32(SYS_LSI_MODE));
+	NOTICE("BL2: SYS_LSI_DEVID: 0x%x\n", mmio_read_32(SYS_LSI_DEVID));
+	NOTICE("BL2: SYS_LSI_PRR: 0x%x\n", mmio_read_32(SYS_LSI_PRR));
 }
