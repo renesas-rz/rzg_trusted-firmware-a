@@ -112,6 +112,7 @@ static void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *
 	tzc400_enable_filters();
 }
 
+#if IMAGE_BL2
 static void plat_tzc_msram_setup(void)
 {
 #if PLAT_M33_BOOT_SUPPORT
@@ -222,7 +223,57 @@ static void plat_tzc_spi_setup(void)
 
 	plat_tzc400_setup(RZG3S_TZC400_xSPI_BASE, &xspi_tzc_regions[0]);
 }
+#endif
 
+#if IMAGE_BL31
+static void plat_tzc_asram_setup(void)
+{
+	const arm_tzc_regions_info_t asram0_tzc_regions[] = {
+		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+		{}
+	};
+
+	const arm_tzc_regions_info_t asram1_tzc_regions[] = {
+		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+		{}
+	};
+
+	const arm_tzc_regions_info_t asram2_tzc_regions[] = {
+		{
+			/* Default Region 0: Lock down */
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+		{
+			.base = PLAT_DATA_S_ASRAM02_BASE,
+			.end  = PLAT_DATA_S_ASRAM02_END,
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+		{}
+	};
+
+	plat_tzc400_setup(RZG3S_TZC400_ASRAM_0_BASE, &asram0_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_ASRAM_1_BASE, &asram1_tzc_regions[0]);
+	plat_tzc400_setup(RZG3S_TZC400_ASRAM_2_BASE, &asram2_tzc_regions[0]);
+}
+#endif
+
+#if IMAGE_BL2
 static void bl2_security_setup(void)
 {
 	/* initialize TZC-400 */
@@ -233,8 +284,23 @@ static void bl2_security_setup(void)
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
 }
+#endif
+
+#if IMAGE_BL31
+static void bl31_security_setup(void)
+{
+	/* initialize TZC-400 */
+	plat_tzc_asram_setup();
+}
+#endif
 
 void plat_security_setup(void)
 {
+#if IMAGE_BL2
 	bl2_security_setup();
+#endif
+
+#if IMAGE_BL31
+	bl31_security_setup();
+#endif
 }

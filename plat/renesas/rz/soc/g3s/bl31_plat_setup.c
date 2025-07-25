@@ -16,6 +16,7 @@
 #include <pwrc.h>
 #include <riic.h>
 #include <scifa.h>
+#include <plat_tzc_def.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 
@@ -108,6 +109,9 @@ void bl31_plat_arch_setup(void)
 
 void bl31_platform_setup(void)
 {
+	/* Setup TZC-400 */
+	plat_security_setup();
+
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
