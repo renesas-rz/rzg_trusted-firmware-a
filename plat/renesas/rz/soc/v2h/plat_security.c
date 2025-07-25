@@ -166,6 +166,7 @@ void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_reg
 	tzc400_enable_filters();
 }
 
+#if IMAGE_BL2
 static void plat_tzc_msram_setup(void)
 {
 	const arm_tzc_regions_info_t msram_tzc_regions[] = {
@@ -306,8 +307,27 @@ static void plat_tzc_r8_setup(void)
 
 	plat_tzc400_setup(RZV2H_TZC400_R8_BASE, &r8_tzc_regions[0]);
 }
+#endif
 
+#if IMAGE_BL31
+static void bl31_security_setup(void)
+{
+	const arm_tzc_regions_info_t asram_tzc_regions[] = {
+		{
+			/* Default Region 0: Complete access */
+			.base = 0,	/* Not Used by Region 0 */
+			.end  = 0,	/* Not Used by Region 0 */
+			.sec_attr = TZC_REGION_S_RDWR,
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
+		},
+		{}
+	};
 
+	plat_tzc400_setup(RZV2H_TZC400_SRAMA_BASE, &asram_tzc_regions[0]);
+}
+#endif
+
+#if IMAGE_BL2
 static void bl2_security_setup(void)
 {
 	/* initialize TZC-400 */
@@ -320,8 +340,15 @@ static void bl2_security_setup(void)
 	/* setup Master/Slave Access Control */
 	plat_access_control_setup();
 }
+#endif
 
 void plat_security_setup(void)
 {
+#if IMAGE_BL2
 	bl2_security_setup();
+#endif
+
+#if IMAGE_BL31
+	bl31_security_setup();
+#endif
 }
