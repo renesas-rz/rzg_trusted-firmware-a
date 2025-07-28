@@ -117,7 +117,7 @@ static void plat_tzc_ddr_setup(void)
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_PRIV
 		},
 
 		{}
@@ -129,7 +129,7 @@ static void plat_tzc_ddr_setup(void)
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_PRIV
 		},
 
 		{}
