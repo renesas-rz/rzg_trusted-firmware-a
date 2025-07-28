@@ -167,7 +167,7 @@ static void plat_tzc_xspi_setup(void)
 			.base = RZT2H_XSPI1_MEMORY_MAP_BASE,
 			.end  = RZT2H_XSPI1_MEMORY_MAP_BASE + RZT2H_XSPI_MEMORY_MAP_SIZE - 1ULL,
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_PRIV
 		},
 
 		{}
@@ -184,7 +184,7 @@ static void plat_tzc_pci_setup(void)
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
-			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
+			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_PRIV
 		},
 
 		{}
