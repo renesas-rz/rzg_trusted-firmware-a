@@ -1,7 +1,7 @@
-Renesas RZ/G2L
-==============
+Renesas RZ/G2LC
+===============
 
-The "RZ/G2L" high-end 64-bit Arm®-based microprocessors (MPUs)
+The "RZ/G2LC" high-end 64-bit Arm®-based microprocessors (MPUs)
 enables the solutions required for the smart society of the future.
 Through a dual core of Arm Cortex®-A55 and in addition a M33 core, engineers can
 easily implement real-time control and
@@ -30,22 +30,22 @@ Plug-ins are available for multiple open-source software tools.
         MICROSD-CARD SLOT (SDR104 100 MBYTES/S)
 
 
-Renesas RZ/G2L reference platforms:
------------------------------------
+Renesas RZ/G2LC reference platforms:
+------------------------------------
 
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
-| Board        |      Details                                                                                                                          |
-+==============+===============+=======================================================================================================================+
-| smarc_pmic   | Equipped with Renesas RZ/G2L SoC                                                                                                      |
-|              +---------------------------------------------------------------------------------------------------------------------------------------+
-|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/rzg2l-evaluation-board-kit-rzg2l-evaluation-board-kit |
-+--------------+---------------------------------------------------------------------------------------------------------------------------------------+
++--------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| Board        |      Details                                                                                                                            |
++==============+===============+=========================================================================================================================+
+| smarc        | Equipped with Renesas RZ/G2LC SoC                                                                                                       |
+|              +-----------------------------------------------------------------------------------------------------------------------------------------+
+|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/rzg2lc-evaluation-board-kit-rzg2lc-evaluation-board-kit |
++--------------+-----------------------------------------------------------------------------------------------------------------------------------------+
 
 `boards info <https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg-series#evaluation_boards>`__
 
 Overview
 --------
-On RZ/G2L SoCs the BOOTROM starts the cpu at EL3; for this port BL2
+On RZ/G2LC SoCs the BOOTROM starts the cpu at EL3; for this port BL2
 will therefore be entered at this exception level (the Renesas' ATF
 reference tree [1] resets into EL1 before entering BL2 - see its
 bl2.ld.S)
@@ -66,28 +66,28 @@ case).
 System Tested:
 --------------
 
-The current TF-A port has been tested on the smarc_pmic_2 RZ/G2L board.
-SoC_id  R9A07G044L23GBG revision ESx.y.
+The current TF-A port has been tested on the smarc_1 RZ/G2LC board.
+SoC_id  R9A07G044C22GBG revision ESx.y.
 
 * u-boot:
-  The port has been tested using mainline uboot with the G2L Board added.
+  The port has been tested using mainline uboot with the G2LC Board added.
 
 * linux:
-  The port has been tested using mainline kernel with the G2L Board added.
+  The port has been tested using mainline kernel with the G2LC Board added.
 
 How to build
 ------------
 
 The TF-A build options depend on the target board so you will have to
 refer to those specific instructions. What follows is customized to
-the SMARC PMIC RZ/G2L development kit used in this port.
+the SMARC RZ/G2LC development kit used in this port.
 
 Base build instruction:
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
-    make PLAT=g2l all BOARD=smarc_pmic_2
+    make PLAT=g2l all BOARD=smarc_1
 
 Build Options:
 ~~~~~~~~~~~~~~
@@ -143,7 +143,7 @@ Argument descriptions:
 
 	export CROSS_COMPILE=${path_to_cc_toolset}/bin/aarch64-none-elf-
 	cd ${path_to_tfa_project}
-	make PLAT=g2l BOARD=smarc_pmic_2 BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
+	make PLAT=g2l BOARD=smarc_1 BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
 
 How to load TF-A
 ----------------
@@ -157,7 +157,7 @@ Loading the flash writer
 	2. Connect to the COM port provided by the device via some terminal software.
 	3. Hit reset and the device will print a message.
 	4. The baudrate is 115200
-	5. Then send the device the FlashWriter[1] (e.g. Flash_Writer_SCIF_RZG2L_SMARC_PMIC_DDR4_2GB_1PCS.mot).
+	5. Then send the device the FlashWriter[1] (e.g. Flash_Writer_SCIF_RZG2LC_SMARC_DDR4_1GB_1PCS.mot).
 
 [1] https://github.com/renesas-rz/rzg2_flash_writer/tree/rz_g2l
 
@@ -343,9 +343,9 @@ Flash Procedure for SD
 		1177152 bytes (1.2 MB, 1.1 MiB) copied, 0.758863 s, 1.6 MB/s
 
 	13. If Linux is required on this SD card, then follow the steps below.
-		sudo cp ./<g2l device tree>.dtb /media/user/79273262-4ff6-424f-9e7e-a
-		sudo cp ./<g2l kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
-		sudo tar -jxvf <g2l root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
+		sudo cp ./<G2lc device tree>.dtb /media/user/79273262-4ff6-424f-9e7e-a
+		sudo cp ./<G2lc kernel image>.bin /media/user/79273262-4ff6-424f-9e7e-a
+		sudo tar -jxvf <g2lc root file system>.tar.bz2 -C /media/user/c18b1089-2298-40fe-b5eb-c
 
 
 Boot trace
