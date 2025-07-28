@@ -114,6 +114,15 @@ For example, to build with debug and verbose logging:
 
     DEBUG=1 LOG_LEVEL=50
 
+The SPI_FLASH build option can be used to specify the type of SPI flash
+used on the board. The default is AT25QL128A for the g2ul_smarc board, but it can be changed
+to MT25QU512ABB if that is the flash used on the board.
+
+.. code:: bash
+
+    SPI_FLASH=AT25QL128A
+    SPI_FLASH=MT25QU512ABB
+
 TF-A Packaging Procedure
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -141,7 +150,7 @@ Argument descriptions:
 
 	export CROSS_COMPILE=${path_to_cc_toolset}/bin/aarch64-none-elf-
 	cd ${path_to_tfa_project}
-	make PLAT=g2ul BOARD=g2ul_smarc BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg SPI_FLASH=AT25QL128A <Build Options>
+	make PLAT=g2ul BOARD=g2ul_smarc BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
 
 How to load TF-A
 ----------------
