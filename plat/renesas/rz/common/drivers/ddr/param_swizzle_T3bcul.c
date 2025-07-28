@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2020-2025, Renesas Electronics Corporation. All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause
  * This code was generated with RZ/G2L, G2UL, Five, A3UL DDR config generation tool v3.0.0
  */
@@ -35,7 +35,7 @@ const uint32_t mc_mr6_tbl[2] = {
 };
 
 const uint32_t mc_phy_settings_tbl[MC_PHYSET_NUM][2] = {
-	{DDRMC_R040,	0x4F7F06E8	},
+	{DDRMC_R040,	0x4F7F86E8	},
 	{DDRMC_R041,	0x00002822	},
 	{DDRMC_R042,	0x00003C22	},
 	{DDRMC_R043,	0x00000000	}
