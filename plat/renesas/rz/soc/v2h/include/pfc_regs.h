@@ -318,20 +318,20 @@
 
 /* Definition for IOLH switch register */
 #define IOLH0_X1			(0 << 0)
-#define IOLH0_X2			(1 << 0)
-#define IOLH0_X4			(2 << 0)
+#define IOLH0_X2			(2 << 0)
+#define IOLH0_X4			(1 << 0)
 #define IOLH0_X6			(3 << 0)
 #define IOLH1_X1			(0 << 8)
-#define IOLH1_X2			(1 << 8)
-#define IOLH1_X4			(2 << 8)
+#define IOLH1_X2			(2 << 8)
+#define IOLH1_X4			(1 << 8)
 #define IOLH1_X6			(3 << 8)
 #define IOLH2_X1			(0 << 16)
-#define IOLH2_X2			(1 << 16)
-#define IOLH2_X4			(2 << 16)
+#define IOLH2_X2			(2 << 16)
+#define IOLH2_X4			(1 << 16)
 #define IOLH2_X6			(3 << 16)
 #define IOLH3_X1			(0 << 24)
-#define IOLH3_X2			(1 << 24)
-#define IOLH3_X4			(2 << 24)
+#define IOLH3_X2			(2 << 24)
+#define IOLH3_X4			(1 << 24)
 #define IOLH3_X6			(3 << 24)
 
 /* Definition for Slew-Rate switch register */
