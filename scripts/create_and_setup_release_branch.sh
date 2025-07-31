@@ -30,6 +30,7 @@ manual_rel_prompt() {
         declare -g "$var_name=${input}"
 		release_type="manual"
     done
+	release_type="manual"
 }
 
 bsp_name="$1"
