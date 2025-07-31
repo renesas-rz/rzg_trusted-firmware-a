@@ -73,7 +73,7 @@ tag_creation_job:
     - fi
     - echo "RELEASE IS BASED OFF BRANCH $CI_COMMIT_REF_NAME"
     - scripts/create_and_setup_release_branch.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "../workspace" "$PLATFORM" "$TFA_VER" "$CI_COMMIT_REF_NAME"
-    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "../workspace" "$TAG_NAME" "$TFA_VER"
+    - scripts/create_tagging_branch_and_tag.sh "$BSP_NAME" "$BSP_RELEASE_NUM" "../workspace" "$TAG_NAME" "$TFA_VER" "$CI_COMMIT_REF_NAME"
 
 ############################################# tag_deployment_job ######################################################
 # 1. Tag would be pushed to repository only if PUSH_TAG pipeline variable is set to true and the tag is NOT already
