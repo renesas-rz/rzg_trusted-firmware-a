@@ -30,7 +30,6 @@ manual_rel_prompt() {
         declare -g "$var_name=${input}"
 		release_type="manual"
     done
-	release_type="manual"
 }
 
 bsp_name="$1"
@@ -47,7 +46,6 @@ manual_rel_prompt workspace_path "Enter workspace path, spaces to be replaced wi
 manual_rel_prompt list_devices_to_keep "Enter the list of devices, space-separated list"
 manual_rel_prompt tfa_version "Enter TF-A version"
 manual_rel_prompt branch_name "Enter the base branch name for the release"
-echo "REL TYPE: ${release_type}"
 
 tfa_release_branch_name="${tfa_version}/rz_rel_${bsp_name}.${bsp_release_number}"
 tfa_rel_feature_branch_name="${tfa_version}/rz_rel_feat_rm_dev_${bsp_name}.${bsp_release_number}"
@@ -134,7 +132,6 @@ tfa_project_path=$(pwd)
 #######################################################################################################################
 git checkout "${tfa_branch_name}"
 if [[ ${release_type} == "manual" ]]; then
-	echo "manual"
 	check_branch_status "On branch ${tfa_branch_name} Your branch is up-to-date with origin/${tfa_branch_name}. nothing to commit, working tree clean"
 else
 	check_branch_status "On branch ${tfa_branch_name} Your branch is up to date with origin/${tfa_branch_name}. nothing to commit, working tree clean"
