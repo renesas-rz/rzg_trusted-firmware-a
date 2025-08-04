@@ -228,24 +228,53 @@ static void cpg_mstop_gic(void)
 
 	/* Disable write to System Registers */
 	sys_safetybase_lock(PRCRx_SYS_CTRL);
+
+	/*GIC doesn't have a MSTPCRn bit*/
 }
 
 static void cpg_mstop_ca55(void)
 {
 	volatile uint32_t dummy;
-
 	/* Enable write to Module Stop */
 	sys_safetybase_unlock(PRCRx_LOW_POWER);
 
-	/* Clear bit to release CA55 related modules from Module Stop State */
-	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN_CA55_ALL));
+	/* Clear bit to release CA55 Core 0 from Module Stop State */
+	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN2_MSK));
+	/* Dummy read MSTPCRE register once */
 	dummy = mmio_read_32(MSTPCRN);
+	/* Dummy read RVBALn register 7 times (RVBALn chosen arbitarily) */
+	uint8_t i;
+	for (i = 0; i < 7; i++) {
+		dummy = mmio_read_32(CA55_RVBAL0);
+	}
+
+	/* Clear bit to release CA55 Core 1 from Module Stop State */
+	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN3_MSK));
+	/* Dummy read MSTPCRE register once */
 	dummy = mmio_read_32(MSTPCRN);
+	/* Dummy read RVBALn register 7 times (RVBALn chosen arbitarily) */
+	for (i = 0; i < 7; i++) {
+		dummy = mmio_read_32(CA55_RVBAL1);
+	}
+
+	/* Clear bit to release CA55 Core 2 from Module Stop State */
+	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN4_MSK));
+	/* Dummy read MSTPCRE register once */
 	dummy = mmio_read_32(MSTPCRN);
+	/* Dummy read RVBALn register 7 times (RVBALn chosen arbitarily) */
+	for (i = 0; i < 7; i++) {
+		dummy = mmio_read_32(CA55_RVBAL2);
+	}
+
+	/* Clear bit to release CA55 Core 3 from Module Stop State */
+	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN5_MSK));
+	/* Dummy read MSTPCRE register once */
 	dummy = mmio_read_32(MSTPCRN);
-	dummy = mmio_read_32(MSTPCRN);
-	dummy = mmio_read_32(MSTPCRN);
-	dummy = mmio_read_32(MSTPCRN);
+	/* Dummy read RVBALn register 7 times (RVBALn chosen arbitarily) */
+	for (i = 0; i < 7; i++) {
+		dummy = mmio_read_32(CA55_RVBAL3);
+	}
+
 	/* The below is to avoid both a 'checkpatch.pl' and a compile issue "error: variable 'dummy' set but not used [-Werror=unused-but-set-variable]" */
 	(void)dummy;
 
