@@ -34,9 +34,7 @@
 
 static uintptr_t fip_dev_handle;
 static uintptr_t memdrv_dev_handle;
-#ifndef BOOT_MODE_eMMC_NOT_SUPPORTED
 static uintptr_t emmcdrv_dev_handle;
-#endif /* BOOT_MODE_eMMC_NOT_SUPPORTED */
 static uintptr_t sddrv_dev_handle;
 #if PLAT_SYSTEM_SUSPEND
 static uintptr_t xspidrv_dev_handle;
@@ -49,12 +47,10 @@ static const io_block_spec_t spirom_block_spec = {
 	.length = RZ_SOC_SPIROM_FIP_SIZE,
 };
 
-#ifndef BOOT_MODE_eMMC_NOT_SUPPORTED
 static const io_drv_spec_t emmc_block_spec = {
 	.offset = RZ_SOC_EMMC_FIP_BASE,
 	.length = RZ_SOC_EMMC_FIP_SIZE,
 };
-#endif /* BOOT_MODE_eMMC_NOT_SUPPORTED */
 
 static const io_drv_spec_t sd_block_spec = {
 	.offset = RZ_SOC_SD_FIP_BASE,
@@ -106,9 +102,7 @@ static const io_block_spec_t spirom_ddr_cfg_spec = {
 };
 #endif /* PLAT_SYSTEM_SUSPEND */
 
-#ifndef BOOT_MODE_eMMC_NOT_SUPPORTED
 static int32_t open_emmcdrv(const uintptr_t spec);
-#endif /* BOOT_MODE_eMMC_NOT_SUPPORTED */
 static int32_t open_memmap(const uintptr_t spec);
 static int32_t open_fipdrv(const uintptr_t spec);
 static int32_t open_sddrv(const uintptr_t spec);
@@ -128,13 +122,11 @@ static const struct plat_io_policy sd_fip_policy = {
 	&open_sddrv
 };
 
-#ifndef BOOT_MODE_eMMC_NOT_SUPPORTED
 static const struct plat_io_policy emmc_fip_policy = {
 	&emmcdrv_dev_handle,
 	(uintptr_t) &emmc_block_spec,
 	&open_emmcdrv
 };
-#endif /* BOOT_MODE_eMMC_NOT_SUPPORTED */
 
 static const struct plat_io_policy spirom_fip_policy = {
 	&memdrv_dev_handle,
@@ -221,12 +213,10 @@ static int32_t open_memmap(const uintptr_t spec)
 	return result;
 }
 
-#ifndef BOOT_MODE_eMMC_NOT_SUPPORTED
 static int32_t open_emmcdrv(const uintptr_t spec)
 {
 	return io_dev_init(emmcdrv_dev_handle, 0);
 }
-#endif /* BOOT_MODE_eMMC_NOT_SUPPORTED */
 
 static int32_t open_sddrv(const uintptr_t spec)
 {
@@ -261,12 +251,10 @@ static void update_dev_policies(uint16_t boot_mode)
 		policies[V2H_DDR_CONFIG_ID] = spirom_ddr_config_policy;
 #endif /* PLAT_SYSTEM_SUSPEND */
 		break;
-#ifndef BOOT_MODE_eMMC_NOT_SUPPORTED
 	case SYS_BOOT_MODE_EMMC_1_8:
 	case SYS_BOOT_MODE_EMMC_3_3:
 		policies[FIP_IMAGE_ID] = emmc_fip_policy;
 		break;
-#endif /* BOOT_MODE_eMMC_NOT_SUPPORTED */
 	case SYS_BOOT_MODE_ESD:
 		policies[FIP_IMAGE_ID] = sd_fip_policy;
 		break;
@@ -278,9 +266,7 @@ static void update_dev_policies(uint16_t boot_mode)
 void rz_io_setup(void)
 {
 	const io_dev_connector_t *memmap;
-#ifndef BOOT_MODE_eMMC_NOT_SUPPORTED
 	const io_dev_connector_t *emmc;
-#endif /* BOOT_MODE_eMMC_NOT_SUPPORTED */
 	const io_dev_connector_t *rzsoc;
 	const io_dev_connector_t *sd;
 #if PLAT_SYSTEM_SUSPEND
@@ -310,7 +296,6 @@ void rz_io_setup(void)
 		register_io_dev_xspidrv(&xspi);
 		io_dev_open(xspi, 0, &xspidrv_dev_handle);
 #endif /* PLAT_SYSTEM_SUSPEND */
-#ifndef BOOT_MODE_eMMC_NOT_SUPPORTED
 	} else if  (boot_mode == SYS_BOOT_MODE_EMMC_1_8 ||
 				boot_mode == SYS_BOOT_MODE_EMMC_3_3) {
 		if (emmc_init() != EMMC_SUCCESS) {
@@ -325,7 +310,6 @@ void rz_io_setup(void)
 
 		register_io_dev_emmcdrv(&emmc);
 		io_dev_open(emmc, 0, &emmcdrv_dev_handle);
-#endif /* BOOT_MODE_eMMC_NOT_SUPPORTED */
 	} else if (boot_mode == SYS_BOOT_MODE_ESD) {
 		register_io_dev_sddrv(&sd);
 		io_dev_open(sd, 0, &sddrv_dev_handle);
