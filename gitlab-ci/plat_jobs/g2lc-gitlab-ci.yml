@@ -19,8 +19,6 @@
 # Description: Yaml file containing jobs for G2LC.
 #######################################################################################################################
 
-# NOTE: G2LC is using "g2l" as the PLAT due to the way it has been built over the years, however for CI/CD this also
-#       means thats that G2LC runners are unused and the G2L runners are being instead. This build command needs TBD.
 ################################################## include ############################################################
 include:
   - local: gitlab-ci/templates/common-job-templates.yml
@@ -30,21 +28,21 @@ include:
 ################################### Preparation job for G2LC merge gateway pipeline ####################################
 rzg2lc-prep-for-merge-gateway-build-job:
   variables:
-    PLAT: "g2l"
+    PLAT: "g2lc"
   extends:
     - .prep_for_merge_gateway_build_job_template
 
 ################################ Preparation job for G2LC release procedure pipeline ###################################
 rzg2lc-prep-for-release-build-job:
   variables:
-    PLAT: "g2l"
+    PLAT: "g2lc"
   extends:
     - .prep_for_release_build_job_template
 
 ############################################## G2LC smarc_1 MPU build jobs ###############################################
 rzg2lc-release-smarc-1:
   variables:
-    PLAT: "g2l"
+    PLAT: "g2lc"
     BOARD: "smarc_1"
     BUILD_TYPE: "release"
     CONFIGS: ""
@@ -53,7 +51,7 @@ rzg2lc-release-smarc-1:
 
 rzg2lc-release-smarc-1-stack-protector-0:
   variables:
-    PLAT: "g2l"
+    PLAT: "g2lc"
     BOARD: "smarc_1"
     BUILD_TYPE: "release"
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
@@ -63,7 +61,7 @@ rzg2lc-release-smarc-1-stack-protector-0:
 
 rzg2lc-debug-log0-smarc-1:
   variables:
-    PLAT: "g2l"
+    PLAT: "g2lc"
     BOARD: "smarc_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0"
@@ -72,7 +70,7 @@ rzg2lc-debug-log0-smarc-1:
 
 rzg2lc-debug-log50-smarc-1:
   variables:
-    PLAT: "g2l"
+    PLAT: "g2lc"
     BOARD: "smarc_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
