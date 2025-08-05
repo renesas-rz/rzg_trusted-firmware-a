@@ -52,6 +52,15 @@ include:
   - local: gitlab-ci/plat_jobs/g2l-gitlab-ci.yml
     rules:
       - if: $CHECKPATCH_AND_BUILD == "true"
+  - local: gitlab-ci/plat_jobs/g2lc-gitlab-ci.yml
+    rules:
+      - if: $CHECKPATCH_AND_BUILD == "true"
+  - local: gitlab-ci/plat_jobs/g2ul-gitlab-ci.yml
+    rules:
+      - if: $CHECKPATCH_AND_BUILD == "true"
+  - local: gitlab-ci/plat_jobs/v2l-gitlab-ci.yml
+    rules:
+      - if: $CHECKPATCH_AND_BUILD == "true"
 
   # Windows (Klocwork) MPU builds
   - local: gitlab-ci/win_mpu_build/n2h-gitlab-ci.yml

@@ -48,3 +48,12 @@ include:
   - local: gitlab-ci/plat_jobs/g2l-gitlab-ci.yml
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /g2l/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
+  - local: gitlab-ci/plat_jobs/g2lc-gitlab-ci.yml
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /g2lc/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
+  - local: gitlab-ci/plat_jobs/g2ul-gitlab-ci.yml
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /g2ul/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
+  - local: gitlab-ci/plat_jobs/v2l-gitlab-ci.yml
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /v2l/ || $CI_MERGE_REQUEST_LABELS =~ /all_plat/
