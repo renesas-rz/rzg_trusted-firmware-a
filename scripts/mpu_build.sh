@@ -64,6 +64,7 @@ g3l_build()
 
 	check_file_exists "$U_BOOT_FILE"
 
+	make PLAT=$PLAT realclean BOARD=$BOARD
 	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$U_BOOT_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
 }
 
