@@ -238,15 +238,7 @@ static void cpg_mstop_ca55(void)
 	/* Enable write to Module Stop */
 	sys_safetybase_unlock(PRCRx_LOW_POWER);
 
-	/* Clear bit to release CA55 Core 0 from Module Stop State */
-	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN2_MSK));
-	/* Dummy read MSTPCRE register once */
-	dummy = mmio_read_32(MSTPCRN);
-	/* Dummy read RVBALn register 7 times (RVBALn chosen arbitarily) */
-	uint8_t i;
-	for (i = 0; i < 7; i++) {
-		dummy = mmio_read_32(CA55_RVBAL0);
-	}
+	/* CA55 Core 0 is already in released state, the code is running via this core */
 
 	/* Clear bit to release CA55 Core 1 from Module Stop State */
 	mmio_write_32(MSTPCRN, mmio_read_32(MSTPCRN) & (~MSTPCRN_MSTPCRN3_MSK));
