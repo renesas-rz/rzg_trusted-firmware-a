@@ -236,7 +236,7 @@ static void cpg_mstop_ca55(void)
 {
 	volatile uint32_t dummy;
 	uint8_t i;
-	
+
 	/* Enable write to Module Stop */
 	sys_safetybase_unlock(PRCRx_LOW_POWER);
 
