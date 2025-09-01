@@ -49,7 +49,7 @@
 #define BL2_PARAMS_SIZE				U(0x00000200)
 
 #define BL2_BASE					U(BL2_PARAMS_BASE + BL2_PARAMS_SIZE + 0x1000)
-#define BL2_LIMIT					U(BL2_BASE + 0x60000)
+#define BL2_LIMIT					U(BL2_BASE + 0x40000)
 
 /*******************************************************************************
  * BL31 specific defines.
