@@ -39,6 +39,10 @@ PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3l/rz_stack_protector.c
 endif
 
 ifneq (${TRUSTED_BOARD_BOOT},0)
+
+	EL3_CPTR_CLEAR_TFP	:= 1
+    $(eval $(call add_define,EL3_CPTR_CLEAR_TFP))
+
 	PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3l/drivers/auth/cip/cip.c
 
 	# Include the selected chain of trust sources.
