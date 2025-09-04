@@ -94,6 +94,15 @@ rzg3s-release-stack-protector-0-smarc:
   extends:
     - .linux_mpu_build_failure_job_template
 
+rzg3s-release-smarc-tftf:
+  variables:
+    PLAT: "g3s"
+    BOARD: "smarc"
+    BUILD_TYPE: "release"
+    BL33: "TFTF"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzg3s-debug-log0-smarc:
   variables:
     PLAT: "g3s"
@@ -202,6 +211,15 @@ rzg3s-release-stack-protector-0-dev:
     ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
   extends:
     - .linux_mpu_build_failure_job_template
+
+rzg3s-release-dev-tftf:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "release"
+    BL33: "TFTF"
+  extends:
+    - .linux_mpu_build_success_job_template
 
 rzg3s-debug-log0-dev:
   variables:

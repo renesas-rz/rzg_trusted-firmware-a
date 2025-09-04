@@ -59,6 +59,16 @@ rzv2n-release-dev-1-stack-protector-0:
   extends:
     - .linux_mpu_build_failure_job_template
 
+rzv2n-release-dev-1-tftf:
+  variables:
+    PLAT: "v2n"
+    BOARD: "dev_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+    BL33: "TFTF"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzv2n-debug-log0-dev-1:
   variables:
     PLAT: "v2n"
@@ -84,6 +94,16 @@ rzv2n-release-evk-1:
     BOARD: "evk_1"
     BUILD_TYPE: "release"
     CONFIGS: ""
+  extends:
+    - .linux_mpu_build_success_job_template
+
+rzv2n-release-evk-1-tftf:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+    BL33: "TFTF"
   extends:
     - .linux_mpu_build_success_job_template
 

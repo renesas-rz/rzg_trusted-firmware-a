@@ -59,6 +59,16 @@ rzg2l-release-smarc-pmic-2-stack-protector-0:
   extends:
     - .linux_mpu_build_failure_job_template
 
+rzg2l-release-smarc-pmic-2-tftf:
+  variables:
+    PLAT: "g2l"
+    BOARD: "smarc_pmic_2"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+    BL33: "TFTF"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzg2l-debug-log0-smarc-pmic-2:
   variables:
     PLAT: "g2l"

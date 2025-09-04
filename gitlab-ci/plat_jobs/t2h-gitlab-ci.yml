@@ -97,6 +97,16 @@ rzt2h-release-stack-protector-0:
   extends:
     - .linux_mpu_build_failure_job_template
 
+rzt2h-release-tftf:
+  variables:
+    PLAT: "t2h"
+    BOARD: "dev_1"
+    BUILD_TYPE: "release"
+    CONFIGS: "PLATFORM_CORE_COUNT=4"
+    BL33: "TFTF"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzt2h-debug-log0:
   variables:
     PLAT: "t2h"

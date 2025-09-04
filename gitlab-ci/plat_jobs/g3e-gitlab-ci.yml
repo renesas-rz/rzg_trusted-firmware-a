@@ -59,6 +59,16 @@ rzg3e-release-dev-1-stack-protector-0:
   extends:
     - .linux_mpu_build_failure_job_template
 
+rzg3e-release-dev-1-tftf:
+  variables:
+    PLAT: "g3e"
+    BOARD: "dev_1"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+    BL33: "TFTF"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzg3e-debug-log0-dev-1:
   variables:
     PLAT: "g3e"
@@ -96,6 +106,16 @@ rzg3e-release-smarc-stack-protector-0:
     ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
   extends:
     - .linux_mpu_build_failure_job_template
+
+rzg3e-release-smarc-tftf:
+  variables:
+    PLAT: "g3e"
+    BOARD: "smarc"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+    BL33: "TFTF"
+  extends:
+    - .linux_mpu_build_success_job_template
 
 rzg3e-debug-log0-smarc:
   variables:
