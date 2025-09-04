@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
+#include <arch_helpers.h>
 
 #include <common/debug.h>
 #include <platform_def.h>
@@ -40,6 +41,9 @@ void cip_init(void)
 
 		first_call = false;
 	}
+
+	/* Starting from version v2.10, TFP bits have been changed to be controlled for each SOC. */
+	write_cptr_el3(read_cptr_el3() & ~(TFP_BIT));
 }
 
 void cip_rng(uintptr_t buffer, size_t len)
