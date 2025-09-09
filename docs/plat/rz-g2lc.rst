@@ -87,7 +87,7 @@ Base build instruction:
 
 .. code:: bash
 
-    make PLAT=g2l all BOARD=smarc_1
+    make PLAT=g2lc all BOARD=smarc_1
 
 Build Options:
 ~~~~~~~~~~~~~~
@@ -167,7 +167,7 @@ Argument descriptions:
 
 	export CROSS_COMPILE=${path_to_cc_toolset}/bin/aarch64-none-elf-
 	cd ${path_to_tfa_project}
-	make PLAT=g2l BOARD=smarc_1 BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
+	make PLAT=g2lc BOARD=smarc_1 BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
 
 How to load TF-A
 ----------------
