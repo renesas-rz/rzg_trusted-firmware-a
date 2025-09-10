@@ -90,7 +90,7 @@ Base build instruction:
 Build Options:
 ~~~~~~~~~~~~~~
 
-If a debug build with logging is required then set DEBUG=1 and set LOG_LEVEL to the desired verbosity.
+Modify LOG_LEVEL to change to the desired verbosity.
 
 +--------------+-------------------------------------------+
 | Build option | Details                                   |
@@ -108,11 +108,35 @@ If a debug build with logging is required then set DEBUG=1 and set LOG_LEVEL to 
 |LOG_LEVEL=50  | The log level is set to LOG_LEVEL_VERBOSE |
 +--------------+-------------------------------------------+
 
-For example, to build with debug and verbose logging:
+For example, to set the output to verbose logging:
 
 .. code:: bash
 
-    DEBUG=1 LOG_LEVEL=50
+    LOG_LEVEL=50
+
+To enable debugging set the following option:
+
+.. code:: bash
+
+	DEBUG=1
+
+To enable basic DDR ECC set the following option:
+
+.. code:: bash
+
+	DDR_ECC_ENABLE=1
+
+To enable basic DDR ECC with detection set the following option:
+
+.. code:: bash
+
+	DDR_ECC_DETECT=1
+
+To enable basic DDR ECC with detection and correction set the following option:
+
+.. code:: bash
+
+	DDR_ECC_DETECT_CORRECT=1
 
 The SPI_FLASH build option can be used to specify the type of SPI flash
 used on the board. The default is AT25QL128A for the g2ul_smarc board, but it can be changed
@@ -177,11 +201,11 @@ Flash Procedure for xSPI
 	2. Write the BL2 srecord to the device SPI flash
 		a. Enter: XLS2
 		b. Program Top Address: 0x11e00
-		c. QSPI Save Address: 0x00000
+		c. QSPI Save Address: 0x0
 		d. Send the BL2 srecord
 	3. Write the FIP srecord to the device SPI flash
 		a. Enter: XLS2
-		b. Program Top Address: 0x00000
+		b. Program Top Address: 0x0
 		c. QSPI Save Address: 0x20000
 		d. Send the FIP srecord
 
