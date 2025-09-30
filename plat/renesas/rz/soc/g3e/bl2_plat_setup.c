@@ -42,9 +42,14 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
 
-	if (bl2_plat_get_boot_mode() == RZ_WARM_BOOT)
-		bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+	if (bl_mem_params == NULL) {
+		/* Return a non 0 value as this will lead to error flagging when function is called. */
+		return 1;
+	}
 
+	if (bl2_plat_get_boot_mode() == RZ_WARM_BOOT) {
+		bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+	}
 	/* Clean next_params_info in BL image node */
 	bl_mem_params->params_node_mem.next_params_info = NULL;
 
@@ -62,6 +67,11 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	}
 
 	bl_mem_params = get_bl_mem_params_node(image_id);
+
+	if (bl_mem_params == NULL) {
+		/* Return a non 0 value as this will lead to error flagging when function is called. */
+		return 1;
+	}
 
 	switch (image_id) {
 	case BL31_IMAGE_ID:
