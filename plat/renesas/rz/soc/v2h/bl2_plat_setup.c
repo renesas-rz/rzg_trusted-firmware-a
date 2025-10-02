@@ -48,6 +48,11 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 		/* If a warm start is in progress then skip rest of initialisation and jump directly to BL31 */
 		if (params->boot_kind == RZ_WARM_BOOT) {
 			bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+			if (bl_mem_params == NULL) {
+				ERROR("%s: no mem params for image %u\n",
+						__func__, image_id);
+				return -1;
+			}
 
 			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
 			flush_dcache_range((uintptr_t)PARAMS_BASE, sizeof(bl2_to_bl31_params_mem_t));
@@ -69,6 +74,11 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	}
 
 	bl_mem_params = get_bl_mem_params_node(image_id);
+	if (bl_mem_params == NULL) {
+		ERROR("%s: no mem params for image %u\n",
+			  __func__, image_id);
+		return -1;
+	}
 
 	switch (image_id) {
 	case BL31_IMAGE_ID:

@@ -1654,7 +1654,7 @@ static CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
 
 static void cpg_ctrl_clkrst(CPG_SETUP_DATA const *array, uint32_t num, uint32_t ip_control_mask)
 {
-	int i;
+	uint32_t i;
 	uint32_t mask;
 	uint32_t cmp;
 
@@ -1717,7 +1717,7 @@ static void cpg_pll_setup(void)
 
 static void cpg_div_sel_setup(CPG_REG_SETTING *tbl, uint32_t size)
 {
-	int cnt;
+	uint32_t cnt;
 
 	for (cnt = 0; cnt < size; cnt++, tbl++) {
 		mmio_write_32(tbl->addr, tbl->val);
