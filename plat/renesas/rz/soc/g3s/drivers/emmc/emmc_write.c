@@ -107,7 +107,10 @@ EMMC_ERROR_CODE emmc_write_sector(uint32_t *buff_address_virtual,
 			return result;
 
 		buff_address_virtual += (EMMC_BLOCK_LENGTH_DW * trans_count);
-		sector_number += trans_count;
+
+		if (sector_number <= (EMMC_RW_SECTOR_COUNT_MAX - trans_count)) {
+			sector_number += trans_count;
+		}
 		remain -= trans_count;
 	}
 

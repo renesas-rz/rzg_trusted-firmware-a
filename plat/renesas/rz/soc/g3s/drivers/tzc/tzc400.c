@@ -26,6 +26,8 @@
 #define TZC_400_REGION_ATTR_0_OFFSET		U(0x110)
 #define TZC_400_REGION_ID_ACCESS_0_OFFSET	U(0x114)
 
+#define TZC_400_MAX_FILTER_NUM				U(4)
+
 /*
  * Implementation defined values used to validate inputs later.
  * Filters : max of 4 ; 0 to 3
@@ -233,6 +235,14 @@ void tzc400_configure_region0(unsigned int sec_attr,
 	_tzc400_configure_region0(tzc400.base, sec_attr, ns_device_access);
 }
 
+uint32_t gen_filter_mask(unsigned int num_filters)
+{
+	if (num_filters > TZC_400_MAX_FILTER_NUM) {
+		return (uint32_t)((1U << TZC_400_MAX_FILTER_NUM) - 1U);
+	}
+	return (uint32_t)((1U << num_filters) - 1U);
+}
+
 /*
  * `tzc400_configure_region` is used to program regions into the TrustZone
  * controller. A region can be associated with more than one filter. The
@@ -254,7 +264,7 @@ void tzc400_configure_region(unsigned int filters,
 
 	/* Adjust filter mask by real filter number */
 	if (filters == TZC_400_REGION_ATTR_FILTER_BIT_ALL) {
-		filters = (1U << tzc400.num_filters) - 1U;
+		filters = gen_filter_mask(tzc400.num_filters);
 	}
 
 	/* Do range checks on filters and regions. */

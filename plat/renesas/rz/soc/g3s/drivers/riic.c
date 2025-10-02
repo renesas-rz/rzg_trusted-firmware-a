@@ -178,7 +178,7 @@ static int riic_i2c_raw_read(uint8_t *buf, uint32_t len)
 {
 	int dummy_read = 1;
 	int ret = 0;
-	int index = 0;
+	uint32_t index = 0;
 
 	do {
 		ret = riic_wait_for_icsr2(ICSR2_RDRF);

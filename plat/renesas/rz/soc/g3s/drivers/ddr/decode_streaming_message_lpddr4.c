@@ -10,7 +10,8 @@
 
 #include "ddr_private.h"
 
-#define DDR_LOG_EN		(0)
+#define DDR_LOG_EN			(0)
+#define DDR_ARGS_LIST_SIZE	(31)
 
 static void decode_streaming_message(uint8_t sel_train);
 static void decode_streaming_message_lpddr4(uint32_t codede_message_hex, uint16_t *args_list);
@@ -84,11 +85,15 @@ static void decode_streaming_message(uint8_t sel_train)
 	int i;
 	uint32_t codede_message_hex;
 	uint16_t num_args;
-	uint16_t args_list[31];
+	uint16_t args_list[DDR_ARGS_LIST_SIZE];
 
 	codede_message_hex = get_mail(1);
 
 	num_args = codede_message_hex & 0xFFFF;
+
+	if (num_args > DDR_ARGS_LIST_SIZE) {
+		num_args = DDR_ARGS_LIST_SIZE;
+	}
 
 	for (i = 0; i < num_args; i++)
 		args_list[i] = get_mail(1);

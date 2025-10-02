@@ -69,7 +69,13 @@ uint32_t emmc_interrupt(void)
 
 		result = emmc_trans_sector(mmc_drv_obj.buff_address_virtual);
 		mmc_drv_obj.buff_address_virtual += EMMC_BLOCK_LENGTH;
-		mmc_drv_obj.remain_size -= EMMC_BLOCK_LENGTH;
+
+		if (mmc_drv_obj.remain_size >= EMMC_BLOCK_LENGTH) {
+			mmc_drv_obj.remain_size -= EMMC_BLOCK_LENGTH;
+		} else {
+			// Handle error / set remain_size to 0
+			mmc_drv_obj.remain_size = 0;
+		}
 
 		if (result != EMMC_SUCCESS) {
 			/* data transfer error */

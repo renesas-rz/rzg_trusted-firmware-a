@@ -80,6 +80,10 @@ uint32_t emmc_bit_field(uint8_t *data, uint32_t top, uint32_t bottom)
 {
 	uint32_t value;
 
+	if (((top >> 3) > 15) || ((bottom >> 3) > 15)) {
+		panic();
+	}
+
 	uint32_t index_top = (uint32_t) (15 - (top >> 3));
 	uint32_t index_bottom = (uint32_t) (15 - (bottom >> 3));
 
@@ -129,6 +133,12 @@ void emmc_make_nontrans_cmd(HAL_MEMCARD_COMMAND cmd, uint32_t arg)
 	mmc_drv_obj.cmd_info.cmd = cmd;
 	mmc_drv_obj.cmd_info.arg = arg;
 	mmc_drv_obj.cmd_info.dir = HAL_MEMCARD_READ;
+
+	if ((cmd & HAL_MEMCARD_COMMAND_INDEX_MASK) >= ARRAY_SIZE(cmd_reg_hw) / sizeof(cmd_reg_hw[0])) {
+		// Handle invalid command index
+		return;
+	}
+
 	mmc_drv_obj.cmd_info.hw =
 	    cmd_reg_hw[cmd & HAL_MEMCARD_COMMAND_INDEX_MASK];
 

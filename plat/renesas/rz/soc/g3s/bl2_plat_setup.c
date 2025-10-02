@@ -38,6 +38,11 @@ static uint32_t bl2_plat_get_boot_mode(void)
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+	if (bl_mem_params == NULL) {
+		ERROR("%s: no mem params for image %u\n",
+			  __func__, image_id);
+		return -1;
+	}
 
 	if (image_id == BL22_IMAGE_ID) {
 #if PLAT_M33_BOOT_SUPPORT
@@ -66,6 +71,12 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	}
 
 	bl_mem_params = get_bl_mem_params_node(image_id);
+
+	if (bl_mem_params == NULL) {
+		ERROR("%s: no mem params for image %u\n",
+			  __func__, image_id);
+		return -1;
+	}
 
 	switch (image_id) {
 	case BL31_IMAGE_ID:
