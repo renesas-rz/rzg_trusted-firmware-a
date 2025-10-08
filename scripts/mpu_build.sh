@@ -47,25 +47,33 @@ BL33			: $BL33"
 #######################################################################################################################
 g3l_build()
 {
-	U_BOOT_FILE=""
-	if [[ "$BOARD" = "smarc" ]] && [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
-		pwd
-		U_BOOT_FILE="../../u-boot/g3l-smarc-u-boot.bin"
-	elif [[ "$BOARD" = "smarc" ]]; then
-		U_BOOT_FILE="../u-boot/g3l-smarc-u-boot.bin"
-	elif [[ "$BOARD" = "dev_1" ]] && [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
-		U_BOOT_FILE="../../u-boot/g3l-dev-1-u-boot.bin"
-	elif [[ "$BOARD" = "dev_1" ]]; then
-		U_BOOT_FILE="../u-boot/g3l-dev-1-u-boot.bin"
+	BL33_FILE=""
+	if [[ "$PIPELINE_TYPE" = "release" || "$PIPELINE_TYPE" = "merge" ]]; then
+		BL33_PATH="../../"
 	else
-		echo "Invalid G3L board: Board doesn't exist"
+		BL33_PATH="../"
+	fi
+
+	if [[ "$BL33" = "U-Boot" ]]; then
+		if [[ "$BOARD" = "dev_1" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g3l-dev-1-u-boot.bin"
+		elif [[ "$BOARD" = "smarc" ]]; then
+			BL33_FILE="${BL33_PATH}u-boot/g3l-smarc-u-boot.bin"
+		else
+			echo "Invalid G3L board: Board doesn't exist"
+			exit 1
+		fi
+	elif [[ "$BL33" = "TFTF" ]]; then
+		BL33_FILE="${BL33_PATH}tftf/tftf_g3l.bin"
+	else
+		echo "Invalid BL33 Type. It should be either U-Boot or TFTF"
 		exit 1
 	fi
 
-	check_file_exists "$U_BOOT_FILE"
+	check_file_exists "$BL33_FILE"
 
 	make PLAT=$PLAT realclean BOARD=$BOARD
-	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$U_BOOT_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
+	run_command "make PLAT=$PLAT BOARD=$BOARD ""$CONFIGS"" BL33="$BL33_FILE" bl2 fip bptool pkg" "$ERROR_MSG"
 }
 
 ################################################## n2h_build ##########################################################
