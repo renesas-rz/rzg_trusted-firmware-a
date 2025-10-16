@@ -32,6 +32,11 @@ $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PLAT_DDR_ECC))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
 
+# This option gets enabled automatically if the TRUSTED_BOARD_BOOT
+# is set via root Makefile, but Renesas support Trusted-Boot without
+# Crypto module.
+override CRYPTO_SUPPORT		:= 0
+
 # Enable workarounds for selected Cortex-A55 erratas.
 ERRATA_A55_768277				:= 1
 ERRATA_A55_778703 				:= 1
