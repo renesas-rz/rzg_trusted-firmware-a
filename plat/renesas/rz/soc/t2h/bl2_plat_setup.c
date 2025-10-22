@@ -45,6 +45,11 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 
 	bl_mem_params = get_bl_mem_params_node(image_id);
 
+	if (bl_mem_params == NULL) {
+		/* Return a non 0 value as this will lead to error flagging when function is called. */
+		return 1;
+	}
+
 	switch (image_id) {
 	case BL32_IMAGE_ID:
 		memcpy(&params->bl32_ep_info, &bl_mem_params->ep_info,

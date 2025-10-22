@@ -9,6 +9,7 @@
 #include <otp.h>
 #include <otp_regs.h>
 #include <otp_drv.h>
+#include <stdint.h>
 
 /***********************************************************************************************************************
 * Function Name: otp_read_anti_rb_setting
@@ -84,8 +85,13 @@ uint32_t otp_read_decrypt_key(uint32_t key_id, uint32_t *key, uint32_t key_size)
 {
 	uint32_t result = 1;
 	bool ret_val = false;
+	uint32_t offset = 0;
 
-	uint32_t offset = OTP_SECURE_BOOT_COMMON_KEY1_ADDR + (key_size * key_id);
+	if ((OTP_SECURE_BOOT_COMMON_KEY1_ADDR + (key_size * key_id)) <= UINT32_MAX) {
+		offset = OTP_SECURE_BOOT_COMMON_KEY1_ADDR + (key_size * key_id);
+	} else {
+		offset = UINT32_MAX;
+	}
 
 	if (OTP_SECURE_BOOT_COMMON_KEY_SIZE != key_size) {
 		return 1;
