@@ -53,13 +53,17 @@ void ddr_setup(void)
 
 void ddr_retention_entry(void)
 {
+	/* 12.1 */
 	uint32_t dram_class = DDRTOP_mc_param_rd(DRAM_CLASS_ADDR, DRAM_CLASS_OFFSET, DRAM_CLASS_WIDTH);
 
-	DDRTOP_mc_param_poll(CONTROLLER_BUSY_ADDR, CONTROLLER_BUSY_OFFSET, CONTROLLER_BUSY_WIDTH, 0);
+	/* 12.2 - No more DDR access from here 	 */
 
+	/* 12.3 */
+	DDRTOP_mc_param_poll(CONTROLLER_BUSY_ADDR, CONTROLLER_BUSY_OFFSET, CONTROLLER_BUSY_WIDTH, 0);
+	/* 12.4 */
 	DDRTOP_mc_param_wr(LP_AUTO_ENTRY_EN_ADDR, LP_AUTO_ENTRY_EN_OFFSET, LP_AUTO_ENTRY_EN_WIDTH, 0);
 	DDRTOP_mc_param_wr(LPI_WAKEUP_EN_ADDR, LPI_WAKEUP_EN_OFFSET, LPI_WAKEUP_EN_WIDTH, 0);
-
+	/* 12.5 */
 	if (dram_class == 0b1011) {
 		DDRTOP_mc_param_wr(LP_CMD_ADDR, LP_CMD_OFFSET, LP_CMD_WIDTH, 0b1010001);
 		DDRTOP_mc_param_poll(LP_STATE_ADDR, LP_STATE_OFFSET, LP_STATE_WIDTH, 0b1001111);
@@ -67,23 +71,25 @@ void ddr_retention_entry(void)
 		DDRTOP_mc_param_wr(LP_CMD_ADDR, LP_CMD_OFFSET, LP_CMD_WIDTH, 0b1010001);
 		DDRTOP_mc_param_poll(LP_STATE_ADDR, LP_STATE_OFFSET, LP_STATE_WIDTH, 0b1001010);
 	}
-
-
+	/* 12.6 */
 	DDRTOP_mc_param_wr(DFIBUS_FREQ_F0_ADDR, DFIBUS_FREQ_F0_OFFSET, DFIBUS_FREQ_F0_WIDTH, 0x1F);
-
+	/* 12.7 */
 	DDRTOP_mc_param_wr(MCAR_CTRL, 16, 1, 1);
-
+	/* 12.8 */
 	dwc_ddrphy_apb_poll(0x0006E0FA, 0 << 0, 1 << 0);
-
+	/* 12.9 */
 	DDRTOP_mc_param_wr(MCAR_CTRL, 16, 1, 0);
-
+	/* 12.10 */
 	dwc_ddrphy_apb_poll(0x0006E0FA, 1 << 0, 1 << 0);
-
+	/* 12.11 */
 	mmio_write_32(CPG_RST_DDR, 0x01000000);
-
+	/* 12.12 */
 	wait_dficlk(18);
 
+/* TODO: Determine if this line is necessary. */
+#if 0
 	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000311);
+#endif
 
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	mmio_write_32(VBATT_BKPSR, 0x00000080);
@@ -93,6 +99,9 @@ void ddr_retention_entry(void)
 void ddr_retention_exit(void)
 {
 	INFO("DDR: Retention Exit (Rev. %s)\n", ddr_version_str);
+
+/* TODO check if these lines are necessary */
+#if 0
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
 	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000311);
 	mmio_write_32(VBATT_BKPSR, 0x00000000);
@@ -102,14 +111,25 @@ void ddr_retention_exit(void)
 
 	wait_dficlk(18);
 	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000200);
+#endif
 
+	/* 13.1 Power up performed by PMIC */
+
+	/* 13.2 - 13.8 */
 	cpg_active_ddr1();
+	/* 13.9 - 13.10 */
 	setup_mc();
+	/* 13.11 - 13.15 */
 	cpg_active_ddr2();
+	/* 13.15 */
 	phyinit_c();
+	/* 13.16 */
 	restore_retcsr();
+	/* 13.17 */
 	phyinit_i();
+	/* 13.18 */
 	phyinit_j();
+	/* 13.19 */
 	update_mc();
 }
 

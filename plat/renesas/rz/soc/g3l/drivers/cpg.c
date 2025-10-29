@@ -583,6 +583,8 @@ void cpg_active_ddr1(void)
 	mmio_write_32(CPG_OTHERFUNC2_REG, 0x00010000);
 
 	/* 3 */
+	/* PLL functions performed in cpg_pll_setup*/
+	/* CLKSELSTATUS and DSEL functions performed in cpg_div_sel_dynamic_setup*/
 	mmio_write_32(CPG_CLKON_DDR, 0x003F003F);
 	while ((mmio_read_32(CPG_CLKMON_DDR) & 0x0000003F) != 0x0000003F)
 		;
@@ -603,13 +605,13 @@ void cpg_active_ddr1(void)
 
 void cpg_active_ddr2(void)
 {
-	/* 12 */
+	/* 13.11 */
 	mmio_write_32(CPG_RST_DDR, 0x00800080);
-	/* 13 */
+	/* 13.12 */
 	wait_pclk(2);
-	/* 14 */
+	/* 13.13 */
 	mmio_write_32(CPG_RST_DDR, 0x00020002);
-	/* 15 */
+	/* 13.14 */
 	wait_pclk(5);
 }
 

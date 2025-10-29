@@ -165,7 +165,7 @@ void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 	}
 }
 
-static void soft_delay(uint64_t usec)
+static void __attribute__((optimize("O0"))) soft_delay(uint64_t usec)
 {
 	const uint32_t cpuclk_freq = 1200000000;
 
@@ -176,7 +176,7 @@ static void soft_delay(uint64_t usec)
 	volatile uint64_t timeout = num_of_nop_needed * usec;
 
 	while (timeout--) {
-		__asm__ ("nop");
+		__asm__ volatile("nop");
 		dsb();
 	}
 }

@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <lib/utils_def.h>
 
-const char ddr_version_str[] = "02.04";
+const char ddr_version_str[] = "02.05";
 
 const uint32_t param_setup_mc[][2] = {
 	{0x0000, 0x00000b00},
