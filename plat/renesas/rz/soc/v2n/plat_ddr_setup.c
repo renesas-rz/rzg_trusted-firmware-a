@@ -99,7 +99,7 @@ exit:
 
 void plat_ddr_setup(void)
 {
-	if (!sys_is_resume_reboot()) {
+	if (!sys_is_resume()) {
 		ddr_setup();
 
 		if (save_ddr_config(V2N_DDR_CONFIG_ID, &ddr_config_info) != 0) {
@@ -107,13 +107,13 @@ void plat_ddr_setup(void)
 			panic();
 		}
 	} else {
+		INFO("Restoring DDR retention info.\n");
 		if (load_auth_image(V2N_DDR_CONFIG_ID, &ddr_config_info) != 0) {
 			ERROR("Failed to load DDR retention info.\n");
 			panic();
 		}
 
-		ddr_retention_exit(0);
-		ddr_retention_exit(1);
+		ddr_retention_exit();
 	}
 }
 #else

@@ -9,7 +9,6 @@
 #include <arch_helpers.h>
 #include <common/debug.h>
 #include <lib/mmio.h>
-#include <drivers/delay_timer.h>
 
 #include "ddr_regs.h"
 #include "ddr_private.h"
@@ -17,6 +16,33 @@
 
 static void decode_streaming_message(void);
 
+static void __attribute__((optimize("O0"))) soft_delay(uint64_t usec)
+{
+	/* RZ/V2N: CPU Clock = 1.7G Hz*/
+	const uint32_t cpuclk_freq = 1700000000;
+	const uint32_t nop_clk_cycles = 4;
+	const uint32_t num_of_nop_needed = cpuclk_freq / (nop_clk_cycles * 1000000);
+	volatile uint64_t timeout = num_of_nop_needed * usec;
+
+	while (timeout--) {
+		__asm__ volatile("nop");
+	}
+	dsb();
+}
+
+void wait_dficlk(uint32_t cycles)
+{
+	const uint32_t dficlk_freq = 400000000; /* dfiCLK = 400MHz */
+
+	soft_delay((((uint64_t)cycles * 1000000) / dficlk_freq) + 1);
+}
+
+void wait_pclk(uint32_t cycles)
+{
+	const uint32_t pclk_freq = 100000000; /* PCLK = 100MHz */
+
+	soft_delay((((uint64_t)cycles * 1000000) / pclk_freq) + 1);
+}
 
 void ddrtop_mc_apb_rmw(uint32_t addr, uint32_t data, uint32_t mask)
 {
@@ -36,7 +62,7 @@ void ddrtop_mc_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 	tmp_data &= mask;
 
 	while (tmp_data != data) {
-		udelay(1);
+		wait_pclk(10);
 		tmp_data = ddrtop_mc_apb_rd(addr);
 		tmp_data &= mask;
 	}

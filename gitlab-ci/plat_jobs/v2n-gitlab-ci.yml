@@ -39,54 +39,6 @@ rzv2n-prep-for-release-build-job:
   extends:
     - .prep_for_release_build_job_template
 
-############################################### V2N dev_1 MPU build jobs ##############################################
-rzv2n-release-dev-1:
-  variables:
-    PLAT: "v2n"
-    BOARD: "dev_1"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzv2n-release-dev-1-stack-protector-0:
-  variables:
-    PLAT: "v2n"
-    BOARD: "dev_1"
-    BUILD_TYPE: "release"
-    CONFIGS: "ENABLE_STACK_PROTECTOR=0"
-    ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
-  extends:
-    - .linux_mpu_build_failure_job_template
-
-rzv2n-release-dev-1-tftf:
-  variables:
-    PLAT: "v2n"
-    BOARD: "dev_1"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-    BL33: "TFTF"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzv2n-debug-log0-dev-1:
-  variables:
-    PLAT: "v2n"
-    BOARD: "dev_1"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=0"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzv2n-debug-log50-dev-1:
-  variables:
-    PLAT: "v2n"
-    BOARD: "dev_1"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
-  extends:
-    - .linux_mpu_build_success_job_template
-
 ############################################ V2N evk_1 MPU build jobs #################################################
 rzv2n-release-evk-1:
   variables:

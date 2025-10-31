@@ -6,19 +6,12 @@
 
 
 #include <lib/mmio.h>
+#include <stdbool.h>
+#include <common/debug.h>
+#include <cpg.h>
 #include <sys.h>
 #include <sys_regs.h>
-#include <common/debug.h>
-#include <pwrc_board.h>
-
-bool sys_is_resume_reboot(void)
-{
-#if PLAT_SYSTEM_SUSPEND
-	return pwrc_board_is_resume();
-#else
-	return false;
-#endif
-}
+#include <platform_def.h>
 
 boot_mode_t sys_get_boot_mode(void)
 {
@@ -49,3 +42,22 @@ boot_mode_t sys_get_boot_mode(void)
 
 	return boot_mode;
 }
+
+#if PLAT_M33_BOOT_SUPPORT
+void sys_m33_core_boot_op(void)
+{
+	mmio_write_32(SYS_MCPU_CFG2, BL22_S_VECTOR);
+	mmio_write_32(SYS_MCPU_CFG3, BL22_NS_VECTOR);
+	cpg_cm33_setup();
+}
+#endif /* PLAT_M33_BOOT_SUPPORT */
+
+bool sys_is_resume(void)
+{
+#if PLAT_SYSTEM_SUSPEND
+	return mmio_read_8(RESUME_MAILBOX_BASE) != 0;
+#else
+	return false;
+#endif /* PLAT_SYSTEM_SUSPEND */
+}
+

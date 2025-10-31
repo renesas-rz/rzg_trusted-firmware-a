@@ -18,22 +18,22 @@
 #include <cpg.h>
 #include <syc.h>
 #include <scifa.h>
+#include <rz_private.h>
 #include <ddr.h>
 #include <sys_regs.h>
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
-#include <rz_private.h>
 #include <cpg_regs.h>
 #include <pfc_regs.h>
 #include <sys.h>
 #include <pwrc.h>
+#include <plat_tbbr_img_def.h>
 
-extern void bl2_enter_bl31(const struct entry_point_info *bl_ep_info);
 static console_t rzv2n_bl2_console;
 
 static uint32_t bl2_plat_get_boot_mode(void)
 {
-	if (sys_is_resume_reboot())
+	if (sys_is_resume())
 		return RZ_WARM_BOOT;
 
 	return RZ_COLD_BOOT;
@@ -41,20 +41,25 @@ static uint32_t bl2_plat_get_boot_mode(void)
 
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
-	if (image_id == BL31_IMAGE_ID) {
-		bl2_to_bl31_params_mem_t *params = (bl2_to_bl31_params_mem_t *)PARAMS_BASE;
-
-		params->boot_kind = bl2_plat_get_boot_mode();
-
-		/* If a warm start is in progress then skip rest of initialisation and jump directly to BL31 */
-		if (params->boot_kind == RZ_WARM_BOOT) {
-			bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
-
-			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
-			flush_dcache_range((uintptr_t)PARAMS_BASE, sizeof(bl2_to_bl31_params_mem_t));
-			bl2_enter_bl31(&bl_mem_params->ep_info);
-		}
+	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+	if (bl_mem_params == NULL) {
+		ERROR("%s: no mem params for image %u\n",
+			  __func__, image_id);
+		return -1;
 	}
+
+	if (image_id == BL22_IMAGE_ID) {
+#if PLAT_M33_BOOT_SUPPORT
+		if (cpg_is_m33_core_booted())
+			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+#endif
+	} else {
+		if (bl2_plat_get_boot_mode() == RZ_WARM_BOOT)
+			bl_mem_params->image_info.h.attr |= IMAGE_ATTRIB_SKIP_LOADING;
+	}
+
+	/* Clean next_params_info in BL image node */
+	bl_mem_params->params_node_mem.next_params_info = NULL;
 
 	return 0;
 }
@@ -70,11 +75,15 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	}
 
 	bl_mem_params = get_bl_mem_params_node(image_id);
+	if (bl_mem_params == NULL) {
+		ERROR("%s: no mem params for image %u\n",
+			  __func__, image_id);
+		return -1;
+	}
 
 	switch (image_id) {
 	case BL31_IMAGE_ID:
-		/* This function is only entered for BL31 image if it is the cold boot */
-		params->boot_kind = RZ_COLD_BOOT;
+		params->boot_kind = bl2_plat_get_boot_mode();
 		break;
 	case BL32_IMAGE_ID:
 		memcpy(&params->bl32_ep_info, &bl_mem_params->ep_info,
@@ -95,8 +104,6 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 								u_register_t arg3, u_register_t arg4)
 {
-	int ret;
-
 	/* early setup Clock and Reset */
 	cpg_early_setup();
 
@@ -106,17 +113,17 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	/* initialize Timer */
 	generic_delay_timer_init();
 
-	/* setup PFC */
+	/* GPIO setup */
 	pfc_setup();
 
 	/* setup Clock and Reset */
 	cpg_setup();
 
 	/* initialize console driver */
-	ret = console_rz_register(
+	int ret = console_rz_register(
 							RZV2N_SCIF_BASE,
 							RZV2N_UART_INCK_HZ,
-							RZV2N_UART_BARDRATE,
+							RZV2N_UART_BAUDRATE,
 							&rzv2n_bl2_console);
 	if (!ret)
 		panic();
@@ -130,14 +137,16 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 void bl2_el3_plat_arch_setup(void)
 {
 	const mmap_region_t bl2_regions[] = {
+#if PLAT_M33_BOOT_SUPPORT
+		MAP_REGION_FLAT(BL22_BASE, BL22_LIMIT - BL22_BASE,
+				MT_CODE | MT_RW | MT_SECURE),
+#endif
 		MAP_REGION_FLAT(BL2_BASE, BL2_END - BL2_BASE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(BL_CODE_BASE, BL_CODE_END - BL_CODE_BASE,
 				MT_CODE | MT_SECURE),
 		MAP_REGION_FLAT(RZV2N_BOOTINFO_BASE, RZV2N_BOOTINFO_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
-		MAP_REGION_FLAT(PARAMS_BASE, PARAMS_SIZE,
-				MT_MEMORY | MT_RW | MT_SECURE),
 #if SEPARATE_CODE_AND_RODATA
 		MAP_REGION_FLAT(BL_RO_DATA_BASE, BL_RO_DATA_END - BL_RO_DATA_BASE,
 				MT_RO_DATA | MT_SECURE),
@@ -152,6 +161,8 @@ void bl2_el3_plat_arch_setup(void)
 		MAP_REGION_FLAT(RZV2N_BOOT_RAM_BASE, RZV2N_BOOT_RAM_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 #endif
+		MAP_REGION_FLAT(RZV2N_SRAM_BASE, RZV2N_SRAM_TOTAL_SIZE,
+				MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(RZV2N_DEVICE_BASE, RZV2N_DEVICE_SIZE,
 				MT_DEVICE | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(RZV2N_XSPI_MEMORY_MAP_BASE, RZV2N_XSPI_SIZE,
@@ -172,10 +183,27 @@ void bl2_platform_setup(void)
 
 	rz_io_setup();
 
-	/* initialize DDR */
-	plat_ddr_setup();
-
 	NOTICE("BL2: SYS_LSI_MODE: 0X%x\n", mmio_read_32(SYS_LSI_MODE));
 	NOTICE("BL2: SYS_LSI_DEVID: 0X%x\n", mmio_read_32(SYS_LSI_DEVID));
 	NOTICE("BL2: SYS_LSI_PRR: 0X%x\n", mmio_read_32(SYS_LSI_PRR));
+
+	/* initialize DDR */
+	plat_ddr_setup();
 }
+
+
+void bl2_el3_plat_prepare_exit(void)
+{
+#if PLAT_M33_BOOT_SUPPORT
+	if (!cpg_is_m33_core_booted()) {
+		INFO("Booting Cortex-M33\n");
+		bl_mem_params_node_t *bl22_mem_params = get_bl_mem_params_node(BL22_IMAGE_ID);
+
+		if (bl22_mem_params != NULL) {
+			sys_m33_core_boot_op();
+		}
+	}
+#endif /* PLAT_M33_BOOT_SUPPORT */
+	console_flush();
+}
+

@@ -195,6 +195,11 @@
 #define	CPG_RSV5					(CPG_BASE + 0xE10)	/* Booking register 5 */
 #define	CPG_RSV6					(CPG_BASE + 0xE14)	/* Booking register 6 */
 
+#define CM33_CLKON_MASK		0x00000004
+#define CM33_RST_MASK		0x00000038
+#define CM33_CLKMON_MASK	0x00040000
+#define CM33_RSTMON_MASK	0x000E0000
+
 #define CPG_LP_CTL1_STBY					(0x00000001UL)
 #define CPG_LP_CTL1_STBY_MSK				(0x00000001UL)
 #define CPG_LP_CTL1_CA55SLEEP_REQ			(0x00000100UL)

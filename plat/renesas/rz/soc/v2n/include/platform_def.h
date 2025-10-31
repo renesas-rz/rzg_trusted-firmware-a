@@ -42,30 +42,47 @@
 #define MAX_IO_HANDLES			U(2)
 #define MAX_IO_BLOCK_DEVICES	U(1)
 
-/*******************************************************************************
- * BL2 specific defines.
- ******************************************************************************/
-#define BL2_BASE				UL(0x08103000)
-#define BL2_LIMIT				UL(0x08163000)
+#define RESUME_MAILBOX_BASE			UL(0x080FFFFF)
+
+#define RZV2N_BOOTINFO_BASE			UL(0x08100000) /*RZV2N_SRAM2_BASE - Boot Info base address for BL2 */
+#define RZV2N_BOOTINFO_SIZE			UL(0x1000)
+
+#define BL2_BASE					UL(0x08103000)
+#define BL2_LIMIT					UL(0x08163000)
+
+#define PARAMS_BASE					BL2_LIMIT /* Base address where parameters to BL31 are stored */
+#define PARAMS_SIZE					UL(0x1000)
+
+#define BL31_SRAM_BASE				UL(0x08170000)
+#define BL31_SRAM_LIMIT				UL(0x0817F000)
+
 
 /*******************************************************************************
  * BL31 specific defines.
  ******************************************************************************/
-#define BL31_BASE				UL(0x44000000)
-#define BL31_LIMIT				UL(0x44040000)
+#define BL31_BASE					UL(0x44000000)
+#define BL31_LIMIT					UL(0x44040000)
 
-#define PLAT_TRUSTED_MAILBOX_BASE		BL31_LIMIT
-
-#define BL31_SRAM_BASE			UL(0x08078000)
-#define BL31_SRAM_LIMIT			UL(0x0807F000)
+#define PLAT_TRUSTED_MAILBOX_BASE	BL31_LIMIT
 
 /*******************************************************************************
  * BL32 specific defines.
  ******************************************************************************/
 #ifndef SPD_none
-#define BL32_BASE				UL(0x44100000)
-#define BL32_LIMIT				(BL32_BASE + 0x100000)
+#define BL32_BASE					UL(0x44100000)
+#define BL32_LIMIT					(BL32_BASE + 0x100000)
 #endif
+
+
+/*******************************************************************************
+ * BL22 (Cortex-M33)
+ ******************************************************************************/
+#if PLAT_M33_BOOT_SUPPORT
+#define BL22_BASE                   U(0x08000000)
+#define BL22_LIMIT                  U(BL22_BASE + 0x00060000)
+#define BL22_S_VECTOR				U(0x08003000)
+#define BL22_NS_VECTOR				U(0x18003000)
+#endif /* PLAT_M33_BOOT_SUPPORT */
 
 /*******************************************************************************
  * BL33
@@ -91,7 +108,7 @@
  * Declarations and constants to access the mailboxes safely. Each mailbox is
  * aligned on the biggest cache line size in the platform. This is known only
  * to the platform as it might have a combination of integrated and external
- * caches. Such alignment ensures that two maiboxes do not sit on the same cache
+ * caches. Such alignment ensures that two mailboxes do not sit on the same cache
  * line at any cache level. They could belong to different cpus/clusters &
  * get written while being protected by different locks causing corruption of
  * a valid mailbox address.

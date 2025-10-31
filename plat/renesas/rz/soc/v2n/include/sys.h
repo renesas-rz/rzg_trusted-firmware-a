@@ -20,6 +20,7 @@ typedef enum {
 } boot_mode_t;
 
 boot_mode_t sys_get_boot_mode(void);
-bool sys_is_resume_reboot(void);
+bool sys_is_resume(void);
+void sys_m33_core_boot_op(void);
 
 #endif /* __SYS_H__ */

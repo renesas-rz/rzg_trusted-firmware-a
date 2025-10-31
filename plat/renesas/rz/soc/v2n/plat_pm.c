@@ -12,7 +12,7 @@
 #include <lib/bakery_lock.h>
 #include <plat/common/platform.h>
 #include <cpg.h>
-#include "wdt.h"
+#include <wdt.h>
 
 #include <cpg_regs.h>
 #include <sys_regs.h>
@@ -22,6 +22,7 @@
 
 #include <pwrc.h>
 #include <ddr.h>
+
 
 #define LO_REG							(0U)
 #define HI_REG							(1U)
@@ -150,6 +151,8 @@ static void rzv2n_pwr_domain_off(const psci_power_state_t *state)
 	rzv2n_pwr_cpuoff(mpidr);
 }
 
+#if PLAT_SYSTEM_SUSPEND
+
 static void rzv2n_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
 	unsigned long mpidr = read_mpidr_el1();
@@ -157,8 +160,11 @@ static void rzv2n_pwr_domain_suspend(const psci_power_state_t *target_state)
 	if (CORE_PWR_STATE(target_state) != PLAT_MAX_OFF_STATE)
 		return;
 
+	mmio_write_8(RESUME_MAILBOX_BASE, 1);
+	flush_dcache_range((uintptr_t)RESUME_MAILBOX_BASE, (size_t)1);
 	rz_program_trusted_mailbox(mpidr, gp_warm_ep);
 
+	pwrc_setup();
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
 	plat_gic_save();
@@ -176,18 +182,15 @@ static void rzv2n_pwr_domain_suspend_finish(const psci_power_state_t *target_sta
 
 static void __dead2 rzv2n_pwr_domain_pwr_down_wfi(const psci_power_state_t *target_state)
 {
-#if PLAT_SYSTEM_SUSPEND
 	if (SYSTEM_PWR_STATE(target_state) == PLAT_MAX_OFF_STATE) {
 		pwrc_suspend_to_ram();
 	}
-#endif /* PLAT_SYSTEM_SUSPEND */
 
 	wfi();
 	ERROR("RZ/V2N Power Down: operation not handled.\n");
 	panic();
 }
 
-#if PLAT_SYSTEM_SUSPEND
 static void rzv2n_get_sys_suspend_power_state(psci_power_state_t *req_state)
 {
 	int i;
@@ -236,17 +239,22 @@ static void __dead2 rzv2n_system_reset(void)
 
 
 const plat_psci_ops_t rzv2n_plat_psci_ops = {
+	/******PSCI_CPU_ON_AARCH64*****/
 	.pwr_domain_on						= rzv2n_pwr_domain_on,
 	.pwr_domain_on_finish				= rzv2n_pwr_domain_on_finish,
+	/*********PSCI_CPU_OFF*********/
 	.pwr_domain_off						= rzv2n_pwr_domain_off,
+	/********PSCI_SYSTEM_OFF*******/
+	.system_off							= rzv2n_system_off,
+	/*******PSCI_SYSTEM_RESET******/
+	.system_reset						= rzv2n_system_reset,
+	/**PSCI_SYSTEM_SUSPEND_AARCH64*/
+#if PLAT_SYSTEM_SUSPEND
 	.pwr_domain_suspend					= rzv2n_pwr_domain_suspend,
 	.pwr_domain_suspend_finish			= rzv2n_pwr_domain_suspend_finish,
 	.pwr_domain_pwr_down_wfi			= rzv2n_pwr_domain_pwr_down_wfi,
-#if PLAT_SYSTEM_SUSPEND
 	.get_sys_suspend_power_state		= rzv2n_get_sys_suspend_power_state,
 #endif /* PLAT_SYSTEM_SUSPEND */
-	.system_off							= rzv2n_system_off,
-	.system_reset						= rzv2n_system_reset,
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint,

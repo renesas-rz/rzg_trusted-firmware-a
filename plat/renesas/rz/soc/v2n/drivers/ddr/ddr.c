@@ -13,7 +13,6 @@
 #include "ddr_private.h"
 #include <ddr.h>
 
-
 #define MCAR_CTL				0x800
 
 
@@ -303,35 +302,6 @@ static void prog_all0(void)
 }
 #endif
 
-static void soft_delay(uint64_t usec)
-{
-	/* RZ/V2N: CPU Clock = 1.7G Hz*/
-	const uint32_t cpuclk_freq = 1700000000;
-	const uint32_t nop_clk_cycles = 4;
-	const uint32_t num_of_nop_needed = cpuclk_freq / (nop_clk_cycles * 1000000);
-
-	volatile uint64_t timeout = num_of_nop_needed * usec;
-
-	while (timeout--) {
-		__asm__ ("nop");
-		dsb();
-	}
-}
-
-void wait_dficlk(uint32_t cycles)
-{
-	const uint32_t dficlk_freq = 400000000; /* dfiCLK = 400MHz */
-
-	soft_delay((((uint64_t)cycles * 1000000) / dficlk_freq) + 1);
-}
-
-void wait_pclk(uint32_t cycles)
-{
-	const uint32_t pclk_freq = 100000000; /* PCLK = 100MHz */
-
-	soft_delay((((uint64_t)cycles * 1000000) / pclk_freq) + 1);
-}
-
 static void dwc_ddrphy_apb_poll(uint32_t addr, uint32_t data, uint32_t mask)
 {
 	uint32_t tmp_data;
@@ -369,7 +339,7 @@ void ddr_retention_entry(void)
 	dwc_ddrphy_apb_poll(0x0D00FA, 0, 1);
 	ddrtop_mc_param_wr(MCAR_CTL, 16, 1, 0);
 	dwc_ddrphy_apb_poll(0x0D00FA, 1, 1);
-	cpg_ddr_pwrokin_off();
+	cpg_ddr_set_pwrokin_off();
 	wait_dficlk(18);
 }
 

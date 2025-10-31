@@ -22,11 +22,7 @@
 
 #include <rz_soc_def.h>
 #include <sys.h>
-#if PLAT_SOC_RZG2L
-#include <spi_multi.h>
-#else
 #include <xspi.h>
-#endif
 #include <emmc_def.h>
 
 #include <sys_regs.h>
@@ -43,18 +39,18 @@ static uintptr_t xspidrv_dev_handle;
 static uintptr_t boot_io_drv_id;
 
 static const io_block_spec_t spirom_block_spec = {
-	.offset = RZ_SOC_SPIROM_FIP_BASE,
-	.length = RZ_SOC_SPIROM_FIP_SIZE,
+	.offset = RZV2N_SPIROM_FIP_BASE,
+	.length = RZV2N_FIP_SIZE_MAX,
 };
 
 static const io_drv_spec_t emmc_block_spec = {
-	.offset = RZ_SOC_EMMC_FIP_BASE,
-	.length = RZ_SOC_EMMC_FIP_SIZE,
+	.offset = RZV2N_EMMC_FIP_BASE,
+	.length = RZV2N_FIP_SIZE_MAX,
 };
 
 static const io_drv_spec_t sd_block_spec = {
-	.offset = RZ_SOC_SD_FIP_BASE,
-	.length = RZ_SOC_SD_FIP_SIZE,
+	.offset = RZV2N_SD_FIP_BASE,
+	.length = RZV2N_FIP_SIZE_MAX,
 };
 
 static const io_uuid_spec_t bl31_file_spec = {
@@ -97,8 +93,18 @@ static const io_uuid_spec_t nt_fw_content_cert_file_spec = {
 
 #if PLAT_SYSTEM_SUSPEND
 static const io_block_spec_t spirom_ddr_cfg_spec = {
-	.offset = RZ_SOC_SPIROM_DDR_CFG_BASE,
-	.length = RZ_SOC_SPIROM_DDR_CFG_SIZE,
+	.offset = RZV2N_SPIROM_DDR_CFG_BASE,
+	.length = RZV2N_DDR_CFG_SIZE_MAX,
+};
+
+static const io_drv_spec_t emmc_ddr_cfg_spec = {
+	.offset = RZV2N_EMMC_DDR_CFG_BASE,
+	.length = RZV2N_DDR_CFG_SIZE_MAX,
+};
+
+static const io_drv_spec_t sd_ddr_cfg_spec = {
+	.offset = RZV2N_SD_DDR_CFG_BASE,
+	.length = RZV2N_DDR_CFG_SIZE_MAX,
 };
 #endif /* PLAT_SYSTEM_SUSPEND */
 
@@ -135,12 +141,55 @@ static const struct plat_io_policy spirom_fip_policy = {
 };
 
 #if PLAT_SYSTEM_SUSPEND
+static const struct plat_io_policy emmc_ddr_config_policy = {
+	&emmcdrv_dev_handle,
+	(uintptr_t) &emmc_ddr_cfg_spec,
+	&open_emmcdrv
+};
 static const struct plat_io_policy spirom_ddr_config_policy = {
 	&xspidrv_dev_handle,
 	(uintptr_t) &spirom_ddr_cfg_spec,
 	&open_xspidrv
 };
+static const struct plat_io_policy sd_ddr_config_policy = {
+	&sddrv_dev_handle,
+	(uintptr_t) &sd_ddr_cfg_spec,
+	&open_sddrv
+};
 #endif /* PLAT_SYSTEM_SUSPEND */
+
+#if PLAT_M33_BOOT_SUPPORT
+static const io_block_spec_t spirom_bl22_image_spec = {
+	.offset = RZV2N_SPIROM_M33_FW_BASE,
+	.length = RZV2N_M33_FW_SIZE,
+};
+
+static const io_block_spec_t emmc_bl22_image_spec = {
+	.offset = RZV2N_EMMC_M33_FW_BASE,
+	.length = RZV2N_M33_FW_SIZE,
+};
+
+static const io_block_spec_t sd_bl22_image_spec = {
+	.offset = RZV2N_SD_M33_FW_BASE,
+	.length = RZV2N_M33_FW_SIZE,
+};
+
+static const struct plat_io_policy emmc_bl22_image_policy = {
+	&emmcdrv_dev_handle,
+	(uintptr_t) &emmc_bl22_image_spec,
+	&open_emmcdrv
+};
+static const struct plat_io_policy spirom_bl22_image_policy = {
+	&xspidrv_dev_handle,
+	(uintptr_t) &spirom_bl22_image_spec,
+	&open_xspidrv
+};
+static const struct plat_io_policy sd_bl22_image_policy = {
+	&sddrv_dev_handle,
+	(uintptr_t) &sd_bl22_image_spec,
+	&open_sddrv
+};
+#endif /* PLAT_M33_BOOT_SUPPORT */
 
 static struct plat_io_policy policies[MAX_NUMBER_IDS] = {
 	/* FIP_IMAGE_ID structure is added to this array on a bootmode basis */
@@ -250,13 +299,28 @@ static void update_dev_policies(uint16_t boot_mode)
 #if PLAT_SYSTEM_SUSPEND
 		policies[V2N_DDR_CONFIG_ID] = spirom_ddr_config_policy;
 #endif /* PLAT_SYSTEM_SUSPEND */
+#if PLAT_M33_BOOT_SUPPORT
+		policies[BL22_IMAGE_ID]		= spirom_bl22_image_policy;
+#endif
 		break;
 	case SYS_BOOT_MODE_EMMC_1_8:
 	case SYS_BOOT_MODE_EMMC_3_3:
 		policies[FIP_IMAGE_ID] = emmc_fip_policy;
+#if PLAT_SYSTEM_SUSPEND
+		policies[V2N_DDR_CONFIG_ID]	= emmc_ddr_config_policy;
+#endif
+#if PLAT_M33_BOOT_SUPPORT
+		policies[BL22_IMAGE_ID]		= emmc_bl22_image_policy;
+#endif
 		break;
 	case SYS_BOOT_MODE_ESD:
 		policies[FIP_IMAGE_ID] = sd_fip_policy;
+#if PLAT_SYSTEM_SUSPEND
+		policies[V2N_DDR_CONFIG_ID]	= sd_ddr_config_policy;
+#endif
+#if PLAT_M33_BOOT_SUPPORT
+		policies[BL22_IMAGE_ID]		= sd_bl22_image_policy;
+#endif
 		break;
 	default:
 		panic();
@@ -326,6 +390,11 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 {
 	const struct plat_io_policy *policy;
 	int result;
+
+	if (MAX_NUMBER_IDS < image_id) {
+		ERROR("image_id: %u exceeds MAX_NUMBER_IDS: %u.\n", image_id, MAX_NUMBER_IDS);
+		return -1;
+	}
 
 	policy = &policies[image_id];
 

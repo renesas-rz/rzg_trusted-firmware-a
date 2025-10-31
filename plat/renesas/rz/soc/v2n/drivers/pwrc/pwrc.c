@@ -7,40 +7,25 @@
 #include <common/debug.h>
 #include <lib/mmio.h>
 #include <lib/xlat_tables/xlat_tables_v2.h>
+#include <cdefs.h>
+
 #include <plat/common/platform.h>
 #include <cpg.h>
 #include <ddr.h>
 #include <pwrc.h>
-#include <pwrc_board.h>
 #include <sys_regs.h>
+#include <cpg_regs.h>
+#include <rz_private.h>
 
-extern void pwrc_func_call_with_pmustack(uintptr_t jump, void *arg);
+#define V2N_ICU_SWINT		UL(RZV2N_ICU + 0x0130)
+#define INT_NUM_TO_USE		0
+#define SHIFT_FOR_IM33		16
 
-void __attribute__ ((section(".sram")))
-pwrc_go_suspend_to_ram(void)
-{
-	cpg_prepare_suspend();
-	ddr_retention_entry();
-	pwrc_board_suspend_on();
-
-	while (1)
-		wfi();
-}
-
-void __dead2 pwrc_suspend_to_ram(void)
-{
-	/* flash all caches */
-	dcsw_op_all(DCCISW);
-
-	/* disable MMU */
-	disable_mmu_el3();
-
-	/* switch to stack */
-	pwrc_func_call_with_pmustack((uintptr_t)pwrc_go_suspend_to_ram, NULL);
-
-	panic();
-}
-
+/*
+ * Power Controller Setup
+ *  - Set the reset vector of secondary cores
+ *  - Setup I2C for PMIC access
+ */
 void pwrc_setup(void)
 {
 	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
@@ -59,3 +44,46 @@ void pwrc_setup(void)
 		mmio_write_32(rval[i][0], rval0);
 	}
 }
+#if PLAT_SYSTEM_SUSPEND
+extern void pwrc_func_call_with_pmustack(uintptr_t jump, void *arg);
+
+void __section(".sram")
+pwrc_go_suspend_to_ram(void)
+{
+	ddr_retention_entry();
+
+	cpg_suspend_setup();
+
+	/* Notify CM33 */
+	mmio_write_32(V2N_ICU_SWINT, 1 << (INT_NUM_TO_USE + SHIFT_FOR_IM33));
+
+	mmio_write_32(CPG_LP_CTL1, CPG_LP_CTL1_CA55SLEEP_REQ_MSK);
+
+	while (1)
+		wfi();
+
+	/*
+	 * This function never returns from here.
+	 * The core is powered off and re-enters through another point in the code (BL2).
+	 */
+}
+
+void __dead2 pwrc_suspend_to_ram(void)
+{
+	console_flush();
+
+	/* flush all caches */
+	dcsw_op_all(DCCISW);
+
+	/* disable MMU */
+	disable_mmu_el3();
+
+	dsb();
+	isb();
+
+	/* switch to stack */
+	pwrc_func_call_with_pmustack((uintptr_t)pwrc_go_suspend_to_ram, NULL);
+
+	panic();
+}
+#endif /* PLAT_SYSTEM_SUSPEND */

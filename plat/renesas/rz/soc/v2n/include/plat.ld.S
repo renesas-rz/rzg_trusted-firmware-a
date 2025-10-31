@@ -29,7 +29,7 @@ SECTIONS
 		__BL31_PMUSRAM_START__ = .;
 		*/ddr*.o (.text* .rodata* .data* .bss*)
 		*/cpg*.o (.text* .rodata* .data* .bss*)
-		*/riic*.o (.text* .rodata* .data* .bss*)
+		*/led_control*.o (.text* .rodata* .data* .bss*)
 		*(.sram*)
 		. = ALIGN(PAGE_SIZE);
 		__BL31_PMUSRAM_END__ = .;

@@ -66,7 +66,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 	ret = console_rz_register(
 							RZV2N_SCIF_BASE,
 							RZV2N_UART_INCK_HZ,
-							RZV2N_UART_BARDRATE,
+							RZV2N_UART_BAUDRATE,
 							&rzv2n_bl31_console);
 	if (!ret)
 		panic();
@@ -97,7 +97,7 @@ void bl31_plat_arch_setup(void)
 	};
 
 	const mmap_region_t rzv2n_mmap[] = {
-		MAP_REGION_FLAT(RZV2N_SRAM_BASE, RZV2N_SRAM_SIZE,
+		MAP_REGION_FLAT(RZV2N_SRAM_BASE, RZV2N_SRAM_TOTAL_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(RZV2N_DEVICE_BASE, RZV2N_DEVICE_SIZE,
 				MT_DEVICE | MT_RW | MT_SECURE),
@@ -113,6 +113,8 @@ void bl31_plat_arch_setup(void)
 
 void bl31_platform_setup(void)
 {
+	plat_security_setup();
+
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();

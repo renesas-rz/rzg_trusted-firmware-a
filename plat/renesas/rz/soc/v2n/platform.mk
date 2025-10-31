@@ -5,7 +5,9 @@
 #
 
 #Set the platform and SOC specific header files 1st
-PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/v2n/include
+PLAT_INCLUDES	:=	-Iplat/renesas/rz/soc/v2n/include			\
+					-Iplat/renesas/rz/soc/v2n/include/cpg
+
 FIP_ALIGN		:=	16
 
 include plat/renesas/rz/common/v2n_common.mk
@@ -15,17 +17,22 @@ DDR_SOURCES	+=				plat/renesas/rz/soc/v2n/drivers/ddr/ddr.c	\
 							plat/renesas/rz/soc/v2n/drivers/ddr/ddr_misc.c	\
 							plat/renesas/rz/soc/v2n/plat_ddr_setup.c
 
-PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/v2n/plat_security.c		\
-							plat/renesas/rz/soc/v2n/drivers/riic.c		\
-							plat/renesas/rz/soc/v2n/drivers/cpg.c		\
-							plat/renesas/rz/soc/v2n/drivers/pwrc/pwrc.c	\
-							plat/renesas/rz/soc/v2n/drivers/pwrc/pwrc_stack.S	\
+PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/v2n/plat_security.c						\
+							plat/renesas/rz/soc/v2n/drivers/riic.c						\
+							plat/renesas/rz/soc/v2n/drivers/cpg/cpg_clk_settings.c		\
+							plat/renesas/rz/soc/v2n/drivers/cpg/cpg_mstop_settings.c	\
+							plat/renesas/rz/soc/v2n/drivers/cpg/cpg_pll_div_settings.c	\
+							plat/renesas/rz/soc/v2n/drivers/cpg/cpg_rst_settings.c		\
+							plat/renesas/rz/soc/v2n/drivers/cpg/cpg.c					\
+							plat/renesas/rz/soc/v2n/drivers/pwrc/pwrc.c					\
+							plat/renesas/rz/soc/v2n/drivers/pwrc/pwrc_stack.S			\
+							plat/renesas/rz/soc/v2n/drivers/pfc.c						\
 							${DDR_SOURCES}
 
 BL2_SOURCES				+=	plat/renesas/rz/soc/v2n/bl2_plat_setup.c		\
 							plat/renesas/rz/soc/v2n/plat_storage.c			\
-							plat/renesas/rz/soc/v2n/drivers/sys.c			\
-							plat/renesas/rz/soc/v2n/drivers/pfc.c
+							plat/renesas/rz/soc/v2n/bl2_plat_mem_params_desc.c	\
+							plat/renesas/rz/soc/v2n/drivers/sys.c
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/v2n/bl31_plat_setup.c		\
 							plat/renesas/rz/soc/v2n/plat_pm.c				\

@@ -20,9 +20,14 @@ PLAT_DDR_ECC					:= 0
 PLAT_SYSTEM_SUSPEND				:= 0
 RESET_TO_BL31					:= 1
 INIT_UNUSED_NS_EL2				:= 1
+PLAT_M33_BOOT_SUPPORT			:= 0
+PLAT_EMMC_WRITE_ENABLE			:= 1
+BOOT_TFA_USING_CM33				:= 0
 
-ifneq (${PLAT_SYSTEM_SUSPEND},0)
+ifneq ($(PLAT_SYSTEM_SUSPEND),0)
 override PLAT_SYSTEM_SUSPEND	:= 1
+#override PLAT_M33_BOOT_SUPPORT	:= 1
+override BOOT_TFA_USING_CM33	:= 1
 $(eval $(call add_define,PLAT_EXTRA_LD_SCRIPT))
 endif
 
@@ -31,6 +36,9 @@ $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PLAT_DDR_ECC))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
+$(eval $(call add_define,PLAT_M33_BOOT_SUPPORT))
+$(eval $(call add_define,PLAT_EMMC_WRITE_ENABLE))
+$(eval $(call add_define,BOOT_TFA_USING_CM33))
 
 # This option gets enabled automatically if the TRUSTED_BOARD_BOOT
 # is set via root Makefile, but Renesas support Trusted-Boot without
@@ -79,7 +87,8 @@ EMMC_SOURCES			:=	plat/renesas/rz/common/drivers/io/io_emmcdrv.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_mount.c	\
 							plat/renesas/rz/common/drivers/emmc/emmc_init.c		\
 							plat/renesas/rz/common/drivers/emmc/emmc_read.c		\
-							plat/renesas/rz/common/drivers/emmc/emmc_cmd.c
+							plat/renesas/rz/common/drivers/emmc/emmc_cmd.c		\
+							plat/renesas/rz/common/drivers/emmc/emmc_write.c
 SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c			\
 							plat/renesas/rz/common/drivers/sd/sd_mount.c		\
 							plat/renesas/rz/common/drivers/sd/sd_util.c			\
@@ -97,7 +106,6 @@ BL2_SOURCES				+=	common/desc_image_load.c							\
 							drivers/io/io_memmap.c								\
 							drivers/io/io_fip.c									\
 							plat/renesas/rz/common/plat_image_load.c			\
-							plat/renesas/rz/common/bl2_plat_mem_params_desc.c	\
 							${XSPI_SOURCES}										\
 							${EMMC_SOURCES}										\
 							${SD_SOURCES}

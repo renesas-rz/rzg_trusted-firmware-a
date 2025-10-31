@@ -7,8 +7,10 @@
 #ifndef PLAT_TBBR_IMG_DEF_H
 #define PLAT_TBBR_IMG_DEF_H
 
-#define V2N_DDR_CONFIG_ID	(MAX_IMG_IDS_WITH_SPMDS + 0)
+#include <common/tbbr/tbbr_img_def.h>
 
+#define V2N_DDR_CONFIG_ID	(MAX_IMG_IDS_WITH_SPMDS + 0)
+#define BL22_IMAGE_ID		(MAX_IMG_IDS_WITH_SPMDS + 1)
 #ifdef MAX_NUMBER_IDS
 
 #undef MAX_NUMBER_IDS
