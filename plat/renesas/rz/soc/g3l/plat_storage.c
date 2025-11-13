@@ -28,18 +28,18 @@ static uintptr_t sddrv_dev_handle;
 static uintptr_t boot_io_drv_id;
 
 static const io_block_spec_t spirom_block_spec = {
-	.offset = RZ_SOC_SPIROM_FIP_BASE,
-	.length = RZ_SOC_SPIROM_FIP_SIZE,
+	.offset = RZG3L_SPIROM_FIP_BASE,
+	.length = RZG3L_FIP_SIZE_MAX,
 };
 
 static const io_drv_spec_t emmc_block_spec = {
-	.offset = RZ_SOC_EMMC_FIP_BASE,
-	.length = RZ_SOC_EMMC_FIP_SIZE,
+	.offset = RZG3L_EMMC_FIP_BASE,
+	.length = RZG3L_FIP_SIZE_MAX,
 };
 
 static const io_drv_spec_t sd_block_spec = {
-	.offset = RZ_SOC_SD_FIP_BASE,
-	.length = RZ_SOC_SD_FIP_SIZE,
+	.offset = RZG3L_SD_FIP_BASE,
+	.length = RZG3L_FIP_SIZE_MAX,
 };
 
 static const io_uuid_spec_t bl31_file_spec = {
@@ -82,18 +82,18 @@ static const io_uuid_spec_t nt_fw_content_cert_file_spec = {
 
 #if PLAT_SYSTEM_SUSPEND
 static const io_block_spec_t spirom_ddr_cfg_spec = {
-	.offset = RZ_SOC_SPIROM_DDR_CFG_BASE,
-	.length = RZ_SOC_SPIROM_DDR_CFG_SIZE,
+	.offset = RZG3L_SPIROM_DDR_CFG_BASE,
+	.length = RZG3L_DDR_CONFIG_SIZE_MAX,
 };
 
 static const io_drv_spec_t emmc_ddr_cfg_spec = {
-	.offset = RZ_SOC_EMMC_DDR_CFG_BASE,
-	.length = RZ_SOC_EMMC_DDR_CFG_SIZE,
+	.offset = RZG3L_EMMC_DDR_CFG_BASE,
+	.length = RZG3L_DDR_CONFIG_SIZE_MAX,
 };
 
 static const io_drv_spec_t sd_ddr_cfg_spec = {
-	.offset = RZ_SOC_SD_DDR_CFG_BASE,
-	.length = RZ_SOC_SD_DDR_CFG_SIZE,
+	.offset = RZG3L_SD_DDR_CFG_BASE,
+	.length = RZG3L_DDR_CONFIG_SIZE_MAX,
 };
 #endif /* PLAT_SYSTEM_SUSPEND */
 
@@ -423,6 +423,11 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 	int result;
 
 	policy = &policies[image_id];
+
+	if (MAX_NUMBER_IDS < image_id) {
+		ERROR("image_id: %u exceeds MAX_NUMBER_IDS: %u.\n", image_id, MAX_NUMBER_IDS);
+		return -1;
+	}
 
 	result = policy->check(policy->image_spec);
 	if (result != 0)

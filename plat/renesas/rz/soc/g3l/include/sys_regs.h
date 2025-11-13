@@ -115,7 +115,7 @@
 #define SYS_PD_ISO_CTRL						(SYS_BASE + 0x00000D60)
 #define SYS_PWRDN_DDRPHY_CTRL				(SYS_BASE + 0x00000D68)
 #define ISO_IOBUF_SE18_CTRL					(SYS_BASE + 0x00000D6C)
-#define SYS_USB_PWRRDY						(SYS_BASE + 0x00000D70)
+#define SYS_PWRRDY_N						(SYS_BASE + 0x00000D70)
 #define SYS_PCIE_RST_RSM_B					(SYS_BASE + 0x00000D74)
 
 #define SYS_GPREG_0							(SYS_BASE + 0x00000E00)
@@ -625,6 +625,12 @@
 
 #define I3C_CFG_af_bypass					(1 << 0)
 
+/* SYS_CA55_CFG_RVALn (0 - 3) */
+#define CA55_CFG_RVAL_MASK					(0xFFFFFFFC)
+
+/* SYS_CA55_CFG_RVAHn (0 - 3) */
+#define CA55_CFG_RVAH_MASK					(0xFF)
+
 #define CM33_LOCK_LOCKSVTAIRCR				(1 << 0)
 #define CM33_LOCK_LOCKNSVTOR				(1 << 1)
 
@@ -643,6 +649,10 @@
 #define SYS_LSI_MODE_MASK					(0x7)
 #define SYS_LSI_MODE_SHIFT					(0x4)
 
+/* SYS_LP_CTL2 */
+#define CA55_STBYCTL_SLEEP_START	(1 << 0)
+#define CA55_STBYCTL_RESUME_START	(0 << 0)
+
 #define PD_ISO_CTRL_PD_ISOVCC_ISOEN			(1 << 0)
 #define PD_ISO_CTRL_PD_ISOVCC_ISORSTN		(1 << 8)
 
@@ -655,7 +665,9 @@
 
 #define ISO_IOBUF_SE18_CTRL_ISO_IOBUF_SE18	(1 << 0)
 
-#define USB_PWRRDY_PWRRDY_N					(1 << 0)
+#define PWRRDY_N_USB_OFF					(1 << 0)
+#define PWRRDY_N_DSI_OFF					(1 << 1)
+#define PWRRDY_N_CSI_OFF					(1 << 2)
 
 #define PCIE_RST_RSM_B_PCIE_RST_RSM_B		(1 << 0)
 

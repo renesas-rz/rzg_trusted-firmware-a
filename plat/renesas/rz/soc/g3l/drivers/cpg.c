@@ -13,34 +13,23 @@
 #define CPG_T_CLK						(0)
 #define CPG_T_RST						(1)
 
-#define DDR_CONFIG_TYPE_S21			(1)
-#define DDR_CONFIG_TYPE_S16			(0)
-
-#if DDR_CONFIG_TYPE_S21
-#define param_ddr_pll_ctl1				0x00908000
-#elif DDR_CONFIG_TYPE_S16
-#define param_ddr_pll_ctl1				0x0498E000
-#else
-#error "Unknown DDR Type."
-#endif
-
 typedef struct {
 	uintptr_t reg;
 	uintptr_t mon;
 	uint32_t  val;
 	uint32_t  type;
-} CPG_SETUP_DATA;
+} cpg_setup_data_t;
 
 typedef struct {
 	uintptr_t reg;
 	uint32_t  val;
-} CPG_REG_SETTING;
+} cpg_reg_setting_t;
 
-static const CPG_REG_SETTING cpg_early_div_tbl[] = {
+static const cpg_reg_setting_t cpg_early_div_tbl[] = {
 	{ (uintptr_t)CPG_PL1_DDIV,				0x00010000 },	/* 1200MHz */
 };
 
-static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
+static const cpg_setup_data_t cpg_early_clkrst_tbl[] = {
 	{
 		(uintptr_t)CPG_CLKON_SYC,
 		(uintptr_t)CPG_CLKMON_SYC,
@@ -79,7 +68,7 @@ static const CPG_SETUP_DATA cpg_early_clkrst_tbl[] = {
 	},
 };
 
-static const CPG_REG_SETTING cpg_pll4_tbl[] = {
+static const cpg_reg_setting_t cpg_pll4_tbl[] = {
 #if (DDR_PLL4 == 2133)
 	{ CPG_PLL4_CLK1, 0x00908000 },
 #elif (DDR_PLL4 == 1600)
@@ -91,7 +80,7 @@ static const CPG_REG_SETTING cpg_pll4_tbl[] = {
 	{ CPG_PLL4_STBY, 0x00010001 }
 };
 
-static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
+static const cpg_setup_data_t cpg_static_clock_tbl[] = {
 	{		/* XSPI */
 		(uintptr_t)CPG_CLKON_XSPI,
 		(uintptr_t)CPG_CLKMON_XSPI,
@@ -100,16 +89,16 @@ static const CPG_SETUP_DATA cpg_static_clock_tbl[] = {
 	},
 };
 
-static const CPG_REG_SETTING cpg_static_select_tbl[] = {
+static const cpg_reg_setting_t cpg_static_select_tbl[] = {
 	{ (uintptr_t)CPG_XSPI_SSEL,				0x00010002 },	/* 2'b10:CLK522 */
 };
 
-static const CPG_REG_SETTING cpg_dynamic_select_tbl[] = {
+static const cpg_reg_setting_t cpg_dynamic_select_tbl[] = {
 	{ (uintptr_t)CPG_PLL_DSEL,				0x00400040 },	/* 1'b1:PLL4 */
 	{ (uintptr_t)CPG_SDHI_DSEL,				0x01110333 },	/* 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C, 2'b11:CLK266FIX_C */
 };
 
-static const CPG_REG_SETTING cpg_dynamic_division_tbl[] = {
+static const cpg_reg_setting_t cpg_dynamic_division_tbl[] = {
 	{ (uintptr_t)CPG_PL2_DDIV,				0x01110000 },	/* 3'b000:1/4(200MHz), 3'b000:1/8(100MHz), 3'b000:1/4(200MHz) */
 	{ (uintptr_t)CPG_PL3_DDIV,				0x00110000 },	/* 3'b000:1/4(200MHz), 3'b000:1/8(100MHz) */
 	{ (uintptr_t)CPG_SDHI_DDIV,				0x01110111 },	/* 1'b1:1/2, 1'b1:1/2, 1'b1:1/2 */
@@ -117,7 +106,7 @@ static const CPG_REG_SETTING cpg_dynamic_division_tbl[] = {
 };
 
 /* Power down everything except for SRAM_ACPU in CPG_PWRDN_IP1 */
-static const CPG_REG_SETTING cpg_pwrdown_ip_tbl[] = {
+static const cpg_reg_setting_t cpg_pwrdown_ip_tbl[] = {
 	{ (uintptr_t)CPG_PWRDN_IP1,				0xFFEFFFEE },
 	{ (uintptr_t)CPG_PWRDN_IP2,				0x3FF33FF3 },
 	{ (uintptr_t)CPG_PWRDN_IP3,				0x3FFF3FFF },
@@ -125,7 +114,7 @@ static const CPG_REG_SETTING cpg_pwrdown_ip_tbl[] = {
 };
 
 #if defined(PLAT_SYSTEM_SUSPEND_awo)
-static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
+static const cpg_reg_setting_t cpg_iso_mstop_tbl[] = {
 	{ (uintptr_t)CPG_BUS_ACPU_MSTOP,		0x00070007 },
 	{ (uintptr_t)CPG_BUS_PERI_COM_MSTOP,	0x3FFF3FFF },
 	{ (uintptr_t)CPG_BUS_PERI_DDR_MSTOP,	0x00030003 },
@@ -137,18 +126,25 @@ static const CPG_REG_SETTING cpg_iso_mstop_tbl[] = {
 };
 #endif
 
-static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
-#if PLAT_SYSTEM_SUSPEND
-	{		/* I2C Ch1 */
+#if PLAT_SYSTEM_SUSPEND_vbat
+static const cpg_setup_data_t cpg_s2r_clkrst_tbl[] = {
+
+	{		/* I2C Ch0 */
 		(uintptr_t)CPG_CLKON_I2C,
 		(uintptr_t)CPG_CLKMON_I2C,
-		0x00020002,
+		0x0010001,
 		CPG_T_CLK
 	},
-	{		/* I2C Ch1 */
+	{		/* I2C Ch0 */
 		(uintptr_t)CPG_RST_I2C,
 		(uintptr_t)CPG_RSTMON_I2C,
-		0x00020002,
+		0x00010001,
+		CPG_T_RST
+	},
+	{		/* PCI */
+		(uintptr_t)CPG_RST_PCI,
+		(uintptr_t)CPG_RSTMON_PCI,
+		0x00010000,
 		CPG_T_RST
 	},
 	{		/* VBAT */
@@ -163,19 +159,19 @@ static const CPG_SETUP_DATA cpg_s2r_clkrst_tbl[] = {
 		0x00010001,
 		CPG_T_RST
 	},
-#endif
 };
 
-static const CPG_REG_SETTING cpg_s2r_mstop_tbl[] = {
-#if PLAT_SYSTEM_SUSPEND
+static const cpg_reg_setting_t cpg_s2r_mstop_tbl[] = {
+
 			/* I2C Ch0 */
 	{ (uintptr_t)CPG_BUS_MCPU2_MSTOP,	0x04000000 },
 			/* VBAT */
 	{ (uintptr_t)CPG_BUS_MCPU3_MSTOP,	0x01000000 },
-#endif
-};
 
-static const CPG_SETUP_DATA cpg_m33_clkrst_tbl[] = {
+};
+#endif /* PLAT_SYSTEM_SUSPEND */
+
+static const cpg_setup_data_t cpg_m33_clkrst_tbl[] = {
 #if PLAT_M33_BOOT_SUPPORT
 	{		/* CM33 */
 		(uintptr_t)CPG_CLKON_CM33,
@@ -192,7 +188,7 @@ static const CPG_SETUP_DATA cpg_m33_clkrst_tbl[] = {
 #endif /* PLAT_M33_BOOT_SUPPORT */
 };
 
-static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
+static const cpg_setup_data_t cpg_iso_clock_tbl[] = {
 	{		/* SDHI */
 		(uintptr_t)CPG_CLKON_SDHI,
 		(uintptr_t)CPG_CLKMON_SDHI,
@@ -243,7 +239,7 @@ static const CPG_SETUP_DATA cpg_iso_clock_tbl[] = {
 	}
 };
 
-static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
+static const cpg_setup_data_t cpg_iso_reset_tbl[] = {
 	{		/* SDHI */
 		(uintptr_t)CPG_RST_SDHI,
 		(uintptr_t)CPG_RSTMON_SDHI,
@@ -294,7 +290,7 @@ static const CPG_SETUP_DATA cpg_iso_reset_tbl[] = {
 	},
 };
 
-static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
+static const cpg_setup_data_t cpg_awo_clock_tbl[] = {
 #if PLAT_M33_BOOT_SUPPORT
 	{		/* CM33 */
 		(uintptr_t)CPG_CLKON_CM33,
@@ -336,7 +332,7 @@ static const CPG_SETUP_DATA cpg_awo_clock_tbl[] = {
 	}
 };
 
-static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
+static const cpg_setup_data_t cpg_awo_reset_tbl[] = {
 #if PLAT_M33_BOOT_SUPPORT
 	{		/* CM33 */
 		(uintptr_t)CPG_RST_CM33,
@@ -377,7 +373,7 @@ static const CPG_SETUP_DATA cpg_awo_reset_tbl[] = {
 	}
 };
 
-static CPG_SETUP_DATA cpg_clk_rst_wdt0_ctrl_tbl[] = {
+static cpg_setup_data_t cpg_clk_rst_wdt0_ctrl_tbl[] = {
 	{		/* WDT */
 		(uintptr_t)CPG_CLKON_WDT,
 		(uintptr_t)CPG_CLKMON_WDT,
@@ -393,7 +389,7 @@ static CPG_SETUP_DATA cpg_clk_rst_wdt0_ctrl_tbl[] = {
 	}
 };
 
-static void cpg_sel_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
+static void cpg_sel_setup(const cpg_reg_setting_t *tbl, const uint32_t size)
 {
 	int cnt;
 
@@ -409,7 +405,7 @@ static void cpg_sel_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
 		;
 }
 
-static void cpg_div_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
+static void cpg_div_setup(const cpg_reg_setting_t *tbl, const uint32_t size)
 {
 	int cnt;
 
@@ -425,18 +421,8 @@ static void cpg_div_setup(const CPG_REG_SETTING *tbl, const uint32_t size)
 		;
 }
 
-#if defined(PLAT_SYSTEM_SUSPEND_awo)
-static void cpg_module_stop(const CPG_REG_SETTING *tbl, const uint32_t size)
-{
-	int cnt;
-
-	for (cnt = 0; cnt < size; cnt++, tbl++) {
-		mmio_write_32(tbl->reg, tbl->val);
-	}
-}
-#endif
-
-static void cpg_module_start(const CPG_REG_SETTING *tbl, const uint32_t size)
+#if PLAT_SYSTEM_SUSPEND
+static void cpg_module_start(const cpg_reg_setting_t *tbl, const uint32_t size)
 {
 	int cnt;
 
@@ -444,8 +430,9 @@ static void cpg_module_start(const CPG_REG_SETTING *tbl, const uint32_t size)
 		mmio_write_32(tbl->reg, tbl->val & 0xFFFF0000);
 	}
 }
+#endif
 
-static void cpg_clkrst_stop(const CPG_SETUP_DATA *tbl, const uint32_t size)
+static void cpg_clkrst_stop(const cpg_setup_data_t *tbl, const uint32_t size)
 {
 	int cnt;
 	uint32_t mask;
@@ -464,7 +451,7 @@ static void cpg_clkrst_stop(const CPG_SETUP_DATA *tbl, const uint32_t size)
 	}
 }
 
-static void cpg_clkrst_start(const CPG_SETUP_DATA *tbl, const uint32_t size)
+static void cpg_clkrst_start(const cpg_setup_data_t *tbl, const uint32_t size)
 {
 	int cnt;
 	uint32_t mask;
@@ -552,7 +539,7 @@ static void cpg_wdtrst_sel_setup(void)
 static void cpg_pwrdown_ip_setup(void)
 {
 	int cnt;
-	const CPG_REG_SETTING *tbl = &cpg_pwrdown_ip_tbl[0];
+	const cpg_reg_setting_t *tbl = &cpg_pwrdown_ip_tbl[0];
 
 	for (cnt = 0; cnt < ARRAY_SIZE(cpg_pwrdown_ip_tbl); cnt++, tbl++) {
 		mmio_write_32(tbl->reg, tbl->val);
@@ -564,6 +551,15 @@ void cpg_early_setup(void)
 	cpg_div_setup(cpg_early_div_tbl, ARRAY_SIZE(cpg_early_div_tbl));
 	cpg_clkrst_start(cpg_early_clkrst_tbl, ARRAY_SIZE(cpg_early_clkrst_tbl));
 }
+
+#if PLAT_SYSTEM_SUSPEND_vbat
+void cpg_setup_vbat_suspend(void)
+{
+	/* Enable IP to use for suspend */
+	cpg_clkrst_start(cpg_s2r_clkrst_tbl, ARRAY_SIZE(cpg_s2r_clkrst_tbl));
+	cpg_module_start(cpg_s2r_mstop_tbl,  ARRAY_SIZE(cpg_s2r_mstop_tbl));
+}
+#endif
 
 void cpg_setup(void)
 {
@@ -613,22 +609,6 @@ void cpg_active_ddr2(void)
 	mmio_write_32(CPG_RST_DDR, 0x00020002);
 	/* 13.14 */
 	wait_pclk(5);
-}
-
-void cpg_prepare_suspend(void)
-{
-	/* Enable IP to use for suspend */
-	cpg_clkrst_start(cpg_s2r_clkrst_tbl, ARRAY_SIZE(cpg_s2r_clkrst_tbl));
-	cpg_module_start(cpg_s2r_mstop_tbl,  ARRAY_SIZE(cpg_s2r_mstop_tbl));
-}
-
-void cpg_suspend_setup(void)
-{
-#if defined(PLAT_SYSTEM_SUSPEND_awo)
-	cpg_module_stop(cpg_iso_mstop_tbl, ARRAY_SIZE(cpg_iso_mstop_tbl));
-	cpg_clkrst_stop(cpg_iso_clock_tbl, ARRAY_SIZE(cpg_iso_clock_tbl));
-	cpg_clkrst_stop(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl));
-#endif
 }
 
 void cpg_resume_setup(void)

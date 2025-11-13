@@ -13,12 +13,26 @@
 #include "ddr_regs.h"
 #include "ddr_private.h"
 
-static void soft_delay(uint64_t usec);
-
 #pragma weak decode_major_message
 void decode_major_message(uint32_t mail, uint8_t sel_train)
 {
 	;
+}
+
+static void __attribute__((optimize("O0"))) soft_delay(uint64_t usec)
+{
+	const uint32_t cpuclk_freq = 1200000000;
+
+	const uint32_t cycles_per_nop = 4;
+
+	const uint32_t nops_per_usec = cpuclk_freq / (cycles_per_nop * 1000000);
+
+	volatile uint64_t number_of_nops = nops_per_usec * usec;
+
+	while (number_of_nops--) {
+		__asm__ volatile("nop");
+		dsb();
+	}
 }
 
 void wait_pclk(uint32_t cycles)
@@ -162,21 +176,5 @@ void dwc_ddrphy_phyinit_userCustom_G_waitDone(uint8_t sel_train)
 	if (mail == 0xff) {
 		ERROR("Training failed.\n");
 		panic();
-	}
-}
-
-static void __attribute__((optimize("O0"))) soft_delay(uint64_t usec)
-{
-	const uint32_t cpuclk_freq = 1200000000;
-
-	const uint32_t nop_clk_cycles = 4;
-
-	const uint32_t num_of_nop_needed = cpuclk_freq / (nop_clk_cycles * 1000000);
-
-	volatile uint64_t timeout = num_of_nop_needed * usec;
-
-	while (timeout--) {
-		__asm__ volatile("nop");
-		dsb();
 	}
 }

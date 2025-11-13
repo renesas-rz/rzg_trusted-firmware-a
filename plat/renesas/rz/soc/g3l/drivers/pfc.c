@@ -11,7 +11,7 @@
 #include <sys.h>
 #include <lib/mmio.h>
 
-static PFC_REGS pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
+static const pfc_regs_t pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	/* SD0_CLK (P09.0), SD0_CMD (P09.1), SD0_RSTN (P09.2), SD0_DS (P09.5) */
 	{
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
@@ -30,7 +30,7 @@ static PFC_REGS pfc_sd_reg_tbl[PFC_SD_TBL_NUM] = {
 	}
 };
 
-static PFC_REGS pfc_scif_reg_tbl[PFC_SCIF_TBL_NUM] = {
+static const pfc_regs_t pfc_scif_reg_tbl[PFC_SCIF_TBL_NUM] = {
 	/* SCIF0_RX (P06.0), SCIF0_TX (P06.1) */
 	{
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PMC */
@@ -41,7 +41,7 @@ static PFC_REGS pfc_scif_reg_tbl[PFC_SCIF_TBL_NUM] = {
 	}
 };
 
-static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
+static const pfc_regs_t  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 	/* XSPI_CKP (P35.0), XSPI_CS0 (P35.1), XSPI_CS1 (P35.2), XSPI_DS (P35.3), XSPI_RESET (P35.4),*/
 	{
 		{ PFC_ON,	(uintptr_t)PFC_PMC35,	0x1F },					/* PMC */
@@ -60,11 +60,23 @@ static PFC_REGS  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 	}
 };
 
-static void pfc_write_registers(uint8_t tbl_size, PFC_REGS *pfc_reg_tbl)
-{
-	int cnt;
 
-	for (cnt = 0; cnt < tbl_size; cnt++) {
+#if PLAT_SYSTEM_SUSPEND
+/* RIIC0 */
+static const pfc_regs_t pfc_i2c0_reg_tbl[PFC_RIIC_TBL_NUM] = {
+	{
+		{ PFC_ON,   (uintptr_t)PFC_PMC35, 0x0C },					/* PMC */
+		{ PFC_ON,   (uintptr_t)PFC_PFC35, 0x00004400 },				/* PFC */
+		{ PFC_OFF,  (uintptr_t)NULL,      0 },						/* IOLH */
+		{ PFC_OFF,  (uintptr_t)NULL,      0 },						/* PUPD */
+		{ PFC_OFF,  (uintptr_t)NULL,      0 }						/* IEN */
+	}
+};
+#endif /* PLAT_SYSTEM_SUSPEND */
+
+static void pfc_write_registers(uint8_t tbl_size, const pfc_regs_t *pfc_reg_tbl)
+{
+	for (uint8_t cnt = 0; cnt < tbl_size; cnt++) {
 		/* PMC */
 		if (pfc_reg_tbl[cnt].pmc.flg == PFC_ON) {
 			mmio_write_8(pfc_reg_tbl[cnt].pmc.reg, pfc_reg_tbl[cnt].pmc.val);
@@ -97,13 +109,13 @@ static void pfc_xspi_setup(void)
 	/* Set OEN of XSPI Multi/OctaRAM IO block. */
 	mmio_write_32(PFC_XSPI_OEN, XSPI_OEN_SORST_N);
 
-	mmio_write_32(PFC_PWPR, 0x0);
-	mmio_write_32(PFC_PWPR, PWPR_PFCWE);
+	mmio_write_32(PFC_PWPR, PWPR_B0WI_ENABLE_PFCWE | PWPR_PFCWE_DISABLE);
+	mmio_write_32(PFC_PWPR, PWPR_PFCWE_ENABLE);
 
 	pfc_write_registers(PFC_XSPI_TBL_NUM, pfc_xspi_reg_tbl);
 
-	mmio_write_32(PFC_PWPR, 0x0);
-	mmio_write_32(PFC_PWPR, PWPR_B0WI);
+	mmio_write_32(PFC_PWPR, PWPR_B0WI_ENABLE_PFCWE | PWPR_PFCWE_DISABLE);
+	mmio_write_32(PFC_PWPR, PWPR_B0WI_DISABLE_PFCWE);
 
 	mmio_write_32(PFC_XSPI_VOLT_CTL, QSPI_PVDD_1V8);
 }
@@ -116,7 +128,30 @@ static void pfc_sd_setup(void)
 	pfc_write_registers(PFC_SD_TBL_NUM, pfc_sd_reg_tbl);
 }
 
-static const PFC_REGS *pfc_boot_mode_tbls[SYS_BOOT_MODE_MAX] = {
+#if PLAT_SYSTEM_SUSPEND
+void pfc_riic_pmic_setup(void)
+{
+	mmio_write_32(PFC_PWPR, PWPR_B0WI_ENABLE_PFCWE | PWPR_PFCWE_DISABLE);
+	mmio_write_32(PFC_PWPR, PWPR_PFCWE_ENABLE);
+
+	for (uint8_t cnt = 0; cnt < PFC_RIIC_TBL_NUM; cnt++) {
+		/* PFC */
+		if (pfc_i2c0_reg_tbl[cnt].pfc.flg == PFC_ON) {
+			mmio_write_32(pfc_i2c0_reg_tbl[cnt].pfc.reg, pfc_i2c0_reg_tbl[cnt].pfc.val);
+		}
+		/* PMC */
+		if (pfc_i2c0_reg_tbl[cnt].pmc.flg == PFC_ON) {
+			mmio_write_8(pfc_i2c0_reg_tbl[cnt].pmc.reg, pfc_i2c0_reg_tbl[cnt].pmc.val);
+		}
+	}
+
+	mmio_write_32(PFC_PWPR, PWPR_B0WI_ENABLE_PFCWE | PWPR_PFCWE_DISABLE);
+	mmio_write_32(PFC_PWPR, PWPR_B0WI_DISABLE_PFCWE);
+
+}
+#endif /* PLAT_SYSTEM_SUSPEND */
+
+static const pfc_regs_t *pfc_boot_mode_tbls[SYS_BOOT_MODE_MAX] = {
 	pfc_sd_reg_tbl,
 	pfc_sd_reg_tbl,
 	pfc_sd_reg_tbl,
@@ -141,12 +176,10 @@ static void pfc_drive_setup(void)
 	int16_t boot_mode = sys_get_boot_mode();
 
 	if (boot_mode < SYS_BOOT_MODE_MAX) {
-		const PFC_REGS *p_pins_tbl = pfc_boot_mode_tbls[boot_mode];
+		const pfc_regs_t *p_pins_tbl = pfc_boot_mode_tbls[boot_mode];
 		uint8_t tbl_len = pfc_boot_mode_tbl_len[boot_mode];
 
-		int cnt;
-
-		for (cnt = 0; cnt < tbl_len; cnt++) {
+		for (uint8_t cnt = 0; cnt < tbl_len; cnt++) {
 			if (p_pins_tbl[cnt].iolh.flg == PFC_ON) {
 				/* Write IOLH value from pfc_sd_reg_tbl[] masked with value in pin table */
 				mmio_write_64(p_pins_tbl[cnt].iolh.reg, p_pins_tbl[cnt].iolh.val);
@@ -161,4 +194,7 @@ void pfc_setup(void)
 	pfc_xspi_setup();
 	pfc_sd_setup();
 	pfc_drive_setup();
+#if PLAT_SYSTEM_SUSPEND
+	pfc_riic_pmic_setup();
+#endif
 }

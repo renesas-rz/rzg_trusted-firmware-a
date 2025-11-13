@@ -60,7 +60,7 @@ void sys_m33_core_boot_op(uintptr_t vector)
 
 	cpg_m33_setup();
 }
-#endif /* PLAT_M33_BOOT_SUPPORT */
+
 
 bool sys_is_m33_core_booted(void)
 {
@@ -75,6 +75,8 @@ bool sys_is_m33_core_booted(void)
 	return is_booted;
 }
 
+#endif /* PLAT_M33_BOOT_SUPPORT */
+
 bool sys_is_resume_reboot(void)
 {
 #if PLAT_SYSTEM_SUSPEND
@@ -87,7 +89,7 @@ bool sys_is_resume_reboot(void)
 bool sys_is_resume_peripheral(void)
 {
 #if defined(PLAT_SYSTEM_SUSPEND_awo)
-	return sys_is_m33_core_booted();
+	return pwrc_board_is_resume();
 #else
 	return false;
 #endif

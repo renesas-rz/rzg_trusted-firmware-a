@@ -21,6 +21,7 @@
 #include <common/bl_common.h>
 #include <cpg_regs.h>
 #include <wdt.h>
+#include <pfc.h>
 
 #define LO_REG							(0U)
 #define HI_REG							(1U)
@@ -79,10 +80,26 @@ static void rz_cpu_standby(plat_local_state_t cpu_state)
 	mmio_write_32(SYS_LP_CTL2, 0x00000000);
 }
 
+
+static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
+{
+	if (ns_entrypoint >= RZG3L_NS_DRAM_BASE)
+		return PSCI_E_SUCCESS;
+
+	return PSCI_E_INVALID_ADDRESS;
+}
+
+#if PLAT_SYSTEM_SUSPEND
 static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
+	unsigned long mpidr = read_mpidr_el1();
+
+	pfc_riic_pmic_setup();
+
 	if (CORE_PWR_STATE(target_state) != PLAT_MAX_OFF_STATE)
 		return;
+
+	rz_program_trusted_mailbox(mpidr, gp_warm_ep);
 
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
@@ -102,25 +119,19 @@ static void rz_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 	pwrc_setup();
 }
 
-static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
-{
-	if (ns_entrypoint >= RZG3L_NS_DRAM_BASE)
-		return PSCI_E_SUCCESS;
-
-	return PSCI_E_INVALID_ADDRESS;
-}
-
 static void __dead2 rz_pwr_domain_pwr_down_wfi(const psci_power_state_t *target_state)
 {
-#if PLAT_SYSTEM_SUSPEND
-	if (SYSTEM_PWR_STATE(target_state) == PLAT_MAX_OFF_STATE)
+
+	if (SYSTEM_PWR_STATE(target_state) == PLAT_MAX_OFF_STATE) {
 		pwrc_suspend_to_ram();
-#endif /* PLAT_SYSTEM_SUSPEND */
+	}
 
 	wfi();
 	ERROR("RZ/G3L Power Down: operation not handled.\n");
 	panic();
 }
+#endif /* PLAT_SYSTEM_SUSPEND */
+
 
 static int rz_validate_power_state(unsigned int power_state, psci_power_state_t *req_state)
 {
@@ -273,22 +284,28 @@ static void __dead2 rzg3l_system_reset(void)
 }
 
 const plat_psci_ops_t rz_plat_psci_ops = {
+	/*****PSCI Common function*****/
+	.validate_ns_entrypoint				= rz_validate_ns_entrypoint,
+	/*****PSCI_CPU_SUSPEND_AARCH64*****/
 	.cpu_standby						= rz_cpu_standby,
+	/*****PSCI_CPU_ON_AARCH64*****/
 	.pwr_domain_on						= rzg3l_pwr_domain_on,
 	.pwr_domain_on_finish				= rzg3l_pwr_domain_on_finish,
+	/*****PSCI_CPU_OFF*****/
 	.pwr_domain_off						= rzg3l_pwr_domain_off,
-	.pwr_domain_suspend					= rz_pwr_domain_suspend,
-	.pwr_domain_suspend_finish			= rz_pwr_domain_suspend_finish,
-	.pwr_domain_pwr_down_wfi			= rz_pwr_domain_pwr_down_wfi,
-	.validate_ns_entrypoint				= rz_validate_ns_entrypoint,
+	/*****PSCI_CPU_SUSPEND_AARCH64*****/
 	.validate_power_state				= rz_validate_power_state,
-#if PLAT_SYSTEM_SUSPEND
-	.get_sys_suspend_power_state		= rz_get_sys_suspend_power_state,
-#endif /* PLAT_SYSTEM_SUSPEND */
 	/*****PSCI_SYSTEM_OFF*****/
 	.system_off							= rz_system_off,
 	/*****PSCI_SYSTEM_RESET*****/
 	.system_reset						= rzg3l_system_reset,
+	/*****PSCI_SYSTEM_SUSPEND_AARCH64*****/
+#if PLAT_SYSTEM_SUSPEND
+	.pwr_domain_suspend					= rz_pwr_domain_suspend,
+	.pwr_domain_suspend_finish			= rz_pwr_domain_suspend_finish,
+	.pwr_domain_pwr_down_wfi			= rz_pwr_domain_pwr_down_wfi,
+	.get_sys_suspend_power_state		= rz_get_sys_suspend_power_state,
+#endif /* PLAT_SYSTEM_SUSPEND */
 };
 
 int plat_setup_psci_ops(uintptr_t sec_entrypoint, const plat_psci_ops_t **psci_ops)

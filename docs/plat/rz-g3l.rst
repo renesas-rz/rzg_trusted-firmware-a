@@ -28,10 +28,6 @@ Renesas RZ/G3L reference platforms:
 +--------------+---------------------------------------------------------------------------------------------------------+
 | Board        | Details                                                                                                 |
 +==============+===============+=========================================================================================+
-| dev1         | Equipped with Renesas RZ/G3L SoC                                                                        |
-|              +---------------------------------------------------------------------------------------------------------+
-|              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update |
-+--------------+---------------------------------------------------------------------------------------------------------+
 | smarc        | Equipped with Renesas RZ/G3L SoC                                                                        |
 |              +---------------------------------------------------------------------------------------------------------+
 |              | https://www.renesas.com/jp/en/products/microcontrollers-microprocessors/rz-mpus/<TBD>     /TODO: Update |
@@ -55,7 +51,7 @@ BL31.
 System Tested:
 --------------
 
-The current TF-A port has been tested on the dev_1 and smarc RZ/G3L boards.
+The current TF-A port has been tested on the RZ/G3L smarc board.
 SoC_id  R9A08G046L46GBG revision ESx.y.
 
 * u-boot:
@@ -76,7 +72,6 @@ Base build instruction:
 
 .. code:: bash
 
-    make PLAT=g3l all BOARD=dev_1
     make PLAT=g3l all BOARD=smarc
 
 Build Options:
@@ -106,6 +101,12 @@ For example, to build with debug and verbose logging:
 
     DEBUG=1 LOG_LEVEL=50
 
+This enables platform suspend in 'VBatt with DDR Retention' mode.
+Follow the 'Build TF-A for VBatt Suspend Procedure' (shown below) to use this option.
+
+.. code:: bash
+
+	PLAT_SYSTEM_SUSPEND=vbat
 
 TF-A Packaging Procedure
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -134,8 +135,22 @@ Argument descriptions:
 
 	export CROSS_COMPILE=${path_to_cc_toolset}/bin/aarch64-none-elf-
 	cd ${path_to_tfa_project}
-	make PLAT=g3l BOARD=dev_1 BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
 	make PLAT=g3l BOARD=smarc BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg <Build Options>
+
+Build TF-A for VBatt Suspend Procedure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This procedure builds TF-A with VBatt platform suspend support enabled.
+
+.. code:: bash
+
+	export CROSS_COMPILE=${path_to_cc_toolset}/bin/aarch64-none-elf-
+	cd ${path_to_tfa_project}
+	make PLAT=g3l BOARD=smarc BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg PLAT_SYSTEM_SUSPEND=vbat
+
+The build option LOG_LEVEL can be added to the above command to set the desired logging level.
+It is recommended to avoid using other build options when building for suspend support.
+Use the 'Flash Procedure for EMMC' (which is shown below) to flash the device.
 
 How to load TF-A
 ----------------

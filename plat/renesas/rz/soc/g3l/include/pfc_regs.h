@@ -829,8 +829,10 @@
 #define ETH_ch1_2_5				(2 << 0)
 
 /* Write protection definition */
-#define PWPR_B0WI				(1 << 7)
-#define PWPR_PFCWE				(1 << 6)
+#define PWPR_B0WI_DISABLE_PFCWE	(1 << 7)
+#define PWPR_B0WI_ENABLE_PFCWE	(0 << 7)
+#define PWPR_PFCWE_ENABLE		(1 << 6)
+#define PWPR_PFCWE_DISABLE		(0 << 6)
 
 /* Register for setting the mode of ETH MII / RGMII */
 #define ETH_MII_0_MII			(1 << 0)
@@ -844,31 +846,32 @@
 #define PFC_SCIF_TBL_NUM		(1)
 #define PFC_XSPI_TBL_NUM		(2)
 #define PFC_SD_TBL_NUM			(2)
+#define PFC_RIIC_TBL_NUM		(1)
 
 typedef struct {
-	int			flg;
+	uint8_t		flg;
 	uintptr_t	reg;
 	uint8_t		val;
-} PFC_REG_UINT8;
+} pfc_reg_uint8_t;
 
 typedef struct {
-	int			flg;
+	uint8_t		flg;
 	uintptr_t	reg;
 	uint32_t	val;
-} PFC_REG_UINT32;
+} pfc_reg_uint32_t;
 
 typedef struct {
-	int			flg;
+	uint8_t		flg;
 	uintptr_t	reg;
 	uint64_t	val;
-} PFC_REG_UINT64;
+} pfc_reg_uint64_t;
 
 typedef struct {
-	PFC_REG_UINT8	pmc;
-	PFC_REG_UINT32	pfc;
-	PFC_REG_UINT64	iolh;
-	PFC_REG_UINT64	pupd;
-	PFC_REG_UINT64	ien;
-} PFC_REGS;
+	pfc_reg_uint8_t		pmc;
+	pfc_reg_uint32_t	pfc;
+	pfc_reg_uint64_t	iolh;
+	pfc_reg_uint64_t	pupd;
+	pfc_reg_uint64_t	ien;
+} pfc_regs_t;
 
 #endif	/* __PFC_REGS_H__ */

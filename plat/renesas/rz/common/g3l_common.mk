@@ -31,6 +31,7 @@ ifneq (${PLAT_SYSTEM_SUSPEND},0)
 ifneq ($(filter awo vbat,${PLAT_SYSTEM_SUSPEND}),)
 override PLAT_SUSPEND_MODE		:= ${PLAT_SYSTEM_SUSPEND}
 override PLAT_SYSTEM_SUSPEND	:= 1
+PLAT_EMMC_WRITE_ENABLE			:= 1
 else
 $(error Unknown suspend mode ${PLAT_SYSTEM_SUSPEND})
 endif
@@ -39,8 +40,6 @@ endif
 ifeq (${PLAT_SUSPEND_MODE},awo)
 override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
-
-PLAT_EMMC_WRITE_ENABLE			:= 1
 
 $(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,SECURE_RTC))
@@ -94,10 +93,10 @@ SD_SOURCES				:=	plat/renesas/rz/common/drivers/sd/sd_init.c				\
 BL_COMMON_SOURCES		+=	lib/cpus/aarch64/cortex_a55.S
 
 include lib/xlat_tables_v2/xlat_tables.mk
-PLAT_BL_COMMON_SOURCES	:=	${XLAT_TABLES_LIB_SRCS}									\
-							plat/renesas/rz/common/plat_rz_common.c					\
-							plat/renesas/rz/common/aarch64/plat_helpers.S			\
-							plat/renesas/rz/common/drivers/syc.c					\
+PLAT_BL_COMMON_SOURCES	:=	${XLAT_TABLES_LIB_SRCS}											\
+							plat/renesas/rz/common/plat_rz_common.c							\
+							plat/renesas/rz/common/aarch64/plat_helpers_system_suspend.S	\
+							plat/renesas/rz/common/drivers/syc.c							\
 							plat/renesas/rz/common/drivers/scifa.S
 
 BL2_SOURCES				+=	common/desc_image_load.c								\

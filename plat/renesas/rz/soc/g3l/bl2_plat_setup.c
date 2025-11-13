@@ -20,6 +20,7 @@
 #include <sys.h>
 #include <scifa.h>
 #include <pwrc.h>
+#include <pwrc_board.h>
 #include <plat_tzc_def.h>
 #include <rz_soc_def.h>
 #include <platform_def.h>
@@ -39,6 +40,12 @@ static uint32_t bl2_plat_get_boot_mode(void)
 int bl2_plat_handle_pre_image_load(unsigned int image_id)
 {
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+
+	if (bl_mem_params == NULL) {
+		ERROR("%s: no mem params for image %u\n",
+			  __func__, image_id);
+		return -1;
+	}
 
 	if (image_id == BL22_IMAGE_ID) {
 #if PLAT_M33_BOOT_SUPPORT
@@ -68,6 +75,12 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 
 	bl_mem_params = get_bl_mem_params_node(image_id);
 
+	if (bl_mem_params == NULL) {
+		ERROR("%s: no mem params for image %u\n",
+			  __func__, image_id);
+		return -1;
+	}
+
 	switch (image_id) {
 	case BL31_IMAGE_ID:
 		params->boot_kind = bl2_plat_get_boot_mode();
@@ -91,54 +104,39 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 								  u_register_t arg3, u_register_t arg4)
 {
-	int ret;
-
 	/* early setup Clock and Reset */
 	cpg_early_setup();
 
 	if (!sys_is_resume_peripheral()) {
 		/* initialize SYC */
 		syc_init(RZG3L_SYC_INCK_HZ);
+	}
 
-		/* initialize Timer */
-		generic_delay_timer_init();
+	/* initialize Timer */
+	generic_delay_timer_init();
 
+	if (!sys_is_resume_peripheral()) {
 		/* setup PFC */
 		pfc_setup();
 
 		/* setup Clock and Reset */
 		cpg_setup();
-
-		/* initialize console driver */
-		ret = console_rz_register(
-								RZG3L_SCIF_0_BASE,
-								RZG3L_UART_INCK_HZ,
-								RZG3L_UART_BARDRATE,
-								&rzg3l_bl2_console);
-		if (!ret)
-			panic();
-
-		console_set_scope(&rzg3l_bl2_console,
-				CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 	} else {
-		/* initialize Timer */
-		generic_delay_timer_init();
-
-		/* resume Clock and Reset */
 		cpg_resume_setup();
-
-		/* initialize console driver */
-		ret = console_rz_register(
-								RZG3L_SCIF_0_BASE,
-								RZG3L_UART_INCK_HZ,
-								RZG3L_UART_BARDRATE,
-								&rzg3l_bl2_console);
-		if (!ret)
-			panic();
-
-		console_set_scope(&rzg3l_bl2_console,
-				CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
 	}
+
+	/* initialize console driver */
+	int ret = console_rz_register(
+							RZG3L_SCIF_0_BASE,
+							RZG3L_UART_INCK_HZ,
+							RZG3L_UART_BAUDRATE,
+							&rzg3l_bl2_console);
+	if (!ret)
+		panic();
+
+	console_set_scope(&rzg3l_bl2_console,
+			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
+
 	pwrc_setup();
 }
 
@@ -167,7 +165,7 @@ void bl2_el3_plat_arch_setup(void)
 			MAP_REGION_FLAT(RZG3L_DEVICE_BASE, RZG3L_DEVICE_SIZE,
 					MT_DEVICE | MT_RW | MT_SECURE),
 			MAP_REGION_FLAT(RZG3L_SPIROM_BASE, RZG3L_SPIROM_SIZE,
-					MT_MEMORY | MT_RO | MT_SECURE),
+					MT_MEMORY | MT_RW | MT_SECURE),
 			MAP_REGION_FLAT(RZG3L_DDR_MEM_BASE, RZG3L_DDR_MEM_SIZE,
 					MT_MEMORY | MT_RW | MT_SECURE),
 			{0}
@@ -200,6 +198,11 @@ void bl2_el3_plat_prepare_exit(void)
 		if (bl22_mem_params != NULL) {
 			sys_m33_core_boot_op((bl22_mem_params->ep_info).pc);
 		}
+	}
+#endif
+#if PLAT_SYSTEM_SUSPEND
+	if (sys_is_resume_reboot()) {
+		pwrc_clear_resume_flag();
 	}
 #endif
 }

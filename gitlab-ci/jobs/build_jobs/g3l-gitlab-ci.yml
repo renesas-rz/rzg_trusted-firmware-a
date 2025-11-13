@@ -39,54 +39,6 @@ rzg3l-prep-for-release-build-job:
   extends:
     - .prep_for_release_build_job_template
 
-############################################## G3L dev_1 MPU build jobs ###############################################
-rzg3l-release-dev-1:
-  variables:
-    PLAT: "g3l"
-    BOARD: "dev_1"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg3l-release-dev-1-stack-protector-0:
-  variables:
-    PLAT: "g3l"
-    BOARD: "dev_1"
-    BUILD_TYPE: "release"
-    CONFIGS: "ENABLE_STACK_PROTECTOR=0"
-    ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
-  extends:
-    - .linux_mpu_build_failure_job_template
-
-
-rzg3l-release-dev-1-tftf:
-  variables:
-    PLAT: "g3l"
-    BOARD: "dev_1"
-    BUILD_TYPE: "release"
-    BL33: "TFTF"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg3l-debug-log0-dev-1:
-  variables:
-    PLAT: "g3l"
-    BOARD: "dev_1"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=0"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg3l-debug-log50-dev-1:
-  variables:
-    PLAT: "g3l"
-    BOARD: "dev_1"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
-  extends:
-    - .linux_mpu_build_success_job_template
-
     ############################################## G3L smarc MPU build jobs ###############################################
 rzg3l-release-smarc:
   variables:

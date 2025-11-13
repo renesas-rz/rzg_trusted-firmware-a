@@ -56,4 +56,11 @@
 #define VBATT_BKR30					(VBATT_BASE + 0x00F8)
 #define VBATT_BKR31					(VBATT_BASE + 0x00FC)
 
+/* VBATT_ISOEN */
+#define ISOEN_ON					(1 << 0)
+#define ISOEN_OFF					(0 << 0)
+
+/* VBATT_ISOENPROT */
+#define WPROT_WRITE_ENABLE			UL(0x15AFFA51)
+
 #endif /* __VBATT_REGS_H__ */

@@ -3,6 +3,9 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
+PLAT_INCLUDES			+=	-Iplat/renesas/rz/board/g3l_smarc/include
+
+BL_COMMON_SOURCES	+=	plat/renesas/rz/board/g3l_smarc/pwrc_board.c
 
 DDR_SOURCES +=	plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr_setup_lpddr4.c	\
 				plat/renesas/rz/soc/${PLAT}/drivers/ddr/ddr_retcsr_lpddr4.c	\

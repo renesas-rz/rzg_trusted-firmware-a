@@ -63,7 +63,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 	ret = console_rz_register(
 							RZG3L_SCIF_0_BASE,
 							RZG3L_UART_INCK_HZ,
-							RZG3L_UART_BARDRATE,
+							RZG3L_UART_BAUDRATE,
 							&rzg3l_bl31_console);
 	if (!ret)
 		panic();

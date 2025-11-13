@@ -11,8 +11,7 @@ void cpg_early_setup(void);
 void cpg_setup(void);
 void cpg_active_ddr1(void);
 void cpg_active_ddr2(void);
-void cpg_prepare_suspend(void);
-void cpg_suspend_setup(void);
+void cpg_setup_vbat_suspend(void);
 void cpg_resume_setup(void);
 void cpg_m33_setup(void);
 

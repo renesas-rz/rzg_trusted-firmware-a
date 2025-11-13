@@ -85,33 +85,12 @@ void ddr_retention_entry(void)
 	mmio_write_32(CPG_RST_DDR, 0x01000000);
 	/* 12.12 */
 	wait_dficlk(18);
-
-/* TODO: Determine if this line is necessary. */
-#if 0
-	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000311);
-#endif
-
-#if defined(PLAT_SYSTEM_SUSPEND_vbat)
-	mmio_write_32(VBATT_BKPSR, 0x00000080);
-#endif
 }
 
 void ddr_retention_exit(void)
 {
 	INFO("DDR: Retention Exit (Rev. %s)\n", ddr_version_str);
 
-/* TODO check if these lines are necessary */
-#if 0
-#if defined(PLAT_SYSTEM_SUSPEND_vbat)
-	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000311);
-	mmio_write_32(VBATT_BKPSR, 0x00000000);
-#elif defined(PLAT_SYSTEM_SUSPEND_awo)
-	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000301);
-#endif
-
-	wait_dficlk(18);
-	mmio_write_32(SYS_PWRDN_DDRPHY_CTRL, 0x00000200);
-#endif
 
 	/* 13.1 Power up performed by PMIC */
 

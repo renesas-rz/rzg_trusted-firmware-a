@@ -122,28 +122,28 @@ static void plat_tzc_ddr_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 
 		{
 			.base = PLAT_FW_TZC_PROT_DRAM01_BASE,
 			.end  = PLAT_FW_TZC_PROT_DRAM01_END,
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 
 		{
 			.base = PLAT_TEE_TZC_PROT_DRAM01_BASE,
 			.end  = PLAT_TEE_TZC_PROT_DRAM01_END,
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 
 		{
 			.base = PLAT_TEE_TZC_PROT_DRAM01_END + 1,
 			.end  = UL(0xFFFFFFFFF),
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #else
@@ -151,7 +151,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
@@ -168,7 +168,7 @@ static void plat_tzc_ddr_video_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -185,19 +185,19 @@ static void plat_tzc_spi_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 		{
 			.base = RZG3L_SPIROM_BASE,
 			.end  = (RZG3L_SPIROM_BASE + RZG3L_SPIROM_SIZE - 1ULL),
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 		{
-			.base = RZG3L_XSPI_BASE,
-			.end  = (RZG3L_XSPI_BASE + 0x1FFFFULL),
-			.sec_attr = TZC_REGION_S_NONE,
+			.base = RZG3L_XSPI_REG_BASE,
+			.end  = (RZG3L_XSPI_REG_BASE + RZG3L_XSPI_REG_SIZE - 1ULL),
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 		{}

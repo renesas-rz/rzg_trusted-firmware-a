@@ -87,8 +87,9 @@
  * BL22 (Cortex-M33)
  ******************************************************************************/
 #if PLAT_M33_BOOT_SUPPORT
-#define BL22_BASE					U(BL31_SRAM_LIMIT)
-#define BL22_LIMIT					U(RZG3L_SRAM_LIMIT)
+/* TODO: move these values to MCPU SRAM*/
+#define BL22_BASE					U(0x70000)
+#define BL22_LIMIT					U(0x80000)
 #endif /* PLAT_M33_BOOT_SUPPORT */
 
 /*******************************************************************************
@@ -110,7 +111,7 @@
  * Declarations and constants to access the mailboxes safely. Each mailbox is
  * aligned on the biggest cache line size in the platform. This is known only
  * to the platform as it might have a combination of integrated and external
- * caches. Such alignment ensures that two maiboxes do not sit on the same cache
+ * caches. Such alignment ensures that two mailboxes do not sit on the same cache
  * line at any cache level. They could belong to different cpus/clusters &
  * get written while being protected by different locks causing corruption of
  * a valid mailbox address.

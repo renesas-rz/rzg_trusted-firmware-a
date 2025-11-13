@@ -25,19 +25,19 @@ include:
   - local: gitlab-ci/win_templates/klocwork-build-templates.yml
 
 ############################################# G3L klocwork jobs #######################################################
-rzg3l-release-dev-1-windows:
+rzg3l-release-smarc-windows:
   variables:
     PLAT: "g3l"
-    BOARD: "dev_1"
+    BOARD: "smarc"
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:
     - .windows_mpu_build_job_template
 
-rzg3l-release-dev-1-klocwork:
+rzg3l-release-smarc-klocwork:
   variables:
     PLAT: "g3l"
-    BOARD: "dev_1"
+    BOARD: "smarc"
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:

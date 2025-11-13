@@ -7,8 +7,8 @@
 # Set the platform and SOC specific header files 1st
 PLAT_INCLUDES		:=	-Iplat/renesas/rz/soc/g3l/include
 
-include plat/renesas/rz/common/g3l_common.mk
 include plat/renesas/rz/board/${PLAT}_${BOARD}/rz_board.mk
+include plat/renesas/rz/common/g3l_common.mk
 
 PLAT_INCLUDES			+=	-Iplat/renesas/rz/soc/g3l/drivers/ddr
 
@@ -20,6 +20,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3l/drivers/riic.c					\
 							plat/renesas/rz/soc/g3l/drivers/pwrc/pwrc.c				\
 							plat/renesas/rz/soc/g3l/drivers/pwrc/pwrc_stack.S		\
 							plat/renesas/rz/soc/g3l/drivers/cpg.c					\
+							plat/renesas/rz/soc/g3l/drivers/pfc.c					\
 							${DDR_SOURCES}
 
 BL2_SOURCES				+=	plat/renesas/rz/soc/g3l/bl2_plat_setup.c				\
@@ -27,7 +28,6 @@ BL2_SOURCES				+=	plat/renesas/rz/soc/g3l/bl2_plat_setup.c				\
 							plat/renesas/rz/soc/g3l/plat_security.c					\
 							plat/renesas/rz/soc/g3l/bl2_plat_mem_params_desc.c		\
 							plat/renesas/rz/soc/g3l/drivers/sys.c					\
-							plat/renesas/rz/soc/g3l/drivers/pfc.c					\
 							plat/renesas/rz/soc/g3l/plat_ddr_setup.c
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/g3l/bl31_plat_setup.c				\

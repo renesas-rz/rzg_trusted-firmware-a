@@ -21,18 +21,29 @@
 #include <sys_regs.h>
 #include <rz_private.h>
 #include <pwrc_board.h>
+#include <vbatt_regs.h>
 
 extern void pwrc_func_call_with_pmustack(uintptr_t jump, void *arg);
 
 static void __dead2 pwrc_go_suspend_to_ram(void)
 {
-	cpg_prepare_suspend();
-
+	/*
+	 * The console output will become unavailable after the DDR goes into retention mode.
+	 * Be sure to avoid printing anything after this point.
+	 */
 	ddr_retention_entry();
 
-	cpg_suspend_setup();
+#if PLAT_SYSTEM_SUSPEND_vbat
+	mmio_write_32(SYS_PWRRDY_N, PWRRDY_N_USB_OFF | PWRRDY_N_DSI_OFF | PWRRDY_N_CSI_OFF);
+	cpg_setup_vbat_suspend();
+	/* VBATT area shut-off control */
+	mmio_write_32(VBATT_ISOENPROT, WPROT_WRITE_ENABLE);
+	mmio_write_32(VBATT_ISOEN, ISOEN_ON);
 
 	pwrc_board_suspend_on();
+#endif
+
+	mmio_write_32(SYS_LP_CTL2, CA55_STBYCTL_SLEEP_START);
 
 	while (1)
 		wfi();
@@ -53,11 +64,19 @@ void __dead2 pwrc_suspend_to_ram(void)
 
 void pwrc_setup(void)
 {
-	uintptr_t sec_entrypoint = (uintptr_t)BL2_BASE;
+	const uint32_t rval[PLATFORM_CORE_COUNT][2] = {
+		{ SYS_CA55_CFG_RVAL0, SYS_CA55_CFG_RVAH0 },
+		{ SYS_CA55_CFG_RVAL1, SYS_CA55_CFG_RVAH1 },
+		{ SYS_CA55_CFG_RVAL2, SYS_CA55_CFG_RVAH2 },
+		{ SYS_CA55_CFG_RVAL3, SYS_CA55_CFG_RVAH3 }
+	};
 
-	uint32_t rvah0 = (uint32_t)(sec_entrypoint >> 32);
-	uint32_t rval0 = (uint32_t)(sec_entrypoint & 0xFFFFFFFF);
+	uint8_t i;
+	uint32_t rvah0 = (uint32_t)(((uintptr_t)&plat_secondary_reset >> 32) & CA55_CFG_RVAH_MASK);
+	uint32_t rval0 = (uint32_t)((uintptr_t)&plat_secondary_reset & CA55_CFG_RVAL_MASK);
 
-	mmio_write_32(SYS_CA55_CFG_RVAH0, rvah0);
-	mmio_write_32(SYS_CA55_CFG_RVAL0, rval0);
+	for (i = 0; i < PLATFORM_CORE_COUNT; i++) {
+		mmio_write_32(rval[i][1], rvah0);
+		mmio_write_32(rval[i][0], rval0);
+	}
 }
