@@ -28,6 +28,8 @@ IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_END__, BL31_PMUSRAM_END);
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_BASE__, BL31_PMUSRAM_BASE);
 #endif
 
+#define MMU_NO_FLAGS		0
+
 void plat_copy_code_to_system_ram(void)
 {
 #ifdef PLAT_EXTRA_LD_SCRIPT
@@ -66,7 +68,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 	ret = console_rz_register(
 							RZV2H_SCIF_BASE,
 							RZV2H_UART_INCK_HZ,
-							RZV2H_UART_BARDRATE,
+							RZV2H_UART_BAUDRATE,
 							&rzv2h_bl31_console);
 	if (!ret)
 		panic();
@@ -80,7 +82,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 	generic_delay_timer_init();
 
 	/* copy bl2_to_bl31_params_mem_t*/
-	memcpy(&from_bl2, (void *)PARAMS_BASE, sizeof(from_bl2));
+	memcpy(&from_bl2, (const bl2_to_bl31_params_mem_t *)PARAMS_BASE, sizeof(from_bl2));
 }
 
 void bl31_plat_arch_setup(void)
@@ -106,14 +108,14 @@ void bl31_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl31_regions, rzv2h_mmap);
-	enable_mmu_el3(0);
+	enable_mmu_el3(MMU_NO_FLAGS);
 	plat_copy_code_to_system_ram();
 }
 
 void bl31_platform_setup(void)
 {
 	/* Setup TZC-400 */
-	plat_security_setup();
+	bl31_security_setup();
 
 	/* initialize GIC-600 */
 	plat_gic_driver_init();

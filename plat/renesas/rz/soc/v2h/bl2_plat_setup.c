@@ -27,6 +27,8 @@
 #include <sys.h>
 #include <pwrc.h>
 
+#define MMU_NO_FLAGS		0
+
 extern void bl2_enter_bl31(const struct entry_point_info *bl_ep_info);
 static console_t rzv2h_bl2_console;
 
@@ -125,7 +127,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	ret = console_rz_register(
 							RZV2H_SCIF_BASE,
 							RZV2H_UART_INCK_HZ,
-							RZV2H_UART_BARDRATE,
+							RZV2H_UART_BAUDRATE,
 							&rzv2h_bl2_console);
 	if (!ret)
 		panic();
@@ -171,13 +173,13 @@ void bl2_el3_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl2_regions, rzv2h_mmap);
-	enable_mmu_el3(0);
+	enable_mmu_el3(MMU_NO_FLAGS);
 }
 
 void bl2_platform_setup(void)
 {
 	/* Setup TZC-400, Access Control */
-	plat_security_setup();
+	bl2_security_setup();
 
 	rz_io_setup();
 

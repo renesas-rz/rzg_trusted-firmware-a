@@ -20,7 +20,52 @@ typedef struct arm_tzc_regions_info {
 	unsigned int nsaid_permissions;
 } arm_tzc_regions_info_t;
 
+static uint8_t tzc400_get_num_filters(uintptr_t tzc_base)
+{
+	uint32_t tzc400_build;
 
+	tzc400_build = mmio_read_32(tzc_base + BUILD_CONFIG_OFF);
+
+	return (uint8_t)((tzc400_build >> BUILD_CONFIG_NF_SHIFT) & BUILD_CONFIG_NF_MASK) + 1U;
+}
+
+static void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_regions)
+{
+	uint8_t num_filters;
+	unsigned int region_index = 1U;
+	const arm_tzc_regions_info_t *p = tzc_regions;
+
+	if (p == NULL) {
+		ERROR("Invalid Trust Zone Configuration\n");
+		return;
+	}
+
+	INFO("Configuring TrustZone Controller\n");
+
+	tzc400_init(tzc_base);
+
+	tzc400_disable_filters();
+
+	/* Region 0 configuration is always supplied */
+	tzc400_configure_region0(p->sec_attr, p->nsaid_permissions);
+	p++;
+
+	num_filters = tzc400_get_num_filters(tzc_base);
+
+	for (; p->base != 0UL; p++) {
+		tzc400_configure_region((1 << num_filters) - 1, region_index,
+			p->base, p->end, p->sec_attr, p->nsaid_permissions);
+		region_index++;
+	}
+
+	INFO("Total %u regions set.\n", region_index);
+
+	tzc400_set_action(TZC_ACTION_ERR);
+
+	tzc400_enable_filters();
+}
+
+#if IMAGE_BL2
 static const struct {
 	uint32_t reg;
 	uint32_t msk;
@@ -48,7 +93,7 @@ static const struct {
 	{SYS_MSTACCCTL18, 0xBBBBBBBBU, 0xAAAAAAAAU},
 	/* Slave Access Control Register */
 	{SYS_SLVACCCTL0,  0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL1,  0x00000003U, 0x00000000U},
+	/* SYS_SLVACCCTL1 is readonly */
 	{SYS_SLVACCCTL2,  0x0000000FU, 0x00000000U},
 	{SYS_SLVACCCTL3,  0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL4,  0x0000000FU, 0x00000000U},
@@ -107,8 +152,7 @@ static const struct {
 	{SYS_SLVACCCTL93, 0x00000003U, 0x00000000U},
 };
 
-
-void plat_access_control_setup(void)
+static void plat_access_control_setup(void)
 {
 	uint32_t i;
 
@@ -121,52 +165,6 @@ void plat_access_control_setup(void)
 	}
 }
 
-uint8_t tzc400_get_num_filters(uintptr_t tzc_base)
-{
-	uint32_t tzc400_build;
-
-	tzc400_build = mmio_read_32(tzc_base + BUILD_CONFIG_OFF);
-
-	return (uint8_t)((tzc400_build >> BUILD_CONFIG_NF_SHIFT) & BUILD_CONFIG_NF_MASK) + 1U;
-}
-
-void plat_tzc400_setup(uintptr_t tzc_base, const arm_tzc_regions_info_t *tzc_regions)
-{
-	uint8_t num_filters;
-	unsigned int region_index = 1U;
-	const arm_tzc_regions_info_t *p = tzc_regions;
-
-	if (p == NULL) {
-		ERROR("Invalid Trust Zone Configuration\n");
-		return;
-	}
-
-	INFO("Configuring TrustZone Controller\n");
-
-	tzc400_init(tzc_base);
-
-	tzc400_disable_filters();
-
-	/* Region 0 configuration is always supplied */
-	tzc400_configure_region0(p->sec_attr, p->nsaid_permissions);
-	p++;
-
-	num_filters = tzc400_get_num_filters(tzc_base);
-
-	for (; p->base != 0UL; p++) {
-		tzc400_configure_region((1 << num_filters) - 1, region_index,
-			p->base, p->end, p->sec_attr, p->nsaid_permissions);
-		region_index++;
-	}
-
-	INFO("Total %u regions set.\n", region_index);
-
-	tzc400_set_action(TZC_ACTION_ERR);
-
-	tzc400_enable_filters();
-}
-
-#if IMAGE_BL2
 static void plat_tzc_msram_setup(void)
 {
 	const arm_tzc_regions_info_t msram_tzc_regions[] = {
@@ -177,7 +175,7 @@ static void plat_tzc_msram_setup(void)
 			.sec_attr = TZC_REGION_S_RDWR,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
-		{}
+		{0}
 	};
 
 	plat_tzc400_setup(RZV2H_TZC400_M33_BASE, &msram_tzc_regions[0]);
@@ -227,7 +225,7 @@ static void plat_tzc_ddr_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
-		{}
+		{0}
 	};
 
 	const arm_tzc_regions_info_t ddr_default_tzc_regions[] = {
@@ -239,7 +237,7 @@ static void plat_tzc_ddr_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
-		{}
+		{0}
 	};
 
 	plat_tzc400_setup(RZV2H_TZC400_DDR00_BASE, &ddr_default_tzc_regions[0]);
@@ -268,10 +266,10 @@ static void plat_tzc_spi_setup(void)
 		},
 
 
-		{}
+		{0}
 	};
 
-	plat_tzc400_setup(RZV2H_TZC400_xSPI_BASE, &xspi_tzc_regions[0]);
+	plat_tzc400_setup(RZV2H_TZC400_XSPI_BASE, &xspi_tzc_regions[0]);
 }
 
 static void plat_tzc_pci_setup(void)
@@ -285,10 +283,10 @@ static void plat_tzc_pci_setup(void)
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
-		{}
+		{0}
 	};
 
-	plat_tzc400_setup(RZV2H_TZC400_PCIe_BASE, &pci_tzc_regions[0]);
+	plat_tzc400_setup(RZV2H_TZC400_PCIE_BASE, &pci_tzc_regions[0]);
 }
 
 static void plat_tzc_r8_setup(void)
@@ -307,10 +305,23 @@ static void plat_tzc_r8_setup(void)
 
 	plat_tzc400_setup(RZV2H_TZC400_R8_BASE, &r8_tzc_regions[0]);
 }
-#endif
+
+void bl2_security_setup(void)
+{
+	/* initialize TZC-400 */
+	plat_tzc_msram_setup();
+	plat_tzc_spi_setup();
+	plat_tzc_ddr_setup();
+	plat_tzc_pci_setup();
+	plat_tzc_r8_setup();
+
+	/* Setup Master/Slave access control */
+	plat_access_control_setup();
+}
+#endif /* IMAGE_BL2 */
 
 #if IMAGE_BL31
-static void bl31_security_setup(void)
+static void plat_tzc_asram_setup(void)
 {
 	const arm_tzc_regions_info_t asram_tzc_regions[] = {
 		{
@@ -325,30 +336,9 @@ static void bl31_security_setup(void)
 
 	plat_tzc400_setup(RZV2H_TZC400_SRAMA_BASE, &asram_tzc_regions[0]);
 }
-#endif
 
-#if IMAGE_BL2
-static void bl2_security_setup(void)
+void bl31_security_setup(void)
 {
-	/* initialize TZC-400 */
-	plat_tzc_msram_setup();
-	plat_tzc_spi_setup();
-	plat_tzc_ddr_setup();
-	plat_tzc_pci_setup();
-	plat_tzc_r8_setup();
-
-	/* setup Master/Slave Access Control */
-	plat_access_control_setup();
+	plat_tzc_asram_setup();
 }
-#endif
-
-void plat_security_setup(void)
-{
-#if IMAGE_BL2
-	bl2_security_setup();
-#endif
-
-#if IMAGE_BL31
-	bl31_security_setup();
-#endif
-}
+#endif /* IMAGE_BL31 */
