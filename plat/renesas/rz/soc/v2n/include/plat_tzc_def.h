@@ -7,12 +7,12 @@
 #ifndef PLAT_TZC_DEF_H
 #define PLAT_TZC_DEF_H
 
-/* Platform specific TrsutZone setup constants */
+/* Platform specific TrustZone setup constants */
 
 #define PLAT_TZC_REGION_ACCESS_ID_MASK	U(0x3)
 
 #define PLAT_TZC_REGION_ACCESS_RDWR(nsaid)	\
-	(TZC_REGION_ACCESS_RDWR(nsaid & PLAT_TZC_REGION_ACCESS_ID_MASK))
+	(TZC_REGION_ACCESS_RDWR((nsaid) & PLAT_TZC_REGION_ACCESS_ID_MASK))
 
 #define PLAT_TZC_REGION_ACCESS_S_PRIV		\
 	(PLAT_TZC_REGION_ACCESS_RDWR(0x1))
@@ -62,6 +62,7 @@
 #define PLAT_TEE_TZC_PROT_DRAM01_END		\
 	(PLAT_TEE_TZC_PROT_DRAM01_BASE + PLAT_TEE_TZC_PROT_DRAM01_SIZE - 1)
 
-void plat_security_setup(void);
+void bl2_security_setup(void);
+void bl31_security_setup(void);
 
 #endif /* PLAT_TZC_DEF_H */

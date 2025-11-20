@@ -29,6 +29,8 @@
 #include <pwrc.h>
 #include <plat_tbbr_img_def.h>
 
+#define MMU_NO_FLAGS		0
+
 static console_t rzv2n_bl2_console;
 
 static uint32_t bl2_plat_get_boot_mode(void)
@@ -173,13 +175,13 @@ void bl2_el3_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl2_regions, rzv2n_mmap);
-	enable_mmu_el3(0);
+	enable_mmu_el3(MMU_NO_FLAGS);
 }
 
 void bl2_platform_setup(void)
 {
 	/* Setup TZC-400, Access Control */
-	plat_security_setup();
+	bl2_security_setup();
 
 	rz_io_setup();
 

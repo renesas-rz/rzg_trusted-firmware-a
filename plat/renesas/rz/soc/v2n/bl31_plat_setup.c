@@ -22,6 +22,8 @@
 static console_t rzv2n_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
 
+#define MMU_NO_FLAGS		0
+
 #ifdef PLAT_EXTRA_LD_SCRIPT
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_START__, BL31_PMUSRAM_START);
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_END__, BL31_PMUSRAM_END);
@@ -107,13 +109,13 @@ void bl31_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl31_regions, rzv2n_mmap);
-	enable_mmu_el3(0);
+	enable_mmu_el3(MMU_NO_FLAGS);
 	plat_copy_code_to_system_ram();
 }
 
 void bl31_platform_setup(void)
 {
-	plat_security_setup();
+	bl31_security_setup();
 
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
