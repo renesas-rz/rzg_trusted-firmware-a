@@ -21,11 +21,11 @@ PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3l/drivers/riic.c					\
 							plat/renesas/rz/soc/g3l/drivers/pwrc/pwrc_stack.S		\
 							plat/renesas/rz/soc/g3l/drivers/cpg.c					\
 							plat/renesas/rz/soc/g3l/drivers/pfc.c					\
+							plat/renesas/rz/soc/g3l/plat_security.c					\
 							${DDR_SOURCES}
 
 BL2_SOURCES				+=	plat/renesas/rz/soc/g3l/bl2_plat_setup.c				\
 							plat/renesas/rz/soc/g3l/plat_storage.c					\
-							plat/renesas/rz/soc/g3l/plat_security.c					\
 							plat/renesas/rz/soc/g3l/bl2_plat_mem_params_desc.c		\
 							plat/renesas/rz/soc/g3l/drivers/sys.c					\
 							plat/renesas/rz/soc/g3l/plat_ddr_setup.c

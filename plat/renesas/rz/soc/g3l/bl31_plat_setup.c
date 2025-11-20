@@ -18,12 +18,15 @@
 #include <scifa.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
+#include <plat_tzc_def.h>
 
 #ifdef PLAT_EXTRA_LD_SCRIPT
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_START__, BL31_PMUSRAM_START);
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_END__, BL31_PMUSRAM_END);
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_BASE__, BL31_PMUSRAM_BASE);
 #endif
+
+#define MMU_NO_FLAGS		0
 
 static console_t rzg3l_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
@@ -77,7 +80,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 	generic_delay_timer_init();
 
 	/* copy bl2_to_bl31_params_mem_t*/
-	memcpy(&from_bl2, (void *)PARAMS_BASE, sizeof(from_bl2));
+	memcpy(&from_bl2, (const bl2_to_bl31_params_mem_t *)PARAMS_BASE, sizeof(from_bl2));
 }
 
 void bl31_plat_arch_setup(void)
@@ -103,11 +106,13 @@ void bl31_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl31_regions, rzg3l_mmap);
-	enable_mmu_el3(0);
+	enable_mmu_el3(MMU_NO_FLAGS);
 }
 
 void bl31_platform_setup(void)
 {
+	bl31_security_setup();
+
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
