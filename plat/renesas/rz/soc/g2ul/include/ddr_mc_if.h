@@ -9,7 +9,6 @@
 
 #include <ddr_mc_regs.h>
 
-#define MC_INIT_NUM			(436)
 
 #define DDRMC_R000		DENALI_CTL_00
 #define DDRMC_R001		DENALI_CTL_11
