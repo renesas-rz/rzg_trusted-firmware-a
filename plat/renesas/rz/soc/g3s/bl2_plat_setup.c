@@ -25,6 +25,8 @@
 #include <rz_soc_def.h>
 #include <rz_private.h>
 
+#define MMU_NO_FLAGS		0
+
 static console_t rzg3s_bl2_console;
 
 static uint32_t bl2_plat_get_boot_mode(void)
@@ -123,7 +125,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 		ret = console_rz_register(
 								RZG3S_SCIF_0_BASE,
 								RZG3S_UART_INCK_HZ,
-								RZG3S_UART_BARDRATE,
+								RZG3S_UART_BAUDRATE,
 								&rzg3s_bl2_console);
 		if (!ret)
 			panic();
@@ -141,7 +143,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 		ret = console_rz_register(
 								RZG3S_SCIF_0_BASE,
 								RZG3S_UART_INCK_HZ,
-								RZG3S_UART_BARDRATE,
+								RZG3S_UART_BAUDRATE,
 								&rzg3s_bl2_console);
 		if (!ret)
 			panic();
@@ -184,14 +186,14 @@ void bl2_el3_plat_arch_setup(void)
 		};
 
 		setup_page_tables(bl2_regions, rzg3s_mmap);
-		enable_mmu_el3(0);
+		enable_mmu_el3(MMU_NO_FLAGS);
 	}
 }
 
 void bl2_platform_setup(void)
 {
 	/* Setup TZC-400, Access Control */
-	plat_security_setup();
+	bl2_security_setup();
 
 	rz_io_setup();
 

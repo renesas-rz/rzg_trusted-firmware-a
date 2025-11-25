@@ -26,6 +26,8 @@ IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_END__, BL31_PMUSRAM_END);
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_BASE__, BL31_PMUSRAM_BASE);
 #endif
 
+#define MMU_NO_FLAGS		0
+
 static console_t rzg3s_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
 
@@ -64,7 +66,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 	ret = console_rz_register(
 							RZG3S_SCIF_0_BASE,
 							RZG3S_UART_INCK_HZ,
-							RZG3S_UART_BARDRATE,
+							RZG3S_UART_BAUDRATE,
 							&rzg3s_bl31_console);
 	if (!ret)
 		panic();
@@ -104,13 +106,13 @@ void bl31_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl31_regions, rzg3s_mmap);
-	enable_mmu_el3(0);
+	enable_mmu_el3(MMU_NO_FLAGS);
 }
 
 void bl31_platform_setup(void)
 {
 	/* Setup TZC-400 */
-	plat_security_setup();
+	bl31_security_setup();
 
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
