@@ -66,6 +66,12 @@ include:
   - local: gitlab-ci/klocwork_mpu_build/g2l-gitlab-ci.yml
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
+  - local: gitlab-ci/klocwork_mpu_build/g2lc-gitlab-ci.yml
+    rules:
+      - if: $RUN_KLOCWORK_BUILD == "true"
+  - local: gitlab-ci/klocwork_mpu_build/g2ul-gitlab-ci.yml
+    rules:
+      - if: $RUN_KLOCWORK_BUILD == "true"
   - local: gitlab-ci/klocwork_mpu_build/n2h-gitlab-ci.yml
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
