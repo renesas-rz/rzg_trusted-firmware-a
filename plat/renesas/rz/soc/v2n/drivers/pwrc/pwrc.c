@@ -50,6 +50,7 @@ extern void pwrc_func_call_with_pmustack(uintptr_t jump, void *arg);
 void __section(".sram")
 pwrc_go_suspend_to_ram(void)
 {
+	/* The console becomes unavailable in ddr_retention_entry() */
 	ddr_retention_entry();
 
 	cpg_suspend_setup();

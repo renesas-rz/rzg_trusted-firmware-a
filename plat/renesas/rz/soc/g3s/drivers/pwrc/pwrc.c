@@ -28,6 +28,7 @@ static void __dead2 pwrc_go_suspend_to_ram(void)
 {
 	cpg_prepare_suspend();
 
+	/* The console becomes unavailable in ddr_retention_entry() */
 	ddr_retention_entry();
 
 	cpg_suspend_setup();
@@ -36,6 +37,11 @@ static void __dead2 pwrc_go_suspend_to_ram(void)
 
 	while (1)
 		wfi();
+
+	/*
+	 * This function never returns from here.
+	 * The core is powered off and re-enters through another point in the code (BL2).
+	 */
 }
 
 void __dead2 pwrc_suspend_to_ram(void)

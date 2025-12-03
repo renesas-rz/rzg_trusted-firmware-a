@@ -325,7 +325,7 @@ static void plat_tzc_asram_setup(void)
 {
 	const arm_tzc_regions_info_t asram_tzc_regions[] = {
 		{
-			/* Default Region 0: Complete access */
+			/* Default Region 0: Restricted */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,

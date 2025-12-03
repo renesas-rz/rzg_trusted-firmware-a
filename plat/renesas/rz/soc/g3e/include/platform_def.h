@@ -128,7 +128,7 @@
  * Declarations and constants to access the mailboxes safely. Each mailbox is
  * aligned on the biggest cache line size in the platform. This is known only
  * to the platform as it might have a combination of integrated and external
- * caches. Such alignment ensures that two maiboxes do not sit on the same cache
+ * caches. Such alignment ensures that two mailboxes do not sit on the same cache
  * line at any cache level. They could belong to different cpus/clusters &
  * get written while being protected by different locks causing corruption of
  * a valid mailbox address.

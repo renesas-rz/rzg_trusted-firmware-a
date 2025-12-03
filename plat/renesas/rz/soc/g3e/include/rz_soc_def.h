@@ -73,8 +73,8 @@
 /* 0x00060000 = 384 KB This value is not checked/enforced anywhere */
 #define RZG3E_BL2_SIZE_MAX			UL(0x00060000)
 /*
- * eSD boot mode has 4096 sectors. Therefore 4096 x 512bytes = 0x1000 x 0x200 = 0x200000= 2MB.
- * 0x200000 - FIP start offset (RZG3E_BL2_END_OFFSET) = 0x200000 - 0x60000 = 0x1A0000 = 1664KB
+ * eSD boot mode has 6144 sectors available. 6144 sectors x 512 bytes = 0x300000= 3MB.
+ * RZG3E_FIP_SIZE_MAX = CM33 image offset - FIP offset = 0x200000 - 0x60000 = 0x1A0000 = 1664KB
  */
 #define RZG3E_FIP_SIZE_MAX			UL(0x001A0000)
 

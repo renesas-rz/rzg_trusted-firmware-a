@@ -7,7 +7,7 @@
 #ifndef PLAT_TZC_DEF_H
 #define PLAT_TZC_DEF_H
 
-/* Platform specific TrsutZone setup constants */
+/* Platform specific TrustZone setup constants */
 
 #define PLAT_TZC_REGION_ACCESS_ID_MASK	U(0x3)
 #define PLAT_TZC_REGION_ACCESS_RDWR(nsaid)	\

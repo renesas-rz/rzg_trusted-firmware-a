@@ -20,11 +20,19 @@ void __attribute__ ((section(".sram")))
 pwrc_go_suspend_to_ram(void)
 {
 	cpg_prepare_suspend();
+
+	/* The console becomes unavailable in ddr_retention_entry() */
 	ddr_retention_entry();
+
 	pwrc_board_suspend_on();
 
 	while (1)
 		wfi();
+
+	/*
+	 * This function never returns from here.
+	 * The core is powered off and re-enters through another point in the code (BL2).
+	 */
 }
 
 void __dead2 pwrc_suspend_to_ram(void)

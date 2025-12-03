@@ -211,7 +211,7 @@ static void plat_tzc_msram_setup(void)
 #if PLAT_M33_BOOT_SUPPORT
 	const arm_tzc_regions_info_t msram0_tzc_regions[] = {
 		{
-			/* Default Region 0: Lock down */
+			/* Default Region 0: Restricted */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
@@ -223,7 +223,7 @@ static void plat_tzc_msram_setup(void)
 
 	const arm_tzc_regions_info_t msram1_tzc_regions[] = {
 		{
-			/* Default Region 0: Lock down */
+			/* Default Region 0: Restricted */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
@@ -242,7 +242,7 @@ static void plat_tzc_asram_setup(void)
 {
 	const arm_tzc_regions_info_t asram0_tzc_regions[] = {
 		{
-			/* Default Region 0: Lock down */
+			/* Default Region 0: Restricted */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
@@ -254,7 +254,7 @@ static void plat_tzc_asram_setup(void)
 
 	const arm_tzc_regions_info_t asram1_tzc_regions[] = {
 		{
-			/* Default Region 0: Lock down */
+			/* Default Region 0: Restricted */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,
@@ -265,7 +265,7 @@ static void plat_tzc_asram_setup(void)
 
 	const arm_tzc_regions_info_t asram2_tzc_regions[] = {
 		{
-			/* Default Region 0: Lock down */
+			/* Default Region 0: Restricted */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
 			.sec_attr = TZC_REGION_S_RDWR,

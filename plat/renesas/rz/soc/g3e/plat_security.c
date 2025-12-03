@@ -296,7 +296,7 @@ static void plat_tzc_sram_setup(void)
 {
 	const arm_tzc_regions_info_t msram_tzc_regions[] = {
 		{
-			/* Default Region 0: Lock down */
+			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
 			.sec_attr = TZC_REGION_S_NONE,
