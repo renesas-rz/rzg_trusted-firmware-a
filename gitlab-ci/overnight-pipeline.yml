@@ -90,3 +90,6 @@ include:
   - local: gitlab-ci/klocwork_mpu_build/v2n-gitlab-ci.yml
     rules:
       - if: $RUN_KLOCWORK_BUILD == "true"
+  - local: gitlab-ci/klocwork_mpu_build/v2l-gitlab-ci.yml
+    rules:
+      - if: $RUN_KLOCWORK_BUILD == "true"
