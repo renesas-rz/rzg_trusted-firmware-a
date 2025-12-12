@@ -3,7 +3,8 @@
 #include "cpg_settings.h"
 #include "cpg_regs.h"
 
-void cpg_awo_mstop_setup(void)
+/* Set MSTOPS in the AWO power domain */
+void cpg_awo_pd_mstop_setup(void)
 {
 	/* Remove all MSTOPS apart from reserved and those already removed at TF-A entry */
 	mstop_remove(CPG_BUS_3_MSTOP,       CPG_BUS_3_MSTOP_ADC
@@ -37,7 +38,8 @@ void cpg_awo_mstop_setup(void)
 										| CPG_BUS_12_MSTOP_MCPU_TO_ACPU);
 }
 
-void cpg_iso_mstop_setup(void)
+/* Set MSTOPS in the OTHERS power domain */
+void cpg_others_pd_mstop_setup(void)
 {
 	/* Remove all MSTOPS apart from reserved and those already removed at TF-A entry */
 	mstop_remove(CPG_BUS_1_MSTOP,      CPG_BUS_1_MSTOP_WDT1

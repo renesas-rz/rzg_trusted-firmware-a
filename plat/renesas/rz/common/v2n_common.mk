@@ -15,7 +15,6 @@ HW_ASSISTED_COHERENCY			:= 1
 USE_COHERENT_MEM				:= 0
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
-DEBUG_FPGA						:= 0
 PLAT_DDR_ECC					:= 0
 PLAT_SYSTEM_SUSPEND				:= 0
 RESET_TO_BL31					:= 1
@@ -33,7 +32,6 @@ endif
 
 $(eval $(call add_define,PLAT_SOC_RZV2N))
 $(eval $(call add_define,PROTECTED_CHIPID))
-$(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,PLAT_DDR_ECC))
 $(eval $(call add_define,PLAT_SYSTEM_SUSPEND))
 $(eval $(call add_define,PLAT_M33_BOOT_SUPPORT))

@@ -5,8 +5,8 @@
 #include "cpg_settings.h"
 #include "cpg_regs.h"
 
-
-static const cpg_clk_data_t cpg_awo_clk_on_tbl[] = {
+/* clock control for peripherals in the AWO power domain */
+static const cpg_clk_data_t cpg_awo_pd_clk_on_tbl[] = {
 
 	{	/* MHU */
 	.reg =  {
@@ -153,7 +153,8 @@ static const cpg_clk_data_t cpg_awo_clk_on_tbl[] = {
 	},
 };
 
-static const cpg_clk_data_t cpg_iso_clk_on_tbl[] = {
+/* clock control for peripherals in the OTHERS power domain */
+static const cpg_clk_data_t cpg_others_pd_clk_on_tbl[] = {
 	{	/* DMAC 1 to 4 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_0,
@@ -678,14 +679,14 @@ static void cpg_ctrl_clk(cpg_clk_data_t const *array, uint32_t num, cpg_clk_stat
 	}
 }
 
-void cpg_awo_set_clk(cpg_clk_state_t clk_state)
+void cpg_awo_pd_set_clk(cpg_clk_state_t clk_state)
 {
-	cpg_ctrl_clk(cpg_awo_clk_on_tbl, ARRAY_SIZE(cpg_awo_clk_on_tbl), clk_state);
+	cpg_ctrl_clk(cpg_awo_pd_clk_on_tbl, ARRAY_SIZE(cpg_awo_pd_clk_on_tbl), clk_state);
 }
 
-void cpg_iso_set_clk(cpg_clk_state_t clk_state)
+void cpg_others_pd_set_clk(cpg_clk_state_t clk_state)
 {
-	cpg_ctrl_clk(cpg_iso_clk_on_tbl, ARRAY_SIZE(cpg_iso_clk_on_tbl), clk_state);
+	cpg_ctrl_clk(cpg_others_pd_clk_on_tbl, ARRAY_SIZE(cpg_others_pd_clk_on_tbl), clk_state);
 }
 
 void cpg_wdt1_set_clk(cpg_clk_state_t clk_state)

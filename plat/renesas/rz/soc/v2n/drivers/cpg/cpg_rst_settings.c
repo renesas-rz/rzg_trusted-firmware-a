@@ -3,7 +3,8 @@
 #include "cpg_settings.h"
 #include "cpg_regs.h"
 
-static const cpg_rst_data_t cpg_awo_reset_tbl[] = {
+/* reset control for peripherals in the AWO power domain */
+static const cpg_rst_data_t cpg_awo_pd_reset_tbl[] = {
 	{	/* MHU */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_5,
@@ -137,7 +138,8 @@ static const cpg_rst_data_t cpg_awo_reset_tbl[] = {
 	}
 };
 
-static const cpg_rst_data_t cpg_iso_reset_tbl[] = {
+/* reset control for peripherals in the OTHERS power domain */
+static const cpg_rst_data_t cpg_others_pd_reset_tbl[] = {
 	{	/* OSTM ISO Part 1 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_6,
@@ -606,14 +608,14 @@ static void cpg_ctrl_rst(cpg_rst_data_t const *array, uint32_t num, cpg_rst_stat
 	}
 }
 
-void cpg_awo_set_rst(cpg_rst_state_t rst_state)
+void cpg_awo_pd_set_rst(cpg_rst_state_t rst_state)
 {
-	cpg_ctrl_rst(cpg_awo_reset_tbl, ARRAY_SIZE(cpg_awo_reset_tbl), rst_state);
+	cpg_ctrl_rst(cpg_awo_pd_reset_tbl, ARRAY_SIZE(cpg_awo_pd_reset_tbl), rst_state);
 }
 
-void cpg_iso_set_rst(cpg_rst_state_t rst_state)
+void cpg_others_pd_set_rst(cpg_rst_state_t rst_state)
 {
-	cpg_ctrl_rst(cpg_iso_reset_tbl, ARRAY_SIZE(cpg_iso_reset_tbl), rst_state);
+	cpg_ctrl_rst(cpg_others_pd_reset_tbl, ARRAY_SIZE(cpg_others_pd_reset_tbl), rst_state);
 }
 
 void cpg_wdt1_set_rst(cpg_rst_state_t rst_state)

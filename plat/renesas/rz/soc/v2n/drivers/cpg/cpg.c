@@ -121,8 +121,8 @@ void cpg_ddr_set_pwrokin_off(void)
 void cpg_suspend_setup(void)
 {
 	cpg_enter_s2r_mstop();
-	cpg_iso_set_clk(CPG_CLK_DISABLE);
-	cpg_iso_set_rst(CPG_RST_ASSERT);
+	cpg_others_pd_set_clk(CPG_CLK_DISABLE);
+	cpg_others_pd_set_rst(CPG_RST_ASSERT);
 }
 #endif
 
@@ -178,12 +178,12 @@ void cpg_setup(void)
 {
 	cpg_div_sel_static_setup();
 	cpg_pll_setup();
-	cpg_awo_set_clk(CPG_CLK_ENABLE);
-	cpg_iso_set_clk(CPG_CLK_ENABLE);
-	cpg_awo_set_rst(CPG_RST_DEASSERT);
-	cpg_iso_set_rst(CPG_RST_DEASSERT);
-	cpg_awo_mstop_setup();
-	cpg_iso_mstop_setup();
+	cpg_awo_pd_set_clk(CPG_CLK_ENABLE);
+	cpg_others_pd_set_clk(CPG_CLK_ENABLE);
+	cpg_awo_pd_set_rst(CPG_RST_DEASSERT);
+	cpg_others_pd_set_rst(CPG_RST_DEASSERT);
+	cpg_awo_pd_mstop_setup();
+	cpg_others_pd_mstop_setup();
 	cpg_div_sel_dynamic_setup();
 	cpg_wdtrst_sel_setup();
 }
