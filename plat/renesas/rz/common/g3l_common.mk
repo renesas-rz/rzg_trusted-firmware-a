@@ -19,7 +19,6 @@ PLAT_SUSPEND_MODE				:= none
 TRUSTED_BOARD_BOOT				:= 0
 PROTECTED_CHIPID				:= 1
 SECURE_RTC						:= 0
-DEBUG_FPGA						:= 0
 INIT_UNUSED_NS_EL2				:= 1
 
 # This option gets enabled automatically if the TRUSTED_BOARD_BOOT
@@ -41,7 +40,6 @@ ifeq (${PLAT_SUSPEND_MODE},awo)
 override PLAT_M33_BOOT_SUPPORT	:= 1
 endif
 
-$(eval $(call add_define,DEBUG_FPGA))
 $(eval $(call add_define,SECURE_RTC))
 $(eval $(call add_define,PROTECTED_CHIPID))
 $(eval $(call add_define,PLAT_TBBR_IMG_DEF))
