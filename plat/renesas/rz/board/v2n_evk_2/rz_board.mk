@@ -13,6 +13,19 @@ DDR_PLL4	:=1600
 
 $(eval $(call add_define,DDR_PLL4))
 
-ifneq ($(PLAT_SYSTEM_SUSPEND),0)
-$(error PLAT_SYSTEM_SUSPEND is not available for the RZ/V2N evk_1 it is only available for the evk_2)
+#
+# Modules useful for testing
+#
+
+LED_CONTROL :=0
+
+ifneq ($(LED_CONTROL),0)
+PLAT_INCLUDES	+=	-Iplat/renesas/rz/board/v2n_evk_2/include
+BL_COMMON_SOURCES	+=	plat/renesas/rz/board/v2n_evk_2/led_control.c
+endif
+
+ENABLE_PMIC_CONTROL				:= 0
+
+ifneq ($(ENABLE_PMIC_CONTROL),0)
+BL_COMMON_SOURCES	+=	plat/renesas/rz/board/v2n_evk_2/pwrc_board.c
 endif
