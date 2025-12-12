@@ -183,21 +183,12 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 #endif
 		CPG_T_CLK
 	},
-#if !DEBUG_FPGA
 	{		/* DDR */
 		(uintptr_t)CPG_CLKON_DDR,
 		(uintptr_t)CPG_CLKMON_DDR,
 		0x00030000,
 		CPG_T_CLK
 	},
-#else
-	{		/* DDR */
-		(uintptr_t)CPG_CLKON_DDR,
-		(uintptr_t)CPG_CLKMON_DDR,
-		0x00030003,
-		CPG_T_CLK
-	},
-#endif
 	{		/* SPI_MULTI */
 		(uintptr_t)CPG_CLKON_SPI_MULTI,
 		(uintptr_t)CPG_CLKMON_SPI_MULTI,
@@ -379,21 +370,12 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 #endif
 		CPG_T_RST
 	},
-#if !DEBUG_FPGA
 	{		/* DDR */
 		(uintptr_t)CPG_RST_DDR,
 		(uintptr_t)CPG_RSTMON_DDR,
 		0x007F0000,
 		CPG_T_RST
 	},
-#else
-	{		/* DDR */
-		(uintptr_t)CPG_RST_DDR,
-		(uintptr_t)CPG_RSTMON_DDR,
-		0x007F007F,
-		CPG_T_RST
-	},
-#endif
 	{		/* SPI_MULTI */
 		(uintptr_t)CPG_RST_SPI,
 		(uintptr_t)CPG_RSTMON_SPI,
@@ -755,7 +737,6 @@ static void cpg_pll_start_146(CPG_PLL_SETDATA_146 *pdata)
 /* It is assumed that the PLL has stopped by the time this function is executed. */
 static void cpg_pll_setup(void)
 {
-#if !DEBUG_FPGA
 	uint32_t val = 0;
 
 	/* PLL4 startup */
@@ -769,14 +750,12 @@ static void cpg_pll_setup(void)
 	do {
 		val = mmio_read_32(CPG_PLL6_MON);
 	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) != 0);
-#endif /* DEBUG_FPGA */
 
 	/* Set PLL4 to normal mode */
 	cpg_pll_start_146(&cpg_pll4_setdata);
 	/* Set PLL6 to normal mode */
 	cpg_pll_start_146(&cpg_pll6_setdata);
 
-#if !DEBUG_FPGA
 	/* PLL4 normal mode transition confirmation */
 	do {
 		val = mmio_read_32(CPG_PLL4_MON);
@@ -786,7 +765,6 @@ static void cpg_pll_setup(void)
 	do {
 		val = mmio_read_32(CPG_PLL6_MON);
 	} while ((val & (PLL6_MON_PLL6_RESETB | PLL6_MON_PLL6_LOCK)) == 0);
-#endif /* DEBUG_FPGA */
 }
 
 static void cpg_div_sel_setup(CPG_REG_SETTING *tbl, uint32_t size)
@@ -797,11 +775,9 @@ static void cpg_div_sel_setup(CPG_REG_SETTING *tbl, uint32_t size)
 		mmio_write_32(tbl->reg, tbl->val);
 	}
 
-#if !DEBUG_FPGA
 	/* Wait for completion of settings */
 	while (mmio_read_32(CPG_CLKSTATUS) != 0)
 		;
-#endif
 }
 
 static void cpg_div_sel_static_setup(void)

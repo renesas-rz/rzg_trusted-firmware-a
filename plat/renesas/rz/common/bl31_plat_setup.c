@@ -17,6 +17,8 @@
 #include <rz_private.h>
 #include <rz_soc_def.h>
 
+#define MMU_NO_FLAGS		0
+
 static const mmap_region_t rzg2l_mmap[] = {
 	MAP_REGION_FLAT(RZG2L_SRAM_BASE, RZG2L_SRAM_SIZE,
 			MT_MEMORY | MT_RW | MT_SECURE),
@@ -41,7 +43,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 	ret = console_rz_register(
 							RZG2L_SCIF0_BASE,
 							RZG2L_UART_INCK_HZ,
-							RZG2L_UART_BARDRATE,
+							RZG2L_UART_BAUDRATE,
 							&rzg2l_bl31_console);
 	if (!ret)
 		panic();
@@ -71,19 +73,17 @@ void bl31_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl31_regions, rzg2l_mmap);
-	enable_mmu_el3(0);
+	enable_mmu_el3(MMU_NO_FLAGS);
 }
 
 void bl31_platform_setup(void)
 {
 	/* Setup TZC-400 */
-	plat_security_setup();
+	bl31_security_setup();
 
-#if !DEBUG_FPGA
 	/* initialize GIC-600 */
 	plat_gic_driver_init();
 	plat_gic_init();
-#endif /* DEBUG_FPGA */
 }
 
 entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)

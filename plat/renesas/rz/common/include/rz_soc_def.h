@@ -59,7 +59,7 @@
 
 #define RZG2L_SYC_INCK_HZ			(24000000)
 #define RZG2L_UART_INCK_HZ			(100000000)
-#define RZG2L_UART_BARDRATE			(115200)
+#define RZG2L_UART_BAUDRATE			(115200)
 
 /* Boot Info base address */
 #define RZG2L_BOOTINFO_BASE			(RZG2L_SRAM_BASE)

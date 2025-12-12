@@ -27,6 +27,7 @@
 #include <drivers/delay_timer.h>
 #include <libfdt.h>
 
+#define MMU_NO_FLAGS		0
 
 /* FDT with DRAM configuration */
 uint64_t fdt_blob[PAGE_SIZE_4KB / sizeof(uint64_t)];
@@ -50,6 +51,12 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	}
 
 	bl_mem_params = get_bl_mem_params_node(image_id);
+
+	if (bl_mem_params == NULL) {
+		ERROR("%s: no mem params for image %u\n",
+			  __func__, image_id);
+		return -1;
+	}
 
 	switch (image_id) {
 	case BL32_IMAGE_ID:
@@ -166,7 +173,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 		mmio_write_32(0x11c40010, 0x01021506);
 
 		mmio_write_32(CPG_CLKON_USB, 0x000F0000);
-		while ((mmio_read_32(CPG_CLKMON_USB) & 0x00000000) != 0x00000000)
+		while ((mmio_read_32(CPG_CLKMON_USB) & 0x0000000F) != 0x00000000)
 			;
 	}
 
@@ -174,7 +181,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 	ret = console_rz_register(
 							RZG2L_SCIF0_BASE,
 							RZG2L_UART_INCK_HZ,
-							RZG2L_UART_BARDRATE,
+							RZG2L_UART_BAUDRATE,
 							&rzg2l_bl31_console);
 	if (!ret)
 		panic();
@@ -195,10 +202,10 @@ void bl2_el3_plat_arch_setup(void)
 	};
 
 	static const mmap_region_t rzg2l_mmap[] = {
-	#if TRUSTED_BOARD_BOOT
+#if TRUSTED_BOARD_BOOT
 		MAP_REGION_FLAT(RZG2L_BOOT_ROM_BASE, RZG2L_BOOT_ROM_SIZE,
 				MT_MEMORY | MT_RO | MT_SECURE),
-	#endif
+#endif
 		MAP_REGION_FLAT(RZG2L_SRAM_BASE, RZG2L_SRAM_SIZE,
 				MT_MEMORY | MT_RW | MT_SECURE),
 		MAP_REGION_FLAT(RZG2L_DEVICE_BASE, RZG2L_DEVICE_SIZE,
@@ -211,18 +218,16 @@ void bl2_el3_plat_arch_setup(void)
 	};
 
 	setup_page_tables(bl2_regions, rzg2l_mmap);
-	enable_mmu_el3(0);
+	enable_mmu_el3(MMU_NO_FLAGS);
 }
 
 void bl2_platform_setup(void)
 {
 	/* Setup TZC-400, Access Control */
-	plat_security_setup();
+	bl2_security_setup();
 
-#if !DEBUG_FPGA
 	/* initialize DDR */
 	ddr_setup();
-#endif /* DEBUG_FPGA */
 
 	bl2_init_fdt();
 
