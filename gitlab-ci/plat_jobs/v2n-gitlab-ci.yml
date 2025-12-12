@@ -67,3 +67,32 @@ rzv2n-debug-log50-evk-1:
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
     - .linux_mpu_build_success_job_template
+
+############################################ V2N evk_2 MPU build jobs #################################################
+rzv2n-release-evk-2:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_2"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+  extends:
+    - .linux_mpu_build_success_job_template
+
+rzv2n-release-evk-2-tftf:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_2"
+    BUILD_TYPE: "release"
+    CONFIGS: ""
+    BL33: "TFTF"
+  extends:
+    - .linux_mpu_build_success_job_template
+
+rzv2n-debug-log50-evk-2:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_2"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
+  extends:
+    - .linux_mpu_build_success_job_template
