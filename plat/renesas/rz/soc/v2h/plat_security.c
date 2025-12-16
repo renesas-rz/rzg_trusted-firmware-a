@@ -111,6 +111,7 @@ static const struct {
 	{SYS_SLVACCCTL17, 0x0000000FU, 0x00000000U},
 	{SYS_SLVACCCTL19, 0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL20, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL21, 0x0000000FU, 0x0000000AU},
 	{SYS_SLVACCCTL22, 0x000003FFU, 0x00000002U},
 	{SYS_SLVACCCTL32, 0x0000000FU, 0x00000000U},
 	{SYS_SLVACCCTL33, 0x003FFFC3U, 0x00000000U},
@@ -135,8 +136,8 @@ static const struct {
 	{SYS_SLVACCCTL54, 0x0000003FU, 0x00000000U},
 	{SYS_SLVACCCTL55, 0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL56, 0x00000003U, 0x00000000U},
-	{SYS_SLVACCCTL58, 0x000FFFFFU, 0x000002AAU},
-	{SYS_SLVACCCTL59, 0x0003FFFFU, 0x00000000U},
+	{SYS_SLVACCCTL57, 0x00003FFFU, 0x00002AAAU},
+	{SYS_SLVACCCTL58, 0x000003FFU, 0x000002AAU},
 	{SYS_SLVACCCTL64, 0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL65, 0x0000000FU, 0x00000000U},
 	{SYS_SLVACCCTL66, 0x0000FFFFU, 0x00000000U},
@@ -145,6 +146,7 @@ static const struct {
 	{SYS_SLVACCCTL80, 0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL81, 0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL82, 0x00000003U, 0x00000000U},
+	{SYS_SLVACCCTL87, 0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL88, 0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL89, 0x00000003U, 0x00000000U},
 	{SYS_SLVACCCTL91, 0x00000003U, 0x00000000U},
@@ -172,7 +174,7 @@ static void plat_tzc_msram_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 		{0}
@@ -189,7 +191,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0*/
 			.end  = 0,	/* Not Used by Region 0*/
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 
@@ -197,7 +199,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Region 1: */
 			.base = PLAT_FW_TZC_PROT_DRAM01_BASE,
 			.end  = PLAT_FW_TZC_PROT_DRAM01_END,
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 
@@ -205,7 +207,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Region 2: */
 			.base = PLAT_TEE_TZC_PROT_DRAM01_BASE,
 			.end  = PLAT_TEE_TZC_PROT_DRAM01_END,
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 
@@ -213,7 +215,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Region 3: */
 			.base = PLAT_TEE_TZC_PROT_DRAM01_END + 1,
 			.end  = UL(0xFFFFFFFFF),
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #else
@@ -221,7 +223,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 #endif /* TRUSTED_BOARD_BOOT */
@@ -233,7 +235,7 @@ static void plat_tzc_ddr_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -253,7 +255,7 @@ static void plat_tzc_spi_setup(void)
 			/* Default Region 0: Lock down */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_PRIV
 		},
 
@@ -261,7 +263,7 @@ static void plat_tzc_spi_setup(void)
 			/* Region 1: Access to region required to store */
 			.base = RZV2H_XSPI_MEMORY_MAP_BASE,
 			.end = (RZV2H_XSPI_MEMORY_MAP_BASE + RZV2H_XSPI_SIZE - 1ULL),
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -279,7 +281,7 @@ static void plat_tzc_pci_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -296,7 +298,7 @@ static void plat_tzc_r8_setup(void)
 			/* Default Region 0: Complete access */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_NONE,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_NS_UNPRIV
 		},
 
@@ -328,7 +330,7 @@ static void plat_tzc_asram_setup(void)
 			/* Default Region 0: Restricted */
 			.base = 0,	/* Not Used by Region 0 */
 			.end  = 0,	/* Not Used by Region 0 */
-			.sec_attr = TZC_REGION_S_RDWR,
+			.sec_attr = PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL,
 			.nsaid_permissions = PLAT_TZC_REGION_ACCESS_S_UNPRIV
 		},
 		{}

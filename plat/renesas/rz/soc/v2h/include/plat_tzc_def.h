@@ -9,6 +9,8 @@
 
 /* Platform specific TrustZone setup constants */
 
+#define PLAT_TZC_SEC_ATTR_REG_UNUSED_VAL TZC_REGION_S_RDWR //The .sec_attr register in the TZC has no impact on the RZ MPUs
+
 #define PLAT_TZC_REGION_ACCESS_ID_MASK	U(0x3)
 
 #define PLAT_TZC_REGION_ACCESS_RDWR(nsaid)	\
