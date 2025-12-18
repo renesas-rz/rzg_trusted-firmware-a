@@ -7,6 +7,7 @@
 #include <stddef.h>
 
 #include <lib/mmio.h>
+#include <common/debug.h>
 
 #include "emmc_config.h"
 #include "emmc_hal.h"
@@ -144,3 +145,11 @@ EMMC_ERROR_CODE emmc_init(void)
 
 	return result;
 }
+
+#if defined(SD_INFO1_MASK_RESTORE) && defined(SD_INFO2_MASK_RESTORE)
+void emmc_irqmask_suspend_restore(void)
+{
+	SETR_32(SD_INFO1_MASK, SD_INFO1_MASK_RESTORE);	/* all interrupt mask */
+	SETR_32(SD_INFO2_MASK, SD_INFO2_MASK_RESTORE);	/* all interrupt mask */
+}
+#endif
