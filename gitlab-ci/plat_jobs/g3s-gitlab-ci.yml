@@ -103,6 +103,15 @@ rzg3s-release-smarc-tftf:
   extends:
     - .linux_mpu_build_success_job_template
 
+rzg3s-release-smarc-secure:
+  variables:
+    PLAT: "g3s"
+    BOARD: "smarc"
+    BUILD_TYPE: "release"
+    CONFIG: "TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzg3s-debug-log0-smarc:
   variables:
     PLAT: "g3s"
@@ -154,6 +163,15 @@ rzg3s-debug-log50-vbat-disable-m33-smarc:
     BOARD: "smarc"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
+  extends:
+    - .linux_mpu_build_success_job_template
+
+rzg3s-debug-log50-smarc-secure:
+  variables:
+    PLAT: "g3s"
+    BOARD: "smarc"
+    BUILD_TYPE: "debug"
+    CONFIG: "DEBUG=1 LOG_LEVEL=50 TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls"
   extends:
     - .linux_mpu_build_success_job_template
 
@@ -221,6 +239,15 @@ rzg3s-release-dev-tftf:
   extends:
     - .linux_mpu_build_success_job_template
 
+rzg3s-release-dev-secure:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "release"
+    CONFIGS: "TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzg3s-debug-log0-dev:
   variables:
     PLAT: "g3s"
@@ -272,5 +299,14 @@ rzg3s-debug-log50-vbat-disable-m33-dev:
     BOARD: "dev14_1_lpddr"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLAT_SYSTEM_SUSPEND=vbat PLAT_M33_BOOT_SUPPORT=0"
+  extends:
+    - .linux_mpu_build_success_job_template
+
+rzg3s-debug-log50-dev-secure:
+  variables:
+    PLAT: "g3s"
+    BOARD: "dev14_1_lpddr"
+    BUILD_TYPE: "debug"
+    CONFIG: "DEBUG=1 LOG_LEVEL=50 TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls"
   extends:
     - .linux_mpu_build_success_job_template

@@ -107,6 +107,15 @@ rzn2h-release-tftf:
   extends:
     - .linux_mpu_build_success_job_template
 
+rzn2h-release-secure:
+  variables:
+    PLAT: "n2h"
+    BOARD: "eval"
+    BUILD_TYPE: "release"
+    CONFIGS: "TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls SCE_LIB_DIR=../../"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzn2h-debug-log0:
   variables:
     PLAT: "n2h"
@@ -162,3 +171,12 @@ rzn2h-debug-log50-core5:
     ERROR_MSG: "PLATFORM_CORE_COUNT is set to illegal value. It should either be set for 1,2 or 4 CA55 cores"
   extends:
     - .linux_mpu_build_failure_job_template
+
+rzn2h-debug-log50-secure:
+  variables:
+    PLAT: "n2h"
+    BOARD: "eval"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls SCE_LIB_DIR=../../"
+  extends:
+    - .linux_mpu_build_success_job_template

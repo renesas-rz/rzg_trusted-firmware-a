@@ -59,12 +59,30 @@ rzv2n-release-evk-1-tftf:
   extends:
     - .linux_mpu_build_success_job_template
 
+rzv2n-release-evk-1-secure:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_1"
+    BUILD_TYPE: "release"
+    CONFIGS: "-j52 SPD=opteed TRUSTED_BOARD_BOOT=1 COT=tbbr"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzv2n-debug-log50-evk-1:
   variables:
     PLAT: "v2n"
     BOARD: "evk_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
+  extends:
+    - .linux_mpu_build_success_job_template
+
+rzv2n-debug-log50-evk-1-secure:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_1"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 -j52 SPD=opteed TRUSTED_BOARD_BOOT=1 COT=tbbr"
   extends:
     - .linux_mpu_build_success_job_template
 
@@ -88,11 +106,29 @@ rzv2n-release-evk-2-tftf:
   extends:
     - .linux_mpu_build_success_job_template
 
+rzv2n-release-evk-2-secure:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_2"
+    BUILD_TYPE: "release"
+    CONFIGS: "-j52 SPD=opteed TRUSTED_BOARD_BOOT=1 COT=tbbr"
+  extends:
+    - .linux_mpu_build_success_job_template
+
 rzv2n-debug-log50-evk-2:
   variables:
     PLAT: "v2n"
     BOARD: "evk_2"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
+  extends:
+    - .linux_mpu_build_success_job_template
+
+rzv2n-debug-log50-evk-2-secure:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_2"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 -j52 SPD=opteed TRUSTED_BOARD_BOOT=1 COT=tbbr"
   extends:
     - .linux_mpu_build_success_job_template
