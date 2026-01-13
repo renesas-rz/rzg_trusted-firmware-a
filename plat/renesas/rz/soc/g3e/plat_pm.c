@@ -97,7 +97,6 @@ static int rz_validate_power_state(unsigned int power_state, psci_power_state_t 
 
 static int rzg3e_pwr_domain_on(u_register_t mpidr)
 {
-
 	const CPG_CORE_PWR pch[PLATFORM_CORE_COUNT] = {
 		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ0, CPG_LP_CA55_CTL2_COREACCEPT0, CPG_LP_CA55_CTL2_CORESTATE0_ON_MASK },
 		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ1, CPG_LP_CA55_CTL2_COREACCEPT1, CPG_LP_CA55_CTL2_CORESTATE1_ON_MASK },
@@ -110,8 +109,12 @@ static int rzg3e_pwr_domain_on(u_register_t mpidr)
 	if (coreid >= PLATFORM_CORE_COUNT)
 		return PSCI_E_INVALID_PARAMS;
 
-	/* Check if in standby */
-	if ((mmio_read_32(CPG_LP_CTL1) & 0x1) == 0x1) {
+	/* Check if in standby then reset */
+	if ((mmio_read_32(CPG_LP_CTL1) & (CPG_LP_CTL1_CA55SLEEP_ACK << coreid))) {
+		/* Clear CA55SLEEP_REQ and CA55SLEEP_ACK */
+		mmio_write_32(CPG_LP_CTL1, mmio_read_32(CPG_LP_CTL1) & ~((CPG_LP_CTL1_CA55SLEEP_ACK | CPG_LP_CTL1_CA55SLEEP_REQ) << coreid));
+
+		/* Reset */
 		mmio_write_32(pch[coreid].reg, pch[coreid].preq_mask);
 		while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != pch[coreid].paccept_mask)
 			;
@@ -166,10 +169,6 @@ static void rzg3e_pwr_domain_off(const psci_power_state_t *state)
 
 	/* Request transition to Cortex-A55 CoreX Sleep Mode */
 	mmio_write_32(CPG_LP_CTL1, (CPG_LP_CTL1_CA55SLEEP_REQ << coreid));
-
-
-	/* Enter the Cortex-A55 Sleep Mode */
-	mmio_write_32(CPG_LP_CTL1, mmio_read_32(CPG_LP_CTL1) | 0x00000001);
 
 	/* Issue Barrier instruction */
 	isb();
