@@ -112,7 +112,7 @@ rzn2h-release-secure:
     PLAT: "n2h"
     BOARD: "eval"
     BUILD_TYPE: "release"
-    CONFIGS: "TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls SCE_LIB_DIR=../../"
+    CONFIGS: "TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls"
   extends:
     - .linux_mpu_build_success_job_template
 
@@ -177,6 +177,6 @@ rzn2h-debug-log50-secure:
     PLAT: "n2h"
     BOARD: "eval"
     BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50 TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls SCE_LIB_DIR=../../"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls"
   extends:
     - .linux_mpu_build_success_job_template
