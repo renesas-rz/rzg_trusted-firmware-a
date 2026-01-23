@@ -668,6 +668,8 @@
 #define CORE1_PCHCTL_PSTATE1_SET_OFF				(0x00 << 16)
 #define BUS_MSTOP_MSTOPMODE_SET						(1 << 0)
 #define BUS_MSTOP_MSTOPMODE_SET_WEN					(1 << 16)
+#define BUS_MSTOP_MSTOP2_ON                         (1 << 2)
+#define BUS_MSTOP_MSTOP2_ON_WEN                     (1 << 18)
 #define OTHERFUNC1_REG_RES0_SET						(1 << 0)
 #define OTHERFUNC1_REG_RES0_ON_WEN					(1 << 16)
 #define OTHERFUNC2_REG_RES0_SET						(1 << 0)
