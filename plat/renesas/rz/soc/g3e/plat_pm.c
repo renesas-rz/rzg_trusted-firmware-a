@@ -97,7 +97,6 @@ static int rz_validate_power_state(unsigned int power_state, psci_power_state_t 
 
 static int rzg3e_pwr_domain_on(u_register_t mpidr)
 {
-
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
 	if (coreid >= PLATFORM_CORE_COUNT)

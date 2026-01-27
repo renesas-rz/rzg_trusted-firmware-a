@@ -13,13 +13,12 @@
 #include <plat/common/platform.h>
 #include <cpg.h>
 #include <wdt.h>
-
+#include <core_ctrl.h>
 #include <cpg_regs.h>
 #include <sys_regs.h>
 #include <rz_private.h>
 #include <rz_soc_def.h>
 #include <common/bl_common.h>
-
 #include <pwrc.h>
 #include <ddr.h>
 
@@ -45,11 +44,11 @@ typedef struct {
 uintptr_t	gp_warm_ep;
 
 const uint32_t cores_reset_vector[PLATFORM_CORE_COUNT][2] = {
-		{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
-		{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
-		{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
-		{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
-	};
+	{ SYS_ACPU_CFG_RVAL0, SYS_ACPU_CFG_RVAH0 },
+	{ SYS_ACPU_CFG_RVAL1, SYS_ACPU_CFG_RVAH1 },
+	{ SYS_ACPU_CFG_RVAL2, SYS_ACPU_CFG_RVAH2 },
+	{ SYS_ACPU_CFG_RVAL3, SYS_ACPU_CFG_RVAH3 }
+};
 
 static void rz_program_trusted_mailbox(u_register_t mpidr, uintptr_t address)
 {
@@ -63,70 +62,21 @@ static void rz_program_trusted_mailbox(u_register_t mpidr, uintptr_t address)
 	flush_dcache_range(range, sizeof(range));
 }
 
-static void rzv2n_pwr_cpuoff(unsigned long mpidr)
-{
-	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
-
-	if (read_mpidr_el1() != mpidr) {
-		ERROR("RZ/V2N: fail to power-off.\n");
-		panic();
-	}
-
-	/* Request transition to Cortex-A55 CoreX Sleep Mode */
-	mmio_write_32(CPG_LP_CTL1, (CPG_LP_CTL1_CA55SLEEP_REQ << coreid));
-
-	/* Enter the Cortex-A55 Sleep Mode */
-	mmio_write_32(CPG_LP_CTL1, mmio_read_32(CPG_LP_CTL1) | 0x00000001);
-
-	/* Issue Barrier instruction */
-	isb();
-	dsb();
-	dcsw_op_all(DCCISW);
-}
-
 static int rzv2n_pwr_domain_on(u_register_t mpidr)
 {
-	const CPG_CORE_PWR pch[PLATFORM_CORE_COUNT] = {
-		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ0, CPG_LP_CA55_CTL2_COREACCEPT0, CPG_LP_CA55_CTL2_CORESTATE0_ON_MASK },
-		{ CPG_LP_CA55_CTL2, CPG_LP_CA55_CTL2_COREPREQ1, CPG_LP_CA55_CTL2_COREACCEPT1, CPG_LP_CA55_CTL2_CORESTATE1_ON_MASK },
-		{ CPG_LP_CA55_CTL3, CPG_LP_CA55_CTL3_COREPREQ2, CPG_LP_CA55_CTL3_COREACCEPT2, CPG_LP_CA55_CTL3_CORESTATE2_ON_MASK },
-		{ CPG_LP_CA55_CTL3, CPG_LP_CA55_CTL3_COREPREQ3, CPG_LP_CA55_CTL3_COREACCEPT3, CPG_LP_CA55_CTL3_CORESTATE3_ON_MASK }
-	};
-
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
 	if (coreid >= PLATFORM_CORE_COUNT)
 		return PSCI_E_INVALID_PARAMS;
 
-	/* Check if in standby */
-	if ((mmio_read_32(CPG_LP_CTL1) & 0x1) == 0x1) {
-		mmio_write_32(pch[coreid].reg, pch[coreid].preq_mask);
-		while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != pch[coreid].paccept_mask)
-			;
-		mmio_write_32(pch[coreid].reg, 0x00000000);
-		while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != 0x0)
-			;
-	}
-
 	rz_program_trusted_mailbox(mpidr, gp_warm_ep);
 
-	/* Assert PORESET */
-	mmio_write_32(CPG_RST_0, (0x00010000 << coreid));
-	while ((mmio_read_32(CPG_RSTMON_0) & (0x1 << coreid)) == 0x0)
-		;
+	/*  Set Reset Vector */
+	mmio_write_32(cores_reset_vector[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
+	mmio_write_32(cores_reset_vector[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
 
-	/* Deassert PORESET and RERESET */
-	mmio_write_32(CPG_RST_0, (0x00110011 << coreid));
-	while ((mmio_read_32(CPG_RSTMON_0) & (0x1 << coreid)) != 0x0)
-		;
-
-	mmio_write_32(pch[coreid].reg, (pch[coreid].pstate_on_mask | pch[coreid].preq_mask));
-	while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != pch[coreid].paccept_mask)
-		;
-
-	mmio_write_32(pch[coreid].reg, pch[coreid].pstate_on_mask);
-	while ((mmio_read_32(pch[coreid].reg) & pch[coreid].paccept_mask) != 0x0)
-		;
+	/* Reset applied to set */
+	core_ctrl_warm_boot(coreid);
 
 	return PSCI_E_SUCCESS;
 }
@@ -140,15 +90,18 @@ static void rzv2n_pwr_domain_on_finish(const psci_power_state_t *target_state)
 static void rzv2n_pwr_domain_off(const psci_power_state_t *state)
 {
 	unsigned long mpidr = read_mpidr_el1();
+
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
-	if (coreid >= PLATFORM_CORE_COUNT)
+	if (coreid >= PLATFORM_CORE_COUNT) {
 		return;
+	}
 
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
 
-	rzv2n_pwr_cpuoff(mpidr);
+	/* Request transition to Cortex-A55 CoreX Sleep Mode */
+	core_ctrl_set_in_standby(coreid);
 }
 
 #if PLAT_SYSTEM_SUSPEND
