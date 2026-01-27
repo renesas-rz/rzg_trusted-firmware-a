@@ -134,8 +134,8 @@ void emmc_make_nontrans_cmd(HAL_MEMCARD_COMMAND cmd, uint32_t arg)
 	mmc_drv_obj.cmd_info.arg = arg;
 	mmc_drv_obj.cmd_info.dir = HAL_MEMCARD_READ;
 
-	if ((cmd & HAL_MEMCARD_COMMAND_INDEX_MASK) >= ARRAY_SIZE(cmd_reg_hw) / sizeof(cmd_reg_hw[0])) {
-		// Handle invalid command index
+	if ((cmd & HAL_MEMCARD_COMMAND_INDEX_MASK) >= ARRAY_SIZE(cmd_reg_hw)) {
+		/* Handle invalid command index */
 		return;
 	}
 
