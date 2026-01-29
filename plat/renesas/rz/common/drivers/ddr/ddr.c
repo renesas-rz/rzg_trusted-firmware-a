@@ -496,10 +496,10 @@ static void program_mc1(uint8_t *lp_auto_entry_en)
 	}
 
 	/* Step 2 */
-	rmw_mc_set_field(ODT_WR_MAP_CS0_ADDR, ODT_WR_MAP_CS0_WIDTH, ODT_WR_MAP_CS0_OFFSET, mc_odt_pins_tbl[0] << 24);
-	rmw_mc_set_field(ODT_WR_MAP_CS1_ADDR, ODT_WR_MAP_CS1_WIDTH, ODT_WR_MAP_CS1_OFFSET, mc_odt_pins_tbl[1] << 8);
-	rmw_mc_set_field(ODT_RD_MAP_CS0_ADDR, ODT_RD_MAP_CS0_WIDTH, ODT_RD_MAP_CS0_OFFSET, mc_odt_pins_tbl[2] << 16);
-	rmw_mc_set_field(ODT_RD_MAP_CS1_ADDR, ODT_RD_MAP_CS1_WIDTH, ODT_RD_MAP_CS1_OFFSET, mc_odt_pins_tbl[3] << 0);
+	rmw_mc_set_field(ODT_WR_MAP_CS0_ADDR, ODT_WR_MAP_CS0_WIDTH, ODT_WR_MAP_CS0_OFFSET, mc_odt_pins_tbl[0]);
+	rmw_mc_set_field(ODT_WR_MAP_CS1_ADDR, ODT_WR_MAP_CS1_WIDTH, ODT_WR_MAP_CS1_OFFSET, mc_odt_pins_tbl[1]);
+	rmw_mc_set_field(ODT_RD_MAP_CS0_ADDR, ODT_RD_MAP_CS0_WIDTH, ODT_RD_MAP_CS0_OFFSET, mc_odt_pins_tbl[2]);
+	rmw_mc_set_field(ODT_RD_MAP_CS1_ADDR, ODT_RD_MAP_CS1_WIDTH, ODT_RD_MAP_CS1_OFFSET, mc_odt_pins_tbl[3]);
 
 	/* Step 3 */
 	rmw_mc_reg(MR1_DATA_0_ADDR, ~(mc_mr1_tbl[0]), mc_mr1_tbl[1]);
