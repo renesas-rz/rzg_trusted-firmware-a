@@ -12,7 +12,3 @@ LPDDR4		:= 1
 DDR_PLL4	:=1600
 
 $(eval $(call add_define,DDR_PLL4))
-
-ifneq ($(PLAT_SYSTEM_SUSPEND),0)
-$(error PLAT_SYSTEM_SUSPEND is not available for the RZ/V2N evk_1 it is only available for the evk_2)
-endif
