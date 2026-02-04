@@ -804,6 +804,7 @@ void cpg_reset_wdt0(void)
 void cpg_setup_wdt0(void)
 {
 	mmio_write_32(CPG_WDTRST_SEL, mmio_read_32(CPG_WDTRST_SEL) | WDTRST_SEL_WDTRSTSEL0 | WDTRST_SEL_WDTRSTSEL0_WEN);
+	mmio_write_32(CPG_BUS_REG0_MSTOP, BUS_MSTOP_MSTOP0_ON_WEN);
 }
 
 static void cpg_div_sel_static_setup(void)
