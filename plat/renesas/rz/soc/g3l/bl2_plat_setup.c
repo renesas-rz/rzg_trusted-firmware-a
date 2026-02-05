@@ -26,10 +26,9 @@
 #include <platform_def.h>
 #include <rz_private.h>
 #include <sys_regs.h>
+#include <rz_console.h>
 
 #define MMU_NO_FLAGS		0
-
-static console_t rzg3l_bl2_console;
 
 static uint32_t bl2_plat_get_boot_mode(void)
 {
@@ -127,17 +126,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
 		cpg_resume_setup();
 	}
 
-	/* initialize console driver */
-	int ret = console_rz_register(
-							RZG3L_SCIF_0_BASE,
-							RZG3L_UART_INCK_HZ,
-							RZG3L_UART_BAUDRATE,
-							&rzg3l_bl2_console);
-	if (!ret)
-		panic();
-
-	console_set_scope(&rzg3l_bl2_console,
-			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_CRASH);
+	rz_console_init();
 
 	pwrc_setup();
 }

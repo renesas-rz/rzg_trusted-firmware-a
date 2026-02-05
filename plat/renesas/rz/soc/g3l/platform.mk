@@ -21,6 +21,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/renesas/rz/soc/g3l/drivers/riic.c					\
 							plat/renesas/rz/soc/g3l/drivers/pwrc/pwrc_stack.S		\
 							plat/renesas/rz/soc/g3l/drivers/cpg.c					\
 							plat/renesas/rz/soc/g3l/drivers/pfc.c					\
+							plat/renesas/rz/soc/g3l/drivers/rz_console.c			\
 							plat/renesas/rz/soc/g3l/plat_security.c					\
 							${DDR_SOURCES}
 

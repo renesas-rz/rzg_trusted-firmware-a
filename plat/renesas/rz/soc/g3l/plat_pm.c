@@ -22,6 +22,7 @@
 #include <cpg_regs.h>
 #include <wdt.h>
 #include <pfc.h>
+#include <rz_console.h>
 
 #define LO_REG							(0U)
 #define HI_REG							(1U)
@@ -92,6 +93,9 @@ static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
 #if PLAT_SYSTEM_SUSPEND
 static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
+	cpg_prepare_suspend();
+	rz_console_deinit();
+
 	unsigned long mpidr = read_mpidr_el1();
 
 	pfc_riic_pmic_setup();

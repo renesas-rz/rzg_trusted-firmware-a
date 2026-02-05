@@ -625,3 +625,14 @@ void cpg_m33_setup(void)
 {
 	cpg_clkrst_start(cpg_m33_clkrst_tbl, ARRAY_SIZE(cpg_m33_clkrst_tbl));
 }
+
+#if PLAT_SYSTEM_SUSPEND
+static const cpg_reg_setting_t cpg_gpio_mstop_tbl[] = {
+	{ (uintptr_t)CPG_BUS_PERI_CPU_MSTOP, 0x00400000 },
+};
+
+void cpg_prepare_suspend(void)
+{
+	cpg_module_start(cpg_gpio_mstop_tbl, ARRAY_SIZE(cpg_gpio_mstop_tbl));
+}
+#endif /* PLAT_SYSTEM_SUSPEND */

@@ -19,6 +19,7 @@
 #include <rz_private.h>
 #include <rz_soc_def.h>
 #include <plat_tzc_def.h>
+#include <rz_console.h>
 
 #ifdef PLAT_EXTRA_LD_SCRIPT
 IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_START__, BL31_PMUSRAM_START);
@@ -28,7 +29,6 @@ IMPORT_SYM(uintptr_t, __BL31_PMUSRAM_BASE__, BL31_PMUSRAM_BASE);
 
 #define MMU_NO_FLAGS		0
 
-static console_t rzg3l_bl31_console;
 static bl2_to_bl31_params_mem_t from_bl2;
 
 void plat_copy_code_to_system_ram(void)
@@ -60,19 +60,7 @@ void bl31_early_platform_setup2(u_register_t arg0,
 								u_register_t arg2,
 								u_register_t arg3)
 {
-	int ret;
-
-	/* initialize console driver */
-	ret = console_rz_register(
-							RZG3L_SCIF_0_BASE,
-							RZG3L_UART_INCK_HZ,
-							RZG3L_UART_BAUDRATE,
-							&rzg3l_bl31_console);
-	if (!ret)
-		panic();
-
-	console_set_scope(&rzg3l_bl31_console,
-			CONSOLE_FLAG_BOOT | CONSOLE_FLAG_RUNTIME | CONSOLE_FLAG_CRASH);
+	rz_console_init();
 
 	syc_init(RZG3L_SYC_INCK_HZ);
 
