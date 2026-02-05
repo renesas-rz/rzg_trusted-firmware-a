@@ -16,7 +16,7 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing jobs for G2UL.
+# Description: Yaml file containing jobs for T2H.
 #######################################################################################################################
 
 ################################################## include ############################################################
@@ -25,81 +25,23 @@ include:
   - local: gitlab-ci/templates/merge-gateway-job-templates.yml
   - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
-################################### Preparation job for G2UL merge gateway pipeline ####################################
-rzg2ul-prep-for-merge-gateway-build-job:
+################################### Preparation job for T2H merge gateway pipeline ####################################
+rzt2h-prep-for-merge-gateway-build-job:
   variables:
-    PLAT: "g2ul"
+    PLAT: "t2h"
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-################################ Preparation job for G2UL release procedure pipeline ###################################
-rzg2ul-prep-for-release-build-job:
+################################ Preparation job for T2H release procedure pipeline ###################################
+rzt2h-prep-for-release-build-job:
   variables:
-    PLAT: "g2ul"
+    PLAT: "t2h"
   extends:
     - .prep_for_release_build_job_template
 
-############################################## G2UL g2ul_smarc MPU build jobs ###############################################
-rzg2ul-release-g2ul-smarc:
-  variables:
-    PLAT: "g2ul"
-    BOARD: "g2ul_smarc"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2ul-release-g2ul-smarc-stack-protector-0:
-  variables:
-    PLAT: "g2ul"
-    BOARD: "g2ul_smarc"
-    BUILD_TYPE: "release"
-    CONFIGS: "ENABLE_STACK_PROTECTOR=0"
-    ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
-  extends:
-    - .linux_mpu_build_failure_job_template
-
-rzg2ul-release-g2ul-smarc-spi-at25:
-  variables:
-    PLAT: "g2ul"
-    BOARD: "g2ul_smarc"
-    BUILD_TYPE: "release"
-    CONFIGS: "SPI_FLASH=AT25QL128A"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2ul-release-g2ul-smarc-spi-mt25:
-  variables:
-    PLAT: "g2ul"
-    BOARD: "g2ul_smarc"
-    BUILD_TYPE: "release"
-    CONFIGS: "SPI_FLASH=MT25QU512ABB"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2ul-debug-log0-g2ul-smarc:
-  variables:
-    PLAT: "g2ul"
-    BOARD: "g2ul_smarc"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=0"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2ul-debug-log50-g2ul-smarc:
-  variables:
-    PLAT: "g2ul"
-    BOARD: "g2ul_smarc"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2ul-debug-log50-g2ul-smarc-spi-mt25:
-  variables:
-    PLAT: "g2ul"
-    BOARD: "g2ul_smarc"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50 SPI_FLASH=MT25QU512ABB"
-  extends:
-    - .linux_mpu_build_success_job_template
+######################################### Trigger job for the T2H build jobs ##########################################
+trigger-t2h-build-job:
+  stage: mpu_build_testing
+  trigger:
+    include: gitlab-ci/jobs/build_jobs/t2h-build.yml
+    strategy: depend

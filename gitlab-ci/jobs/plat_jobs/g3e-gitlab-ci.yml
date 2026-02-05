@@ -16,73 +16,31 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing jobs for G2L.
+# Description: Yaml file containing jobs for G3E.
 #######################################################################################################################
 
 ################################################## include ############################################################
 include:
-  - local: gitlab-ci/templates/common-job-templates.yml
   - local: gitlab-ci/templates/merge-gateway-job-templates.yml
   - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
-################################### Preparation job for G2L merge gateway pipeline ####################################
-rzg2l-prep-for-merge-gateway-build-job:
+################################### Preparation job for G3E merge gateway pipeline ####################################
+rzg3e-prep-for-merge-gateway-build-job:
   variables:
-    PLAT: "g2l"
+    PLAT: "g3e"
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-################################ Preparation job for G2L release procedure pipeline ###################################
-rzg2l-prep-for-release-build-job:
+################################ Preparation job for G3E release procedure pipeline ###################################
+rzg3e-prep-for-release-build-job:
   variables:
-    PLAT: "g2l"
+    PLAT: "g3e"
   extends:
     - .prep_for_release_build_job_template
 
-############################################## G2L smarc_pmic_2 MPU build jobs ###############################################
-rzg2l-release-smarc-pmic-2:
-  variables:
-    PLAT: "g2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2l-release-smarc-pmic-2-stack-protector-0:
-  variables:
-    PLAT: "g2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "release"
-    CONFIGS: "ENABLE_STACK_PROTECTOR=0"
-    ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
-  extends:
-    - .linux_mpu_build_failure_job_template
-
-rzg2l-release-smarc-pmic-2-tftf:
-  variables:
-    PLAT: "g2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-    BL33: "TFTF"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2l-debug-log0-smarc-pmic-2:
-  variables:
-    PLAT: "g2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=0"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2l-debug-log50-smarc-pmic-2:
-  variables:
-    PLAT: "g2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
-  extends:
-    - .linux_mpu_build_success_job_template
+######################################### Trigger job for the G3E build jobs ##########################################
+trigger-g3e-build-job:
+  stage: mpu_build_testing
+  trigger:
+    include: gitlab-ci/jobs/build_jobs/g3e-build.yml
+    strategy: depend

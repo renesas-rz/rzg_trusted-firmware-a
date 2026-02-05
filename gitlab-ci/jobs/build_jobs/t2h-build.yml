@@ -16,166 +16,157 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing jobs for N2H.
+# Description: Yaml file containing build jobs for T2H.
 #######################################################################################################################
 
-################################################## include ############################################################
+stages:
+  - build
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+      when: always
+
 include:
   - local: gitlab-ci/templates/common-job-templates.yml
-  - local: gitlab-ci/templates/merge-gateway-job-templates.yml
-  - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
-################################### Preparation job for N2H merge gateway pipeline ####################################
-rzn2h-prep-for-merge-gateway-build-job:
+############################################## T2H dev_1 MPU build jobs ###############################################
+rzt2h-release-core4:
   variables:
-    PLAT: "n2h"
-  extends:
-    - .prep_for_merge_gateway_build_job_template
-
-################################ Preparation job for N2H release procedure pipeline ###################################
-rzn2h-prep-for-release-build-job:
-  variables:
-    PLAT: "n2h"
-  extends:
-    - .prep_for_release_build_job_template
-
-############################################## N2H eval MPU build jobs ################################################
-rzn2h-release-core4:
-  variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=4"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-release-core2:
+rzt2h-release-core2:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=2"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-release-core1:
+rzt2h-release-core1:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=1"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-release-core0:
+rzt2h-release-core0:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=0"
     ERROR_MSG: "PLATFORM_CORE_COUNT is set to illegal value. It should either be set for 1,2 or 4 CA55 cores"
   extends:
     - .linux_mpu_build_failure_job_template
 
-rzn2h-release-core5:
+rzt2h-release-core5:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=5"
     ERROR_MSG: "PLATFORM_CORE_COUNT is set to illegal value. It should either be set for 1,2 or 4 CA55 cores"
   extends:
     - .linux_mpu_build_failure_job_template
 
-rzn2h-release-stack-protector-0:
+rzt2h-release-stack-protector-0:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
     ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
   extends:
     - .linux_mpu_build_failure_job_template
 
-rzn2h-release-tftf:
+rzt2h-release-tftf:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "PLATFORM_CORE_COUNT=4"
     BL33: "TFTF"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-release-secure:
+rzt2h-release-secure:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "release"
     CONFIGS: "TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-debug-log0:
+rzt2h-debug-log0:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0 PLATFORM_CORE_COUNT=4"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-debug-log50:
+rzt2h-debug-log50:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=4"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-debug-log50-core2:
+rzt2h-debug-log50-core2:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=2"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-debug-log50-core1:
+rzt2h-debug-log50-core1:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=1"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzn2h-debug-log50-core0:
+rzt2h-debug-log50-core0:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=0"
     ERROR_MSG: "PLATFORM_CORE_COUNT is set to illegal value. It should either be set for 1,2 or 4 CA55 cores"
   extends:
     - .linux_mpu_build_failure_job_template
 
-rzn2h-debug-log50-core5:
+rzt2h-debug-log50-core5:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 PLATFORM_CORE_COUNT=5"
     ERROR_MSG: "PLATFORM_CORE_COUNT is set to illegal value. It should either be set for 1,2 or 4 CA55 cores"
   extends:
     - .linux_mpu_build_failure_job_template
 
-rzn2h-debug-log50-secure:
+rzt2h-debug-log50-secure:
   variables:
-    PLAT: "n2h"
-    BOARD: "eval"
+    PLAT: "t2h"
+    BOARD: "dev_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50 TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 MBEDTLS_DIR=../drivers/auth/mbedtls"
   extends:

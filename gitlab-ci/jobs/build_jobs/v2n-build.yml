@@ -16,121 +16,110 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing jobs for G3E.
+# Description: Yaml file containing build jobs for V2N.
 #######################################################################################################################
 
-################################################## include ############################################################
+stages:
+  - build
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+      when: always
+
 include:
   - local: gitlab-ci/templates/common-job-templates.yml
-  - local: gitlab-ci/templates/merge-gateway-job-templates.yml
-  - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
-################################### Preparation job for G3E merge gateway pipeline ####################################
-rzg3e-prep-for-merge-gateway-build-job:
+############################################ V2N evk_1 MPU build jobs #################################################
+rzv2n-release-evk-1:
   variables:
-    PLAT: "g3e"
-  extends:
-    - .prep_for_merge_gateway_build_job_template
-
-################################ Preparation job for G3E release procedure pipeline ###################################
-rzg3e-prep-for-release-build-job:
-  variables:
-    PLAT: "g3e"
-  extends:
-    - .prep_for_release_build_job_template
-
-############################################## G3E dev_1 MPU build jobs ###############################################
-rzg3e-release-dev-1:
-  variables:
-    PLAT: "g3e"
-    BOARD: "dev_1"
+    PLAT: "v2n"
+    BOARD: "evk_1"
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:
     - .linux_mpu_build_success_job_template
 
-rzg3e-release-dev-1-stack-protector-0:
+rzv2n-release-evk-1-tftf:
   variables:
-    PLAT: "g3e"
-    BOARD: "dev_1"
-    BUILD_TYPE: "release"
-    CONFIGS: "ENABLE_STACK_PROTECTOR=0"
-    ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
-  extends:
-    - .linux_mpu_build_failure_job_template
-
-rzg3e-release-dev-1-tftf:
-  variables:
-    PLAT: "g3e"
-    BOARD: "dev_1"
+    PLAT: "v2n"
+    BOARD: "evk_1"
     BUILD_TYPE: "release"
     CONFIGS: ""
     BL33: "TFTF"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzg3e-debug-log0-dev-1:
+rzv2n-release-evk-1-secure:
   variables:
-    PLAT: "g3e"
-    BOARD: "dev_1"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=0"
+    PLAT: "v2n"
+    BOARD: "evk_1"
+    BUILD_TYPE: "release"
+    CONFIGS: "-j52 SPD=opteed TRUSTED_BOARD_BOOT=1 COT=tbbr"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzg3e-debug-log50-dev-1:
+rzv2n-debug-log50-evk-1:
   variables:
-    PLAT: "g3e"
-    BOARD: "dev_1"
+    PLAT: "v2n"
+    BOARD: "evk_1"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
     - .linux_mpu_build_success_job_template
 
-############################################## G3E smarc MPU build jobs ###############################################
-rzg3e-release-smarc:
+rzv2n-debug-log50-evk-1-secure:
   variables:
-    PLAT: "g3e"
-    BOARD: "smarc"
+    PLAT: "v2n"
+    BOARD: "evk_1"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 -j52 SPD=opteed TRUSTED_BOARD_BOOT=1 COT=tbbr"
+  extends:
+    - .linux_mpu_build_success_job_template
+
+############################################ V2N evk_2 MPU build jobs #################################################
+rzv2n-release-evk-2:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_2"
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:
     - .linux_mpu_build_success_job_template
 
-rzg3e-release-smarc-stack-protector-0:
+rzv2n-release-evk-2-tftf:
   variables:
-    PLAT: "g3e"
-    BOARD: "smarc"
-    BUILD_TYPE: "release"
-    CONFIGS: "ENABLE_STACK_PROTECTOR=0"
-    ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
-  extends:
-    - .linux_mpu_build_failure_job_template
-
-rzg3e-release-smarc-tftf:
-  variables:
-    PLAT: "g3e"
-    BOARD: "smarc"
+    PLAT: "v2n"
+    BOARD: "evk_2"
     BUILD_TYPE: "release"
     CONFIGS: ""
     BL33: "TFTF"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzg3e-debug-log0-smarc:
+rzv2n-release-evk-2-secure:
   variables:
-    PLAT: "g3e"
-    BOARD: "smarc"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=0"
+    PLAT: "v2n"
+    BOARD: "evk_2"
+    BUILD_TYPE: "release"
+    CONFIGS: "-j52 SPD=opteed TRUSTED_BOARD_BOOT=1 COT=tbbr"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzg3e-debug-log50-smarc:
+rzv2n-debug-log50-evk-2:
   variables:
-    PLAT: "g3e"
-    BOARD: "smarc"
+    PLAT: "v2n"
+    BOARD: "evk_2"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
+  extends:
+    - .linux_mpu_build_success_job_template
+
+rzv2n-debug-log50-evk-2-secure:
+  variables:
+    PLAT: "v2n"
+    BOARD: "evk_2"
+    BUILD_TYPE: "debug"
+    CONFIGS: "DEBUG=1 LOG_LEVEL=50 -j52 SPD=opteed TRUSTED_BOARD_BOOT=1 COT=tbbr"
   extends:
     - .linux_mpu_build_success_job_template

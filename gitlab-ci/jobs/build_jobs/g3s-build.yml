@@ -16,28 +16,19 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing jobs for G3S.
+# Description: Yaml file containing build jobs for G3S.
 #######################################################################################################################
 
-################################################## include ############################################################
+stages:
+  - build
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+      when: always
+
 include:
   - local: gitlab-ci/templates/common-job-templates.yml
-  - local: gitlab-ci/templates/merge-gateway-job-templates.yml
-  - local: gitlab-ci/templates/release-procedure-job-templates.yml
-
-################################### Preparation job for G3S merge gateway pipeline ####################################
-rzg3s-prep-for-merge-gateway-build-job:
-  variables:
-    PLAT: "g3s"
-  extends:
-    - .prep_for_merge_gateway_build_job_template
-
-################################ Preparation job for G3S release procedure pipeline ###################################
-rzg3s-prep-for-release-build-job:
-  variables:
-    PLAT: "g3s"
-  extends:
-    - .prep_for_release_build_job_template
 
 ############################################## G3S smarc MPU build jobs ###############################################
 rzg3s-release-no-configs-smarc:

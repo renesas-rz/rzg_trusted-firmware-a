@@ -16,63 +16,31 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing jobs for V2L.
+# Description: Yaml file containing jobs for N2H.
 #######################################################################################################################
 
 ################################################## include ############################################################
 include:
-  - local: gitlab-ci/templates/common-job-templates.yml
   - local: gitlab-ci/templates/merge-gateway-job-templates.yml
   - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
-################################### Preparation job for V2L merge gateway pipeline ####################################
-rzv2l-prep-for-merge-gateway-build-job:
+################################### Preparation job for N2H merge gateway pipeline ####################################
+rzn2h-prep-for-merge-gateway-build-job:
   variables:
-    PLAT: "v2l"
+    PLAT: "n2h"
   extends:
     - .prep_for_merge_gateway_build_job_template
 
-################################ Preparation job for V2L release procedure pipeline ###################################
-rzv2l-prep-for-release-build-job:
+################################ Preparation job for N2H release procedure pipeline ###################################
+rzn2h-prep-for-release-build-job:
   variables:
-    PLAT: "v2l"
+    PLAT: "n2h"
   extends:
     - .prep_for_release_build_job_template
 
-############################################## V2L smarc_pmic_2 MPU build jobs ###############################################
-rzv2l-release-smarc-pmic-2:
-  variables:
-    PLAT: "v2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzv2l-release-smarc-pmic-2-stack-protector-0:
-  variables:
-    PLAT: "v2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "release"
-    CONFIGS: "ENABLE_STACK_PROTECTOR=0"
-    ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
-  extends:
-    - .linux_mpu_build_failure_job_template
-
-rzv2l-debug-log0-smarc-pmic-2:
-  variables:
-    PLAT: "v2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=0"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzv2l-debug-log50-smarc-pmic-2:
-  variables:
-    PLAT: "v2l"
-    BOARD: "smarc_pmic_2"
-    BUILD_TYPE: "debug"
-    CONFIGS: "DEBUG=1 LOG_LEVEL=50"
-  extends:
-    - .linux_mpu_build_success_job_template
+######################################### Trigger job for the N2H build jobs ##########################################
+trigger-n2h-build-job:
+  stage: mpu_build_testing
+  trigger:
+    include: gitlab-ci/jobs/build_jobs/n2h-build.yml
+    strategy: depend

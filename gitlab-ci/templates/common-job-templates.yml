@@ -24,7 +24,7 @@
 # 2. All the variables listed are required in the mpu_build.sh script.
 #######################################################################################################################
 .mpu_build_job_template: &mpu_build_job_template
-  stage: mpu_build_testing
+  stage: build
   variables:
     PLAT: "n2h"
     BOARD: "eval"

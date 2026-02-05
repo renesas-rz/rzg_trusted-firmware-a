@@ -16,72 +16,53 @@
 #######################################################################################################################
 
 #######################################################################################################################
-# Description: Yaml file containing jobs for G2LC.
+# Description: Yaml file containing build jobs for V2L.
 #######################################################################################################################
 
-################################################## include ############################################################
+stages:
+  - build
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+      when: always
+
 include:
   - local: gitlab-ci/templates/common-job-templates.yml
-  - local: gitlab-ci/templates/merge-gateway-job-templates.yml
-  - local: gitlab-ci/templates/release-procedure-job-templates.yml
 
-################################### Preparation job for G2LC merge gateway pipeline ####################################
-rzg2lc-prep-for-merge-gateway-build-job:
+############################################## V2L smarc_pmic_2 MPU build jobs ###############################################
+rzv2l-release-smarc-pmic-2:
   variables:
-    PLAT: "g2lc"
-  extends:
-    - .prep_for_merge_gateway_build_job_template
-
-################################ Preparation job for G2LC release procedure pipeline ###################################
-rzg2lc-prep-for-release-build-job:
-  variables:
-    PLAT: "g2lc"
-  extends:
-    - .prep_for_release_build_job_template
-
-############################################## G2LC smarc_1 MPU build jobs ###############################################
-rzg2lc-release-smarc-1:
-  variables:
-    PLAT: "g2lc"
-    BOARD: "smarc_1"
+    PLAT: "v2l"
+    BOARD: "smarc_pmic_2"
     BUILD_TYPE: "release"
     CONFIGS: ""
   extends:
     - .linux_mpu_build_success_job_template
 
-rzg2lc-release-smarc-1-stack-protector-0:
+rzv2l-release-smarc-pmic-2-stack-protector-0:
   variables:
-    PLAT: "g2lc"
-    BOARD: "smarc_1"
+    PLAT: "v2l"
+    BOARD: "smarc_pmic_2"
     BUILD_TYPE: "release"
     CONFIGS: "ENABLE_STACK_PROTECTOR=0"
     ERROR_MSG: "unrecognized command-line option '-fstack-protector-0'; did you mean '-fstack-protector'?"
   extends:
     - .linux_mpu_build_failure_job_template
 
-rzg2lc-release-smarc-pmic-2-tftf:
+rzv2l-debug-log0-smarc-pmic-2:
   variables:
-    PLAT: "g2lc"
-    BOARD: "smarc_1"
-    BUILD_TYPE: "release"
-    CONFIGS: ""
-    BL33: "TFTF"
-  extends:
-    - .linux_mpu_build_success_job_template
-
-rzg2lc-debug-log0-smarc-1:
-  variables:
-    PLAT: "g2lc"
-    BOARD: "smarc_1"
+    PLAT: "v2l"
+    BOARD: "smarc_pmic_2"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=0"
   extends:
     - .linux_mpu_build_success_job_template
 
-rzg2lc-debug-log50-smarc-1:
+rzv2l-debug-log50-smarc-pmic-2:
   variables:
-    PLAT: "g2lc"
-    BOARD: "smarc_1"
+    PLAT: "v2l"
+    BOARD: "smarc_pmic_2"
     BUILD_TYPE: "debug"
     CONFIGS: "DEBUG=1 LOG_LEVEL=50"
   extends:
