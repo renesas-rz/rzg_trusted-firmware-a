@@ -33,6 +33,7 @@ BL2_SOURCES				+=	plat/renesas/rz/soc/g3l/bl2_plat_setup.c				\
 
 BL31_SOURCES			+=	plat/renesas/rz/soc/g3l/bl31_plat_setup.c				\
 							plat/renesas/rz/soc/g3l/rz_plat_sip_handler.c			\
+							plat/renesas/rz/soc/g3l/drivers/core_ctrl.c				\
 							plat/renesas/rz/soc/g3l/plat_pm.c
 
 ifneq (${ENABLE_STACK_PROTECTOR},0)

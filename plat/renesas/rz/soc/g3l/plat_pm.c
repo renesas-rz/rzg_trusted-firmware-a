@@ -23,6 +23,7 @@
 #include <wdt.h>
 #include <pfc.h>
 #include <rz_console.h>
+#include <core_ctrl.h>
 
 #define LO_REG							(0U)
 #define HI_REG							(1U)
@@ -30,8 +31,6 @@
 #define SYSTEM_PWR_STATE(s)		((s)->pwr_domain_state[PLAT_MAX_PWR_LVL])
 #define CLUSTER_PWR_STATE(s)	((s)->pwr_domain_state[MPIDR_AFFLVL1])
 #define CORE_PWR_STATE(s)		((s)->pwr_domain_state[MPIDR_AFFLVL0])
-
-#define SYS_LP_CTL1_CA55SLEEP_REQ				0x100
 
 typedef struct {
 	uintptr_t reg_pchctl;
@@ -47,23 +46,11 @@ typedef struct {
 uintptr_t	gp_warm_ep;
 
 const uint32_t cores_reset_vector[PLATFORM_CORE_COUNT][2] = {
-		{ SYS_CA55_CFG_RVAL0, SYS_CA55_CFG_RVAH0 },
-		{ SYS_CA55_CFG_RVAL1, SYS_CA55_CFG_RVAH1 },
-		{ SYS_CA55_CFG_RVAL2, SYS_CA55_CFG_RVAH2 },
-		{ SYS_CA55_CFG_RVAL3, SYS_CA55_CFG_RVAH3 }
-	};
-
-static void rz_program_trusted_mailbox(u_register_t mpidr, uintptr_t address)
-{
-	mailbox_t *mailbox = (mailbox_t *) PLAT_TRUSTED_MAILBOX_BASE;
-	uint64_t linear_id = plat_core_pos_by_mpidr(mpidr);
-	unsigned long range;
-
-	mailbox[linear_id].value = address;
-	range = (unsigned long)&mailbox[linear_id];
-
-	flush_dcache_range(range, sizeof(range));
-}
+	{ SYS_CA55_CFG_RVAL0, SYS_CA55_CFG_RVAH0 },
+	{ SYS_CA55_CFG_RVAL1, SYS_CA55_CFG_RVAH1 },
+	{ SYS_CA55_CFG_RVAL2, SYS_CA55_CFG_RVAH2 },
+	{ SYS_CA55_CFG_RVAL3, SYS_CA55_CFG_RVAH3 }
+};
 
 static void rz_cpu_standby(plat_local_state_t cpu_state)
 {
@@ -91,6 +78,18 @@ static int rz_validate_ns_entrypoint(uintptr_t ns_entrypoint)
 }
 
 #if PLAT_SYSTEM_SUSPEND
+static void rz_program_trusted_mailbox(u_register_t mpidr, uintptr_t address)
+{
+	mailbox_t *mailbox = (mailbox_t *) PLAT_TRUSTED_MAILBOX_BASE;
+	uint64_t linear_id = plat_core_pos_by_mpidr(mpidr);
+	unsigned long range;
+
+	mailbox[linear_id].value = address;
+	range = (unsigned long)&mailbox[linear_id];
+
+	flush_dcache_range(range, sizeof(range));
+}
+
 static void rz_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
 	cpg_prepare_suspend();
@@ -134,6 +133,14 @@ static void __dead2 rz_pwr_domain_pwr_down_wfi(const psci_power_state_t *target_
 	ERROR("RZ/G3L Power Down: operation not handled.\n");
 	panic();
 }
+
+static void rz_get_sys_suspend_power_state(psci_power_state_t *req_state)
+{
+	int i;
+
+	for (i = MPIDR_AFFLVL0; i <= PLAT_MAX_PWR_LVL; i++)
+		req_state->pwr_domain_state[i] = PLAT_MAX_OFF_STATE;
+}
 #endif /* PLAT_SYSTEM_SUSPEND */
 
 
@@ -159,16 +166,6 @@ static int rz_validate_power_state(unsigned int power_state, psci_power_state_t 
 	return PSCI_E_SUCCESS;
 }
 
-#if PLAT_SYSTEM_SUSPEND
-static void rz_get_sys_suspend_power_state(psci_power_state_t *req_state)
-{
-	int i;
-
-	for (i = MPIDR_AFFLVL0; i <= PLAT_MAX_PWR_LVL; i++)
-		req_state->pwr_domain_state[i] = PLAT_MAX_OFF_STATE;
-}
-#endif /* PLAT_SYSTEM_SUSPEND */
-
 static void __dead2 rz_system_off(void)
 {
 	wfi();
@@ -178,51 +175,16 @@ static void __dead2 rz_system_off(void)
 
 static int rzg3l_pwr_domain_on(u_register_t mpidr)
 {
-	const CPG_CORE_PWR pch[PLATFORM_CORE_COUNT] = {
-		{ CPG_CORE0_PCHCTL, CPG_CORE0_PCHMON },
-		{ CPG_CORE1_PCHCTL, CPG_CORE1_PCHMON },
-		{ CPG_CORE2_PCHCTL, CPG_CORE2_PCHMON },
-		{ CPG_CORE3_PCHCTL, CPG_CORE3_PCHMON }
-	};
-
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
 	if (coreid >= PLATFORM_CORE_COUNT)
 		return PSCI_E_INVALID_PARAMS;
 
-	/* Check if in standby */
-	if ((mmio_read_32(SYS_LP_CTL2) & 0x1) == 0x1) {
-		mmio_write_32(pch[coreid].reg_pchctl, CORE0_PCHCTL_PREQ0_SET);
-		while (((mmio_read_32(pch[coreid].reg_pchmon) & CORE0_PCHMON_PACCEPT0_MON) != CORE0_PCHMON_PACCEPT0_MON))
-			;
-		mmio_write_32(pch[coreid].reg_pchctl, 0x00000000);
-		while ((mmio_read_32(pch[coreid].reg_pchmon) & CORE0_PCHMON_PACCEPT0_MON) != 0x0)
-			;
-	}
-
-	rz_program_trusted_mailbox(mpidr, gp_warm_ep);
-
-	/*  Start the core */
+	/*  Set Reset Vector */
 	mmio_write_32(cores_reset_vector[coreid][LO_REG], (uint32_t)(gp_warm_ep & 0xFFFFFFFC));
 	mmio_write_32(cores_reset_vector[coreid][HI_REG], (uint32_t)((gp_warm_ep >> 32) & 0xFF));
 
-	/* Assert PORESET */
-	mmio_write_32(CPG_RST_CA55, (0x00010000 << coreid));
-	while ((mmio_read_32(CPG_RSTMON_CA55) & (0x1 << coreid)) == 0x0)
-		;
-
-	/* Deassert PORESET and RERESET */
-	mmio_write_32(CPG_RST_CA55, (0x00110011 << coreid));
-	while ((mmio_read_32(CPG_RSTMON_CA55) & (0x1 << coreid)) != 0x0)
-		;
-
-	mmio_write_32(pch[coreid].reg_pchctl, (CORE0_PCHCTL_PREQ0_SET | CORE0_PCHCTL_PSTATE0_SET_ON));
-	while (((mmio_read_32(pch[coreid].reg_pchmon) & CORE0_PCHMON_PACCEPT0_MON) != CORE0_PCHMON_PACCEPT0_MON))
-		;
-
-	mmio_write_32(pch[coreid].reg_pchctl, CORE0_PCHCTL_PSTATE0_SET_ON);
-	while ((mmio_read_32(pch[coreid].reg_pchmon) & CORE0_PCHMON_PACCEPT0_MON) != 0x0)
-		;
+	core_ctrl_warm_boot(coreid);
 
 	return PSCI_E_SUCCESS;
 }
@@ -238,25 +200,15 @@ static void rzg3l_pwr_domain_off(const psci_power_state_t *state)
 	unsigned long mpidr = read_mpidr_el1();
 	uint8_t coreid = MPIDR_AFFLVL1_VAL(mpidr);
 
-	if (coreid >= PLATFORM_CORE_COUNT)
+	if (coreid >= PLATFORM_CORE_COUNT) {
 		return;
+	}
 
 	/* Prevent interrupts from spuriously waking up this cpu */
 	plat_gic_cpuif_disable();
 
 	/* Request transition to Cortex-A55 CoreX Sleep Mode */
-	mmio_write_32(SYS_LP_CTL1, (SYS_LP_CTL1_CA55SLEEP_REQ << coreid));
-
-
-	/* Enter the Cortex-A55 Sleep Mode */
-	mmio_write_32(SYS_LP_CTL2, mmio_read_32(SYS_LP_CTL2) | 0x00000001);
-
-	/* Issue Barrier instruction */
-	isb();
-	dsb();
-	dcsw_op_all(DCCISW);
-
-	/* A WFI instruction will be executed via lib/psci/psci_off.c->psci_power_down_wfi() */
+	core_ctrl_set_in_standby(coreid);
 }
 
 static void __dead2 rzg3l_system_reset(void)

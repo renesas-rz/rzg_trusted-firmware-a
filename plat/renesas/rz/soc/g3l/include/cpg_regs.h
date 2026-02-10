@@ -190,7 +190,7 @@
 #define CPG_CLKMON_PERI_HPB						(CPG_BASE + 0x07A8)
 #define CPG_CLKMON_QSPI_BUS						(CPG_BASE + 0x07AC)
 
-#define CPG_RST_CA55							(CPG_BASE + 0x0800)	/* Reset ON / OFF register CA55 */
+#define CPG_RST_CA55_1							(CPG_BASE + 0x0800)	/* Reset ON / OFF register CA55 */
 #define CPG_RST_CM33							(CPG_BASE + 0x0804)	/* Reset ON / OFF register CM33 */
 #define CPG_RST_SRAM_ACPU						(CPG_BASE + 0x0808)	/* Reset ON / OFF register SRAM_ACPU */
 #define CPG_RST_SRAM_MCPU						(CPG_BASE + 0x080C)	/* Reset ON / OFF register SRAM_MCPU */
@@ -251,7 +251,7 @@
 #define CPG_RST_QSPI_BUS						(CPG_BASE + 0x092C)
 #define CPG_RST_CA55_2							(CPG_BASE + 0x0930)
 
-#define CPG_RSTMON_CA55							(CPG_BASE + 0x0980)	/* Reset monitor register CA55 */
+#define CPG_RSTMON_CA55_1						(CPG_BASE + 0x0980)	/* Reset monitor register CA55 */
 #define CPG_RSTMON_CM33							(CPG_BASE + 0x0984)	/* Reset monitor register CM33 */
 #define CPG_RSTMON_SRAM_ACPU					(CPG_BASE + 0x0988)	/* Reset monitor register SRAM_ACPU */
 #define CPG_RSTMON_SRAM_MCPU					(CPG_BASE + 0x098C)	/* Reset monitor register SRAM_MCPU */
