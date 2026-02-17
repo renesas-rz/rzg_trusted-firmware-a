@@ -277,34 +277,6 @@ static CPG_SETUP_DATA cpg_clk_on_tbl[] = {
 		.type = CPG_T_CLK
 	},
 
-	{	/* DMAC Part 1 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_0,
-				.val  = 0x0000001E,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_0,
-				.val  = 0x0000001E,
-				},
-
-		.type = CPG_T_CLK
-	},
-
-	{	/* DMAC Part 2 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_15,
-				.val  = 0x00000100,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_7,
-				.val  = 0x01000000,
-				},
-
-		.type = CPG_T_CLK
-	},
-
 	{	/* OSTM */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_4,
@@ -965,20 +937,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.type = CPG_T_RST
 	},
 
-	{	/* DMAC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_3,
-				.val  = 0x00000008,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_1,
-				.val  = 0x00000010,
-				},
-
-		.type = CPG_T_RST
-	},
-
 	{	/* OSTM Part 1 */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_6,
@@ -1506,20 +1464,6 @@ static CPG_SETUP_DATA cpg_reset_tbl[] = {
 		.mon =  {
 				.addr = (uintptr_t)CPG_RSTMON_6,
 				.val  = 0x20000000,
-				},
-
-		.type = CPG_T_RST
-	},
-
-	{	/* DMAC */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_14,
-				.val  = 0x00002000,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_6,
-				.val  = 0x40000000,
 				},
 
 		.type = CPG_T_RST
