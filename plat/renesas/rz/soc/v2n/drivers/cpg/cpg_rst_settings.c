@@ -17,18 +17,6 @@ static const cpg_rst_data_t cpg_awo_pd_reset_tbl[] = {
 				},
 	},
 
-	{	/* DMAC 0 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_RST_3,
-				.val  = 0x00000008,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_RSTMON_1,
-				.val  = 0x00000010,
-				},
-	},
-
 	{	/* GTM 0 and 1 (OSTM) */
 		.reg =  {
 				.addr = (uintptr_t)CPG_RST_6,

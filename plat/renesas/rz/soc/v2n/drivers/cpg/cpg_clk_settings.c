@@ -20,18 +20,6 @@ static const cpg_clk_data_t cpg_awo_pd_clk_on_tbl[] = {
 			},
 	},
 
-	{	/* DMAC0 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_0,
-				.val  = 0x00000001,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_0,
-				.val  = 0x00000001,
-				},
-	},
-
 	{	/* GTM 0 and GTM1 (OSTM) */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_4,
@@ -155,18 +143,6 @@ static const cpg_clk_data_t cpg_awo_pd_clk_on_tbl[] = {
 
 /* clock control for peripherals in the OTHERS power domain */
 static const cpg_clk_data_t cpg_others_pd_clk_on_tbl[] = {
-	{	/* DMAC 1 to 4 */
-		.reg =  {
-				.addr = (uintptr_t)CPG_CLKON_0,
-				.val  = 0x0000001E,
-				},
-
-		.mon =  {
-				.addr = (uintptr_t)CPG_CLKMON_0,
-				.val  = 0x0000001E,
-				},
-	},
-
 	{	/* GTM 2 to GTM7 (OSTM) */
 		.reg =  {
 				.addr = (uintptr_t)CPG_CLKON_4,
