@@ -76,6 +76,9 @@
     - mkdir -p $PLAT && cd $PLAT
     - cp -r "../../../workspace/tf-a/build/${PLAT}/${BUILD_TYPE}" .
     - fi
+    - if [[ "$PIPELINE_TYPE" == "overnight" ]]; then
+    - ./scripts/artifactory_upload.sh $PLAT $BOARD $BUILD_TYPE
+    - fi
   artifacts:
     expire_in: 1 week
     when: always
