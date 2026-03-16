@@ -41,7 +41,7 @@ Renesas RZ/V2H reference platforms:
 | Board        |      Details                                                                                                                           |
 +==============+===============+========================================================================================================================+
 | evk_1        | Equipped with Renesas RZ/V2H SoC                                                                                                       |
-| evk_2        +----------------------------------------------------------------------------------------------------------------------------------------+
+| 	           +----------------------------------------------------------------------------------------------------------------------------------------+
 |              | https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzv2h-evk-rzv2h-quad-core-vision-ai-mpu-evaluation-kit |
 +--------------+----------------------------------------------------------------------------------------------------------------------------------------+
 
@@ -91,7 +91,6 @@ Base build instruction:
 .. code:: bash
 
 	make PLAT=v2h all BOARD=evk_1 ENABLE_STACK_PROTECTOR=all
-	make PLAT=v2h all BOARD=evk_2 ENABLE_STACK_PROTECTOR=all
 
 Build Options:
 ~~~~~~~~~~~~~~
