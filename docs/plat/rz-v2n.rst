@@ -40,7 +40,7 @@ Renesas RZ/V2N reference platforms:
 | Board        | Details                                                                                                                               |
 +==============+=======================================================================================================================================+
 | evk_1        | Equipped with Renesas RZ/V2N SoC                                                                                                      |
-| evk_2        +---------------------------------------------------------------------------------------------------------------------------------------+
+|              +---------------------------------------------------------------------------------------------------------------------------------------+
 |              | https://www.renesas.com/en/design-resources/boards-kits/rz-v2n-evk                                                                    |
 +--------------+---------------------------------------------------------------------------------------------------------------------------------------+
 
@@ -93,7 +93,6 @@ Base build instruction:
 .. code:: bash
 
 	make PLAT=v2n all BOARD=evk_1 ENABLE_STACK_PROTECTOR=all
-	make PLAT=v2n all BOARD=evk_2 ENABLE_STACK_PROTECTOR=all
 
 Build Options:
 ~~~~~~~~~~~~~~
@@ -191,7 +190,7 @@ This procedure builds TF-A with platform suspend support enabled.
 
 	export CROSS_COMPILE=${path_to_cc_toolset}/bin/aarch64-none-elf-
 	cd ${path_to_tfa_project}
-	make PLAT=v2n BOARD=evk_2 BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg PLAT_SYSTEM_SUSPEND=1
+	make PLAT=v2n BOARD=evk_1 BL33=${path_to_uboot_file}/u-boot.bin bl2 fip bptool pkg PLAT_SYSTEM_SUSPEND=1
 
 The build option LOG_LEVEL can be added to the above command to set the desired logging level.
 It is recommended to avoid using other build options when building for suspend support.

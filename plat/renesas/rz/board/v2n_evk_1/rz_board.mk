@@ -12,3 +12,20 @@ LPDDR4		:= 1
 DDR_PLL4	:=1600
 
 $(eval $(call add_define,DDR_PLL4))
+
+#
+# Modules useful for testing
+#
+
+LED_CONTROL :=0
+
+ifneq ($(LED_CONTROL),0)
+PLAT_INCLUDES	+=	-Iplat/renesas/rz/board/v2n_evk_1/include
+BL_COMMON_SOURCES	+=	plat/renesas/rz/board/v2n_evk_1/led_control.c
+endif
+
+ENABLE_PMIC_CONTROL				:= 0
+
+ifneq ($(ENABLE_PMIC_CONTROL),0)
+BL_COMMON_SOURCES	+=	plat/renesas/rz/board/v2n_evk_1/pwrc_board.c
+endif
