@@ -201,12 +201,6 @@ static const cpg_setup_data_t cpg_iso_clock_tbl[] = {
 		0x001F001F,
 		CPG_T_CLK
 	},
-	{		/* ETHER */
-		(uintptr_t)CPG_CLKON_ETH,
-		(uintptr_t)CPG_CLKMON_ETH,
-		0x3FFF3FFF,
-		CPG_T_CLK
-	},
 	{		/* DDR */
 		(uintptr_t)CPG_CLKON_DDR,
 		(uintptr_t)CPG_CLKMON_DDR,
@@ -250,12 +244,6 @@ static const cpg_setup_data_t cpg_iso_reset_tbl[] = {
 		(uintptr_t)CPG_RST_USB,
 		(uintptr_t)CPG_RSTMON_USB,
 		0x001F001F,
-		CPG_T_RST
-	},
-	{		/* ETHER */
-		(uintptr_t)CPG_RST_ETH,
-		(uintptr_t)CPG_RSTMON_ETH,
-		0x00030003,
 		CPG_T_RST
 	},
 	{		/* DDR */
