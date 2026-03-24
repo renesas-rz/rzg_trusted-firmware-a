@@ -201,7 +201,9 @@ void bl2_platform_setup(void)
 	/* initialize DDR */
 	plat_ddr_setup();
 
-	bl2_init_fdt();
+	if (bl2_plat_get_boot_mode() == RZ_COLD_BOOT) {
+		bl2_init_fdt();
+	}
 
 	NOTICE("BL2: SYS_LSI_MODE: 0x%x\n", mmio_read_32(SYS_LSI_MODE));
 	NOTICE("BL2: SYS_LSI_DEVID: 0x%x\n", mmio_read_32(SYS_LSI_DEVID));
