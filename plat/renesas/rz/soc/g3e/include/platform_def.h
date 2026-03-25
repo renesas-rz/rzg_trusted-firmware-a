@@ -50,22 +50,14 @@
 #define BL2_BASE				UL(0x08004000)
 #define BL2_LIMIT				UL(0x08040000)
 
-/*
- * This is used to reduce the size of the translation tables needed
- * BL2_SRAM_MMU_SIZE = BL2's maximum size rounded up to the nearest 0x10000
- * The increase in granularity size results smaller translation tables.
- */
-#define ROUND_UP_TO_0x10000(x)      (((x) + 0xFFFF) & ~0xFFFFUL)
-#define BL2_SRAM_MMU_SIZE         ROUND_UP_TO_0x10000(BL2_LIMIT - BL2_BASE)
-
-#define FDT_LIMIT				UL(0x59000000)
-#define FDT_SIZE				UL(0x1000)
-#define FDT_BASE				(FDT_LIMIT - FDT_SIZE)
-
 /* Base address where BL2 stores the parameters for the subsequent images */
-#define PARAMS_BASE				(FDT_BASE - PARAMS_SIZE)
+#define PARAMS_BASE				(BL2_LIMIT)
 #define PARAMS_SIZE				UL(0x1000)
+#define PARAMS_LIMIT			(PARAMS_BASE + PARAMS_SIZE)
 
+#define FDT_BASE				(PARAMS_LIMIT)
+#define FDT_SIZE				UL(0x1000)
+#define FDT_LIMIT				(FDT_BASE + FDT_SIZE)
 
 /*******************************************************************************
  * BL31 specific defines.
@@ -73,19 +65,20 @@
 #define BL31_BASE				UL(0x44000000)
 #define BL31_LIMIT				UL(0x44040000)
 
+/*
+ * Base address where the suspend stack a portion of the BL31 code suspend code is stored.
+ * This is for when the DDR is powered down and the code needs to be executed from SRAM.
+ */
+#define BL31_SRAM_BASE			(FDT_LIMIT)
+#define BL31_SRAM_SIZE			U(0x3000)
+#define BL31_SRAM_LIMIT			(BL31_SRAM_BASE + BL31_SRAM_SIZE)
+
 /*******************************************************************************
  * Platform suspend defines
  ******************************************************************************/
 #define PLAT_TRUSTED_MAILBOX_BASE		BL31_LIMIT
 #define RZG3E_NS_DRAM_BASE				ULL(0x48000000)
 
-/*
- * Base address where the suspend stack a portion of the BL31 code suspend code is stored.
- * This is for when the DDR is powered down and the code needs to be executed from SRAM.
- */
-#define BL31_SRAM_BASE			BL2_LIMIT
-#define BL31_SRAM_SIZE			U(0x3000)
-#define BL31_SRAM_LIMIT			(BL31_SRAM_BASE + BL31_SRAM_SIZE)
 
 /*******************************************************************************
  * BL32 specific defines.
@@ -120,6 +113,14 @@
 #define MAX_XLAT_TABLES			U(6)
 #define MAX_MMAP_REGIONS		U(9)
 #endif
+
+/*
+ * This is used to reduce the size of the translation tables needed
+ * BL2_SRAM_MMU_SIZE = BL2's maximum size rounded up to the nearest 0x10000
+ * The increase in granularity size results smaller translation tables.
+ */
+#define ROUND_UP_TO_0x10000(x)	(((x) + 0xFFFF) & ~0xFFFFUL)
+#define SRAM_MMU_SIZE			ROUND_UP_TO_0x10000(BL31_SRAM_LIMIT - BL2_BASE)
 
 #define PLAT_VIRT_ADDR_SPACE_SIZE	(1ULL << 36)
 #define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 36)		/* Max Physical Address is 0xF_FFFF_FFFF */
