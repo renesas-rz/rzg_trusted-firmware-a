@@ -21,6 +21,7 @@
 #include <sys.h>
 #include <ddr.h>
 #include <emmc_def.h>
+#include <pfc.h>
 
 uint32_t ddr_csr_table[RET_CSR_SIZE] __aligned(8);
 
@@ -102,12 +103,13 @@ void plat_ddr_setup(void)
 {
 	if (!sys_is_resume_reboot()) {
 		ddr_setup();
-
+		pfc_xspi_setup();
 		if (save_ddr_config(DDR_CONFIG_ID, &ddr_config_info) != 0) {
 			ERROR("Failed to save DDR retention info.\n");
 			panic();
 		}
 	} else {
+		pfc_xspi_setup();
 		if (load_auth_image(DDR_CONFIG_ID, &ddr_config_info) != 0) {
 			ERROR("Failed to load DDR retention info.\n");
 			panic();

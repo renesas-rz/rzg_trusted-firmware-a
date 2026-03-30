@@ -11,6 +11,7 @@
 #include <rz_soc_def.h>
 #include <riic.h>
 #include <riic_regs.h>
+#include <pfc.h>
 
 #define RIIC_SPEED_RATE			(100000)
 #define RIIC_WAIT_COUNT_MAX		(40000000U)
@@ -266,9 +267,11 @@ void riic_setup(void)
 {
 	int ret;
 
+	pfc_riic_pmic_setup();
 	ret = riic_init_setting(RIIC_SPEED_RATE);
-	if (ret)
+	if (ret) {
 		panic();
+	}
 }
 
 int32_t riic_write(uint8_t slave, uint8_t addr, uint8_t data)

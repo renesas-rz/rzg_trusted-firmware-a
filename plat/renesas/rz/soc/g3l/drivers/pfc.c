@@ -104,7 +104,7 @@ static void pfc_scif_setup(void)
 	pfc_write_registers(PFC_SCIF_TBL_NUM, pfc_scif_reg_tbl);
 }
 
-static void pfc_xspi_setup(void)
+void pfc_xspi_setup(void)
 {
 	/* Set OEN of XSPI Multi/OctaRAM IO block. */
 	mmio_write_32(PFC_XSPI_OEN, XSPI_OEN_SORST_N);
@@ -194,7 +194,4 @@ void pfc_setup(void)
 	pfc_xspi_setup();
 	pfc_sd_setup();
 	pfc_drive_setup();
-#if PLAT_SYSTEM_SUSPEND
-	pfc_riic_pmic_setup();
-#endif
 }

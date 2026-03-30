@@ -8,7 +8,7 @@
 #define __PFC_H__
 
 void pfc_setup(void);
-
+void pfc_xspi_setup(void);
 void pfc_riic_pmic_setup(void);
 
 #endif	/* __PFC_H__ */

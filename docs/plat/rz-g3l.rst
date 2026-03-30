@@ -150,7 +150,6 @@ This procedure builds TF-A with VBatt platform suspend support enabled.
 
 The build option LOG_LEVEL can be added to the above command to set the desired logging level.
 It is recommended to avoid using other build options when building for suspend support.
-Use the 'Flash Procedure for EMMC' (which is shown below) to flash the device.
 
 How to load TF-A
 ----------------

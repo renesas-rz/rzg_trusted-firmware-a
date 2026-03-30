@@ -60,7 +60,7 @@ int bl2_plat_handle_pre_image_load(unsigned int image_id)
 
 	/* Clean next_params_info in BL image node */
 	bl_mem_params->params_node_mem.next_params_info = NULL;
-
+	pfc_xspi_setup();
 	return 0;
 }
 
