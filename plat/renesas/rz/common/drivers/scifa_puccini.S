@@ -308,9 +308,22 @@ endfunc console_rz_init
 	 */
 func console_rz_putc
 	ldr x1, [x1, #CONSOLE_T_BASE]
+
+	/*
+	 * Linux leaves TE=0 during shutdown. Restore TE=0->1
+	 * transition if needed - hardware requires this edge to
+	 * arm the TX state machine.
+	 */
+	ldr w2, [x1, #CCR0]
+	tst w2, #CCR0_TE_MSK
+	bne 2f                     /* TE=1 already, skip reinit */
+	orr w2, w2, #CCR0_TE_MSK
+	str w2, [x1, #CCR0]       /* TE=1 restore    */
+
+2:
 	cmp w0, #0xA
 	/* Prepend '\r' to '\n' */
-	bne 2f
+	bne 3f
 1:
 	/* Check if the transmit FIFO is full */
 	ldrb w2, [x1, #FTSR]
@@ -319,12 +332,12 @@ func console_rz_putc
 	bge 1b
 	mov w2, #0x0D
 	strb w2, [x1, #TDR]
-2:
 	/* Check if the transmit FIFO is full */
+3:
 	ldrb w2, [x1, #FTSR]
 	ubfx w2, w2, #FTSR_T, #FTSR_T_WIDTH
 	cmp w2, #FIFO_FULL
-	bge 2b
+	bge 3b
 	strb w0, [x1, #TDR]
 
 	ret
