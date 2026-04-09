@@ -22,6 +22,12 @@
 #define RDID						(0)
 #define RSTEN						(1)
 #define RESET						(2)
+#define WTEN                        (3)
+#define RDSR1						(4)
+#define RDSR2                       (5)
+#define WRSR                        (6)
+
+#define SR2_QE_BIT  (1U << 1)
 
 #define DEVID_ID_MASK				UL(0x00FFFFFF)
 #define DEVICE_ID_BAD				UL(0)
@@ -52,6 +58,10 @@ static const st_xspi_cmd_t cmds[] = {
 	{0x9F00u,		XSPI_IN,	0u,			3u,			0u,			1u},	/* RDID */
 	{0x6600u,		XSPI_OUT,	0u,			0u,			0u,			1u},	/* RSTEN */
 	{0x9900u,		XSPI_OUT,	0u,			0u,			0u,			1u},	/* RESET */
+	{0x0600u,       XSPI_OUT,   0u,         0u,         0u,         1u},    /* WTEN*/
+	{0x0500u,       XSPI_IN,    0u,         1u,         0u,         1u},    /* RDSR1*/
+	{0x3500u,       XSPI_IN,    0u,         1u,         0u,         1u},    /* RDSR2 */
+	{0x3100u,       XSPI_OUT,   0u,         1u,         0u,         1u},    /* WRSR*/
 };
 
 
@@ -158,11 +168,101 @@ static uint32_t xspi_read_identification(const uint32_t xspi_base)
 	return id;
 }
 
+static uint32_t xspi_read_status_register(const uint32_t xspi_base, const uint8_t rdsr_n)
+{
+	uint32_t status = 0xFFFFFFFFu;
+	st_xspi_cmd_info_t cmd_rdsr = {rdsr_n, 0, 0};
+
+	if (xspi_single_command(xspi_base, &cmd_rdsr) == XSPI_SUCCESS) {
+		/* Read status from status data buffer */
+		status = mmio_read_32(XSPI_ADDR(XSPI_CDD0BUF0_OFFSET)) & 0xFFu;
+	}
+
+	return status;
+}
+
+static int32_t xspi_write_status_register(const uint32_t xspi_base, uint8_t status_value)
+{
+	int32_t ret;
+	st_xspi_cmd_info_t cmd_wten = {WTEN, 0, 0};
+	st_xspi_cmd_info_t cmd_wrsr = {WRSR, 0, (uint32_t)status_value};
+
+	/*Send Write Enable command */
+	ret = xspi_single_command(xspi_base, &cmd_wten);
+	if (ret != XSPI_SUCCESS) {
+		return ret;
+	}
+
+	/*Write status register */
+	ret = xspi_single_command(xspi_base, &cmd_wrsr);
+	if (ret != XSPI_SUCCESS) {
+		return ret;
+	}
+
+	/*Wait for write to complete*/
+	uint32_t timeout = 100000u;
+
+	while (timeout > 0u) {
+		uint32_t status = xspi_read_status_register(xspi_base, RDSR1);
+
+		if ((status & 0x01u) == 0u) {
+			INFO("Write in progress bit cleared - operation complete\n");
+			break;
+		}
+		timeout--;
+		__asm__ ("nop");
+		dsb();
+	}
+
+	return (timeout == 0u) ? XSPI_ERROR : XSPI_SUCCESS;
+}
+
+int32_t xspi_enable_quad_mode(const uint32_t xspi_base)
+{
+	uint32_t current_sr;
+	uint8_t new_sr;
+	int32_t ret;
+
+	/* Read current status register value */
+	current_sr = xspi_read_status_register(xspi_base, RDSR2);
+	if (current_sr == 0xFFFFFFFFu) {
+		return XSPI_ERROR;
+	}
+
+	/* Set bit 1 of SR2 (Quad Enable) */
+	new_sr = (uint8_t)(current_sr | 0x02u);
+
+	/* Write new status register value */
+	ret = xspi_write_status_register(xspi_base, new_sr);
+
+	return ret;
+}
+
+int32_t xspi_disable_quad_mode(const uint32_t xspi_base)
+{
+	uint32_t current_sr;
+	uint8_t new_sr;
+	int32_t ret;
+
+	/* Read current status register value */
+	current_sr = xspi_read_status_register(xspi_base, RDSR2);
+	if (current_sr == 0xFFFFFFFFu) {
+		return XSPI_ERROR;
+	}
+
+	/* Clear bit 1 of SR2 (Quad Enable) */
+	new_sr = (uint8_t)(current_sr & ~(0x02u));
+
+	/* Write new status register value */
+	ret = xspi_write_status_register(xspi_base, new_sr);
+
+	return ret;
+}
+
 static void xspi_init_registers(const uint32_t xspi_base, const boot_mode_t boot_mode)
 {
 	switch (boot_mode) {
-	case SYS_BOOT_MODE_XSPI0_x1:
-	case SYS_BOOT_MODE_XSPI1_x1: {
+	case SYS_BOOT_MODE_XSPI0_x1:{
 		/* Set SPI mode - sample data at falling edge, drive clock at falling edge, 1S-1S-1S */
 		mmio_write_32(XSPI_ADDR(XSPI_LIOCFGCS0_OFFSET), mmio_read_32(XSPI_ADDR(XSPI_LIOCFGCS0_OFFSET)) | XSPI_LIOCFGCS_PRTMD_1S_1S_1S);
 		/* Set memory mapping mode */
@@ -176,6 +276,30 @@ static void xspi_init_registers(const uint32_t xspi_base, const boot_mode_t boot
 		/* COMCFG:	use default values */
 		/* BMCFG:	use default values */
 		/* CSSCTL:	use default values */
+	}
+	break;
+
+	case SYS_BOOT_MODE_XSPI1_x1: {
+		/* Set SPI mode initially to single - sample data at falling edge, drive clock at falling edge, 1S-1S-1S */
+		mmio_write_32(XSPI_ADDR(XSPI_LIOCFGCS0_OFFSET), mmio_read_32(XSPI_ADDR(XSPI_LIOCFGCS0_OFFSET)) | XSPI_LIOCFGCS_PRTMD_1S_1S_1S);
+		/* Set memory mapping mode */
+		mmio_write_32(XSPI_ADDR(XSPI_CMCFG0CS0_OFFSET), (0x02u << XSPI_CMCFG0CS_ADDSIZE));
+		/* 0 latency, 0x0300 read command */
+		mmio_write_32(XSPI_ADDR(XSPI_CMCFG1CS0_OFFSET), (0x00u << XSPI_CMCFG1CS_RDLATE) | (0x0300u << XSPI_CMCFG1CS_RDCMD));
+		/* Enable read access to CS0 for selected channel memory areas */
+		mmio_write_32(XSPI_ADDR(XSPI_BMCTL0_OFFSET), (0x01u << XSPI_BMCTL0_CS0ACC));
+
+		if (xspi_read_status_register(xspi_base, RDSR2) & SR2_QE_BIT) {
+			INFO("Quad Mode Enabled\n");
+		} else {
+			INFO("Quad Mode Not Enabled. Enabling...\n");
+			xspi_enable_quad_mode(xspi_base);
+		}
+
+		mmio_write_32(XSPI_ADDR(XSPI_LIOCFGCS0_OFFSET), mmio_read_32(XSPI_ADDR(XSPI_LIOCFGCS0_OFFSET)) | XSPI_LIOCFGCS_PRTMD_1S_4S_4S);
+		mmio_write_32(XSPI_ADDR(XSPI_CMCFG0CS0_OFFSET), (0x02u << XSPI_CMCFG0CS_ADDSIZE));
+		mmio_write_32(XSPI_ADDR(XSPI_CMCFG1CS0_OFFSET), (0x06u << XSPI_CMCFG1CS_RDLATE) | (0xEB00u << XSPI_CMCFG1CS_RDCMD));
+		mmio_write_32(XSPI_ADDR(XSPI_BMCTL0_OFFSET), (0x01u << XSPI_BMCTL0_CS0ACC));
 	}
 	break;
 

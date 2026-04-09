@@ -211,6 +211,8 @@ static void pfc_xspi1_setup(void)
 		/* Port, pin, func#, drive control */
 		{1, 4, 28, DRCTL_SRm0_MSK | DRCTL_Em0_DRIVE_HI_MSK}, /* XSPI1_IO0 */
 		{1, 5, 28, DRCTL_SRm0_MSK | DRCTL_Em0_DRIVE_HI_MSK}, /* XSPI1_IO1 */
+		{1, 6, 28, DRCTL_SRm0_MSK | DRCTL_Em0_DRIVE_HI_MSK}, /* XSPI1_IO2 */
+		{1, 7, 28, DRCTL_SRm0_MSK | DRCTL_Em0_DRIVE_HI_MSK}, /* XSPI1_IO3 */
 		{1, 0, 28, DRCTL_SRm0_MSK | DRCTL_Em0_DRIVE_HI_MSK}, /* XSPI1_CKP */
 		{1, 1, 28, DRCTL_SRm0_MSK | DRCTL_Em0_DRIVE_HI_MSK}, /* XSPI1_CS0# */
 	};
