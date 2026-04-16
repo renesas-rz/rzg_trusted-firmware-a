@@ -42,11 +42,11 @@ static const pfc_regs_t pfc_scif_reg_tbl[PFC_SCIF_TBL_NUM] = {
 };
 
 static const pfc_regs_t  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
-	/* XSPI_CKP (P35.0), XSPI_CS0 (P35.1), XSPI_CS1 (P35.2), XSPI_DS (P35.3), XSPI_RESET (P35.4),*/
+	/* XSPI_CKP (P35.0), XSPI_CS0 (P35.1), XSPI_CS1 (P35.2), XSPI_DS (P35.3) */
 	{
-		{ PFC_ON,	(uintptr_t)PFC_PMC35,	0x1F },					/* PMC */
+		{ PFC_ON,	(uintptr_t)PFC_PMC35,	0x0F },					/* PMC */
 		{ PFC_ON,	(uintptr_t)PFC_PFC35,	0x0 },					/* PFC */
-		{ PFC_ON,	(uintptr_t)PFC_IOLH35,	0x0000000303030303 },	/* IOLH */
+		{ PFC_ON,	(uintptr_t)PFC_IOLH35,	0x0000000003030303 },	/* IOLH */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	},
@@ -122,10 +122,10 @@ void pfc_xspi_setup(void)
 
 static void pfc_sd_setup(void)
 {
-	/* Since SDx is 3.3V, the initial value will be set. */
-	mmio_write_32(PFC_SD_ch0, 1);
 
 	pfc_write_registers(PFC_SD_TBL_NUM, pfc_sd_reg_tbl);
+
+	mmio_write_32(PFC_SD_ch0, 0);
 }
 
 #if PLAT_SYSTEM_SUSPEND
