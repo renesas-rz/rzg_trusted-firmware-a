@@ -157,7 +157,7 @@ int32_t sddev_read_data(int32_t sd_port, uint8_t *buff, uint32_t reg_addr, int32
  * Function Name: sddev_write_data
  * Description  : write to SDHI buffer FIFO
  * Arguments	: int32_t sd_port   : channel no (0 or 1)
- *			  : uint8_t *buff	 : buffer addrees to store writting datas
+ *			  : uint8_t *buff	 : buffer addrees to store writing datas
  *			  : uint32_t reg_addr : SDIP FIFO address
  *			  : int32_t num	   : counts to write(unit:byte)
  * Return Value : success : SD_OK

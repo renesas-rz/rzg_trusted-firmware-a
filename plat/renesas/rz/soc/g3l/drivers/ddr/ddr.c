@@ -56,7 +56,7 @@ void ddr_retention_entry(void)
 	/* 12.1 */
 	uint32_t dram_class = DDRTOP_mc_param_rd(DRAM_CLASS_ADDR, DRAM_CLASS_OFFSET, DRAM_CLASS_WIDTH);
 
-	/* 12.2 - No more DDR access from here 	 */
+	/* 12.2 - No more DDR access from here */
 
 	/* 12.3 */
 	DDRTOP_mc_param_poll(CONTROLLER_BUSY_ADDR, CONTROLLER_BUSY_OFFSET, CONTROLLER_BUSY_WIDTH, 0);

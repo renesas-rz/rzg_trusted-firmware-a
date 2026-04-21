@@ -43,7 +43,7 @@ extern void wait_pclk(uint32_t cycles);
 extern void wait_dficlk(uint32_t cycles);
 extern void wait_regaclk(uint32_t cycles);
 
-/* DDR setup MC funcion */
+/* DDR setup MC function */
 extern void setup_mc(void);
 extern void update_mc(void);
 

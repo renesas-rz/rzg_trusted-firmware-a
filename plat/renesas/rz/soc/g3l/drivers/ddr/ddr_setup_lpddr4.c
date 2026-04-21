@@ -71,6 +71,7 @@ void phyinit_pin_swizzling(void)
 void phyinit_load_1d_image(void)
 {
 	size_t i;
+
 	dwc_ddrphy_apb_wr(0x00058060, 0x00000002);
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000000);
 
@@ -256,6 +257,7 @@ void phyinit_exec_1d_image(void)
 void phyinit_load_2d_image(void)
 {
 	size_t i;
+
 	dwc_ddrphy_apb_wr(0x0006E000, 0x00000000);
 
 	for (i = 0; i < param_phyinit_2d_dat0_size; i++) {

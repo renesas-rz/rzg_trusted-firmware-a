@@ -105,7 +105,7 @@
 #define SYS_LP_CTL5							(SYS_BASE + 0x00000D14)
 #define SYS_LP_CTL6							(SYS_BASE + 0x00000D18)
 #define SYS_LP_CTL7							(SYS_BASE + 0x00000D1C)
-#define SYS_LP_CM33CTL0 					(SYS_BASE + 0x00000D24)
+#define SYS_LP_CM33CTL0						(SYS_BASE + 0x00000D24)
 
 #define SYS_LP_CA55CK_CTL1					(SYS_BASE + 0x00000D38)
 #define SYS_LP_CA55CK_CTL2					(SYS_BASE + 0x00000D3C)
@@ -663,12 +663,12 @@
 #define PD_ISO_CTRL_PD_ISOVCC_ISOEN			(1 << 0)
 #define PD_ISO_CTRL_PD_ISOVCC_ISORSTN		(1 << 8)
 
-#define DDRPHY_CTRL1_EN 					(1 << 0)
-#define DDRPHY_CTRL1	 					(1 << 1)
-#define DDRPHY_CTRL2_EN 					(1 << 4)
-#define DDRPHY_CTRL2	 					(1 << 5)
-#define DDRPHY_CTRL3_EN 					(1 << 8)
-#define DDRPHY_CTRL3	 					(1 << 9)
+#define DDRPHY_CTRL1_EN						(1 << 0)
+#define DDRPHY_CTRL1						(1 << 1)
+#define DDRPHY_CTRL2_EN						(1 << 4)
+#define DDRPHY_CTRL2						(1 << 5)
+#define DDRPHY_CTRL3_EN						(1 << 8)
+#define DDRPHY_CTRL3						(1 << 9)
 
 #define ISO_IOBUF_SE18_CTRL_ISO_IOBUF_SE18	(1 << 0)
 

@@ -50,7 +50,10 @@ static const pfc_regs_t  pfc_xspi_reg_tbl[PFC_XSPI_TBL_NUM] = {
 		{ PFC_OFF,	(uintptr_t)NULL,		0 },					/* PUPD */
 		{ PFC_OFF,	(uintptr_t)NULL,		0 }						/* IEN */
 	},
-	/* XSPI_IO0 (P36.0),  XSPI_IO1 (P36.1),  XSPI_IO2 (P36.2), XSPI_IO3 (P36.3),  XSPI_IO4 (P36.4),  XSPI_IO5 (P36.5),  XSPI_IO6 (P36.6),  XSPI_IO7 (P36.7) */
+	/*
+	 * XSPI_IO0 (P36.0),  XSPI_IO1 (P36.1),  XSPI_IO2 (P36.2), XSPI_IO3 (P36.3),
+	 * XSPI_IO4 (P36.4),  XSPI_IO5 (P36.5),  XSPI_IO6 (P36.6),  XSPI_IO7 (P36.7)
+	 */
 	{
 		{ PFC_ON,	(uintptr_t)PFC_PMC36,	0xFF },					/* PMC */
 		{ PFC_ON,	(uintptr_t)PFC_PFC36,	0x0 },					/* PFC */
