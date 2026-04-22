@@ -50,7 +50,7 @@ EMMC_ERROR_CODE emmc_erase_sector(uint32_t start_address,
 				  uint32_t end_address);
 uint32_t emmc_bit_field(uint8_t *data, uint32_t top, uint32_t bottom);
 
-/** @brief D_INFO1_MASK SD_INFO2_MASK reset back to initial state 
+/** @brief D_INFO1_MASK SD_INFO2_MASK reset back to initial state
  */
 void emmc_irqmask_suspend_restore(void);
 
