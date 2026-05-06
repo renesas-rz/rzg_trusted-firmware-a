@@ -11,6 +11,7 @@
 
 #include <riic.h>
 #include <vbatt_regs.h>
+#include <pfc.h>
 
 #define PMIC_ADDRESS				(uint8_t)(0x12)		/* PMIC I2C address of IC */
 #define GP_ADDRESS					(uint8_t)(0x38)		/* GreenPak I2C address of IC */
@@ -62,7 +63,7 @@
 bool pwrc_board_is_resume(void)
 {
 	uint8_t gpak_data = 0;
-
+	pfc_riic_pmic_setup();
 	riic_setup();
 	riic_read(GP_ADDRESS, GP_ESR_ADDR, &gpak_data);
 
@@ -78,7 +79,7 @@ bool pwrc_board_is_resume(void)
 bool pwrc_board_is_resume(void)
 {
 	uint8_t gpak_data = 0;
-
+	pfc_riic_pmic_setup();
 	riic_setup();
 	riic_read(GP_ADDRESS, GP_SR_ADDR, &gpak_data);
 
@@ -92,6 +93,7 @@ bool pwrc_board_is_resume(void)
 
 void pwrc_clear_resume_flag(void)
 {
+	pfc_riic_pmic_setup();
 	riic_setup();
 
 	riic_write(GP_ADDRESS, GP_SHSC_ADDR, SLP_HIST_STS_CLEAR);
@@ -103,12 +105,12 @@ void pwrc_clear_resume_flag(void)
 /*
  * Below the function pwrc_board_suspend_on() for vbat mode will be performed by the CA55
  * The pwrc_board_suspend_on() function for AWO mode should be performed by the CM33 and
- * is thus not included in this code.
+ * is thus not included in this code. This function is solely executed in SRAM, beware of
+ * including any code that branches to code that is not in SRAM, as it may cause a crash.
  */
 #if defined(PLAT_SYSTEM_SUSPEND_vbat)
 void pwrc_board_suspend_on(void)
 {
-
 	uint8_t gpak_data = 0;
 
 	riic_setup();

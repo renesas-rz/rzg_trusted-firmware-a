@@ -267,7 +267,6 @@ void riic_setup(void)
 {
 	int ret;
 
-	pfc_riic_pmic_setup();
 	ret = riic_init_setting(RIIC_SPEED_RATE);
 	if (ret) {
 		panic();
