@@ -1,0 +1,47 @@
+/*
+ * Copyright (C) 2019-2021, Renesas Electronics Corporation. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+/*!********************************************************************************************************************
+* \file             : r_sb_sb.h
+* \par version      : 1.00
+* \par Product Name : Renesas-SB-Lib FSBL Custom
+* \par Device(s)    : Does not depend on specific hardware
+* \par Description  : This file defines the macros, types and declarations in used the SecureBoot module.
+**********************************************************************************************************************/
+#ifndef R_SB_SB_H
+/* Multiple inclusion protection macro */
+#define R_SB_SB_H
+
+/*=====================================================================================================================
+ Public macro definitions
+=====================================================================================================================*/
+/*!********************************************************************
+ * \addtogroup SBLIBSecureBootDefinesInternal
+ * \{******************************************************************/
+
+/*! \}*/
+
+/*=====================================================================================================================
+ Public type definitions
+=====================================================================================================================*/
+
+/*=====================================================================================================================
+ Public global variables
+=====================================================================================================================*/
+
+/*=====================================================================================================================
+ Public global functions
+=====================================================================================================================*/
+extern sb_ret_t r_sb_sb_verify_cert_chain(const st_sb_key_cert_t *const p_key_cert_st,
+										  const st_sb_code_cert_t *const p_code_cert_st);
+extern sb_ret_t r_sb_sb_verify_mac(const st_sb_code_cert_t *const p_code_cert_st,
+								   const st_sb_tlv_t *const p_mac_tlv);
+extern sb_ret_t r_sb_sb_check_integrity(const st_sb_key_cert_t *const p_key_cert_st,
+										const st_sb_code_cert_t *const p_code_cert_st,
+										const e_sb_mac_type_t mac_type, uint32_t *const p_tag);
+#endif /* R_SB_SB_H */
+/*=====================================================================================================================
+ End of File
+=====================================================================================================================*/
